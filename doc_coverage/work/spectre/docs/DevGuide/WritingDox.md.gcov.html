@@ -1,0 +1,272 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - /work/spectre/docs/DevGuide/WritingDox.md</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">work/spectre/docs/DevGuide</a> - WritingDox.md</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : \cond NEVER</span>
+<span class="lineNum">       2 </span>            : Distributed under the MIT License.
+<span class="lineNum">       3 </span>            : See LICENSE.txt for details.
+<span class="lineNum">       4 </span>            : \endcond
+<span class="lineNum">       5 </span>            : # Writing Good Documentation {#writing_good_dox}
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            : \tableofcontents
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : # Tutorials, Instructions, and Dev Guide {#writing_dox_writing_help}
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : All non-code documentation such as tutorials, installation instructions, and
+<span class="lineNum">      12 </span>            : the developer guide is written inside Markdown files such as this one. These
+<span class="lineNum">      13 </span>            : files must be placed inside `docs/Tutorials`, `docs/MainSite`, or
+<span class="lineNum">      14 </span>            : `docs/DevGuide` according to what they document. Each Markdown file must start
+<span class="lineNum">      15 </span>            : with the following line
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            : ``` markdown
+<span class="lineNum">      18 </span>            : # The title {#the_tag}
+<span class="lineNum">      19 </span>            : ```
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : where `The title` is replaced with your desired title, and `the_tag` with the
+<span class="lineNum">      22 </span>            : tag you want to use to reference the Markdown file and documentation. Each
+<span class="lineNum">      23 </span>            : main heading of the file starts with a single octothorpe
+<span class="lineNum">      24 </span>            : and can have a tag. For example,
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            : ``` markdown
+<span class="lineNum">      27 </span>            : # My Section {#file_name_my_section}
+<span class="lineNum">      28 </span>            : ```
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span>            : While the `file_name` portion is not necessary, it is useful for reducing the
+<span class="lineNum">      31 </span>            : likelihood of reference collisions. You can add a table of contents using the
+<span class="lineNum">      32 </span>            : Doxygen command &lt;code&gt;\\tableofcontents&lt;/code&gt;. All sections, subsections,
+<span class="lineNum">      33 </span>            : subsubsections, etc. are shown in the table of contents if they have a tag,
+<span class="lineNum">      34 </span>            : if not they do not appear.
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span>            : # C++ Documentation {#writing_dox_cpp_dox_help}
+<span class="lineNum">      37 </span>            : 
+<span class="lineNum">      38 </span>            : We require you to add Doxygen documentation for any of the following
+<span class="lineNum">      39 </span>            : you may have added to the public interface in any hpp file:
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            : + classes
+<span class="lineNum">      42 </span>            : + structs
+<span class="lineNum">      43 </span>            : + enums
+<span class="lineNum">      44 </span>            : + functions
+<span class="lineNum">      45 </span>            : + namespaces
+<span class="lineNum">      46 </span>            : + macros
+<span class="lineNum">      47 </span>            : + type aliases
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span>            : Documentation begins on the line immediately above the declaration with
+<span class="lineNum">      50 </span>            : either a triple slash `///` or a `/*!`.
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            : Examples:
+<span class="lineNum">      53 </span>            : \verbatim
+<span class="lineNum">      54 </span>            : /// \brief A brief description of the object to be documented
+<span class="lineNum">      55 </span>            : ///
+<span class="lineNum">      56 </span>            : /// Doxygen comments can be made
+<span class="lineNum">      57 </span>            : /// using triple slashes...
+<span class="lineNum">      58 </span>            : class ExampleClass{
+<span class="lineNum">      59 </span>            :   ... rest of code
+<span class="lineNum">      60 </span>            : }
+<span class="lineNum">      61 </span>            : \endverbatim
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span>            : \verbatim
+<span class="lineNum">      64 </span>            : /*!
+<span class="lineNum">      65 </span>            :  * \brief A brief description of the object to be documented
+<span class="lineNum">      66 </span>            :  *
+<span class="lineNum">      67 </span>            :  * Doxygen comments can also be made
+<span class="lineNum">      68 </span>            :  * using the &quot;slash-star, star-slash&quot; pattern, in this way.
+<span class="lineNum">      69 </span>            :  */
+<span class="lineNum">      70 </span>            : class ExampleClass{
+<span class="lineNum">      71 </span>            :   ... rest of code
+<span class="lineNum">      72 </span>            : }
+<span class="lineNum">      73 </span>            : \endverbatim
+<span class="lineNum">      74 </span>            : 
+<span class="lineNum">      75 </span>            : Build your documentation by running `make doc` in your build directory.
+<span class="lineNum">      76 </span>            : You can then view it by opening `BUILD_DIR/docs/html/index.html` in a
+<span class="lineNum">      77 </span>            : browser and using the file navigator in Doxygen to locate your file.
+<span class="lineNum">      78 </span>            : 
+<span class="lineNum">      79 </span>            : In addition to providing a file directory of all the source files in SpECTRE,
+<span class="lineNum">      80 </span>            : Doxygen also conveniently provides two additional organizations of the files,
+<span class="lineNum">      81 </span>            : Topics and Namespaces. To ensure that your documentation is easily found from
+<span class="lineNum">      82 </span>            : within Doxygen, we recommend that you add any new objects to Topics and any
+<span class="lineNum">      83 </span>            : new namespaces to Namespaces.
+<span class="lineNum">      84 </span>            : 
+<span class="lineNum">      85 </span>            : ## Add your object to an existing Topic:
+<span class="lineNum">      86 </span>            : 
+<span class="lineNum">      87 </span>            : Within a Doxygen comment, use the Doxygen keyword
+<span class="lineNum">      88 </span>            : \verbatim
+<span class="lineNum">      89 </span>            : \ingroup
+<span class="lineNum">      90 </span>            : \endverbatim
+<span class="lineNum">      91 </span>            : 
+<span class="lineNum">      92 </span>            : followed by the name of the Topic (you can find the list of existing Topics in
+<span class="lineNum">      93 </span>            : `docs/GroupDefs.hpp`).
+<span class="lineNum">      94 </span>            : 
+<span class="lineNum">      95 </span>            : ## Add a new Topic:
+<span class="lineNum">      96 </span>            : 
+<span class="lineNum">      97 </span>            : Within `docs/GroupDefs.hpp`, add the name of your Topic (which follows the
+<span class="lineNum">      98 </span>            : naming convention &quot;YourNameForTopic&quot; followed by &quot;Group&quot;) among the rest,
+<span class="lineNum">      99 </span>            : taking care to keep the list of Topics in alphabetical order.
+<span class="lineNum">     100 </span>            : 
+<span class="lineNum">     101 </span>            : ## Add a new namespace:
+<span class="lineNum">     102 </span>            : 
+<span class="lineNum">     103 </span>            : In the hpp file in which the namespace is declared for the first time,
+<span class="lineNum">     104 </span>            : add a Doxygen comment to the line directly above the namespace. Subsequent
+<span class="lineNum">     105 </span>            : files which use this namespace will not need a Doxygen comment.
+<span class="lineNum">     106 </span>            : 
+<span class="lineNum">     107 </span>            : We also strongly encourage you to:
+<span class="lineNum">     108 </span>            : 
+<span class="lineNum">     109 </span>            : ## Put any mathematical expressions in your documentation into LaTeX form:
+<span class="lineNum">     110 </span>            : 
+<span class="lineNum">     111 </span>            : Within a Doxygen comment, begin and conclude your expression with
+<span class="lineNum">     112 </span>            : 
+<span class="lineNum">     113 </span>            : \verbatim
+<span class="lineNum">     114 </span>            : \f$
+<span class="lineNum">     115 </span>            : \endverbatim
+<span class="lineNum">     116 </span>            : 
+<span class="lineNum">     117 </span>            : Example:
+<span class="lineNum">     118 </span>            : \verbatim
+<span class="lineNum">     119 </span>            : \\\ We define \f$ \xi : = \eta^2 \f$
+<span class="lineNum">     120 </span>            : \endverbatim
+<span class="lineNum">     121 </span>            : 
+<span class="lineNum">     122 </span>            : Note that if this expression spans more than one line,
+<span class="lineNum">     123 </span>            : your Doxygen comment must of the &quot;slash-star, star-slash&quot; form shown in the
+<span class="lineNum">     124 </span>            : previous section. One can also use (within a Doxygen comment) the form
+<span class="lineNum">     125 </span>            : 
+<span class="lineNum">     126 </span>            : \verbatim
+<span class="lineNum">     127 </span>            : \f[ expression \f]
+<span class="lineNum">     128 </span>            : \endverbatim
+<span class="lineNum">     129 </span>            : 
+<span class="lineNum">     130 </span>            : to put the expression on its own line. We also encourage you to use the latex
+<span class="lineNum">     131 </span>            : env `align` for formatting these multiple-line equations.
+<span class="lineNum">     132 </span>            : 
+<span class="lineNum">     133 </span>            : ## Cite publications in your documentation {#writing_dox_citations}
+<span class="lineNum">     134 </span>            : 
+<span class="lineNum">     135 </span>            : When you refer to publications or books in the documentation, add a
+<span class="lineNum">     136 </span>            : corresponding entry to `docs/References.bib`. Follow these guidelines when
+<span class="lineNum">     137 </span>            : editing `docs/References.bib`:
+<span class="lineNum">     138 </span>            : 
+<span class="lineNum">     139 </span>            : - Ideally, find the publication on [INSPIRE HEP](https://inspirehep.net), copy
+<span class="lineNum">     140 </span>            : its BibTeX entry, remove the colon `:` from its key and add the `url` field (see
+<span class="lineNum">     141 </span>            : below). We remove the colon because it can create problems in HTML related to
+<span class="lineNum">     142 </span>            : its function as a CSS selector.
+<span class="lineNum">     143 </span>            : - For publications that are not listed on [INSPIRE HEP](https://inspirehep.net),
+<span class="lineNum">     144 </span>            : make sure to format the new entry's key in the same style, i.e.
+<span class="lineNum">     145 </span>            : `(&lt;Author&gt;[a-zA-Z]+)(&lt;Year&gt;[0-9]{4})(&lt;ID&gt;[a-z]*)`. Good keys are, for
+<span class="lineNum">     146 </span>            : instance, `Einstein1915` or `LVC2016a`. For books you may omit the year.
+<span class="lineNum">     147 </span>            : - Sort the list of BibTeX entries in the file alphabetically by their keys.
+<span class="lineNum">     148 </span>            : - Provide open access or preprint information whenever possible. For
+<span class="lineNum">     149 </span>            : publications available on [arXiv](https://arxiv.org), for instance, add the
+<span class="lineNum">     150 </span>            : following fields (filling in the correct values):
+<span class="lineNum">     151 </span>            : ```
+<span class="lineNum">     152 </span>            : archivePrefix = {arXiv},
+<span class="lineNum">     153 </span>            : eprint = {1609.00098},
+<span class="lineNum">     154 </span>            : primaryClass = {astro-ph.HE},
+<span class="lineNum">     155 </span>            : ```
+<span class="lineNum">     156 </span>            : - Provide the `url` field whenever possible. If a DOI has been issued by the
+<span class="lineNum">     157 </span>            : publisher, use `https://doi.org/&lt;doi&gt;` and also fill the `doi` field of the
+<span class="lineNum">     158 </span>            : entry. Else, use the URL provided by the publisher.
+<span class="lineNum">     159 </span>            : - Make sure to wrap strings in the BibTeX entries in `{}` when capitalization is
+<span class="lineNum">     160 </span>            : important, or when BibTeX keywords should be ignored (e.g. `and` in author
+<span class="lineNum">     161 </span>            : lists).
+<span class="lineNum">     162 </span>            : 
+<span class="lineNum">     163 </span>            : To cite an entry from the `docs/References.bib` file in the documentation, use
+<span class="lineNum">     164 </span>            : the Doxygen keyword
+<span class="lineNum">     165 </span>            : \verbatim
+<span class="lineNum">     166 </span>            : \cite
+<span class="lineNum">     167 </span>            : \endverbatim
+<span class="lineNum">     168 </span>            : followed by the BibTeX key at the place in the documentation where you want the
+<span class="lineNum">     169 </span>            : citation to appear. It will render as a numbered link to the bibliography
+<span class="lineNum">     170 </span>            : page. It will also show a popover when hovering over the link, which displays
+<span class="lineNum">     171 </span>            : the bibliographic information and provides quick access to the publication.
+<span class="lineNum">     172 </span>            : 
+<span class="lineNum">     173 </span>            : ## Include any pictures that aid in the understanding of your documentation:
+<span class="lineNum">     174 </span>            : 
+<span class="lineNum">     175 </span>            : First, please compress your image to be under 130kB. As most images will be
+<span class="lineNum">     176 </span>            : diagrammatical in nature this is certainly achievable!
+<span class="lineNum">     177 </span>            : 
+<span class="lineNum">     178 </span>            : Second, add the directory that will contain your image to the `docs/Images/`
+<span class="lineNum">     179 </span>            : directory. Create the appropriate directories such that the directory structure
+<span class="lineNum">     180 </span>            : in `docs/Images` matches that of `src` and `tests/Unit`.
+<span class="lineNum">     181 </span>            : 
+<span class="lineNum">     182 </span>            : Finally, include the image by using the Doxygen keyword
+<span class="lineNum">     183 </span>            : 
+<span class="lineNum">     184 </span>            : \verbatim
+<span class="lineNum">     185 </span>            : \image html NameOfImage.png
+<span class="lineNum">     186 </span>            : \endverbatim
+<span class="lineNum">     187 </span>            : 
+<span class="lineNum">     188 </span>            : in your hpp file.
+<span class="lineNum">     189 </span>            : 
+<span class="lineNum">     190 </span>            : # Python Documentation {#writing_dox_python_dox_help}
+<span class="lineNum">     191 </span>            : 
+<span class="lineNum">     192 </span>            : DocStrings...
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

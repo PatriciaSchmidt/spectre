@@ -1,0 +1,200 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Evolution/DiscontinuousGalerkin/SlopeLimiters/WenoGridHelpers.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">Evolution/DiscontinuousGalerkin/SlopeLimiters</a> - WenoGridHelpers.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;Evolution/DiscontinuousGalerkin/SlopeLimiters/WenoGridHelpers.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &quot;DataStructures/Tensor/Tensor.hpp&quot;
+<span class="lineNum">       7 </span>            : #include &quot;Domain/Direction.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">       8 </span>            : #include &quot;Domain/Element.hpp&quot;    // IWYU pragma: keep
+<span class="lineNum">       9 </span>            : #include &quot;Domain/LogicalCoordinates.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;Domain/Mesh.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      11 </span>            : #include &quot;Domain/Side.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;ErrorHandling/Assert.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;Utilities/GenerateInstantiations.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : namespace SlopeLimiters {
+<span class="lineNum">      17 </span>            : namespace Weno_detail {
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : template &lt;size_t VolumeDim&gt;
+<span class="lineNum">      20 </span>            : bool check_element_has_one_similar_neighbor_in_direction(
+<span class="lineNum">      21 </span>            :     const Element&lt;VolumeDim&gt;&amp; element,
+<span class="lineNum">      22 </span>            :     const Direction&lt;VolumeDim&gt;&amp; direction) noexcept {
+<span class="lineNum">      23 </span>            :   const auto&amp; neighbors = element.neighbors().at(direction);
+<span class="lineNum">      24 </span>            :   if (neighbors.size() &gt; 1) {
+<span class="lineNum">      25 </span>            :     // More than one neighbor
+<span class="lineNum">      26 </span>            :     return false;
+<span class="lineNum">      27 </span>            :   } else {
+<span class="lineNum">      28 </span>            :     const auto&amp; orientation_map = neighbors.orientation();
+<span class="lineNum">      29 </span>            :     const auto&amp; neighbor_segment_ids = neighbors.ids().cbegin()-&gt;segment_ids();
+<span class="lineNum">      30 </span>            :     const auto reoriented_neighbor_segment_ids =
+<span class="lineNum">      31 </span>            :         orientation_map.inverse_map()(neighbor_segment_ids);
+<span class="lineNum">      32 </span>            :     for (size_t d = 0; d &lt; VolumeDim; ++d) {
+<span class="lineNum">      33 </span>            :       if (gsl::at(reoriented_neighbor_segment_ids, d).refinement_level() !=
+<span class="lineNum">      34 </span>            :           gsl::at(element.id().segment_ids(), d).refinement_level()) {
+<span class="lineNum">      35 </span>            :         // One neighbor, but of a different refinement level
+<span class="lineNum">      36 </span>            :         return false;
+<span class="lineNum">      37 </span>            :       }
+<span class="lineNum">      38 </span>            :     }
+<span class="lineNum">      39 </span>            :   }
+<span class="lineNum">      40 </span>            :   return true;
+<span class="lineNum">      41 </span>            : }
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span>            : template &lt;size_t VolumeDim&gt;
+<span class="lineNum">      44 </span>            : std::array&lt;DataVector, VolumeDim&gt; neighbor_grid_points_in_local_logical_coords(
+<span class="lineNum">      45 </span>            :     const Mesh&lt;VolumeDim&gt;&amp; local_mesh, const Mesh&lt;VolumeDim&gt;&amp; neighbor_mesh,
+<span class="lineNum">      46 </span>            :     const Element&lt;VolumeDim&gt;&amp; element,
+<span class="lineNum">      47 </span>            :     const Direction&lt;VolumeDim&gt;&amp; direction_to_neighbor) noexcept {
+<span class="lineNum">      48 </span>            :   ASSERT(check_element_has_one_similar_neighbor_in_direction(
+<span class="lineNum">      49 </span>            :              element, direction_to_neighbor),
+<span class="lineNum">      50 </span>            :          &quot;Found some amount of h-refinement; this is not supported&quot;);
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            :   constexpr double logical_element_width = 2.0;
+<span class="lineNum">      53 </span>            :   std::array&lt;DataVector, VolumeDim&gt; result{{{}}};
+<span class="lineNum">      54 </span>            :   for (size_t d = 0; d &lt; VolumeDim; ++d) {
+<span class="lineNum">      55 </span>            :     const auto neighbor_mesh_1d = neighbor_mesh.slice_through(d);
+<span class="lineNum">      56 </span>            :     if (d == direction_to_neighbor.dimension()) {
+<span class="lineNum">      57 </span>            :       // Coordinates normal to the interface cannot line up, so we must provide
+<span class="lineNum">      58 </span>            :       // the coordinates to interpolate to
+<span class="lineNum">      59 </span>            :       gsl::at(result, d) =
+<span class="lineNum">      60 </span>            :           get&lt;0&gt;(logical_coordinates(neighbor_mesh_1d)) +
+<span class="lineNum">      61 </span>            :           (direction_to_neighbor.side() == Side::Upper ? 1.0 : -1.0) *
+<span class="lineNum">      62 </span>            :               logical_element_width;
+<span class="lineNum">      63 </span>            :     } else if (neighbor_mesh_1d != local_mesh.slice_through(d)) {
+<span class="lineNum">      64 </span>            :       // Coordinates parallel to the interface may or may not line up
+<span class="lineNum">      65 </span>            :       gsl::at(result, d) = get&lt;0&gt;(logical_coordinates(neighbor_mesh_1d));
+<span class="lineNum">      66 </span>            :     }
+<span class="lineNum">      67 </span>            :   }
+<span class="lineNum">      68 </span>            :   return result;
+<span class="lineNum">      69 </span>            : }
+<span class="lineNum">      70 </span>            : 
+<span class="lineNum">      71 </span>            : template &lt;size_t VolumeDim&gt;
+<span class="lineNum">      72 </span>            : std::array&lt;DataVector, VolumeDim&gt; local_grid_points_in_neighbor_logical_coords(
+<span class="lineNum">      73 </span>            :     const Mesh&lt;VolumeDim&gt;&amp; local_mesh, const Mesh&lt;VolumeDim&gt;&amp; neighbor_mesh,
+<span class="lineNum">      74 </span>            :     const Element&lt;VolumeDim&gt;&amp; element,
+<span class="lineNum">      75 </span>            :     const Direction&lt;VolumeDim&gt;&amp; direction_to_neighbor) noexcept {
+<span class="lineNum">      76 </span>            :   ASSERT(check_element_has_one_similar_neighbor_in_direction(
+<span class="lineNum">      77 </span>            :              element, direction_to_neighbor),
+<span class="lineNum">      78 </span>            :          &quot;Found some amount of h-refinement; this is not supported&quot;);
+<span class="lineNum">      79 </span>            : 
+<span class="lineNum">      80 </span>            :   constexpr double logical_element_width = 2.0;
+<span class="lineNum">      81 </span>            :   std::array&lt;DataVector, VolumeDim&gt; result{{{}}};
+<span class="lineNum">      82 </span>            :   for (size_t d = 0; d &lt; VolumeDim; ++d) {
+<span class="lineNum">      83 </span>            :     const auto local_mesh_1d = local_mesh.slice_through(d);
+<span class="lineNum">      84 </span>            :     if (d == direction_to_neighbor.dimension()) {
+<span class="lineNum">      85 </span>            :       // Coordinates normal to the interface cannot line up, so we must provide
+<span class="lineNum">      86 </span>            :       // the coordinates to interpolate to
+<span class="lineNum">      87 </span>            :       gsl::at(result, d) =
+<span class="lineNum">      88 </span>            :           get&lt;0&gt;(logical_coordinates(local_mesh_1d)) +
+<span class="lineNum">      89 </span>            :           (direction_to_neighbor.side() == Side::Upper ? -1.0 : 1.0) *
+<span class="lineNum">      90 </span>            :               logical_element_width;
+<span class="lineNum">      91 </span>            :     } else if (local_mesh_1d != neighbor_mesh.slice_through(d)) {
+<span class="lineNum">      92 </span>            :       // Coordinates parallel to the interface may or may not line up
+<span class="lineNum">      93 </span>            :       gsl::at(result, d) = get&lt;0&gt;(logical_coordinates(local_mesh_1d));
+<span class="lineNum">      94 </span>            :     }
+<span class="lineNum">      95 </span>            :   }
+<span class="lineNum">      96 </span>            :   return result;
+<span class="lineNum">      97 </span>            : }
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span>            : // Explicit instantiations
+<span class="lineNum">     100 </span><span class="lineNoCov">          0 : #define DIM(data) BOOST_PP_TUPLE_ELEM(0, data)</span>
+<span class="lineNum">     101 </span>            : 
+<span class="lineNum">     102 </span><span class="lineNoCov">          0 : #define INSTANTIATE(_, data)                                            \</span>
+<span class="lineNum">     103 </span>            :   template bool check_element_has_one_similar_neighbor_in_direction(    \
+<span class="lineNum">     104 </span>            :       const Element&lt;DIM(data)&gt;&amp;, const Direction&lt;DIM(data)&gt;&amp;) noexcept; \
+<span class="lineNum">     105 </span>            :   template std::array&lt;DataVector, DIM(data)&gt;                            \
+<span class="lineNum">     106 </span>            :   neighbor_grid_points_in_local_logical_coords(                         \
+<span class="lineNum">     107 </span>            :       const Mesh&lt;DIM(data)&gt;&amp;, const Mesh&lt;DIM(data)&gt;&amp;,                   \
+<span class="lineNum">     108 </span>            :       const Element&lt;DIM(data)&gt;&amp;, const Direction&lt;DIM(data)&gt;&amp;) noexcept; \
+<span class="lineNum">     109 </span>            :   template std::array&lt;DataVector, DIM(data)&gt;                            \
+<span class="lineNum">     110 </span>            :   local_grid_points_in_neighbor_logical_coords(                         \
+<span class="lineNum">     111 </span>            :       const Mesh&lt;DIM(data)&gt;&amp;, const Mesh&lt;DIM(data)&gt;&amp;,                   \
+<span class="lineNum">     112 </span>            :       const Element&lt;DIM(data)&gt;&amp;, const Direction&lt;DIM(data)&gt;&amp;) noexcept;
+<span class="lineNum">     113 </span>            : 
+<span class="lineNum">     114 </span>            : GENERATE_INSTANTIATIONS(INSTANTIATE, (1, 2, 3))
+<span class="lineNum">     115 </span>            : 
+<span class="lineNum">     116 </span>            : #undef DIM
+<span class="lineNum">     117 </span>            : #undef INSTANTIATE
+<span class="lineNum">     118 </span>            : 
+<span class="lineNum">     119 </span>            : }  // namespace Weno_detail
+<span class="lineNum">     120 </span>            : }  // namespace SlopeLimiters
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

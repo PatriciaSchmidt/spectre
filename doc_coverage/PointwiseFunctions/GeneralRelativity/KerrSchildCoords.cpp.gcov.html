@@ -1,0 +1,230 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - PointwiseFunctions/GeneralRelativity/KerrSchildCoords.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">PointwiseFunctions/GeneralRelativity</a> - KerrSchildCoords.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;PointwiseFunctions/GeneralRelativity/KerrSchildCoords.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;cmath&gt;
+<span class="lineNum">       7 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       8 </span>            : #include &lt;ostream&gt;
+<span class="lineNum">       9 </span>            : #include &lt;pup.h&gt;
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : #include &quot;DataStructures/Tensor/EagerMath/DotProduct.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;DataStructures/Tensor/Tensor.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;ErrorHandling/Assert.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;Utilities/ConstantExpressions.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;Utilities/ContainerHelpers.hpp&quot;
+<span class="lineNum">      16 </span>            : #include &quot;Utilities/EqualWithinRoundoff.hpp&quot;
+<span class="lineNum">      17 </span>            : #include &quot;Utilities/GenerateInstantiations.hpp&quot;
+<span class="lineNum">      18 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      19 </span>            : #include &quot;Utilities/MakeWithValue.hpp&quot;
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : /// \cond
+<span class="lineNum">      22 </span>            : namespace gr {
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : KerrSchildCoords::KerrSchildCoords(const double bh_mass,
+<span class="lineNum">      25 </span>            :                                    const double bh_dimless_spin) noexcept
+<span class="lineNum">      26 </span>            :     : spin_a_(bh_mass * bh_dimless_spin) {
+<span class="lineNum">      27 </span>            :   ASSERT(bh_mass &gt; 0,
+<span class="lineNum">      28 </span>            :          &quot;The mass must be positive. The value given was &quot; &lt;&lt; bh_mass &lt;&lt; &quot;.&quot;);
+<span class="lineNum">      29 </span>            :   ASSERT(bh_dimless_spin &gt; -1.0 and bh_dimless_spin &lt; 1.0,
+<span class="lineNum">      30 </span>            :          &quot;The dimensionless spin must be in the range (-1, 1). The value given &quot;
+<span class="lineNum">      31 </span>            :          &quot;was &quot;
+<span class="lineNum">      32 </span>            :              &lt;&lt; bh_dimless_spin &lt;&lt; &quot;.&quot;);
+<span class="lineNum">      33 </span>            : }
+<span class="lineNum">      34 </span>            : 
+<span class="lineNum">      35 </span>            : void KerrSchildCoords::pup(PUP::er&amp; p) noexcept { p | spin_a_; }
+<span class="lineNum">      36 </span>            : 
+<span class="lineNum">      37 </span>            : template &lt;typename DataType&gt;
+<span class="lineNum">      38 </span>            : tnsr::Ij&lt;DataType, 3, Frame::NoFrame&gt; KerrSchildCoords::jacobian_matrix(
+<span class="lineNum">      39 </span>            :     const DataType&amp; x, const DataType&amp; y, const DataType&amp; z) const noexcept {
+<span class="lineNum">      40 </span>            :   auto result = make_with_value&lt;tnsr::Ij&lt;DataType, 3, Frame::NoFrame&gt;&gt;(x, 0.0);
+<span class="lineNum">      41 </span>            : 
+<span class="lineNum">      42 </span>            :   const double a_squared = square(spin_a_);
+<span class="lineNum">      43 </span>            :   DataType prefactor = 0.5 * (square(x) + square(y) + square(z) - a_squared);
+<span class="lineNum">      44 </span>            :   prefactor += sqrt(square(prefactor) + a_squared * square(z));
+<span class="lineNum">      45 </span>            :   const DataType r = sqrt(prefactor);
+<span class="lineNum">      46 </span>            :   prefactor += a_squared;
+<span class="lineNum">      47 </span>            :   const DataType prefactor_dth = sqrt(prefactor / (square(x) + square(y))) / r;
+<span class="lineNum">      48 </span>            :   prefactor = 1.0 / prefactor;
+<span class="lineNum">      49 </span>            : 
+<span class="lineNum">      50 </span>            :   get&lt;0, 0&gt;(result) = prefactor * (x * r + spin_a_ * y);
+<span class="lineNum">      51 </span>            :   get&lt;0, 1&gt;(result) = z * prefactor_dth * x;
+<span class="lineNum">      52 </span>            :   get&lt;0, 2&gt;(result) = -y;
+<span class="lineNum">      53 </span>            :   get&lt;1, 0&gt;(result) = prefactor * (y * r - spin_a_ * x);
+<span class="lineNum">      54 </span>            :   get&lt;1, 1&gt;(result) = z * prefactor_dth * y;
+<span class="lineNum">      55 </span>            :   get&lt;1, 2&gt;(result) = x;
+<span class="lineNum">      56 </span>            :   get&lt;2, 0&gt;(result) = z / r;
+<span class="lineNum">      57 </span>            :   get&lt;2, 1&gt;(result) = -1.0 / prefactor_dth;
+<span class="lineNum">      58 </span>            :   // get&lt;2, 2&gt;(result) vanishes identically
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span>            :   return result;
+<span class="lineNum">      61 </span>            : }
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span>            : template &lt;typename DataType&gt;
+<span class="lineNum">      64 </span>            : tnsr::I&lt;DataType, 3, Frame::Inertial&gt;
+<span class="lineNum">      65 </span>            : KerrSchildCoords::cartesian_from_spherical_ks(
+<span class="lineNum">      66 </span>            :     const tnsr::I&lt;DataType, 3, Frame::NoFrame&gt;&amp; spatial_vector,
+<span class="lineNum">      67 </span>            :     const tnsr::I&lt;DataType, 3, Frame::Inertial&gt;&amp; cartesian_coords) const
+<span class="lineNum">      68 </span>            :     noexcept {
+<span class="lineNum">      69 </span>            :   auto result = make_with_value&lt;tnsr::I&lt;DataType, 3, Frame::Inertial&gt;&gt;(
+<span class="lineNum">      70 </span>            :       cartesian_coords, 0.0);
+<span class="lineNum">      71 </span>            : 
+<span class="lineNum">      72 </span>            :   for (size_t s = 0; s &lt; get_size(get&lt;0&gt;(cartesian_coords)); ++s) {
+<span class="lineNum">      73 </span>            :     const double&amp; x = get_element(get&lt;0&gt;(cartesian_coords), s);
+<span class="lineNum">      74 </span>            :     const double&amp; y = get_element(get&lt;1&gt;(cartesian_coords), s);
+<span class="lineNum">      75 </span>            :     const double&amp; z = get_element(get&lt;2&gt;(cartesian_coords), s);
+<span class="lineNum">      76 </span>            : 
+<span class="lineNum">      77 </span>            :     // For a point off the z-axis, transforming with Jacobian is well defined.
+<span class="lineNum">      78 </span>            :     if (LIKELY(not(equal_within_roundoff(x, 0.0) and
+<span class="lineNum">      79 </span>            :                    equal_within_roundoff(y, 0.0)))) {
+<span class="lineNum">      80 </span>            :       const auto jacobian = jacobian_matrix(x, y, z);
+<span class="lineNum">      81 </span>            :       for (size_t i = 0; i &lt; 3; ++i) {
+<span class="lineNum">      82 </span>            :         for (size_t j = 0; j &lt; 3; ++j) {
+<span class="lineNum">      83 </span>            :           get_element(result.get(i), s) +=
+<span class="lineNum">      84 </span>            :               jacobian.get(i, j) * get_element(spatial_vector.get(j), s);
+<span class="lineNum">      85 </span>            :         }
+<span class="lineNum">      86 </span>            :       }
+<span class="lineNum">      87 </span>            :     } else {
+<span class="lineNum">      88 </span>            :       // On the z-axis, the Jacobian provides the multivalued transformation
+<span class="lineNum">      89 </span>            :       //
+<span class="lineNum">      90 </span>            :       // v^x = (+-)(r cos\phi + a sin\phi) v^\theta
+<span class="lineNum">      91 </span>            :       // v^y = (+-)(r sin\phi - a cos\phi) v^\theta
+<span class="lineNum">      92 </span>            :       // v^z = (+-) v^r
+<span class="lineNum">      93 </span>            :       //
+<span class="lineNum">      94 </span>            :       // where +/- accounts for points z &gt; 0 or z &lt; 0, respectively.
+<span class="lineNum">      95 </span>            :       // A well defined transformation is possible if v^\theta vanishes at the
+<span class="lineNum">      96 </span>            :       // z-axis, in which case the transformed vector points along the z-axis.
+<span class="lineNum">      97 </span>            :       ASSERT(equal_within_roundoff(get_element(get&lt;1&gt;(spatial_vector), s), 0.0),
+<span class="lineNum">      98 </span>            :              &quot;The input vector must have a vanishing theta component on the &quot;
+<span class="lineNum">      99 </span>            :              &quot;z-axis in order to perform a single-valued transformation. The &quot;
+<span class="lineNum">     100 </span>            :              &quot;vector passed has v^theta = &quot;
+<span class="lineNum">     101 </span>            :                  &lt;&lt; get_element(get&lt;1&gt;(spatial_vector), s) &lt;&lt; &quot; at z =  &quot; &lt;&lt; z
+<span class="lineNum">     102 </span>            :                  &lt;&lt; &quot; on the z-axis.&quot;);
+<span class="lineNum">     103 </span>            :       get_element(get&lt;2&gt;(result), s) =
+<span class="lineNum">     104 </span>            :           ((z &gt; 0.0) ? get_element(get&lt;0&gt;(spatial_vector), s)
+<span class="lineNum">     105 </span>            :                      : -1.0 * get_element(get&lt;0&gt;(spatial_vector), s));
+<span class="lineNum">     106 </span>            :     }
+<span class="lineNum">     107 </span>            :   }
+<span class="lineNum">     108 </span>            :   return result;
+<span class="lineNum">     109 </span>            : }
+<span class="lineNum">     110 </span>            : 
+<span class="lineNum">     111 </span>            : template &lt;typename DataType&gt;
+<span class="lineNum">     112 </span>            : Scalar&lt;DataType&gt; KerrSchildCoords::r_coord_squared(
+<span class="lineNum">     113 </span>            :     const tnsr::I&lt;DataType, 3, Frame::Inertial&gt;&amp; cartesian_coords) const
+<span class="lineNum">     114 </span>            :     noexcept {
+<span class="lineNum">     115 </span>            :   const double a_squared = square(spin_a_);
+<span class="lineNum">     116 </span>            :   const DataType temp =
+<span class="lineNum">     117 </span>            :       0.5 * (get(dot_product(cartesian_coords, cartesian_coords)) - a_squared);
+<span class="lineNum">     118 </span>            :   return Scalar&lt;DataType&gt;{
+<span class="lineNum">     119 </span>            :       temp + sqrt(square(temp) + a_squared * square(get&lt;2&gt;(cartesian_coords)))};
+<span class="lineNum">     120 </span>            : }
+<span class="lineNum">     121 </span>            : 
+<span class="lineNum">     122 </span>            : bool operator==(const KerrSchildCoords&amp; lhs,
+<span class="lineNum">     123 </span>            :                 const KerrSchildCoords&amp; rhs) noexcept {
+<span class="lineNum">     124 </span>            :   return lhs.spin_a_ == rhs.spin_a_;
+<span class="lineNum">     125 </span>            : }
+<span class="lineNum">     126 </span>            : 
+<span class="lineNum">     127 </span>            : bool operator!=(const KerrSchildCoords&amp; lhs,
+<span class="lineNum">     128 </span>            :                 const KerrSchildCoords&amp; rhs) noexcept {
+<span class="lineNum">     129 </span>            :   return not(lhs == rhs);
+<span class="lineNum">     130 </span>            : }
+<span class="lineNum">     131 </span>            : 
+<span class="lineNum">     132 </span>            : #define DTYPE(data) BOOST_PP_TUPLE_ELEM(0, data)
+<span class="lineNum">     133 </span>            : 
+<span class="lineNum">     134 </span>            : #define INSTANTIATE(_, data)                                            \
+<span class="lineNum">     135 </span>            :   template Scalar&lt;DTYPE(data)&gt; KerrSchildCoords::r_coord_squared(       \
+<span class="lineNum">     136 </span>            :       const tnsr::I&lt;DTYPE(data), 3, Frame::Inertial&gt;&amp; cartesian_coords) \
+<span class="lineNum">     137 </span>            :       const noexcept;                                                   \
+<span class="lineNum">     138 </span>            :   template tnsr::I&lt;DTYPE(data), 3, Frame::Inertial&gt;                     \
+<span class="lineNum">     139 </span>            :   KerrSchildCoords::cartesian_from_spherical_ks(                        \
+<span class="lineNum">     140 </span>            :       const tnsr::I&lt;DTYPE(data), 3, Frame::NoFrame&gt;&amp; spatial_vector,    \
+<span class="lineNum">     141 </span>            :       const tnsr::I&lt;DTYPE(data), 3, Frame::Inertial&gt;&amp; cartesian_coords) \
+<span class="lineNum">     142 </span>            :       const noexcept;
+<span class="lineNum">     143 </span>            : 
+<span class="lineNum">     144 </span>            : GENERATE_INSTANTIATIONS(INSTANTIATE, (double, DataVector))
+<span class="lineNum">     145 </span>            : 
+<span class="lineNum">     146 </span>            : #undef DTYPE
+<span class="lineNum">     147 </span>            : #undef INSTANTIATE
+<span class="lineNum">     148 </span>            : 
+<span class="lineNum">     149 </span>            : }  // namespace gr
+<span class="lineNum">     150 </span>            : /// \endcond
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

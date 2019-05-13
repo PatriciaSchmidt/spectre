@@ -1,0 +1,279 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - /work/spectre/docs/DevGuide/CreatingExecutables.md</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">work/spectre/docs/DevGuide</a> - CreatingExecutables.md</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : \cond NEVER</span>
+<span class="lineNum">       2 </span>            : Distributed under the MIT License.
+<span class="lineNum">       3 </span>            : See LICENSE.txt for details.
+<span class="lineNum">       4 </span>            : \endcond
+<span class="lineNum">       5 </span>            : # Creating Executables {#dev_guide_creating_executables}
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            : There are several different types of executables that can be built:
+<span class="lineNum">       8 </span>            : - An executable that uses Charm++ to run in parallel,
+<span class="lineNum">       9 </span>            :   e.g. `Executables/ParallelInfo`
+<span class="lineNum">      10 </span>            : - An executable that does not use Charm++, does not run in parallel, and
+<span class="lineNum">      11 </span>            :   supplies its own `main`, e.g. `Executables/Benchmark`
+<span class="lineNum">      12 </span>            : - An executable that uses Charm++ to run in parallel but supplies its own `main`
+<span class="lineNum">      13 </span>            : - An executable that uses custom compilation or linking flags,
+<span class="lineNum">      14 </span>            :   e.g. `DebugPreprocessor`
+<span class="lineNum">      15 </span>            : - Executables used for evolutions or elliptic solves
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            : ### Executable Using Charm++ for Parallelization
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : A simple example of an executable using Charm++ for parallelization is in
+<span class="lineNum">      20 </span>            : `src/Executables/Examples/HelloWorld`. To add an executable as a target, use
+<span class="lineNum">      21 </span>            : the CMake function `add_spectre_parallel_executable` which takes as its four
+<span class="lineNum">      22 </span>            : arguments
+<span class="lineNum">      23 </span>            : - the name of the executable
+<span class="lineNum">      24 </span>            : - the name of the path relative to src that contains the header file (which is
+<span class="lineNum">      25 </span>            :   the name of the executable with extension `.hpp`) that will define structs and
+<span class="lineNum">      26 </span>            :   functions to be described below
+<span class="lineNum">      27 </span>            : - the name of the metavariables struct described below
+<span class="lineNum">      28 </span>            : - the list of SpECTRE libraries needed for the executable to link
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span>            : For example,
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span>            : ```
+<span class="lineNum">      33 </span>            : set(LIBS_TO_LINK
+<span class="lineNum">      34 </span>            :   Informer
+<span class="lineNum">      35 </span>            :   Utilities
+<span class="lineNum">      36 </span>            :   )
+<span class="lineNum">      37 </span>            : 
+<span class="lineNum">      38 </span>            : add_spectre_parallel_executable(
+<span class="lineNum">      39 </span>            :   SingletonHelloWorld
+<span class="lineNum">      40 </span>            :   Executables/Examples/HelloWorld
+<span class="lineNum">      41 </span>            :   Metavars
+<span class="lineNum">      42 </span>            :   &quot;${LIBS_TO_LINK}&quot;
+<span class="lineNum">      43 </span>            :   )
+<span class="lineNum">      44 </span>            : ```
+<span class="lineNum">      45 </span>            : will create the executable `SingletonHelloWorld` from
+<span class="lineNum">      46 </span>            : SingletonHelloWorld.hpp which is found in the directory
+<span class="lineNum">      47 </span>            : `src/Executables/Examples/HelloWorld`.  `Metavars` will be used as the
+<span class="lineNum">      48 </span>            : metavariables struct, and `SingletonHelloWorld` will link against the
+<span class="lineNum">      49 </span>            : `%Informer` and `Utilities` SpECTRE libraries.
+<span class="lineNum">      50 </span>            : 
+<span class="lineNum">      51 </span>            : The header file from which an executable is generated must define a
+<span class="lineNum">      52 </span>            : metavariables struct that can be thought of as a compile-time input file that
+<span class="lineNum">      53 </span>            : defines what the executable will do.  The `Metavars` struct for
+<span class="lineNum">      54 </span>            : `SingletonHelloWorld` is a minimal example of a metavariables struct.
+<span class="lineNum">      55 </span>            : 
+<span class="lineNum">      56 </span>            : \snippet SingletonHelloWorld.hpp executable_example_metavariables
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span>            : Each metavariables must define an enum class `Phase` with the phases of the
+<span class="lineNum">      59 </span>            : executable (which must include `Initialization` and `Exit`), and a static
+<span class="lineNum">      60 </span>            : function `determine_next_phase`.  In the example, the only additional phase is
+<span class="lineNum">      61 </span>            : `Execute`, and the phases are executed in order.  Charm++ will execute each
+<span class="lineNum">      62 </span>            : phase until it detects that nothing is happening (quiescence detection).  As
+<span class="lineNum">      63 </span>            : this represents a global synchronization point, the number of phases should be
+<span class="lineNum">      64 </span>            : minimized in order to exploit the power of SpECTRE.
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span>            : Each metavariables must define a type alias `component_list` that is a
+<span class="lineNum">      67 </span>            : `tmpl::list` of the parallel components used by the executable.
+<span class="lineNum">      68 </span>            : `SingletonHelloWorld` defines a single component `HelloWorld`
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span>            : \snippet SingletonHelloWorld.hpp executable_example_singleton
+<span class="lineNum">      71 </span>            : 
+<span class="lineNum">      72 </span>            : which specifies via the `chare_type` type alias that it is a singleton parallel
+<span class="lineNum">      73 </span>            : component which means that only one such object will exist across all processors
+<span class="lineNum">      74 </span>            : used by the executable.  Each component must define the static functions
+<span class="lineNum">      75 </span>            : `initialize`, which is executed during the `Initialization` phase, and
+<span class="lineNum">      76 </span>            : `execute_next_phase` which is executed during the phases (other than
+<span class="lineNum">      77 </span>            : `Initialization` and `Exit`) defined in the metavariables struct.  In
+<span class="lineNum">      78 </span>            : `SingletonHelloWorld`, nothing is done during the initialization phase, while
+<span class="lineNum">      79 </span>            : the `PrintMessage` action is called during the `Execute` phase.
+<span class="lineNum">      80 </span>            : 
+<span class="lineNum">      81 </span>            : \snippet  SingletonHelloWorld.hpp executable_example_action
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span>            : The `PrintMessage` action is executed on whatever process the singleton
+<span class="lineNum">      84 </span>            : component is created upon, and prints a message.
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span>            : Executables can read in an input file (specified by the `--input-file` argument)
+<span class="lineNum">      87 </span>            : that will be parsed when the executable begins.  %Options specified in the input
+<span class="lineNum">      88 </span>            : file can be used to either place items in a constant global cache (by specifying
+<span class="lineNum">      89 </span>            : options in the `const_global_cache_tag_list` of the metavariables or component
+<span class="lineNum">      90 </span>            : structs) or be passed to the `initialize` function of a component (by specifying
+<span class="lineNum">      91 </span>            : options in the `options` type alias of the component).  `SingletonHelloWorld`
+<span class="lineNum">      92 </span>            : specifies a single option
+<span class="lineNum">      93 </span>            : 
+<span class="lineNum">      94 </span>            : \snippet SingletonHelloWorld.hpp executable_example_options
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span>            : which a string specifying a name that will be placed into the constant global
+<span class="lineNum">      97 </span>            : cache.  The string is fetched when performing the `PrintMessage` action. Items
+<span class="lineNum">      98 </span>            : in the constant global cache are stored once per node that the executable runs
+<span class="lineNum">      99 </span>            : on. An example input file for `SingletonHelloWorld` can be found in
+<span class="lineNum">     100 </span>            : `tests/InputFiles/ExampleExecutables/SingletonHelloWorld.yaml` and shows how to
+<span class="lineNum">     101 </span>            : specify the options (lines beginning with a `#` are comments and can be
+<span class="lineNum">     102 </span>            : ignored).
+<span class="lineNum">     103 </span>            : 
+<span class="lineNum">     104 </span>            : In addition to defining the metavaribles and component structs, the header for
+<span class="lineNum">     105 </span>            : an executable must define two lists of functions
+<span class="lineNum">     106 </span>            : 
+<span class="lineNum">     107 </span>            : \snippet  SingletonHelloWorld.hpp executable_example_charm_init
+<span class="lineNum">     108 </span>            : 
+<span class="lineNum">     109 </span>            : that are executed at startup by Charm++ on each node and processor the
+<span class="lineNum">     110 </span>            : executable runs on.
+<span class="lineNum">     111 </span>            : 
+<span class="lineNum">     112 </span>            : Furthermore among the included header files
+<span class="lineNum">     113 </span>            : 
+<span class="lineNum">     114 </span>            : \snippet  SingletonHelloWorld.hpp executable_example_includes
+<span class="lineNum">     115 </span>            : 
+<span class="lineNum">     116 </span>            : must be the appropriate header for each parallel component type, which in the
+<span class="lineNum">     117 </span>            : `SingletonHelloWorld` example is `AlgorithmSingleton.hpp`.  Note that
+<span class="lineNum">     118 </span>            : these headers are not in the source tree, but are generated automatically when
+<span class="lineNum">     119 </span>            : the code is compiled.
+<span class="lineNum">     120 </span>            : 
+<span class="lineNum">     121 </span>            : See [the Parallelization documentation](group__ParallelGroup.html#details)
+<span class="lineNum">     122 </span>            : for more details.
+<span class="lineNum">     123 </span>            : 
+<span class="lineNum">     124 </span>            : ### Executable Using Charm++ with Custom main()
+<span class="lineNum">     125 </span>            : 
+<span class="lineNum">     126 </span>            : While this is technically possible, it has not been tested. We recommend using
+<span class="lineNum">     127 </span>            : the Charm++ supplied main chare mechanism for the time being.
+<span class="lineNum">     128 </span>            : 
+<span class="lineNum">     129 </span>            : ### Executable Not Using Charm++
+<span class="lineNum">     130 </span>            : 
+<span class="lineNum">     131 </span>            : An example of an executable that does not use Charm++ for parallelization but
+<span class="lineNum">     132 </span>            : still can use all other infrastructure in SpECTRE is in
+<span class="lineNum">     133 </span>            : `src/Executables/Examples/HelloWorldNoCharm`. Adding a non-Charm++ executable to
+<span class="lineNum">     134 </span>            : SpECTRE mostly follows the standard way of adding an executable using CMake. The
+<span class="lineNum">     135 </span>            : only deviation is that the `CMakeLists.txt` file must tell Charm++ not to add a
+<span class="lineNum">     136 </span>            : `main()` by passing the link flags `-nomain-module -nomain`. This is done using
+<span class="lineNum">     137 </span>            : CMake's `set_target_properties`:
+<span class="lineNum">     138 </span>            : 
+<span class="lineNum">     139 </span>            : ```
+<span class="lineNum">     140 </span>            : set_target_properties(
+<span class="lineNum">     141 </span>            :   ${EXECUTABLE}
+<span class="lineNum">     142 </span>            :   PROPERTIES LINK_FLAGS &quot;-nomain-module -nomain&quot;
+<span class="lineNum">     143 </span>            :   )
+<span class="lineNum">     144 </span>            : ```
+<span class="lineNum">     145 </span>            : 
+<span class="lineNum">     146 </span>            : To add the executable as a target you must use the `add_spectre_executable`
+<span class="lineNum">     147 </span>            : function, which is a light weight wrapper around CMake's `add_executable`.
+<span class="lineNum">     148 </span>            : For example,
+<span class="lineNum">     149 </span>            : 
+<span class="lineNum">     150 </span>            : ```
+<span class="lineNum">     151 </span>            : add_spectre_executable(
+<span class="lineNum">     152 </span>            :   ${EXECUTABLE}
+<span class="lineNum">     153 </span>            :   EXCLUDE_FROM_ALL # Exclude from calls to `make` without a specified target
+<span class="lineNum">     154 </span>            :   HelloWorld.cpp
+<span class="lineNum">     155 </span>            :   )
+<span class="lineNum">     156 </span>            : ```
+<span class="lineNum">     157 </span>            : 
+<span class="lineNum">     158 </span>            : You can link in any of the SpECTRE libraries by adding them to the
+<span class="lineNum">     159 </span>            : `target_link_libraries`, for example:
+<span class="lineNum">     160 </span>            : 
+<span class="lineNum">     161 </span>            : ```
+<span class="lineNum">     162 </span>            : target_link_libraries(
+<span class="lineNum">     163 </span>            :   ${EXECUTABLE}
+<span class="lineNum">     164 </span>            :   DataStructures
+<span class="lineNum">     165 </span>            :   )
+<span class="lineNum">     166 </span>            : ```
+<span class="lineNum">     167 </span>            : 
+<span class="lineNum">     168 </span>            : We recommend that you add a test that the executable properly runs by adding an
+<span class="lineNum">     169 </span>            : input file to `tests/InputFiles` in an appropriate subdirectory. See
+<span class="lineNum">     170 </span>            : [`tests/InputFiles/ExampleExecutables/HelloWorldNoCharm.yaml`]
+<span class="lineNum">     171 </span>            : (https://github.com/sxs-collaboration/spectre/tree/develop/tests/InputFiles/
+<span class="lineNum">     172 </span>            : ExampleExecutables/HelloWorldNoCharm.yaml)
+<span class="lineNum">     173 </span>            : for an example.
+<span class="lineNum">     174 </span>            : The input file is passed to the executable using `--input-file
+<span class="lineNum">     175 </span>            : path/to/Input.yaml`. In the case of the executable not taking any input file
+<span class="lineNum">     176 </span>            : this is just used to generate a test that runs the executable.
+<span class="lineNum">     177 </span>            : 
+<span class="lineNum">     178 </span>            : For these types of executables `main` can take the usual `(int argc, char
+<span class="lineNum">     179 </span>            : *argv[])` and parse command line options. Executables not using Charm++ are just
+<span class="lineNum">     180 </span>            : standard executables that can link in any of the libraries in SpECTRE.
+<span class="lineNum">     181 </span>            : 
+<span class="lineNum">     182 </span>            : \warning
+<span class="lineNum">     183 </span>            : Currently calling `Parallel::abort` results in a segfault deep inside Charm++
+<span class="lineNum">     184 </span>            : code. However, the error messages from `ASSERT` and `ERROR` are still printed.
+<span class="lineNum">     185 </span>            : 
+<span class="lineNum">     186 </span>            : ### Executable With Custom Compilation or Linking Flags
+<span class="lineNum">     187 </span>            : 
+<span class="lineNum">     188 </span>            : Use the CMake function `set_target_properties` to add flags to an executable. To
+<span class="lineNum">     189 </span>            : call a completely custom compiler invocation you should use the
+<span class="lineNum">     190 </span>            : `add_custom_target` CMake function. The need for the `custom_target` level of
+<span class="lineNum">     191 </span>            : control is rare and should generally be avoided since it adds quite a bit of
+<span class="lineNum">     192 </span>            : technical debt to the code base. Thus, it is not explained here. If you are
+<span class="lineNum">     193 </span>            : certain you need it you can see the `DebugPreprocessor` executable's
+<span class="lineNum">     194 </span>            : `CMakeLists.txt` file for an example.
+<span class="lineNum">     195 </span>            : 
+<span class="lineNum">     196 </span>            : ### Executable Used for Evolution or Elliptic Solve
+<span class="lineNum">     197 </span>            : 
+<span class="lineNum">     198 </span>            : Once they are written, see the tutorials specific to evolution and elliptic
+<span class="lineNum">     199 </span>            : solves.
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

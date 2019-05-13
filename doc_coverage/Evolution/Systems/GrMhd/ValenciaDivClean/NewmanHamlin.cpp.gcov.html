@@ -1,0 +1,283 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Evolution/Systems/GrMhd/ValenciaDivClean/NewmanHamlin.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">Evolution/Systems/GrMhd/ValenciaDivClean</a> - NewmanHamlin.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;Evolution/Systems/GrMhd/ValenciaDivClean/NewmanHamlin.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;algorithm&gt;
+<span class="lineNum">       7 </span>            : #include &lt;array&gt;
+<span class="lineNum">       8 </span>            : #include &lt;boost/none.hpp&gt;
+<span class="lineNum">       9 </span>            : #include &lt;cmath&gt;
+<span class="lineNum">      10 </span>            : #include &lt;limits&gt;
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : #include &quot;DataStructures/Tensor/Tensor.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;Evolution/Systems/GrMhd/ValenciaDivClean/PrimitiveRecoveryData.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;Utilities/ConstantExpressions.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;Utilities/GenerateInstantiations.hpp&quot;
+<span class="lineNum">      16 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      17 </span>            : #include &quot;Utilities/Overloader.hpp&quot;
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : // IWYU pragma: no_forward_declare EquationsOfState::EquationOfState
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : /// \cond
+<span class="lineNum">      22 </span>            : namespace grmhd {
+<span class="lineNum">      23 </span>            : namespace ValenciaDivClean {
+<span class="lineNum">      24 </span>            : namespace PrimitiveRecoverySchemes {
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            : template &lt;size_t ThermodynamicDim&gt;
+<span class="lineNum">      27 </span>            : boost::optional&lt;PrimitiveRecoveryData&gt; NewmanHamlin::apply(
+<span class="lineNum">      28 </span>            :     const double initial_guess_for_pressure, const double total_energy_density,
+<span class="lineNum">      29 </span>            :     const double momentum_density_squared,
+<span class="lineNum">      30 </span>            :     const double momentum_density_dot_magnetic_field,
+<span class="lineNum">      31 </span>            :     const double magnetic_field_squared,
+<span class="lineNum">      32 </span>            :     const double rest_mass_density_times_lorentz_factor,
+<span class="lineNum">      33 </span>            :     const EquationsOfState::EquationOfState&lt;true, ThermodynamicDim&gt;&amp;
+<span class="lineNum">      34 </span>            :         equation_of_state) noexcept {
+<span class="lineNum">      35 </span>            :   // constant in cubic equation  f(eps) = eps^3 - a eps^2 + d
+<span class="lineNum">      36 </span>            :   // whose root is being found at each point in the iteration below
+<span class="lineNum">      37 </span>            :   const double d_in_cubic = [
+<span class="lineNum">      38 </span>            :     momentum_density_squared, magnetic_field_squared,
+<span class="lineNum">      39 </span>            :     momentum_density_dot_magnetic_field
+<span class="lineNum">      40 </span>            :   ]() noexcept {
+<span class="lineNum">      41 </span>            :     const double local_d_in_cubic =
+<span class="lineNum">      42 </span>            :         0.5 * (momentum_density_squared * magnetic_field_squared -
+<span class="lineNum">      43 </span>            :                square(momentum_density_dot_magnetic_field));
+<span class="lineNum">      44 </span>            :     if (UNLIKELY(-1e-12 * square(momentum_density_dot_magnetic_field) &gt;
+<span class="lineNum">      45 </span>            :                  local_d_in_cubic)) {
+<span class="lineNum">      46 </span>            :       return local_d_in_cubic;  // will fail returning boost::none
+<span class="lineNum">      47 </span>            :     }
+<span class="lineNum">      48 </span>            :     return std::max(0.0, local_d_in_cubic);
+<span class="lineNum">      49 </span>            :   }
+<span class="lineNum">      50 </span>            :   ();
+<span class="lineNum">      51 </span>            :   if (UNLIKELY(0.0 &gt; d_in_cubic)) {
+<span class="lineNum">      52 </span>            :     return boost::none;
+<span class="lineNum">      53 </span>            :   }
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span>            :   // bound needed so cubic equation has a positive root
+<span class="lineNum">      56 </span>            :   const double minimum_pressure =
+<span class="lineNum">      57 </span>            :       std::max(0.0, cbrt(6.75 * d_in_cubic) - total_energy_density -
+<span class="lineNum">      58 </span>            :                         0.5 * magnetic_field_squared);
+<span class="lineNum">      59 </span>            :   double current_pressure =
+<span class="lineNum">      60 </span>            :       std::max(minimum_pressure, initial_guess_for_pressure);
+<span class="lineNum">      61 </span>            :   double previous_pressure{std::numeric_limits&lt;double&gt;::signaling_NaN()};
+<span class="lineNum">      62 </span>            :   size_t iteration_step{0};
+<span class="lineNum">      63 </span>            :   std::array&lt;double, 3&gt; aitken_pressure{
+<span class="lineNum">      64 </span>            :       {current_pressure, std::numeric_limits&lt;double&gt;::signaling_NaN(),
+<span class="lineNum">      65 </span>            :        std::numeric_limits&lt;double&gt;::signaling_NaN()}};
+<span class="lineNum">      66 </span>            :   size_t valid_entries_in_aitken_pressure = 1;
+<span class="lineNum">      67 </span>            :   bool converged = false;
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span>            :   while (true) {  // will break when relative pressure change is &lt;
+<span class="lineNum">      70 </span>            :                   // relative_tolernance_
+<span class="lineNum">      71 </span>            :     if (UNLIKELY(max_iterations_ == iteration_step and not converged)) {
+<span class="lineNum">      72 </span>            :       return boost::none;
+<span class="lineNum">      73 </span>            :     }
+<span class="lineNum">      74 </span>            : 
+<span class="lineNum">      75 </span>            :     ++iteration_step;
+<span class="lineNum">      76 </span>            :     previous_pressure = current_pressure;
+<span class="lineNum">      77 </span>            :     // enforces NH Eq.(5.9): d &lt;= (4/27) a^3 so cubic has positive root
+<span class="lineNum">      78 </span>            :     current_pressure = std::max(current_pressure, minimum_pressure);
+<span class="lineNum">      79 </span>            :     const double a_in_cubic =
+<span class="lineNum">      80 </span>            :         total_energy_density + current_pressure + 0.5 * magnetic_field_squared;
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span>            :     if (UNLIKELY(a_in_cubic &lt; 0.0)) {
+<span class="lineNum">      83 </span>            :       return boost::none;
+<span class="lineNum">      84 </span>            :     }
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span>            :     // NH Eq. (5.10): d = (4/27) a^3 cos^2(phi)
+<span class="lineNum">      87 </span>            :     const double phi = acos(sqrt(6.75 * d_in_cubic / cube(a_in_cubic)));
+<span class="lineNum">      88 </span>            :     // NH Eq. (5.11) with l=1 is desired positive root
+<span class="lineNum">      89 </span>            :     const double root_of_cubic =
+<span class="lineNum">      90 </span>            :         (a_in_cubic / 3.0) * (1.0 - 2.0 * cos((2.0 / 3.0) * (M_PI + phi)));
+<span class="lineNum">      91 </span>            :     // NH Eq. (5.5) with their script L being rho_h_w_squared
+<span class="lineNum">      92 </span>            :     // where rho is rest_mass_density, h is specific_enthalpy,
+<span class="lineNum">      93 </span>            :     // and w is the lorentz factor
+<span class="lineNum">      94 </span>            :     const double rho_h_w_squared = root_of_cubic - magnetic_field_squared;
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span>            :     if (UNLIKELY(rho_h_w_squared &lt;= 0.0)) {
+<span class="lineNum">      97 </span>            :       return boost::none;
+<span class="lineNum">      98 </span>            :     }
+<span class="lineNum">      99 </span>            : 
+<span class="lineNum">     100 </span>            :     // NH Eq. (5.2) with (5.5) substituted in denominator
+<span class="lineNum">     101 </span>            :     const double v_squared =
+<span class="lineNum">     102 </span>            :         (momentum_density_squared * square(rho_h_w_squared) +
+<span class="lineNum">     103 </span>            :          square(momentum_density_dot_magnetic_field) *
+<span class="lineNum">     104 </span>            :              (magnetic_field_squared + 2.0 * rho_h_w_squared)) /
+<span class="lineNum">     105 </span>            :         square(rho_h_w_squared * root_of_cubic);
+<span class="lineNum">     106 </span>            : 
+<span class="lineNum">     107 </span>            :     // If this fails, there was code in the Bitbucket version that adjusted
+<span class="lineNum">     108 </span>            :     // the pressure to get the maximum allowed velocity in atmosphere.
+<span class="lineNum">     109 </span>            :     // Instead, we could return boost::none and try the next inversion method.
+<span class="lineNum">     110 </span>            :     if (UNLIKELY(v_squared &lt; 0.0 or v_squared &gt;= 1.0)) {
+<span class="lineNum">     111 </span>            :       return boost::none;
+<span class="lineNum">     112 </span>            :     }
+<span class="lineNum">     113 </span>            : 
+<span class="lineNum">     114 </span>            :     const double current_lorentz_factor = sqrt(1.0 / (1.0 - v_squared));
+<span class="lineNum">     115 </span>            :     const double current_rest_mass_density =
+<span class="lineNum">     116 </span>            :         rest_mass_density_times_lorentz_factor / current_lorentz_factor;
+<span class="lineNum">     117 </span>            : 
+<span class="lineNum">     118 </span>            :     if (converged) {
+<span class="lineNum">     119 </span>            :       return PrimitiveRecoveryData{current_rest_mass_density,
+<span class="lineNum">     120 </span>            :                                    current_lorentz_factor, current_pressure,
+<span class="lineNum">     121 </span>            :                                    rho_h_w_squared};
+<span class="lineNum">     122 </span>            :     }
+<span class="lineNum">     123 </span>            : 
+<span class="lineNum">     124 </span>            :     const double current_specific_enthalpy = [
+<span class="lineNum">     125 </span>            :       rho_h_w_squared, current_rest_mass_density, current_lorentz_factor
+<span class="lineNum">     126 </span>            :     ]() noexcept {
+<span class="lineNum">     127 </span>            :       const double specific_enthalpy =
+<span class="lineNum">     128 </span>            :           rho_h_w_squared /
+<span class="lineNum">     129 </span>            :           (current_rest_mass_density * square(current_lorentz_factor));
+<span class="lineNum">     130 </span>            :       if (UNLIKELY(1.0 - 1.0e-12 &gt; specific_enthalpy)) {
+<span class="lineNum">     131 </span>            :         return specific_enthalpy;  // will fail returning boost::none
+<span class="lineNum">     132 </span>            :       }
+<span class="lineNum">     133 </span>            :       return std::max(1.0, specific_enthalpy);
+<span class="lineNum">     134 </span>            :     }
+<span class="lineNum">     135 </span>            :     ();
+<span class="lineNum">     136 </span>            :     if (UNLIKELY(1.0 &gt; current_specific_enthalpy)) {
+<span class="lineNum">     137 </span>            :       return boost::none;
+<span class="lineNum">     138 </span>            :     }
+<span class="lineNum">     139 </span>            : 
+<span class="lineNum">     140 </span>            :     current_pressure = get(make_overloader(
+<span class="lineNum">     141 </span>            :         [&amp;current_rest_mass_density](
+<span class="lineNum">     142 </span>            :             const EquationsOfState::EquationOfState&lt;true, 1&gt;&amp;
+<span class="lineNum">     143 </span>            :                 the_equation_of_state) noexcept {
+<span class="lineNum">     144 </span>            :           return the_equation_of_state.pressure_from_density(
+<span class="lineNum">     145 </span>            :               Scalar&lt;double&gt;(current_rest_mass_density));
+<span class="lineNum">     146 </span>            :         },
+<span class="lineNum">     147 </span>            :         [&amp;current_rest_mass_density, &amp;current_specific_enthalpy ](
+<span class="lineNum">     148 </span>            :             const EquationsOfState::EquationOfState&lt;true, 2&gt;&amp;
+<span class="lineNum">     149 </span>            :                 the_equation_of_state) noexcept {
+<span class="lineNum">     150 </span>            :           return the_equation_of_state.pressure_from_density_and_enthalpy(
+<span class="lineNum">     151 </span>            :               Scalar&lt;double&gt;(current_rest_mass_density),
+<span class="lineNum">     152 </span>            :               Scalar&lt;double&gt;(current_specific_enthalpy));
+<span class="lineNum">     153 </span>            :         })(equation_of_state));
+<span class="lineNum">     154 </span>            : 
+<span class="lineNum">     155 </span>            :     gsl::at(aitken_pressure, valid_entries_in_aitken_pressure++) =
+<span class="lineNum">     156 </span>            :         current_pressure;
+<span class="lineNum">     157 </span>            :     if (3 == valid_entries_in_aitken_pressure) {
+<span class="lineNum">     158 </span>            :       const double aitken_residual = (aitken_pressure[2] - aitken_pressure[1]) /
+<span class="lineNum">     159 </span>            :                                      (aitken_pressure[1] - aitken_pressure[0]);
+<span class="lineNum">     160 </span>            :       if (0.0 &lt;= aitken_residual and aitken_residual &lt; 1.0) {
+<span class="lineNum">     161 </span>            :         previous_pressure = current_pressure;
+<span class="lineNum">     162 </span>            :         current_pressure =
+<span class="lineNum">     163 </span>            :             aitken_pressure[1] +
+<span class="lineNum">     164 </span>            :             (aitken_pressure[2] - aitken_pressure[1]) / (1.0 - aitken_residual);
+<span class="lineNum">     165 </span>            :         aitken_pressure = {{current_pressure,
+<span class="lineNum">     166 </span>            :                             std::numeric_limits&lt;double&gt;::signaling_NaN(),
+<span class="lineNum">     167 </span>            :                             std::numeric_limits&lt;double&gt;::signaling_NaN()}};
+<span class="lineNum">     168 </span>            :         valid_entries_in_aitken_pressure = 1;
+<span class="lineNum">     169 </span>            :       } else {
+<span class="lineNum">     170 </span>            :         // Aitken extrapolation failed, retain latest 2 values for next attempt
+<span class="lineNum">     171 </span>            :         aitken_pressure[0] = aitken_pressure[1];
+<span class="lineNum">     172 </span>            :         aitken_pressure[1] = aitken_pressure[2];
+<span class="lineNum">     173 </span>            :         valid_entries_in_aitken_pressure = 2;
+<span class="lineNum">     174 </span>            :       }
+<span class="lineNum">     175 </span>            :     }
+<span class="lineNum">     176 </span>            :     // note primitives are recomputed above before being returned
+<span class="lineNum">     177 </span>            :     converged = fabs(current_pressure - previous_pressure) &lt;=
+<span class="lineNum">     178 </span>            :                 relative_tolerance_ * (current_pressure + previous_pressure);
+<span class="lineNum">     179 </span>            :   }  // while loop
+<span class="lineNum">     180 </span>            : }
+<span class="lineNum">     181 </span>            : }  // namespace PrimitiveRecoverySchemes
+<span class="lineNum">     182 </span>            : }  // namespace ValenciaDivClean
+<span class="lineNum">     183 </span>            : }  // namespace grmhd
+<span class="lineNum">     184 </span>            : 
+<span class="lineNum">     185 </span>            : #define THERMODIM(data) BOOST_PP_TUPLE_ELEM(0, data)
+<span class="lineNum">     186 </span>            : #define INSTANTIATION(_, data)                                                 \
+<span class="lineNum">     187 </span>            :   template boost::optional&lt;grmhd::ValenciaDivClean::PrimitiveRecoverySchemes:: \
+<span class="lineNum">     188 </span>            :                                PrimitiveRecoveryData&gt;                          \
+<span class="lineNum">     189 </span>            :   grmhd::ValenciaDivClean::PrimitiveRecoverySchemes::NewmanHamlin::apply&lt;      \
+<span class="lineNum">     190 </span>            :       THERMODIM(data)&gt;(                                                        \
+<span class="lineNum">     191 </span>            :       const double initial_guess_pressure, const double total_energy_density,  \
+<span class="lineNum">     192 </span>            :       const double momentum_density_squared,                                   \
+<span class="lineNum">     193 </span>            :       const double momentum_density_dot_magnetic_field,                        \
+<span class="lineNum">     194 </span>            :       const double magnetic_field_squared,                                     \
+<span class="lineNum">     195 </span>            :       const double rest_mass_density_times_lorentz_factor,                     \
+<span class="lineNum">     196 </span>            :       const EquationsOfState::EquationOfState&lt;true, THERMODIM(data)&gt;&amp;          \
+<span class="lineNum">     197 </span>            :           equation_of_state) noexcept;
+<span class="lineNum">     198 </span>            : 
+<span class="lineNum">     199 </span>            : GENERATE_INSTANTIATIONS(INSTANTIATION, (1, 2))
+<span class="lineNum">     200 </span>            : 
+<span class="lineNum">     201 </span>            : #undef INSTANTIATION
+<span class="lineNum">     202 </span>            : #undef THERMODIM
+<span class="lineNum">     203 </span>            : /// \endcond
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

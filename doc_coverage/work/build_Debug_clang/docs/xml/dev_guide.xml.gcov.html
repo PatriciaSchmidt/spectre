@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - /work/build_Debug_clang/docs/xml/dev_guide.xml</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">work/build_Debug_clang/docs/xml</a> - dev_guide.xml</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineCov">          1 : &lt;?xml version='1.0' encoding='UTF-8' standalone='no'?&gt;</span>
+<span class="lineNum">       2 </span>            : &lt;doxygen xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:noNamespaceSchemaLocation=&quot;compound.xsd&quot; version=&quot;1.8.13&quot;&gt;
+<span class="lineNum">       3 </span>            :   &lt;compounddef id=&quot;dev_guide&quot; kind=&quot;page&quot;&gt;
+<span class="lineNum">       4 </span>            :     &lt;compoundname&gt;dev_guide&lt;/compoundname&gt;
+<span class="lineNum">       5 </span>            :     &lt;title&gt;Developer&amp;apos;s Guide&lt;/title&gt;
+<span class="lineNum">       6 </span>            :     &lt;detaileddescription&gt;
+<span class="lineNum">       7 </span>            : &lt;para&gt;&lt;heading level=&quot;3&quot;&gt;Developing and Improving Executables&lt;/heading&gt;
+<span class="lineNum">       8 </span>            : &lt;/para&gt;&lt;para&gt;&lt;itemizedlist&gt;
+<span class="lineNum">       9 </span>            : &lt;listitem&gt;&lt;para&gt;&lt;ref refid=&quot;spectre_build_system&quot; kindref=&quot;compound&quot;&gt;Build system&lt;/ref&gt; and how to add dependencies, unit tests, and executables.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;&lt;ref refid=&quot;dev_guide_creating_executables&quot; kindref=&quot;compound&quot;&gt;Executables and how to add them&lt;/ref&gt;&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;&lt;ref refid=&quot;dev_guide_option_parsing&quot; kindref=&quot;compound&quot;&gt;Option parsing&lt;/ref&gt; to get options from input files&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;&lt;ref refid=&quot;profiling_with_projections&quot; kindref=&quot;compound&quot;&gt;Profiling With Charm++ Projections&lt;/ref&gt; and PAPI for optimizing performance&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;&lt;ref refid=&quot;spectre_writing_python_bindings&quot; kindref=&quot;compound&quot;&gt;Writing Python Bindings&lt;/ref&gt; to use SpECTRE C++ classes and functions from within python.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;&lt;ref refid=&quot;implementing_vectors&quot; kindref=&quot;compound&quot;&gt;Implementing SpECTRE vectors&lt;/ref&gt; a quick how-to for making new generalizations of DataVectors&lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      10 </span>            : &lt;/para&gt;&lt;para&gt;&lt;heading level=&quot;3&quot;&gt;Having your Contributions Merged into SpECTRE&lt;/heading&gt;
+<span class="lineNum">      11 </span>            : &lt;/para&gt;&lt;para&gt;&lt;itemizedlist&gt;
+<span class="lineNum">      12 </span>            : &lt;listitem&gt;&lt;para&gt;&lt;ref refid=&quot;writing_good_dox&quot; kindref=&quot;compound&quot;&gt;Writing good documentation&lt;/ref&gt; is key for long term maintainability of the project.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;&lt;ref refid=&quot;writing_unit_tests&quot; kindref=&quot;compound&quot;&gt;Writing Unit Tests&lt;/ref&gt; to catch bugs and to make sure future changes don&amp;apos;t cause your code to regress.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;&lt;ref refid=&quot;travis_guide&quot; kindref=&quot;compound&quot;&gt;Travis CI&lt;/ref&gt; is used to test every pull request.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;&lt;ref refid=&quot;code_review_guide&quot; kindref=&quot;compound&quot;&gt;Code review guidelines.&lt;/ref&gt; All code merged into develop must follow these requirements.&lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      13 </span>            : &lt;/para&gt;&lt;para&gt;&lt;heading level=&quot;3&quot;&gt;General SpECTRE Terminology&lt;/heading&gt;
+<span class="lineNum">      14 </span>            : &lt;/para&gt;&lt;para&gt;Terms with SpECTRE-specific meanings are defined here.&lt;itemizedlist&gt;
+<span class="lineNum">      15 </span>            : &lt;listitem&gt;&lt;para&gt;&lt;ref refid=&quot;domain_concepts&quot; kindref=&quot;compound&quot;&gt;Domain Concepts&lt;/ref&gt; used throughout the code are defined here for reference.&lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      16 </span>            : &lt;/para&gt;&lt;para&gt;&lt;heading level=&quot;3&quot;&gt;Template Metaprogramming (TMP)&lt;/heading&gt;
+<span class="lineNum">      17 </span>            : &lt;/para&gt;&lt;para&gt;Explanations for TMP concepts and patterns known to the greater C++ community can be found here.&lt;itemizedlist&gt;
+<span class="lineNum">      18 </span>            : &lt;listitem&gt;&lt;para&gt;&lt;ref refid=&quot;sfinae&quot; kindref=&quot;compound&quot;&gt;SFINAE&lt;/ref&gt;&lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      19 </span>            : &lt;/para&gt;&lt;para&gt;&lt;heading level=&quot;3&quot;&gt;Foundational Concepts in SpECTRE&lt;/heading&gt;
+<span class="lineNum">      20 </span>            : &lt;/para&gt;&lt;para&gt;Designed to give the reader an introduction to SpECTRE&amp;apos;s most recurring concepts and patterns.&lt;itemizedlist&gt;
+<span class="lineNum">      21 </span>            : &lt;listitem&gt;&lt;para&gt;&lt;ref refid=&quot;databox_foundations&quot; kindref=&quot;compound&quot;&gt;Towards SpECTRE&amp;apos;s DataBox&lt;/ref&gt;&lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      22 </span>            : &lt;/para&gt;&lt;para&gt;&lt;heading level=&quot;3&quot;&gt;Technical Documentation for Fluent Developers&lt;/heading&gt;
+<span class="lineNum">      23 </span>            : &lt;/para&gt;&lt;para&gt;Assumes a thorough familiarity and fluency in SpECTRE&amp;apos;s usage of TMP.&lt;itemizedlist&gt;
+<span class="lineNum">      24 </span>            : &lt;listitem&gt;&lt;para&gt;&lt;ref refid=&quot;group__DataBoxGroup&quot; kindref=&quot;compound&quot;&gt;DataBox&lt;/ref&gt;&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;&lt;ref refid=&quot;group__ParallelGroup&quot; kindref=&quot;compound&quot;&gt;Parallelization infrastructure&lt;/ref&gt; components and usage&lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      25 </span>            : &lt;/para&gt;&lt;para&gt;&lt;heading level=&quot;3&quot;&gt;CoordinateMap Guide&lt;/heading&gt;
+<span class="lineNum">      26 </span>            : &lt;/para&gt;&lt;para&gt;Methods for creating custom coordinate maps are discussed here.&lt;itemizedlist&gt;
+<span class="lineNum">      27 </span>            : &lt;listitem&gt;&lt;para&gt;&lt;ref refid=&quot;redistributing_gridpoints&quot; kindref=&quot;compound&quot;&gt;Methods for redistributing gridpoints&lt;/ref&gt; &lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      28 </span>            : &lt;/para&gt;    &lt;/detaileddescription&gt;
+<span class="lineNum">      29 </span>            :   &lt;/compounddef&gt;
+<span class="lineNum">      30 </span>            : &lt;/doxygen&gt;
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Domain/Creators/RotatedIntervals.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">Domain/Creators</a> - RotatedIntervals.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;Domain/Creators/RotatedIntervals.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &quot;DataStructures/Index.hpp&quot;
+<span class="lineNum">       7 </span>            : #include &quot;Domain/Block.hpp&quot;                   // IWYU pragma: keep
+<span class="lineNum">       8 </span>            : #include &quot;Domain/BlockNeighbor.hpp&quot;           // IWYU pragma: keep
+<span class="lineNum">       9 </span>            : #include &quot;Domain/Creators/DomainCreator.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      10 </span>            : #include &quot;Domain/Direction.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;Domain/Domain.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;Domain/DomainHelpers.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;Domain/OrientationMap.hpp&quot;
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : /// \cond
+<span class="lineNum">      16 </span>            : namespace Frame {
+<span class="lineNum">      17 </span>            : struct Grid;
+<span class="lineNum">      18 </span>            : struct Inertial;
+<span class="lineNum">      19 </span>            : }  // namespace Frame
+<span class="lineNum">      20 </span>            : /// \endcond
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : namespace domain {
+<span class="lineNum">      23 </span>            : namespace creators {
+<span class="lineNum">      24 </span>            : template &lt;typename TargetFrame&gt;
+<span class="lineNum">      25 </span>            : RotatedIntervals&lt;TargetFrame&gt;::RotatedIntervals(
+<span class="lineNum">      26 </span>            :     typename LowerBound::type lower_x, typename Midpoint::type midpoint_x,
+<span class="lineNum">      27 </span>            :     typename UpperBound::type upper_x,
+<span class="lineNum">      28 </span>            :     typename IsPeriodicIn::type is_periodic_in,
+<span class="lineNum">      29 </span>            :     typename InitialRefinement::type initial_refinement_level_x,
+<span class="lineNum">      30 </span>            :     typename InitialGridPoints::type
+<span class="lineNum">      31 </span>            :         initial_number_of_grid_points_in_x) noexcept
+<span class="lineNum">      32 </span>            :     // clang-tidy: trivially copyable
+<span class="lineNum">      33 </span>            :     : lower_x_(std::move(lower_x)),                          // NOLINT
+<span class="lineNum">      34 </span>            :       midpoint_x_(std::move(midpoint_x)),                    // NOLINT
+<span class="lineNum">      35 </span>            :       upper_x_(std::move(upper_x)),                          // NOLINT
+<span class="lineNum">      36 </span>            :       is_periodic_in_(std::move(is_periodic_in)),            // NOLINT
+<span class="lineNum">      37 </span>            :       initial_refinement_level_x_(                           // NOLINT
+<span class="lineNum">      38 </span>            :           std::move(initial_refinement_level_x)),            // NOLINT
+<span class="lineNum">      39 </span>            :       initial_number_of_grid_points_in_x_(                   // NOLINT
+<span class="lineNum">      40 </span>            :           std::move(initial_number_of_grid_points_in_x)) {}  // NOLINT
+<span class="lineNum">      41 </span>            : 
+<span class="lineNum">      42 </span>            : template &lt;typename TargetFrame&gt;
+<span class="lineNum">      43 </span>            : Domain&lt;1, TargetFrame&gt; RotatedIntervals&lt;TargetFrame&gt;::create_domain() const
+<span class="lineNum">      44 </span>            :     noexcept {
+<span class="lineNum">      45 </span>            :   return rectilinear_domain&lt;1, TargetFrame&gt;(
+<span class="lineNum">      46 </span>            :       Index&lt;1&gt;{2}, {{{lower_x_[0], midpoint_x_[0], upper_x_[0]}}}, {},
+<span class="lineNum">      47 </span>            :       {OrientationMap&lt;1&gt;{}, OrientationMap&lt;1&gt;{std::array&lt;Direction&lt;1&gt;, 1&gt;{
+<span class="lineNum">      48 </span>            :                                 {Direction&lt;1&gt;::lower_xi()}}}},
+<span class="lineNum">      49 </span>            :       is_periodic_in_);
+<span class="lineNum">      50 </span>            : }
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            : template &lt;typename TargetFrame&gt;
+<span class="lineNum">      53 </span>            : std::vector&lt;std::array&lt;size_t, 1&gt;&gt;
+<span class="lineNum">      54 </span>            : RotatedIntervals&lt;TargetFrame&gt;::initial_extents() const noexcept {
+<span class="lineNum">      55 </span>            :   return {{{initial_number_of_grid_points_in_x_[0][0]}},
+<span class="lineNum">      56 </span>            :           {{initial_number_of_grid_points_in_x_[0][1]}}};
+<span class="lineNum">      57 </span>            : }
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span>            : template &lt;typename TargetFrame&gt;
+<span class="lineNum">      60 </span>            : std::vector&lt;std::array&lt;size_t, 1&gt;&gt;
+<span class="lineNum">      61 </span>            : RotatedIntervals&lt;TargetFrame&gt;::initial_refinement_levels() const noexcept {
+<span class="lineNum">      62 </span>            :   return {{{initial_refinement_level_x_[0]}},
+<span class="lineNum">      63 </span>            :           {{initial_refinement_level_x_[0]}}};
+<span class="lineNum">      64 </span>            : }
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span>            : template class RotatedIntervals&lt;Frame::Inertial&gt;;
+<span class="lineNum">      67 </span>            : template class RotatedIntervals&lt;Frame::Grid&gt;;
+<span class="lineNum">      68 </span>            : }  // namespace creators
+<span class="lineNum">      69 </span>            : }  // namespace domain
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

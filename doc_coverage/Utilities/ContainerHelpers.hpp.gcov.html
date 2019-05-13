@@ -1,0 +1,204 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Utilities/ContainerHelpers.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">Utilities</a> - ContainerHelpers.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntry">7</td>
+            <td class="headerCovTableEntryLo">57.1 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;complex&gt;
+<span class="lineNum">       7 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       8 </span>            : #include &lt;type_traits&gt;
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : #include &quot;Utilities/ForceInline.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;Utilities/Requires.hpp&quot;
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            : /// \ingroup UtilitiesGroup
+<span class="lineNum">      15 </span>            : /// \brief Callable struct which retrieves the `t.size()` for operand `t`. This
+<span class="lineNum">      16 </span>            : /// will cause a compiler error if no such function exists.
+<span class="lineNum">      17 </span><span class="lineCov">          1 : struct GetContainerSize {</span>
+<span class="lineNum">      18 </span>            :   template &lt;typename T&gt;
+<span class="lineNum">      19 </span><span class="lineNoCov">          0 :   SPECTRE_ALWAYS_INLINE decltype(auto) operator()(const T&amp; t) noexcept {</span>
+<span class="lineNum">      20 </span>            :     return t.size();
+<span class="lineNum">      21 </span>            :   }
+<span class="lineNum">      22 </span>            : };
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : /// \ingroup UtilitiesGroup
+<span class="lineNum">      25 </span>            : /// \brief Callable struct for the subscript operator. Returns `t[i]`
+<span class="lineNum">      26 </span><span class="lineCov">          1 : struct GetContainerElement {</span>
+<span class="lineNum">      27 </span>            :   template &lt;typename T&gt;
+<span class="lineNum">      28 </span><span class="lineNoCov">          0 :   SPECTRE_ALWAYS_INLINE decltype(auto) operator()(T&amp; t,</span>
+<span class="lineNum">      29 </span>            :                                                   const size_t i) noexcept {
+<span class="lineNum">      30 </span>            :     return t[i];
+<span class="lineNum">      31 </span>            :   }
+<span class="lineNum">      32 </span>            : };
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            : namespace ContainerHelpers_detail {
+<span class="lineNum">      35 </span>            : // implementation struct for get_element and get_size
+<span class="lineNum">      36 </span>            : template &lt;bool IsFundamentalOrComplexOfFundamental&gt;
+<span class="lineNum">      37 </span>            : struct GetImpls;
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span>            : template &lt;&gt;
+<span class="lineNum">      40 </span>            : struct GetImpls&lt;true&gt; {
+<span class="lineNum">      41 </span>            :   template &lt;typename T, typename SubscriptFunction&gt;
+<span class="lineNum">      42 </span>            :   static SPECTRE_ALWAYS_INLINE decltype(auto) get_element(
+<span class="lineNum">      43 </span>            :       T&amp; t, const size_t /*i*/, const SubscriptFunction /*at*/) noexcept {
+<span class="lineNum">      44 </span>            :     return t;
+<span class="lineNum">      45 </span>            :   }
+<span class="lineNum">      46 </span>            : 
+<span class="lineNum">      47 </span>            :   template &lt;typename T, typename SizeFunction&gt;
+<span class="lineNum">      48 </span>            :   static SPECTRE_ALWAYS_INLINE size_t
+<span class="lineNum">      49 </span>            :   get_size(const T&amp; /*t*/, const SizeFunction /*size*/) noexcept {
+<span class="lineNum">      50 </span>            :     return 1;
+<span class="lineNum">      51 </span>            :   }
+<span class="lineNum">      52 </span>            : };
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span>            : template &lt;&gt;
+<span class="lineNum">      55 </span>            : struct GetImpls&lt;false&gt; {
+<span class="lineNum">      56 </span>            :   template &lt;typename T, typename SubscriptFunction&gt;
+<span class="lineNum">      57 </span>            :   static SPECTRE_ALWAYS_INLINE decltype(auto) get_element(
+<span class="lineNum">      58 </span>            :       T&amp; t, const size_t i, SubscriptFunction at) noexcept {
+<span class="lineNum">      59 </span>            :     return at(t, i);
+<span class="lineNum">      60 </span>            :   }
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span>            :   template &lt;typename T, typename SizeFunction&gt;
+<span class="lineNum">      63 </span>            :   static SPECTRE_ALWAYS_INLINE decltype(auto) get_size(
+<span class="lineNum">      64 </span>            :       const T&amp; t, SizeFunction size) noexcept {
+<span class="lineNum">      65 </span>            :     return size(t);
+<span class="lineNum">      66 </span>            :   }
+<span class="lineNum">      67 </span>            : };
+<span class="lineNum">      68 </span>            : }  // namespace ContainerHelpers_detail
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span>            : /*!
+<span class="lineNum">      71 </span>            :  * \ingroup UtilitiesGroup
+<span class="lineNum">      72 </span>            :  * \brief Returns the `i`th element if `T` has a subscript operator, otherwise
+<span class="lineNum">      73 </span>            :  * if `T` is fundamental or a `std::complex` of a fundamental type,  returns
+<span class="lineNum">      74 </span>            :  * `t`.
+<span class="lineNum">      75 </span>            :  *
+<span class="lineNum">      76 </span>            :  * \details This function also optionally takes the user-defined subscript
+<span class="lineNum">      77 </span>            :  * function `at`, which can be used to specify a custom indexing function. For
+<span class="lineNum">      78 </span>            :  * instance, for a type which is a `std::array` of a `std::array`s, the indexing
+<span class="lineNum">      79 </span>            :  * function could be the below callable struct:
+<span class="lineNum">      80 </span>            :  * \snippet Test_ContainerHelpers.cpp get_element_example_indexing_callable
+<span class="lineNum">      81 </span>            :  *
+<span class="lineNum">      82 </span>            :  * which would index the data structure in a manner in which the outer array
+<span class="lineNum">      83 </span>            :  * index varies fastest. The indexing function must take as arguments the
+<span class="lineNum">      84 </span>            :  * applicable container and a `size_t` index, in that order. This follows the
+<span class="lineNum">      85 </span>            :  * convention of `gsl::at`.
+<span class="lineNum">      86 </span>            :  * \note `std::complex` are regarded as non-indexable (despite a predictable
+<span class="lineNum">      87 </span>            :  * memory layout), so this function acts as the identity on `std::complex` of
+<span class="lineNum">      88 </span>            :  * fundamental types
+<span class="lineNum">      89 </span>            :  */
+<span class="lineNum">      90 </span>            : template &lt;typename T, typename SubscriptFunction = GetContainerElement&gt;
+<span class="lineNum">      91 </span><span class="lineCov">          1 : SPECTRE_ALWAYS_INLINE decltype(auto) get_element(</span>
+<span class="lineNum">      92 </span>            :     T&amp; t, const size_t i,
+<span class="lineNum">      93 </span>            :     SubscriptFunction at = GetContainerElement{}) noexcept {
+<span class="lineNum">      94 </span>            :   return ContainerHelpers_detail::GetImpls&lt;(
+<span class="lineNum">      95 </span>            :       tt::is_complex_of_fundamental_v&lt;std::remove_cv_t&lt;T&gt;&gt; or
+<span class="lineNum">      96 </span>            :       cpp17::is_fundamental_v&lt;std::remove_cv_t&lt;T&gt;&gt;)&gt;::get_element(t, i, at);
+<span class="lineNum">      97 </span>            : }
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span>            : /*!
+<span class="lineNum">     100 </span>            :  * \ingroup UtilitiesGroup
+<span class="lineNum">     101 </span>            :  * \brief Retrieve the size of `t` if `t.size()` is a valid expression,
+<span class="lineNum">     102 </span>            :  * otherwise if `T` is fundamental or a `std::complex` of a fundamental type,
+<span class="lineNum">     103 </span>            :  * returns 1.
+<span class="lineNum">     104 </span>            :  *
+<span class="lineNum">     105 </span>            :  * \details This function also optionally takes the user-defined `size`
+<span class="lineNum">     106 </span>            :  * function, which can be used to specify a custom size function. For
+<span class="lineNum">     107 </span>            :  * instance, for a type which is a `std::array` of a `std::array`, the size
+<span class="lineNum">     108 </span>            :  * function could be the below callable struct:
+<span class="lineNum">     109 </span>            :  * \snippet Test_ContainerHelpers.cpp get_size_example_size_callable
+<span class="lineNum">     110 </span>            :  *
+<span class="lineNum">     111 </span>            :  * The `size` function must take the single argument of the applicable
+<span class="lineNum">     112 </span>            :  * container, and should return a `size_t`. This follows the convention of
+<span class="lineNum">     113 </span>            :  * `std::size()` as of C++17.
+<span class="lineNum">     114 </span>            :  * \note `std::complex` are regarded as non-indexable (despite a predictable
+<span class="lineNum">     115 </span>            :  * memory layout), so this function will return 1 for a `std::complex` of a
+<span class="lineNum">     116 </span>            :  * fundamental type
+<span class="lineNum">     117 </span>            :  */
+<span class="lineNum">     118 </span>            : template &lt;typename T, typename SizeFunction = GetContainerSize&gt;
+<span class="lineNum">     119 </span><span class="lineCov">          1 : SPECTRE_ALWAYS_INLINE decltype(auto) get_size(</span>
+<span class="lineNum">     120 </span>            :     const T&amp; t, SizeFunction size = GetContainerSize{}) noexcept {
+<span class="lineNum">     121 </span>            :   return ContainerHelpers_detail::GetImpls&lt;(
+<span class="lineNum">     122 </span>            :       tt::is_complex_of_fundamental_v&lt;std::remove_cv_t&lt;T&gt;&gt; or
+<span class="lineNum">     123 </span>            :       cpp17::is_fundamental_v&lt;std::remove_cv_t&lt;T&gt;&gt;)&gt;::get_size(t, size);
+<span class="lineNum">     124 </span>            : }
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

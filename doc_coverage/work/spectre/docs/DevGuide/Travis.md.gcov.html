@@ -1,0 +1,249 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - /work/spectre/docs/DevGuide/Travis.md</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">work/spectre/docs/DevGuide</a> - Travis.md</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : \cond NEVER</span>
+<span class="lineNum">       2 </span>            : Distributed under the MIT License.
+<span class="lineNum">       3 </span>            : See LICENSE.txt for details.
+<span class="lineNum">       4 </span>            : \endcond
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : # Travis CI {#travis_guide}
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : \tableofcontents
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : # Testing SpECTRE with Travis CI {#travis_ci}
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : SpECTRE uses
+<span class="lineNum">      13 </span>            : [TravisCI](https://travis-ci.org/sxs-collaboration/spectre) for
+<span class="lineNum">      14 </span>            : testing the code.  Multiple build jobs (described below) are launched
+<span class="lineNum">      15 </span>            : each time a pull request is submitted or updated.  In addition, a
+<span class="lineNum">      16 </span>            : daily cron job is run.  Travis will also launch these build jobs each
+<span class="lineNum">      17 </span>            : time you push to a branch on your fork of SpECTRE if you enable
+<span class="lineNum">      18 </span>            : it. (Go to Travis, click on your name in the upper right corner, and
+<span class="lineNum">      19 </span>            : then towards the bottom, enable testing on your fork of SpECTRE.)
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : For pull requests, you can view the Travis CI build by clicking on
+<span class="lineNum">      22 </span>            : `Details` next to the `Travis build failed` or `Travis build
+<span class="lineNum">      23 </span>            : succeeded` in the section for `All checks have failed` or `All checks
+<span class="lineNum">      24 </span>            : have passed` towards the bottom of the pull request.  You can login to
+<span class="lineNum">      25 </span>            : Travis using your GitHub credentials in order to cancel your builds,
+<span class="lineNum">      26 </span>            : and you should do so if you update your pull request while it is
+<span class="lineNum">      27 </span>            : building.
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            : ## What is tested {#what-is-tested}
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span>            : The Travis report lists the build jobs which will each have either a
+<span class="lineNum">      32 </span>            : green check mark if it passes, a red `X` if it has failed, or a yellow
+<span class="lineNum">      33 </span>            : binary if the build is in progress.  Clicking on a build job will
+<span class="lineNum">      34 </span>            : display the log of the build.
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span>            : The following build jobs are launched:
+<span class="lineNum">      37 </span>            : * CHECK_COMMITS runs the script `tools/CheckCommits.sh` and fails the build if
+<span class="lineNum">      38 </span>            : any casing of the words in the list below is the first word of the commit
+<span class="lineNum">      39 </span>            : message.  This allows developers to flag their commits with these keywords to
+<span class="lineNum">      40 </span>            : indicate that a pull request should not be merged in its current state.
+<span class="lineNum">      41 </span>            :   - fixup
+<span class="lineNum">      42 </span>            :   - wip (for work in progress)
+<span class="lineNum">      43 </span>            :   - fixme
+<span class="lineNum">      44 </span>            :   - deleteme
+<span class="lineNum">      45 </span>            :   - rebaseme
+<span class="lineNum">      46 </span>            :   - testing
+<span class="lineNum">      47 </span>            :   - rebase
+<span class="lineNum">      48 </span>            : * CHECK_FILES runs the script `tools/CheckFiles.sh` (which also runs the script
+<span class="lineNum">      49 </span>            : `tools/FileTestDefs.sh`) and fails the build if any of the following checks are
+<span class="lineNum">      50 </span>            : true:
+<span class="lineNum">      51 </span>            :   - A `c++` file (i.e. `*.hpp`, `*.cpp`, or `*.tpp` file) contains a
+<span class="lineNum">      52 </span>            :   line over 80 characters
+<span class="lineNum">      53 </span>            :   - A file contains a tab character
+<span class="lineNum">      54 </span>            :   - A file has white space at the end of the line
+<span class="lineNum">      55 </span>            :   - A file has a carriage return character
+<span class="lineNum">      56 </span>            :   - A file is missing the license line
+<span class="lineNum">      57 </span>            :   - A `*.hpp` file is missing `pragma once`
+<span class="lineNum">      58 </span>            :   - A file does not end with a newline
+<span class="lineNum">      59 </span>            :   - A `c++` file includes any of the following headers
+<span class="lineNum">      60 </span>            :     * `&lt;iostream&gt;`  (useless when running in parallel)
+<span class="lineNum">      61 </span>            :     * `Utilities/TmplDebugging.hpp`  (used only for debugging)
+<span class="lineNum">      62 </span>            :   - A `c++` file contains a `namespace` ending in `_details` (use `_detail`)
+<span class="lineNum">      63 </span>            :   - A `c++` file contains a `struct TD` or `class TD` (used only for debugging)
+<span class="lineNum">      64 </span>            :   - A `c++` file contains `std::enable_if` (use `Requires` instead)
+<span class="lineNum">      65 </span>            :   - A `c++` file contains additional text after `/*!` (does not render correctly
+<span class="lineNum">      66 </span>            :   in doxygen)
+<span class="lineNum">      67 </span>            :   - A `c++` file contains `Ls` (use `List` instead)
+<span class="lineNum">      68 </span>            :   - A `c++` test uses either:
+<span class="lineNum">      69 </span>            :     * `TEST_CASE` (use `SPECTRE_TEST_CASE` instead)
+<span class="lineNum">      70 </span>            :     * `Approx` (use `approx` instead)
+<span class="lineNum">      71 </span>            : * RUN_CLANG_TIDY runs the script `.travis/RunClangTidy.sh` which runs
+<span class="lineNum">      72 </span>            : `clang-tidy` on all files which were modified.  This is done for both `Release`
+<span class="lineNum">      73 </span>            : and `Debug` builds.
+<span class="lineNum">      74 </span>            : * TEST_CHECK_FILES runs `tools/CheckFiles.sh --test` which tests the checks
+<span class="lineNum">      75 </span>            : performed in the CHECK_FILES build.
+<span class="lineNum">      76 </span>            : * The other builds compile the code and run the tests for both
+<span class="lineNum">      77 </span>            : `Release` and `Debug` builds, for the `gcc` and `clang` compilers
+<span class="lineNum">      78 </span>            : using a Linux OS, and the `AppleClang` compiler for `OS X`.
+<span class="lineNum">      79 </span>            : * The `gcc Debug` build will fail if there are `doxygen` warnings.
+<span class="lineNum">      80 </span>            : 
+<span class="lineNum">      81 </span>            : ## How to perform the checks locally {#perform-checks-locally}
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span>            : Before pushing to GitHub and waiting for Travis to perform the checks it is
+<span class="lineNum">      84 </span>            : useful to perform at least the following tests locally:
+<span class="lineNum">      85 </span>            : - **Unit tests:** Perform a `make test-executables` and then execute `ctest` to
+<span class="lineNum">      86 </span>            :   run all unit tests. As for `make` you can append a `-jN` flag to `ctest` to
+<span class="lineNum">      87 </span>            :   run in parallel on `N` cores. To run only a subset of the tests you can use
+<span class="lineNum">      88 </span>            :   one of the other keywords that the tests are labeled with, such as `ctest -L
+<span class="lineNum">      89 </span>            :   datastructures`. To run only particular tests you can also execute `ctest -R
+<span class="lineNum">      90 </span>            :   TEST_NAME` instead, where `TEST_NAME` is a regular expression matching the
+<span class="lineNum">      91 </span>            :   test identifiers such as `Unit.DataStructures.Mesh`. Pass the flag
+<span class="lineNum">      92 </span>            :   `--output-on-failure` to get output from failed tests. Consult `ctest -h` for
+<span class="lineNum">      93 </span>            :   further options.
+<span class="lineNum">      94 </span>            : - **clang-tidy:** In a clang build directory, run `make clang-tidy
+<span class="lineNum">      95 </span>            :   FILE=SOURCE_FILE` where `SOURCE_FILE` is a relative or absolute path to a
+<span class="lineNum">      96 </span>            :   `.cpp` file. To perform this check for all source files that changed in your
+<span class="lineNum">      97 </span>            :   pull request, `make clang-tidy-hash HASH=UPSTREAM_HEAD` where `UPSTREAM_HEAD`
+<span class="lineNum">      98 </span>            :   is the hash of the commit that your pull request is based on, usually the
+<span class="lineNum">      99 </span>            :   `HEAD` of the `upstream/develop` branch.
+<span class="lineNum">     100 </span>            : - **IWYU:** Also just for the changed files in a pull request run `make
+<span class="lineNum">     101 </span>            :   iwyu-hash HASH=UPSTREAM_HEAD`. Since IWYU requires `USE_PCH=OFF` you can
+<span class="lineNum">     102 </span>            :   create a separate build directory and append `-D USE_PCH=OFF` to the usual
+<span class="lineNum">     103 </span>            :   `cmake` call. Note that it is very easy to incorrectly install IWYU (if not
+<span class="lineNum">     104 </span>            :   using the Docker container) and generate nonsense errors.
+<span class="lineNum">     105 </span>            : - **Documentation:** To render the documentation for the current state
+<span class="lineNum">     106 </span>            :   of the source tree the command `make doc` (or `make doc-check` to
+<span class="lineNum">     107 </span>            :   highlight warnings) can be used, placing its result in the `docs`
+<span class="lineNum">     108 </span>            :   directory in the build tree.  Once code has been made into a pull
+<span class="lineNum">     109 </span>            :   request to GitHub, the documentation can be rendered locally using
+<span class="lineNum">     110 </span>            :   the `tools/pr-docs` script.  To view the documentation, simply open the
+<span class="lineNum">     111 </span>            :   `index.html` file in the `html` subdirectory in a browser. Some functionality
+<span class="lineNum">     112 </span>            :   requires a web server (e.g. citation popovers), so just run a
+<span class="lineNum">     113 </span>            :   `python3 -m http.server` in the `html` directory to enable this.
+<span class="lineNum">     114 </span>            : 
+<span class="lineNum">     115 </span>            : ## Travis setup {#travis-setup}
+<span class="lineNum">     116 </span>            : 
+<span class="lineNum">     117 </span>            : * The `gcc Debug` build runs code coverage for each Travis build.
+<span class="lineNum">     118 </span>            : 
+<span class="lineNum">     119 </span>            : ## Troubleshooting {#travis-troubleshooting}
+<span class="lineNum">     120 </span>            : 
+<span class="lineNum">     121 </span>            : * Occasionally, a build job will fail because of a problem with Travis
+<span class="lineNum">     122 </span>            : (e.g. it times out).  Clicking on the circular arrow icon on the far
+<span class="lineNum">     123 </span>            : right of the build job will restart it.  All build jobs can be
+<span class="lineNum">     124 </span>            : restarted by clicking on the `Restart build` button to the right of
+<span class="lineNum">     125 </span>            : the pull request description.
+<span class="lineNum">     126 </span>            : * Travis caches some things between builds.  Occasionally this may
+<span class="lineNum">     127 </span>            : cause a problem leading to strange build failures.  If you suspect
+<span class="lineNum">     128 </span>            : this may be the case, get a SpECTRE owner to click on the `More
+<span class="lineNum">     129 </span>            : options` button in the top right, choose `Caches` and delete the cache
+<span class="lineNum">     130 </span>            : for your pull request.
+<span class="lineNum">     131 </span>            : 
+<span class="lineNum">     132 </span>            : ## Precompiled Headers and ccache {#precompiled-headers-ccache}
+<span class="lineNum">     133 </span>            : 
+<span class="lineNum">     134 </span>            : Getting ccache to work with precompiled headers on TravisCI is a little
+<span class="lineNum">     135 </span>            : challenging. The header to be precompiled is
+<span class="lineNum">     136 </span>            : `${SPECTRE_SOURCE_DIR}/tools/SpectrePch.hpp` and is symbolically linked to
+<span class="lineNum">     137 </span>            : `${SPECTRE_BUILD_DIR}/SpectrePch.hpp`. The configuration that seems to work is
+<span class="lineNum">     138 </span>            : specifying the environment variables:
+<span class="lineNum">     139 </span>            : 
+<span class="lineNum">     140 </span>            : \code{.sh}
+<span class="lineNum">     141 </span>            : CCACHE_COMPILERCHECK=content
+<span class="lineNum">     142 </span>            : CCACHE_EXTRAFILES=&quot;${SPECTRE_SOURCE_DIR}/tools/SpectrePch.hpp&quot;
+<span class="lineNum">     143 </span>            : CCACHE_IGNOREHEADERS=&quot;${SPECTRE_BUILD_DIR}/SpectrePch.hpp:${SPECTRE_BUILD_DIR}/SpectrePch.hpp.gch&quot;
+<span class="lineNum">     144 </span>            : \endcode
+<span class="lineNum">     145 </span>            : 
+<span class="lineNum">     146 </span>            : On macOS builds we haven't yet had success with using `ccache` with a
+<span class="lineNum">     147 </span>            : precompiled header. We disable the precompiled header and build in debug mode
+<span class="lineNum">     148 </span>            : only to have reasonable build times.
+<span class="lineNum">     149 </span>            : 
+<span class="lineNum">     150 </span>            : ## Build Stages {#travis-build-stages}
+<span class="lineNum">     151 </span>            : 
+<span class="lineNum">     152 </span>            : In order to avoid timeouts we build SpECTRE in various stages, carrying over the
+<span class="lineNum">     153 </span>            : ccache from one stage to the next. This allows us to avoid recompiling the code
+<span class="lineNum">     154 </span>            : in the next stage (there is some small overhead from running ccache instead of
+<span class="lineNum">     155 </span>            : not doing anything at all). The first stage builds all the SpECTRE libraries but
+<span class="lineNum">     156 </span>            : none of the executables or testing libraries. The second stage builds builds the
+<span class="lineNum">     157 </span>            : test executables, runs the tests, and also runs ClangTidy, include-what-you-use,
+<span class="lineNum">     158 </span>            : and various other checks. Another stage could be added that builds some of the
+<span class="lineNum">     159 </span>            : test libraries if necessary.
+<span class="lineNum">     160 </span>            : 
+<span class="lineNum">     161 </span>            : ## Caching Dependencies on macOS Builds {#caching-mac-os}
+<span class="lineNum">     162 </span>            : 
+<span class="lineNum">     163 </span>            : On macOS builds we cache all of our dependencies, like LIBXSMM and
+<span class="lineNum">     164 </span>            : Charm++. These are cached in `$HOME/mac_cache`. Ultimately this saves about
+<span class="lineNum">     165 </span>            : 10-12 minutes even when compared to using ccache to cache the object files from
+<span class="lineNum">     166 </span>            : building the dependencies. We also cache `$HOME/Library/Caches/Homebrew`, which
+<span class="lineNum">     167 </span>            : is where Homebrew keeps the downloaded formulas. By caching the Homebrew bottles
+<span class="lineNum">     168 </span>            : we are able to avoid brew formulas building from source because a tarball of the
+<span class="lineNum">     169 </span>            : package was not available at the time.
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

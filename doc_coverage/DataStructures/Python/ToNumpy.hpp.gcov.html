@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - DataStructures/Python/ToNumpy.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">DataStructures/Python</a> - ToNumpy.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryLo">50.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;Python.h&gt;
+<span class="lineNum">       7 </span>            : #include &lt;array&gt;
+<span class="lineNum">       8 </span>            : #include &lt;cstdlib&gt;
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : #include &quot;DataStructures/Matrix.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;DataStructures/Python/Numpy.hpp&quot;
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            : // IWYU pragma: no_include &lt;numpy/ndarrayobject.h&gt;
+<span class="lineNum">      14 </span>            : // IWYU pragma: no_include &lt;numpy/ndarraytypes.h&gt;
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : namespace py_bindings {
+<span class="lineNum">      17 </span>            : /// Convert Matrix to a Numpy Array. Always creates a copy.
+<span class="lineNum">      18 </span>            : // We use `malloc` instead of `new` because we tell NumPy it needs to free the
+<span class="lineNum">      19 </span>            : // memory and NumPy uses `free`, not `delete`.
+<span class="lineNum">      20 </span><span class="lineCov">          1 : inline PyObject* to_numpy(const Matrix&amp; matrix) {</span>
+<span class="lineNum">      21 </span>            :   auto* c_style_data = static_cast&lt;double*&gt;(
+<span class="lineNum">      22 </span>            :       malloc(sizeof(double) * (matrix.rows()) * matrix.columns()));
+<span class="lineNum">      23 </span>            :   for (size_t i = 0; i &lt; matrix.rows(); ++i) {
+<span class="lineNum">      24 </span>            :     for (size_t j = 0; j &lt; matrix.columns(); ++j) {
+<span class="lineNum">      25 </span>            :       // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+<span class="lineNum">      26 </span>            :       c_style_data[j + i * matrix.columns()] = matrix(i, j);
+<span class="lineNum">      27 </span>            :     }
+<span class="lineNum">      28 </span>            :   }
+<span class="lineNum">      29 </span>            :   std::array&lt;long, 2&gt; dims{
+<span class="lineNum">      30 </span>            :       {static_cast&lt;long&gt;(matrix.rows()), static_cast&lt;long&gt;(matrix.columns())}};
+<span class="lineNum">      31 </span>            :   // clang-tidy: C-style cast done implictly with Python
+<span class="lineNum">      32 </span>            :   // NOLINTNEXTLINE
+<span class="lineNum">      33 </span>            :   PyObject* npy_array = PyArray_SimpleNewFromData(2, dims.data(), NPY_DOUBLE,
+<span class="lineNum">      34 </span>            :                                                   c_style_data);  // NOLINT
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span>            :   // The `reinterpret_cast` is intentional because we know the pointer actually
+<span class="lineNum">      37 </span>            :   // points to an object of type `PyArrayObject` and we need to access it in
+<span class="lineNum">      38 </span>            :   // that manner.
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span>            :   // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+<span class="lineNum">      41 </span>            :   auto* npy_array_obj = reinterpret_cast&lt;PyArrayObject*&gt;(npy_array);
+<span class="lineNum">      42 </span>            :   PyArray_ENABLEFLAGS(npy_array_obj, NPY_ARRAY_OWNDATA);
+<span class="lineNum">      43 </span>            :   return npy_array;
+<span class="lineNum">      44 </span>            : }
+<span class="lineNum">      45 </span>            : }  // namespace py_bindings
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Evolution/DiscontinuousGalerkin/SlopeLimiters/MinmodTci.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">Evolution/DiscontinuousGalerkin/SlopeLimiters</a> - MinmodTci.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;array&gt;
+<span class="lineNum">       7 </span>            : #include &lt;cstdlib&gt;
+<span class="lineNum">       8 </span>            : #include &lt;memory&gt;
+<span class="lineNum">       9 </span>            : #include &lt;unordered_map&gt;
+<span class="lineNum">      10 </span>            : #include &lt;utility&gt;
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : #include &quot;DataStructures/DataBox/DataBoxTag.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;DataStructures/DataVector.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;Evolution/DiscontinuousGalerkin/SlopeLimiters/MinmodHelpers.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;Evolution/DiscontinuousGalerkin/SlopeLimiters/MinmodType.hpp&quot;
+<span class="lineNum">      16 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      17 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : /// \cond
+<span class="lineNum">      20 </span>            : template &lt;size_t VolumeDim&gt;
+<span class="lineNum">      21 </span>            : class Direction;
+<span class="lineNum">      22 </span>            : template &lt;size_t Dim, typename T&gt;
+<span class="lineNum">      23 </span>            : class DirectionMap;
+<span class="lineNum">      24 </span>            : template &lt;size_t VolumeDim&gt;
+<span class="lineNum">      25 </span>            : class Element;
+<span class="lineNum">      26 </span>            : template &lt;size_t VolumeDim&gt;
+<span class="lineNum">      27 </span>            : class ElementId;
+<span class="lineNum">      28 </span>            : template &lt;size_t VolumeDim&gt;
+<span class="lineNum">      29 </span>            : class Mesh;
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span>            : namespace boost {
+<span class="lineNum">      32 </span>            : template &lt;class T&gt;
+<span class="lineNum">      33 </span>            : struct hash;
+<span class="lineNum">      34 </span>            : }  // namespace boost
+<span class="lineNum">      35 </span>            : /// \endcond
+<span class="lineNum">      36 </span>            : 
+<span class="lineNum">      37 </span>            : namespace SlopeLimiters {
+<span class="lineNum">      38 </span>            : namespace Minmod_detail {
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span>            : // Implements the troubled-cell indicator corresponding to the Minmod limiter.
+<span class="lineNum">      41 </span>            : //
+<span class="lineNum">      42 </span>            : // The troubled-cell indicator (TCI) determines whether or not limiting is
+<span class="lineNum">      43 </span>            : // needed. See SlopeLimiters::Minmod for a full description of the Minmod
+<span class="lineNum">      44 </span>            : // limiter. Note that as an optimization, this TCI returns (by reference) some
+<span class="lineNum">      45 </span>            : // additional data that are used by the Minmod limiter in the case where the
+<span class="lineNum">      46 </span>            : // TCI returns true (i.e., the case where limiting is needed).
+<span class="lineNum">      47 </span>            : template &lt;size_t VolumeDim&gt;
+<span class="lineNum">      48 </span>            : bool troubled_cell_indicator(
+<span class="lineNum">      49 </span>            :     gsl::not_null&lt;double*&gt; u_mean,
+<span class="lineNum">      50 </span>            :     gsl::not_null&lt;std::array&lt;double, VolumeDim&gt;*&gt; u_limited_slopes,
+<span class="lineNum">      51 </span>            :     gsl::not_null&lt;DataVector*&gt; u_lin_buffer,
+<span class="lineNum">      52 </span>            :     gsl::not_null&lt;std::array&lt;DataVector, VolumeDim&gt;*&gt; boundary_buffer,
+<span class="lineNum">      53 </span>            :     const SlopeLimiters::MinmodType&amp; minmod_type, double tvbm_constant,
+<span class="lineNum">      54 </span>            :     const DataVector&amp; u, const Element&lt;VolumeDim&gt;&amp; element,
+<span class="lineNum">      55 </span>            :     const Mesh&lt;VolumeDim&gt;&amp; mesh,
+<span class="lineNum">      56 </span>            :     const std::array&lt;double, VolumeDim&gt;&amp; element_size,
+<span class="lineNum">      57 </span>            :     const DirectionMap&lt;VolumeDim, double&gt;&amp; effective_neighbor_means,
+<span class="lineNum">      58 </span>            :     const DirectionMap&lt;VolumeDim, double&gt;&amp; effective_neighbor_sizes,
+<span class="lineNum">      59 </span>            :     const std::array&lt;std::pair&lt;gsl::span&lt;std::pair&lt;size_t, size_t&gt;&gt;,
+<span class="lineNum">      60 </span>            :                                gsl::span&lt;std::pair&lt;size_t, size_t&gt;&gt;&gt;,
+<span class="lineNum">      61 </span>            :                      VolumeDim&gt;&amp; volume_and_slice_indices) noexcept;
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span>            : // Implements the minmod troubled-cell indicator on several tensors.
+<span class="lineNum">      64 </span>            : //
+<span class="lineNum">      65 </span>            : // Internally loops over all tensors and tensor components, calling the above
+<span class="lineNum">      66 </span>            : // function for each case. Returns true if any of the components needs limiting.
+<span class="lineNum">      67 </span>            : // Optimization: stops as soon as one component needs limiting, because no
+<span class="lineNum">      68 </span>            : // intermediate results are passed &quot;up&quot; out of this function.
+<span class="lineNum">      69 </span>            : //
+<span class="lineNum">      70 </span>            : // Expects type `PackagedData` to contain, as in SlopeLimiters::Minmod:
+<span class="lineNum">      71 </span>            : // - a variable `means` that is a `TaggedTuple&lt;Tags::Mean&lt;Tags&gt;...&gt;`
+<span class="lineNum">      72 </span>            : // - a variable `element_size` that is a `std::array&lt;double, VolumeDim&gt;`
+<span class="lineNum">      73 </span>            : template &lt;size_t VolumeDim, typename PackagedData, typename... Tags&gt;
+<span class="lineNum">      74 </span>            : bool troubled_cell_indicator(
+<span class="lineNum">      75 </span>            :     const db::item_type&lt;Tags&gt;&amp;... tensors,
+<span class="lineNum">      76 </span>            :     const std::unordered_map&lt;
+<span class="lineNum">      77 </span>            :         std::pair&lt;Direction&lt;VolumeDim&gt;, ElementId&lt;VolumeDim&gt;&gt;, PackagedData,
+<span class="lineNum">      78 </span>            :         boost::hash&lt;std::pair&lt;Direction&lt;VolumeDim&gt;, ElementId&lt;VolumeDim&gt;&gt;&gt;&gt;&amp;
+<span class="lineNum">      79 </span>            :         neighbor_data,
+<span class="lineNum">      80 </span>            :     const SlopeLimiters::MinmodType&amp; minmod_type, double tvbm_constant,
+<span class="lineNum">      81 </span>            :     const Element&lt;VolumeDim&gt;&amp; element, const Mesh&lt;VolumeDim&gt;&amp; mesh,
+<span class="lineNum">      82 </span>            :     const std::array&lt;double, VolumeDim&gt;&amp; element_size) noexcept {
+<span class="lineNum">      83 </span>            :   // Optimization: allocate temporary buffer to be used in TCI
+<span class="lineNum">      84 </span>            :   std::unique_ptr&lt;double[], decltype(&amp;free)&gt; contiguous_buffer(nullptr, &amp;free);
+<span class="lineNum">      85 </span>            :   DataVector u_lin_buffer{};
+<span class="lineNum">      86 </span>            :   std::array&lt;DataVector, VolumeDim&gt; boundary_buffer{};
+<span class="lineNum">      87 </span>            :   Minmod_detail::allocate_buffers(make_not_null(&amp;contiguous_buffer),
+<span class="lineNum">      88 </span>            :                                   make_not_null(&amp;u_lin_buffer),
+<span class="lineNum">      89 </span>            :                                   make_not_null(&amp;boundary_buffer), mesh);
+<span class="lineNum">      90 </span>            : 
+<span class="lineNum">      91 </span>            :   // Optimization: precompute the slice indices since this is (surprisingly)
+<span class="lineNum">      92 </span>            :   // expensive
+<span class="lineNum">      93 </span>            :   const auto volume_and_slice_buffer_and_indices =
+<span class="lineNum">      94 </span>            :       volume_and_slice_indices(mesh.extents());
+<span class="lineNum">      95 </span>            :   const auto&amp; volume_and_slice_indices =
+<span class="lineNum">      96 </span>            :       volume_and_slice_buffer_and_indices.second;
+<span class="lineNum">      97 </span>            : 
+<span class="lineNum">      98 </span>            :   const auto effective_neighbor_sizes =
+<span class="lineNum">      99 </span>            :       compute_effective_neighbor_sizes(element, neighbor_data);
+<span class="lineNum">     100 </span>            : 
+<span class="lineNum">     101 </span>            :   // Ideally, as soon as one component is found that needs limiting, then we
+<span class="lineNum">     102 </span>            :   // would exit the TCI early with return value `true`. But there is no natural
+<span class="lineNum">     103 </span>            :   // way to return early from the pack expansion. So we use this bool to keep
+<span class="lineNum">     104 </span>            :   // track of whether a previous component needed limiting... and if so, then
+<span class="lineNum">     105 </span>            :   // we simply skip any work.
+<span class="lineNum">     106 </span>            :   bool some_component_needs_limiting = false;
+<span class="lineNum">     107 </span>            :   const auto wrap_tci_one_tensor = [&amp;](auto tag, const auto&amp; tensor) noexcept {
+<span class="lineNum">     108 </span>            :     if (some_component_needs_limiting) {
+<span class="lineNum">     109 </span>            :       // Skip this tensor completely
+<span class="lineNum">     110 </span>            :       return '0';
+<span class="lineNum">     111 </span>            :     }
+<span class="lineNum">     112 </span>            : 
+<span class="lineNum">     113 </span>            :     for (size_t tensor_storage_index = 0; tensor_storage_index &lt; tensor.size();
+<span class="lineNum">     114 </span>            :          ++tensor_storage_index) {
+<span class="lineNum">     115 </span>            :       const auto effective_neighbor_means =
+<span class="lineNum">     116 </span>            :           compute_effective_neighbor_means&lt;decltype(tag)&gt;(
+<span class="lineNum">     117 </span>            :               element, tensor_storage_index, neighbor_data);
+<span class="lineNum">     118 </span>            : 
+<span class="lineNum">     119 </span>            :       const DataVector&amp; u = tensor[tensor_storage_index];
+<span class="lineNum">     120 </span>            :       double u_mean;
+<span class="lineNum">     121 </span>            :       std::array&lt;double, VolumeDim&gt; u_limited_slopes{};
+<span class="lineNum">     122 </span>            :       const bool reduce_slope = troubled_cell_indicator(
+<span class="lineNum">     123 </span>            :           make_not_null(&amp;u_mean), make_not_null(&amp;u_limited_slopes),
+<span class="lineNum">     124 </span>            :           make_not_null(&amp;u_lin_buffer), make_not_null(&amp;boundary_buffer),
+<span class="lineNum">     125 </span>            :           minmod_type, tvbm_constant, u, element, mesh, element_size,
+<span class="lineNum">     126 </span>            :           effective_neighbor_means, effective_neighbor_sizes,
+<span class="lineNum">     127 </span>            :           volume_and_slice_indices);
+<span class="lineNum">     128 </span>            : 
+<span class="lineNum">     129 </span>            :       if (reduce_slope) {
+<span class="lineNum">     130 </span>            :         some_component_needs_limiting = true;
+<span class="lineNum">     131 </span>            :         // Skip remaining components of this tensor
+<span class="lineNum">     132 </span>            :         return '0';
+<span class="lineNum">     133 </span>            :       }
+<span class="lineNum">     134 </span>            :     }
+<span class="lineNum">     135 </span>            :     return '0';
+<span class="lineNum">     136 </span>            :   };
+<span class="lineNum">     137 </span>            :   expand_pack(wrap_tci_one_tensor(Tags{}, tensors)...);
+<span class="lineNum">     138 </span>            :   return some_component_needs_limiting;
+<span class="lineNum">     139 </span>            : }
+<span class="lineNum">     140 </span>            : 
+<span class="lineNum">     141 </span>            : }  // namespace Minmod_detail
+<span class="lineNum">     142 </span>            : }  // namespace SlopeLimiters
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

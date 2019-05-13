@@ -1,0 +1,144 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - ControlSystem/SettleToConstant.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">ControlSystem</a> - SettleToConstant.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;ControlSystem/SettleToConstant.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;cmath&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">       9 </span>            : #include &quot;Utilities/MakeArray.hpp&quot;
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : FunctionsOfTime::SettleToConstant::SettleToConstant(
+<span class="lineNum">      12 </span>            :     const std::array&lt;DataVector, 3&gt;&amp; initial_func_and_derivs,
+<span class="lineNum">      13 </span>            :     const double match_time, const double decay_time) noexcept
+<span class="lineNum">      14 </span>            :     : match_time_(match_time),
+<span class="lineNum">      15 </span>            :       inv_decay_time_(1.0 / decay_time) {
+<span class="lineNum">      16 </span>            :   // F = f(t0)
+<span class="lineNum">      17 </span>            :   // the constants are then computed from F and its derivs:
+<span class="lineNum">      18 </span>            :   // C = -dtF-dt2F*decay_time;
+<span class="lineNum">      19 </span>            :   // B = (C-dtF)*decay_time;
+<span class="lineNum">      20 </span>            :   // A = F-B;
+<span class="lineNum">      21 </span>            :   coef_c_ =
+<span class="lineNum">      22 </span>            :       -initial_func_and_derivs[1] - initial_func_and_derivs[2] * decay_time;
+<span class="lineNum">      23 </span>            :   coef_b_ = (coef_c_ - initial_func_and_derivs[1]) * decay_time;
+<span class="lineNum">      24 </span>            :   coef_a_ = initial_func_and_derivs[0] - coef_b_;
+<span class="lineNum">      25 </span>            : }
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span>            : template &lt;size_t MaxDerivReturned&gt;
+<span class="lineNum">      28 </span>            : std::array&lt;DataVector, MaxDerivReturned + 1&gt;
+<span class="lineNum">      29 </span>            : FunctionsOfTime::SettleToConstant::func_and_derivs(const double t) const
+<span class="lineNum">      30 </span>            :     noexcept {
+<span class="lineNum">      31 </span>            :   static_assert(MaxDerivReturned &lt; 3, &quot;The maximum available derivative is 2.&quot;);
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span>            :   // initialize result for the number of derivs requested
+<span class="lineNum">      34 </span>            :   std::array&lt;DataVector, MaxDerivReturned + 1&gt; result =
+<span class="lineNum">      35 </span>            :       make_array&lt;MaxDerivReturned + 1&gt;(DataVector(coef_a_.size(), 0.0));
+<span class="lineNum">      36 </span>            : 
+<span class="lineNum">      37 </span>            :   const double dt = t - match_time_;
+<span class="lineNum">      38 </span>            :   const double ex = exp(-dt * inv_decay_time_);
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span>            :   gsl::at(result, 0) = coef_a_ + (coef_b_ + coef_c_ * dt) * ex;
+<span class="lineNum">      41 </span>            :   if (MaxDerivReturned &gt; 0) {
+<span class="lineNum">      42 </span>            :     gsl::at(result, 1) = ex * (coef_c_ * (1.0 - dt * inv_decay_time_) -
+<span class="lineNum">      43 </span>            :                                coef_b_ * inv_decay_time_);
+<span class="lineNum">      44 </span>            :     if (MaxDerivReturned &gt; 1) {
+<span class="lineNum">      45 </span>            :       gsl::at(result, 2) =
+<span class="lineNum">      46 </span>            :           ex * inv_decay_time_ *
+<span class="lineNum">      47 </span>            :           (coef_c_ * (inv_decay_time_ * dt - 2.0) + inv_decay_time_ * coef_b_);
+<span class="lineNum">      48 </span>            :     }
+<span class="lineNum">      49 </span>            :   }
+<span class="lineNum">      50 </span>            : 
+<span class="lineNum">      51 </span>            :   return result;
+<span class="lineNum">      52 </span>            : }
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span>            : /// \cond
+<span class="lineNum">      55 </span>            : template std::array&lt;DataVector, 1&gt;
+<span class="lineNum">      56 </span>            : FunctionsOfTime::SettleToConstant::func_and_derivs&lt;0&gt;(const double) const
+<span class="lineNum">      57 </span>            :     noexcept;
+<span class="lineNum">      58 </span>            : template std::array&lt;DataVector, 2&gt;
+<span class="lineNum">      59 </span>            : FunctionsOfTime::SettleToConstant::func_and_derivs&lt;1&gt;(const double) const
+<span class="lineNum">      60 </span>            :     noexcept;
+<span class="lineNum">      61 </span>            : template std::array&lt;DataVector, 3&gt;
+<span class="lineNum">      62 </span>            : FunctionsOfTime::SettleToConstant::func_and_derivs&lt;2&gt;(const double) const
+<span class="lineNum">      63 </span>            :     noexcept;
+<span class="lineNum">      64 </span>            : /// \endcond
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

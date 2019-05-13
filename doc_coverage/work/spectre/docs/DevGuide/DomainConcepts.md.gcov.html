@@ -1,0 +1,144 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - /work/spectre/docs/DevGuide/DomainConcepts.md</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">work/spectre/docs/DevGuide</a> - DomainConcepts.md</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : \cond NEVER</span>
+<span class="lineNum">       2 </span>            : Distributed under the MIT License.
+<span class="lineNum">       3 </span>            : See LICENSE.txt for details.
+<span class="lineNum">       4 </span>            : \endcond
+<span class="lineNum">       5 </span>            : # Domain Concepts {#domain_concepts}
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            : * Logical Coordinates:&lt;br&gt;
+<span class="lineNum">       8 </span>            :   The coordinate frame of a reference cell.
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : * Domain:&lt;br&gt;
+<span class="lineNum">      11 </span>            :   The computational domain is partitioned into cells called Blocks. Furthermore, each Block
+<span class="lineNum">      12 </span>            :   must have at most one neighboring Block in each Direction.
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            : * Block:&lt;br&gt;
+<span class="lineNum">      15 </span>            :   A reference cell embedded into a subset of the computational domain. Blocks
+<span class="lineNum">      16 </span>            :   are identified by unique integral values.
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            : * Orientation:&lt;br&gt;
+<span class="lineNum">      19 </span>            :   The information of how the Logical Coordinates between Blocks are related.
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : * \ref BlockNeighbor &quot;Block Neighbor&quot;:&lt;br&gt;
+<span class="lineNum">      22 </span>            :   The identity and Orientation of a neighbor of a given Block.
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : * Direction:&lt;br&gt;
+<span class="lineNum">      25 </span>            :   A logical coordinate axis and a label &quot;Upper&quot; or &quot;Lower&quot; depending on whether
+<span class="lineNum">      26 </span>            :   the Direction is aligned with or anti-aligned with the logical coordinate
+<span class="lineNum">      27 </span>            :   axis, respectively.
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            : * Refinement Level:&lt;br&gt;
+<span class="lineNum">      30 </span>            :   The number of times a Block is split in half in a given dimension.
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span>            : * Segment:&lt;br&gt;
+<span class="lineNum">      33 </span>            :   The specific subset of the interval \f$[-1, 1]\f$ defined by the Refinement Level and an integer label
+<span class="lineNum">      34 </span>            :   such that the Segment's interval is \f$[-1 + 2*(N/D), -1 + 2*(N+1)/D]\f$ where N is the integer label and
+<span class="lineNum">      35 </span>            :   D is \f$2^{(\textrm{Refinement Level})}\f$.
+<span class="lineNum">      36 </span>            : 
+<span class="lineNum">      37 </span>            : * \ref SegmentId &quot;Segment Identifier&quot;:&lt;br&gt;
+<span class="lineNum">      38 </span>            :   The Refinement Level and an integer labeling a Segment.
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span>            : * Element:&lt;br&gt;
+<span class="lineNum">      41 </span>            :   A refined subregion of a Block defined by its Segments in each
+<span class="lineNum">      42 </span>            :   logical coordinate. The properties of the Element
+<span class="lineNum">      43 </span>            :   are inherited from the block, i.e. it is self-similar to the Block.
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span>            : * \ref ElementId &quot;Element Identifier&quot;:&lt;br&gt;
+<span class="lineNum">      46 </span>            :   The Block Identifier containing the Element and a Segment Identifier
+<span class="lineNum">      47 </span>            :   in each logical coordinate axis.
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span>            : * Mesh:&lt;br&gt;
+<span class="lineNum">      50 </span>            :   A regular set of grid points associated with an Element. Represented by the data structure Mesh.
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            : * External Boundary:&lt;br&gt;
+<span class="lineNum">      53 </span>            :   A face of a Block or Element that has no neighbor.
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span>            : * Internal Boundary:&lt;br&gt;
+<span class="lineNum">      56 </span>            :   A boundary that is not an External Boundary.
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span>            : * \ref Neighbors &quot;Face Neighbors&quot; (Rename C++ Neighbors class to FaceNeighbors):&lt;br&gt;
+<span class="lineNum">      59 </span>            :   The identities and Orientation of the neighbors in a particular direction of a given Element.
+<span class="lineNum">      60 </span>            : 
+<span class="lineNum">      61 </span>            : * External Boundary Condition:&lt;br&gt;
+<span class="lineNum">      62 </span>            :   A prescription for updating the solution on an External Boundary. Each
+<span class="lineNum">      63 </span>            :   External Boundary of Block has exactly one External Boundary Condition
+<span class="lineNum">      64 </span>            :   associated with it.
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

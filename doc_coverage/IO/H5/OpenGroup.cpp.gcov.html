@@ -1,0 +1,182 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - IO/H5/OpenGroup.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">IO/H5</a> - OpenGroup.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;IO/H5/OpenGroup.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;H5version.h&gt;
+<span class="lineNum">       7 </span>            : #include &lt;algorithm&gt;
+<span class="lineNum">       8 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       9 </span>            : #include &lt;iterator&gt;
+<span class="lineNum">      10 </span>            : #include &lt;regex&gt;
+<span class="lineNum">      11 </span>            : #include &lt;sstream&gt;
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            : #include &quot;ErrorHandling/Error.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;IO/H5/CheckH5.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;IO/H5/Wrappers.hpp&quot;
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span><span class="lineNoCov">          0 : namespace {</span>
+<span class="lineNum">      18 </span>            : std::vector&lt;std::string&gt; split_strings(const std::string&amp; s,
+<span class="lineNum">      19 </span>            :                                        const bool match_multiple = true) {
+<span class="lineNum">      20 </span>            :   std::regex split_delim(match_multiple ? R&quot;([^/]+)&quot; : R&quot;([^/])&quot;);
+<span class="lineNum">      21 </span>            :   auto words_begin = std::sregex_iterator(s.begin(), s.end(), split_delim);
+<span class="lineNum">      22 </span>            :   auto words_end = std::sregex_iterator();
+<span class="lineNum">      23 </span>            :   std::vector&lt;std::string&gt; split;
+<span class="lineNum">      24 </span>            :   split.reserve(static_cast&lt;size_t&gt;(std::distance(words_begin, words_end)));
+<span class="lineNum">      25 </span>            :   for (std::sregex_iterator i = words_begin; i != words_end; ++i) {
+<span class="lineNum">      26 </span>            :     split.emplace_back(i-&gt;str());
+<span class="lineNum">      27 </span>            :   }
+<span class="lineNum">      28 </span>            :   return split;
+<span class="lineNum">      29 </span>            : }
+<span class="lineNum">      30 </span>            : }  // namespace
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span>            : namespace h5 {
+<span class="lineNum">      33 </span>            : namespace detail {
+<span class="lineNum">      34 </span>            : OpenGroup::OpenGroup(hid_t file_id, const std::string&amp; group_name,
+<span class="lineNum">      35 </span>            :                      const h5::AccessType access_type) {
+<span class="lineNum">      36 </span>            :   const std::vector&lt;std::string&gt; path(split_strings(group_name));
+<span class="lineNum">      37 </span>            :   hid_t group_id = file_id;
+<span class="lineNum">      38 </span>            :   group_path_.reserve(path.size());
+<span class="lineNum">      39 </span>            :   for (const auto&amp; current_group : path) {
+<span class="lineNum">      40 </span>            :     if (not current_group.empty()) {
+<span class="lineNum">      41 </span>            :       const auto status = H5Lexists(group_id, current_group.c_str(), 0);
+<span class="lineNum">      42 </span>            :       if (0 &lt; status) {
+<span class="lineNum">      43 </span>            :         group_id = H5Gopen(group_id, current_group.c_str(), h5p_default());
+<span class="lineNum">      44 </span>            :       } else if (0 == status) {
+<span class="lineNum">      45 </span>            :         if (AccessType::ReadOnly == access_type) {
+<span class="lineNum">      46 </span>            :           ERROR(&quot;Cannot create group '&quot; &lt;&lt; current_group.c_str()
+<span class="lineNum">      47 </span>            :                                         &lt;&lt; &quot;' in path: &quot; &lt;&lt; group_name
+<span class="lineNum">      48 </span>            :                                         &lt;&lt; &quot; because the access is ReadOnly&quot;);
+<span class="lineNum">      49 </span>            :         }
+<span class="lineNum">      50 </span>            :         group_id = H5Gcreate(group_id, current_group.c_str(), h5p_default(),
+<span class="lineNum">      51 </span>            :                              h5p_default(), h5p_default());
+<span class="lineNum">      52 </span>            :       } else {
+<span class="lineNum">      53 </span>            :         ERROR(&quot;Failed to open the group '&quot;
+<span class="lineNum">      54 </span>            :               &lt;&lt; current_group
+<span class="lineNum">      55 </span>            :               &lt;&lt; &quot;' because the file_id passed in is invalid, or because the &quot;
+<span class="lineNum">      56 </span>            :                  &quot;group_id inside the OpenGroup constructor got corrupted. It &quot;
+<span class="lineNum">      57 </span>            :                  &quot;is most likely that the file_id is invalid.&quot;);
+<span class="lineNum">      58 </span>            :       }
+<span class="lineNum">      59 </span>            :       CHECK_H5(group_id, &quot;Failed to open group '&quot; &lt;&lt; current_group &lt;&lt; &quot;'&quot;);
+<span class="lineNum">      60 </span>            :       group_path_.push_back(group_id);
+<span class="lineNum">      61 </span>            :     }
+<span class="lineNum">      62 </span>            :   }
+<span class="lineNum">      63 </span>            :   group_id_ = group_id;
+<span class="lineNum">      64 </span>            : }
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span>            : /// \cond HIDDEN_SYMBOLS
+<span class="lineNum">      67 </span>            : OpenGroup::OpenGroup(OpenGroup&amp;&amp; rhs) noexcept {
+<span class="lineNum">      68 </span>            :   group_path_ = std::move(rhs.group_path_);
+<span class="lineNum">      69 </span>            :   // clang-tidy: moving trivial type has no effect: might change in future
+<span class="lineNum">      70 </span>            :   group_id_ = std::move(rhs.group_id_);  // NOLINT
+<span class="lineNum">      71 </span>            : 
+<span class="lineNum">      72 </span>            :   rhs.group_id_ = -1;
+<span class="lineNum">      73 </span>            : }
+<span class="lineNum">      74 </span>            : 
+<span class="lineNum">      75 </span>            : OpenGroup&amp; OpenGroup::operator=(OpenGroup&amp;&amp; rhs) noexcept {
+<span class="lineNum">      76 </span>            :   if (group_id_ != -1) {
+<span class="lineNum">      77 </span>            :     for (auto rit = group_path_.rbegin(); rit != group_path_.rend(); ++rit) {
+<span class="lineNum">      78 </span>            :       H5Gclose(*rit);
+<span class="lineNum">      79 </span>            :     }
+<span class="lineNum">      80 </span>            :   }
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span>            :   group_path_ = std::move(rhs.group_path_);
+<span class="lineNum">      83 </span>            :   // clang-tidy: moving trivial type has no effect: might change in future
+<span class="lineNum">      84 </span>            :   group_id_ = std::move(rhs.group_id_);  // NOLINT
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span>            :   rhs.group_id_ = -1;
+<span class="lineNum">      87 </span>            :   return *this;
+<span class="lineNum">      88 </span>            : }
+<span class="lineNum">      89 </span>            : 
+<span class="lineNum">      90 </span>            : OpenGroup::~OpenGroup() {
+<span class="lineNum">      91 </span>            :   if (group_id_ != -1) {
+<span class="lineNum">      92 </span>            :     for (auto rit = group_path_.rbegin(); rit != group_path_.rend(); ++rit) {
+<span class="lineNum">      93 </span>            :       H5Gclose(*rit);
+<span class="lineNum">      94 </span>            :     }
+<span class="lineNum">      95 </span>            :     // Allows destructor to be run manually in tests without relying on HDF5
+<span class="lineNum">      96 </span>            :     // implementation
+<span class="lineNum">      97 </span>            :     group_id_ = -1;
+<span class="lineNum">      98 </span>            :   }
+<span class="lineNum">      99 </span>            : }
+<span class="lineNum">     100 </span>            : /// \endcond
+<span class="lineNum">     101 </span>            : }  // namespace detail
+<span class="lineNum">     102 </span>            : }  // namespace h5
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

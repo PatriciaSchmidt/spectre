@@ -1,0 +1,427 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - /work/spectre/docs/DevGuide/ImplementingVectors.md</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">work/spectre/docs/DevGuide</a> - ImplementingVectors.md</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : \cond NEVER</span>
+<span class="lineNum">       2 </span>            : Distributed under the MIT License.
+<span class="lineNum">       3 </span>            : See LICENSE.txt for details.
+<span class="lineNum">       4 </span>            : \endcond
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : # Implementing SpECTRE vectors {#implementing_vectors}
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : \tableofcontents
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : # Overview of SpECTRE Vectors {#general_structure}
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : In SpECTRE, sets of contiguous or related data are stored in specializations of
+<span class="lineNum">      13 </span>            : vector data types. The canonical implementation of this is the `DataVector`,
+<span class="lineNum">      14 </span>            : which is used for storage of a contiguous sequence of doubles which support a
+<span class="lineNum">      15 </span>            : wide variety of mathematical operations and represent data on a grid used during
+<span class="lineNum">      16 </span>            : an evolution or elliptic solve. However, we support the ability to easily
+<span class="lineNum">      17 </span>            : generate similar vector types which can hold data of a different type
+<span class="lineNum">      18 </span>            : (e.g. `std::complex&lt;double&gt;`), or support a different set of mathematical
+<span class="lineNum">      19 </span>            : operations. SpECTRE vector classes are derived from the class template
+<span class="lineNum">      20 </span>            : `VectorImpl`. The remainder of this brief guide gives a description of the tools
+<span class="lineNum">      21 </span>            : for defining additional vector types.
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : For reference, all functions described here can also be found in brief in the
+<span class="lineNum">      24 </span>            : Doxygen documentation for VectorImpl.hpp, and a simple reference implementation
+<span class="lineNum">      25 </span>            : can be found in DataVector.hpp and DataVector.cpp.
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span>            : # The class definition {#class_definition}
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            : SpECTRE vector types inherit from vector types implemented in the
+<span class="lineNum">      30 </span>            : high-performance arithmetic library
+<span class="lineNum">      31 </span>            : [Blaze](https://bitbucket.org/blaze-lib/blaze). Using inheritance, SpECTRE
+<span class="lineNum">      32 </span>            : vectors gracefully make use of the math functions defined for the Blaze types,
+<span class="lineNum">      33 </span>            : but can be customized for the specific needs in SpECTRE computations.
+<span class="lineNum">      34 </span>            : 
+<span class="lineNum">      35 </span>            : The pair of template parameters for `VectorImpl` are the type of the stored data
+<span class="lineNum">      36 </span>            : (e.g. `double` for `DataVector`), and the result type for mathematical
+<span class="lineNum">      37 </span>            : operations. The result type is used by Blaze to ensure that only compatible
+<span class="lineNum">      38 </span>            : vector types are used together in mathematical expressions. For example, a
+<span class="lineNum">      39 </span>            : vector representing `double` data on a grid (`DataVector`) cannot be added to a
+<span class="lineNum">      40 </span>            : vector representing spectral coefficients (`ModalVector`). This avoids subtle
+<span class="lineNum">      41 </span>            : bugs that arise when vector types are unintentionally mixed.  In nearly all
+<span class="lineNum">      42 </span>            : cases the result type will be the vector type that is being defined, so, for
+<span class="lineNum">      43 </span>            : instance, `DataVector` is a derived class of `VectorImpl&lt;double,
+<span class="lineNum">      44 </span>            : DataVector&gt;`. This template pattern is known as the
+<span class="lineNum">      45 </span>            : [&quot;Curiously Recurring Template Pattern&quot;]
+<span class="lineNum">      46 </span>            : (https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern) (CRTP).
+<span class="lineNum">      47 </span>            : 
+<span class="lineNum">      48 </span>            : The class template `VectorImpl` defines various constructors, assignment
+<span class="lineNum">      49 </span>            : operators, and iterator generation members. Most of these are inherited from
+<span class="lineNum">      50 </span>            : Blaze types, but in addition, the methods `set_data_ref`, and `pup` are defined
+<span class="lineNum">      51 </span>            : for use in SpECTRE. All except for the assignment operators and constructors
+<span class="lineNum">      52 </span>            : will be implicitly inherited from `VectorImpl`. The assignment and constructors
+<span class="lineNum">      53 </span>            : may be inherited calling the following alias code in the vector class
+<span class="lineNum">      54 </span>            : definition:
+<span class="lineNum">      55 </span>            : 
+<span class="lineNum">      56 </span>            : ```
+<span class="lineNum">      57 </span>            : using VectorImpl&lt;T,VectorType&gt;::operator=;
+<span class="lineNum">      58 </span>            : using VectorImpl&lt;T,VectorType&gt;::VectorImpl;
+<span class="lineNum">      59 </span>            : ```
+<span class="lineNum">      60 </span>            : 
+<span class="lineNum">      61 </span>            : Only the mathematical operations supported on the base Blaze types are supported
+<span class="lineNum">      62 </span>            : by default. Those operations are determined by the storage type `T` and by the
+<span class="lineNum">      63 </span>            : Blaze library. See [blaze-wiki/Vector_Operations]
+<span class="lineNum">      64 </span>            : (https://bitbucket.org/blaze-lib/blaze/wiki/Vector%20Operations).
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span>            : Other math operations may be defined either in the class definition or
+<span class="lineNum">      67 </span>            : outside. For ease in defining some of these math operations, `PointerVector.hpp`
+<span class="lineNum">      68 </span>            : defines the macro `MAKE_EXPRESSION_MATH_ASSIGN(OP, TYPE)`, which can be used to
+<span class="lineNum">      69 </span>            : define math assignment operations such as `+=` provided the underlying operation
+<span class="lineNum">      70 </span>            : (e.g. `+`) is defined on the Blaze type.
+<span class="lineNum">      71 </span>            : 
+<span class="lineNum">      72 </span>            : # Allowed operator specification {#blaze_definitions}
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span>            : Blaze keeps track of the return type of unary and binary operations using &quot;type
+<span class="lineNum">      75 </span>            : trait&quot; structs. These specializations for vector types should be placed in the
+<span class="lineNum">      76 </span>            : header file associated with the `VectorImpl` specialization. For `DataVector`,
+<span class="lineNum">      77 </span>            : the specializations are defined in `DataStructures/DataVector.hpp`. The presence
+<span class="lineNum">      78 </span>            : or absence of template specializations of these structs also determines the set
+<span class="lineNum">      79 </span>            : of allowed operations between the vector type and other types. For example, if
+<span class="lineNum">      80 </span>            : adding a `double` to a `DataVector` should be allowed and the result should be
+<span class="lineNum">      81 </span>            : treated as a `DataVector` for subsequent operations, then the struct
+<span class="lineNum">      82 </span>            : `blaze::AddTrait&lt;DataVector, double&gt;` needs to be defined as follows:
+<span class="lineNum">      83 </span>            : 
+<span class="lineNum">      84 </span>            : ```
+<span class="lineNum">      85 </span>            : namespace blaze {
+<span class="lineNum">      86 </span>            : // the `template &lt;&gt;` head tells the compiler that
+<span class="lineNum">      87 </span>            : // `AddTrait&lt;DataVector, double&gt;` is a class template specialization
+<span class="lineNum">      88 </span>            : template &lt;&gt;
+<span class="lineNum">      89 </span>            : struct AddTrait&lt;DataVector, double&gt; {
+<span class="lineNum">      90 </span>            :     // the `Type` alias tells blaze that the result should be treated like a
+<span class="lineNum">      91 </span>            :     // `DataVector` for any further operations
+<span class="lineNum">      92 </span>            :     using Type = DataVector;
+<span class="lineNum">      93 </span>            : };
+<span class="lineNum">      94 </span>            : }  // namespace blaze
+<span class="lineNum">      95 </span>            : ```
+<span class="lineNum">      96 </span>            : 
+<span class="lineNum">      97 </span>            : Note that this only adds support for `DataVector + double`, not `double +
+<span class="lineNum">      98 </span>            : DataVector`. To get the latter the following AddTrait specialization must be
+<span class="lineNum">      99 </span>            : defined
+<span class="lineNum">     100 </span>            : 
+<span class="lineNum">     101 </span>            : ```
+<span class="lineNum">     102 </span>            : namespace blaze {
+<span class="lineNum">     103 </span>            : // the `template &lt;&gt;` head tells the compiler that
+<span class="lineNum">     104 </span>            : // `AddTrait&lt;double, DataVector&gt;` is a class template specialization
+<span class="lineNum">     105 </span>            : template &lt;&gt;
+<span class="lineNum">     106 </span>            : struct AddTrait&lt;double, DataVector&gt; {
+<span class="lineNum">     107 </span>            :     // the `Type` alias tells blaze that the result should be treated like a
+<span class="lineNum">     108 </span>            :     // `DataVector` for any further operations
+<span class="lineNum">     109 </span>            :     using Type = DataVector;
+<span class="lineNum">     110 </span>            : };
+<span class="lineNum">     111 </span>            : }  // namespace blaze
+<span class="lineNum">     112 </span>            : ```
+<span class="lineNum">     113 </span>            : 
+<span class="lineNum">     114 </span>            : Four helper macros are defined to assist with generating the many
+<span class="lineNum">     115 </span>            : specializations that binary operations may require. Both of these macros must be
+<span class="lineNum">     116 </span>            : put inside the blaze namespace for them to work correctly.
+<span class="lineNum">     117 </span>            : 
+<span class="lineNum">     118 </span>            : The first of these helper macros is
+<span class="lineNum">     119 </span>            : `BLAZE_TRAIT_SPECIALIZE_BINARY_TRAIT(VECTOR_TYPE, BLAZE_MATH_TRAIT)`, which will
+<span class="lineNum">     120 </span>            : define all of the pairwise operations (`BLAZE_MATH_TRAIT`) for the vector type
+<span class="lineNum">     121 </span>            : (`VECTOR_TYPE`) with itself and for the vector type with its `value_type`. This
+<span class="lineNum">     122 </span>            : reduces the three specializations similar to the above code blocks to a single
+<span class="lineNum">     123 </span>            : line call,
+<span class="lineNum">     124 </span>            : 
+<span class="lineNum">     125 </span>            : ```
+<span class="lineNum">     126 </span>            : namespace blaze {
+<span class="lineNum">     127 </span>            : BLAZE_TRAIT_SPECIALIZE_BINARY_TRAIT(DataVector, AddTrait)
+<span class="lineNum">     128 </span>            : }  // namespace blaze
+<span class="lineNum">     129 </span>            : ```
+<span class="lineNum">     130 </span>            : 
+<span class="lineNum">     131 </span>            : The second helper macro is provided to easily define all of the arithmetic
+<span class="lineNum">     132 </span>            : operations that will typically be supported for a vector type with its value
+<span class="lineNum">     133 </span>            : type. The macro is
+<span class="lineNum">     134 </span>            : `VECTOR_BLAZE_TRAIT_SPECIALIZE_ARITHMETIC_TRAITS(VECTOR_TYPE)`, and defines all
+<span class="lineNum">     135 </span>            : of:
+<span class="lineNum">     136 </span>            : - `IsVector&lt;VECTOR_TYPE&gt;` to `std::true_type`
+<span class="lineNum">     137 </span>            : - `TransposeFlag&lt;VECTOR_TYPE&gt;`, which informs Blaze of the interpretation of the
+<span class="lineNum">     138 </span>            :   data as a &quot;column&quot; or &quot;row&quot; vector
+<span class="lineNum">     139 </span>            : - `AddTrait` for the `VECTOR_TYPE` and its value type (3 Blaze struct
+<span class="lineNum">     140 </span>            :   specializations)
+<span class="lineNum">     141 </span>            : - `SubTrait` for the `VECTOR_TYPE` and its value type (3 Blaze struct
+<span class="lineNum">     142 </span>            :   specializations)
+<span class="lineNum">     143 </span>            : - `MultTrait` for the `VECTOR_TYPE` and its value type (3 Blaze struct
+<span class="lineNum">     144 </span>            :   specializations)
+<span class="lineNum">     145 </span>            : - `DivTrait` for the `VECTOR_TYPE` and its value type (3 Blaze struct
+<span class="lineNum">     146 </span>            :   specializations)
+<span class="lineNum">     147 </span>            : 
+<span class="lineNum">     148 </span>            : This macro is similarly intended to be used in the `blaze` namespace and can
+<span class="lineNum">     149 </span>            : substantially simplify these specializations for new vector types. For instance,
+<span class="lineNum">     150 </span>            : the call for `DataVector` is:
+<span class="lineNum">     151 </span>            : 
+<span class="lineNum">     152 </span>            : ```
+<span class="lineNum">     153 </span>            : namespace blaze {
+<span class="lineNum">     154 </span>            : VECTOR_BLAZE_TRAIT_SPECIALIZE_ARITHMETIC_TRAITS(DataVector)
+<span class="lineNum">     155 </span>            : }  // namespace blaze
+<span class="lineNum">     156 </span>            : ```
+<span class="lineNum">     157 </span>            : 
+<span class="lineNum">     158 </span>            : The third helper macro is provided to define a combination of Blaze traits for
+<span class="lineNum">     159 </span>            : symmetric operations of a vector type with a second type (which may or may not
+<span class="lineNum">     160 </span>            : be a vector type). The macro is
+<span class="lineNum">     161 </span>            : `BLAZE_TRAIT_SPECIALIZE_COMPATIBLE_BINARY_TRAIT(VECTOR, COMPATIBLE, TRAIT)`, and
+<span class="lineNum">     162 </span>            : defines the appropriate trait for the two combinations `&lt;VECTOR, COMPATIBLE&gt;`
+<span class="lineNum">     163 </span>            : and `&lt;COMPATIBLE, VECTOR&gt;`, and defines the result type to be `VECTOR`. For
+<span class="lineNum">     164 </span>            : instance, to support the multiplication of a `ComplexDataVector` with a
+<span class="lineNum">     165 </span>            : `DataVector` and have the result be a `ComplexDataVector`, the following macro
+<span class="lineNum">     166 </span>            : call should be included in the `blaze` namespace:
+<span class="lineNum">     167 </span>            : 
+<span class="lineNum">     168 </span>            : ```
+<span class="lineNum">     169 </span>            : namespace blaze {
+<span class="lineNum">     170 </span>            : BLAZE_TRAIT_SPECIALIZE_COMPATIBLE_BINARY_TRAIT(ComplexDataVector, DataVector,
+<span class="lineNum">     171 </span>            :                                                MultTrait);
+<span class="lineNum">     172 </span>            : }  // namespace blaze
+<span class="lineNum">     173 </span>            : ```
+<span class="lineNum">     174 </span>            : 
+<span class="lineNum">     175 </span>            : Finally, the fourth helper macro is provided to define all of the blaze traits
+<span class="lineNum">     176 </span>            : which are considered either unary or binary maps. This comprises most named
+<span class="lineNum">     177 </span>            : unary functions (like `sin()` or `sqrt()`) and named binary functions (like
+<span class="lineNum">     178 </span>            : `hypot()` and `atan2()`). The macro
+<span class="lineNum">     179 </span>            : `VECTOR_BLAZE_TRAIT_SPECIALIZE_ALL_MAP_TRAITS(VECTOR_TYPE)` broadly specializes
+<span class="lineNum">     180 </span>            : all blaze-defined maps in which the given `VECTOR_TYPE` as the sole argument
+<span class="lineNum">     181 </span>            : (for unary maps) or both arguments (for binary maps). This macro is also
+<span class="lineNum">     182 </span>            : intended to be used in the blaze namespace. The call for `DataVector` is:
+<span class="lineNum">     183 </span>            : 
+<span class="lineNum">     184 </span>            : ```
+<span class="lineNum">     185 </span>            : namespace blaze {
+<span class="lineNum">     186 </span>            : VECTOR_BLAZE_TRAIT_SPECIALIZE_ALL_MAP_TRAITS(DataVector)
+<span class="lineNum">     187 </span>            : }  // namespace blaze
+<span class="lineNum">     188 </span>            : ```
+<span class="lineNum">     189 </span>            : 
+<span class="lineNum">     190 </span>            : # Supporting operations for `std::array`s of vectors {#array_vector_definitions}
+<span class="lineNum">     191 </span>            : 
+<span class="lineNum">     192 </span>            : In addition to operations between SpECTRE vectors, it is useful to gracefully
+<span class="lineNum">     193 </span>            : handle operations between `std::arrays` of vectors element-wise. There are
+<span class="lineNum">     194 </span>            : general macros defined for handling operations between array specializations:
+<span class="lineNum">     195 </span>            : `DEFINE_STD_ARRAY_BINOP` and `DEFINE_STD_ARRAY_INPLACE_BINOP` from
+<span class="lineNum">     196 </span>            : `Utilities/StdArrayHelpers.hpp`.
+<span class="lineNum">     197 </span>            : 
+<span class="lineNum">     198 </span>            : In addition, there is a macro for rapidly generating addition and subtraction
+<span class="lineNum">     199 </span>            : between arrays of vectors and arrays of their data types. The macro
+<span class="lineNum">     200 </span>            : `MAKE_STD_ARRAY_VECTOR_BINOPS(VECTOR_TYPE)` will define:
+<span class="lineNum">     201 </span>            : - the element-wise `+` and `-` with `std::array&lt;VECTOR_TYPE, N&gt;` and
+<span class="lineNum">     202 </span>            :   `std::array&lt;VECTOR_TYPE, N&gt;`
+<span class="lineNum">     203 </span>            : - the element-wise `+` and `-` of either ordering of
+<span class="lineNum">     204 </span>            :   `std::array&lt;VECTOR_TYPE, N&gt;` with `std::array&lt;VECTOR_TYPE::value_type, N&gt;`
+<span class="lineNum">     205 </span>            : - the `+=` and `-=` of `std::array&lt;VECTOR_TYPE, N&gt;` with a
+<span class="lineNum">     206 </span>            :   `std::array&lt;VECTOR_TYPE, N&gt;`
+<span class="lineNum">     207 </span>            : - the `+=` and `-=` of `std::array&lt;VECTOR_TYPE, N&gt;` with a
+<span class="lineNum">     208 </span>            :   `std::array&lt;VECTOR_TYPE::value_type, N&gt;`.
+<span class="lineNum">     209 </span>            : 
+<span class="lineNum">     210 </span>            : # Equivalence operators {#Vector_type_equivalence}
+<span class="lineNum">     211 </span>            : 
+<span class="lineNum">     212 </span>            : Equivalence operators are supported by the Blaze type inheritance. The
+<span class="lineNum">     213 </span>            : equivalence operator `==` evaluates to true on a pair of vectors if they are the
+<span class="lineNum">     214 </span>            : same size and contain the same values, regardless of ownership.
+<span class="lineNum">     215 </span>            : 
+<span class="lineNum">     216 </span>            : # MakeWithValueImpl {#Vector_MakeWithValueImpl}
+<span class="lineNum">     217 </span>            : 
+<span class="lineNum">     218 </span>            : SpECTRE offers the convenience function `make_with_value` for various types. The
+<span class="lineNum">     219 </span>            : typical behavior for a SpECTRE vector type is to create a new vector type of the
+<span class="lineNum">     220 </span>            : same type and length initialized with the value provided as the second argument
+<span class="lineNum">     221 </span>            : in all entries. This behavior may be created by placing the macro
+<span class="lineNum">     222 </span>            : `MAKE_WITH_VALUE_IMPL_DEFINITION_FOR(VECTOR_TYPE)` in the .hpp file. Any other
+<span class="lineNum">     223 </span>            : specializations of `MakeWithValueImpl` will need to be written manually.
+<span class="lineNum">     224 </span>            : 
+<span class="lineNum">     225 </span>            : # Interoperability with other data types {#Vector_tensor_and_variables}
+<span class="lineNum">     226 </span>            : 
+<span class="lineNum">     227 </span>            : When additional vector types are added, small changes are necessary if they are
+<span class="lineNum">     228 </span>            : to be used as the base container type either for `Tensor`s or for `Variables` (a
+<span class="lineNum">     229 </span>            : `Variables` contains `Tensor`s), which contain some vector type.
+<span class="lineNum">     230 </span>            : 
+<span class="lineNum">     231 </span>            : In `Tensor.hpp`, there is a `static_assert` which white-lists the possible types
+<span class="lineNum">     232 </span>            : that can be used as the storage type in `Tensor`s. Any new vectors must be added
+<span class="lineNum">     233 </span>            : to that white-list if they are to be used within `Tensor`s.
+<span class="lineNum">     234 </span>            : 
+<span class="lineNum">     235 </span>            : `Variables` is templated on the storage type of the stored `Tensor`s. However,
+<span class="lineNum">     236 </span>            : any new data type should be appropriately tested. New vector types should be
+<span class="lineNum">     237 </span>            : tested by invoking new versions of existing testing functions templated on the
+<span class="lineNum">     238 </span>            : new vector type, rather than `DataVector`.
+<span class="lineNum">     239 </span>            : 
+<span class="lineNum">     240 </span>            : # Writing tests {#Vector_tests}
+<span class="lineNum">     241 </span>            : 
+<span class="lineNum">     242 </span>            : In addition to the utilities for generating new vector types, there are a number
+<span class="lineNum">     243 </span>            : of convenience functions and utilities for easily generating the tests necessary
+<span class="lineNum">     244 </span>            : to verify that the vectors function appropriately. These utilities are in
+<span class="lineNum">     245 </span>            : `VectorImplTestHelper.hpp`, and documented individually in the
+<span class="lineNum">     246 </span>            : TestingFrameworkGroup. Presented here are the salient details for rapidly
+<span class="lineNum">     247 </span>            : assembling basic tests for vectors.
+<span class="lineNum">     248 </span>            : 
+<span class="lineNum">     249 </span>            : ## Utility check functions
+<span class="lineNum">     250 </span>            : Each of these functions is intended to encapsulate a single frequently used unit
+<span class="lineNum">     251 </span>            : test and is templated (in order) on the vector type and the value type to be
+<span class="lineNum">     252 </span>            : generated. The default behavior is to uniformly sample values between -100 and
+<span class="lineNum">     253 </span>            : 100, but alternative bounds may be passed in via the function arguments.
+<span class="lineNum">     254 </span>            : 
+<span class="lineNum">     255 </span>            : ### `TestHelpers::VectorImpl::vector_test_construct_and_assign()`
+<span class="lineNum">     256 </span>            :  This function tests a battery of construction and assignment operators for the
+<span class="lineNum">     257 </span>            :  vector type.
+<span class="lineNum">     258 </span>            : 
+<span class="lineNum">     259 </span>            : ### `TestHelpers::VectorImpl::vector_test_serialize()`
+<span class="lineNum">     260 </span>            : This function tests that vector types can be serialized and deserialized,
+<span class="lineNum">     261 </span>            : retaining their data.
+<span class="lineNum">     262 </span>            : 
+<span class="lineNum">     263 </span>            : ### `TestHelpers::VectorImpl::vector_test_ref()`
+<span class="lineNum">     264 </span>            : This function tests the `set_data_ref` method of sharing data between vectors,
+<span class="lineNum">     265 </span>            : and that the appropriate owning flags and move operations are handled correctly.
+<span class="lineNum">     266 </span>            : 
+<span class="lineNum">     267 </span>            : ### `TestHelpers::VectorImpl::vector_test_math_after_move()`
+<span class="lineNum">     268 </span>            : Tests several combinations of math operations and ownership before and after use
+<span class="lineNum">     269 </span>            : of `std::move`.
+<span class="lineNum">     270 </span>            : 
+<span class="lineNum">     271 </span>            : ### `TestHelpers::VectorImpl::vector_ref_test_size_error()`
+<span class="lineNum">     272 </span>            : This function intentionally generates an error when assigning values from one
+<span class="lineNum">     273 </span>            : vector to a differently sized, non-owning vector (made non-owning by use of
+<span class="lineNum">     274 </span>            : `set_data_ref`). The assertion test which calls this function should search for
+<span class="lineNum">     275 </span>            : the string &quot;Must copy into same size&quot;. Three forms of the test are provided,
+<span class="lineNum">     276 </span>            : which are switched between using a value from the enum `RefSizeErrorTestKind` in
+<span class="lineNum">     277 </span>            : the first function argument:
+<span class="lineNum">     278 </span>            : - `RefSizeErrorTestKind::Copy`: tests that the size error is appropriately
+<span class="lineNum">     279 </span>            :   generated when copying to a non-owning vector of the wrong size.
+<span class="lineNum">     280 </span>            : - `RefSizeErrorTestKind::ExpressionAssign`: tests that the size error is
+<span class="lineNum">     281 </span>            :   appropriately generated when assigning the result of a mathematical expression
+<span class="lineNum">     282 </span>            :   to a non-owning vector of the wrong size.
+<span class="lineNum">     283 </span>            : - `RefSizeErrorTestKind::Move`: tests that the size error is appropriately
+<span class="lineNum">     284 </span>            :   generated when a vector is `std::move`d into a non-owning vector of the wrong
+<span class="lineNum">     285 </span>            :   size
+<span class="lineNum">     286 </span>            : 
+<span class="lineNum">     287 </span>            : ## `TestHelpers::VectorImpl::test_functions_with_vector_arguments()`
+<span class="lineNum">     288 </span>            : 
+<span class="lineNum">     289 </span>            : This is a general function for testing the mathematical operation of vector
+<span class="lineNum">     290 </span>            : types with other vector types and/or their base types, with or without various
+<span class="lineNum">     291 </span>            : reference wrappers. This may be used to efficiently test the full set of
+<span class="lineNum">     292 </span>            : permitted math operations on a vector. See the documentation of
+<span class="lineNum">     293 </span>            : `test_functions_with_vector_arguments()` for full usage details.
+<span class="lineNum">     294 </span>            : 
+<span class="lineNum">     295 </span>            : An example simple use case for the math test utility:
+<span class="lineNum">     296 </span>            : \snippet Test_DataVector.cpp test_functions_with_vector_arguments_example
+<span class="lineNum">     297 </span>            : 
+<span class="lineNum">     298 </span>            : More use cases of this functionality can be found in `Test_DataVector.cpp`.
+<span class="lineNum">     299 </span>            : 
+<span class="lineNum">     300 </span>            : # Vector storage nuts and bolts {#Vector_storage}
+<span class="lineNum">     301 </span>            : 
+<span class="lineNum">     302 </span>            : Internally, all vector classes inherit from the templated `VectorImpl`, which
+<span class="lineNum">     303 </span>            : inherits from `PointerVector`, which inherits from a `blaze::DenseVector`. Most
+<span class="lineNum">     304 </span>            : of the mathematical operations are supported through the Blaze inheritance,
+<span class="lineNum">     305 </span>            : which ensures that the math operations execute the optimized forms in Blaze.
+<span class="lineNum">     306 </span>            : 
+<span class="lineNum">     307 </span>            : SpECTRE vectors can be either &quot;owning&quot; or &quot;non-owning&quot;. If a vector is owning,
+<span class="lineNum">     308 </span>            : it allocates and controls the data it has access to, and is responsible for
+<span class="lineNum">     309 </span>            : eventually freeing that data when the vector goes out of scope. If the vector is
+<span class="lineNum">     310 </span>            : non-owning, it acts as a (possibly complete) &quot;view&quot; of otherwise allocated
+<span class="lineNum">     311 </span>            : memory. Non-owning vectors do not manage memory, nor can they change size. The
+<span class="lineNum">     312 </span>            : two cases of data ownership cause the underlying data to be handled fairly
+<span class="lineNum">     313 </span>            : differently, so we will discuss each in turn.
+<span class="lineNum">     314 </span>            : 
+<span class="lineNum">     315 </span>            : In both cases of ownership, the base `PointerVector` contains a pointer to the
+<span class="lineNum">     316 </span>            : allocated contiguous block of memory via a raw pointer `v_` (accessible via
+<span class="lineNum">     317 </span>            : `PointerVector.data()` and the extent of that memory `size_` (accessible via
+<span class="lineNum">     318 </span>            : `PointerVector.size()`). The raw pointer in `PointerVector` then gives access to
+<span class="lineNum">     319 </span>            : the memory block to the base Blaze types, which perform the work of the actual
+<span class="lineNum">     320 </span>            : math operations. `PointerVector` is closely patterned off of Blaze internal
+<span class="lineNum">     321 </span>            : functionality (`CustomVector`), and we stress that direct alteration of
+<span class="lineNum">     322 </span>            : `PointerVector` should be avoided unless completely necessary. The discussion in
+<span class="lineNum">     323 </span>            : this section is intended to provide a better understanding of how the interface
+<span class="lineNum">     324 </span>            : is used for the SpECTRE vector types so that future customization of derived
+<span class="lineNum">     325 </span>            : classes of `VectorImpl` is as easy as possible.
+<span class="lineNum">     326 </span>            : 
+<span class="lineNum">     327 </span>            : When a SpECTRE vector is constructed as owning, or becomes owning, it allocates
+<span class="lineNum">     328 </span>            : its own block of memory of appropriate size, and stores a pointer to that memory
+<span class="lineNum">     329 </span>            : in a `std::unique_ptr` named `owned_data_`. The `std::unique_ptr` ensures that
+<span class="lineNum">     330 </span>            : the SpECTRE vector needs to perform no further direct memory management, and
+<span class="lineNum">     331 </span>            : that the memory will be appropriately managed whenever the `std::unique_ptr
+<span class="lineNum">     332 </span>            : owned_data_` member is deleted or moved. The base `PointerVector` must also be
+<span class="lineNum">     333 </span>            : told about the pointer, which is always accomplished by calling the protected
+<span class="lineNum">     334 </span>            : function `VectorImpl.reset_pointer_vector(const size_t set_size)`, which sets
+<span class="lineNum">     335 </span>            : the `PointerVector` internal pointer to the pointer obtained by
+<span class="lineNum">     336 </span>            : `std::unique_pointer.get()`.
+<span class="lineNum">     337 </span>            : 
+<span class="lineNum">     338 </span>            : When a SpECTRE vector is constructed as non-owning by the `VectorImpl(ValueType*
+<span class="lineNum">     339 </span>            : start, size_t set_size)` constructor, or becomes non-owning by the
+<span class="lineNum">     340 </span>            : `set_data_ref` function, the internal `std::unique_ptr` named `owned_data_` no
+<span class="lineNum">     341 </span>            : longer points to the data represented by the vector and can be thought of as
+<span class="lineNum">     342 </span>            : &quot;inactive&quot; for the purposes of computation and memory management. This behavior
+<span class="lineNum">     343 </span>            : is desirable, because otherwise the `std::unique_ptr` would attempt to free
+<span class="lineNum">     344 </span>            : memory that is presumed to be also used elsewhere, causing difficult to diagnose
+<span class="lineNum">     345 </span>            : memory errors. The non-owning SpECTRE vector updates the base `PointerVector`
+<span class="lineNum">     346 </span>            : pointer directly by calling `PointerVector.reset` from the derived class (on
+<span class="lineNum">     347 </span>            : itself).
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - ControlSystem/TimescaleTuner.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">ControlSystem</a> - TimescaleTuner.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;ControlSystem/TimescaleTuner.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;algorithm&gt;
+<span class="lineNum">       7 </span>            : #include &lt;cmath&gt;
+<span class="lineNum">       8 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       9 </span>            : #include &lt;functional&gt;
+<span class="lineNum">      10 </span>            : #include &lt;ostream&gt;
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : #include &quot;ErrorHandling/Assert.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;ErrorHandling/Error.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;Utilities/ConstantExpressions.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            : TimescaleTuner::TimescaleTuner(DataVector initial_timescale,
+<span class="lineNum">      18 </span>            :                                const double max_timescale,
+<span class="lineNum">      19 </span>            :                                const double min_timescale,
+<span class="lineNum">      20 </span>            :                                const double decrease_timescale_threshold,
+<span class="lineNum">      21 </span>            :                                const double increase_timescale_threshold,
+<span class="lineNum">      22 </span>            :                                const double increase_factor,
+<span class="lineNum">      23 </span>            :                                const double decrease_factor) noexcept
+<span class="lineNum">      24 </span>            :     : timescale_{std::move(initial_timescale)},
+<span class="lineNum">      25 </span>            :       max_timescale_{max_timescale},
+<span class="lineNum">      26 </span>            :       min_timescale_{min_timescale},
+<span class="lineNum">      27 </span>            :       decrease_timescale_threshold_{decrease_timescale_threshold},
+<span class="lineNum">      28 </span>            :       increase_timescale_threshold_{increase_timescale_threshold},
+<span class="lineNum">      29 </span>            :       increase_factor_{increase_factor},
+<span class="lineNum">      30 </span>            :       decrease_factor_{decrease_factor} {
+<span class="lineNum">      31 </span>            :   for (const auto&amp; t_scale : timescale_) {
+<span class="lineNum">      32 </span>            :     if (t_scale &lt;= 0.0) {
+<span class="lineNum">      33 </span>            :       ERROR(&quot;Initial timescale must be &gt; 0&quot;);
+<span class="lineNum">      34 </span>            :     }
+<span class="lineNum">      35 </span>            :   }
+<span class="lineNum">      36 </span>            : 
+<span class="lineNum">      37 </span>            :   if (decrease_factor_ &gt; 1.0 or decrease_factor &lt;= 0.0) {
+<span class="lineNum">      38 </span>            :     ERROR(&quot;The specified decrease_factor &quot;
+<span class="lineNum">      39 </span>            :           &lt;&lt; decrease_factor_ &lt;&lt; &quot; must satisfy 0 &lt; decrease_factor &lt;= 1&quot;);
+<span class="lineNum">      40 </span>            :   }
+<span class="lineNum">      41 </span>            :   if (increase_factor_ &lt; 1.0) {
+<span class="lineNum">      42 </span>            :     ERROR(&quot;The specified increase factor &quot; &lt;&lt; increase_factor_
+<span class="lineNum">      43 </span>            :                                            &lt;&lt; &quot; must be &gt;= 1.0&quot;);
+<span class="lineNum">      44 </span>            :   }
+<span class="lineNum">      45 </span>            :   if (min_timescale_ &lt;= 0.0) {
+<span class="lineNum">      46 </span>            :     ERROR(&quot;The specified minimum timescale &quot; &lt;&lt; min_timescale_
+<span class="lineNum">      47 </span>            :                                              &lt;&lt; &quot; must be &gt; 0&quot;);
+<span class="lineNum">      48 </span>            :   }
+<span class="lineNum">      49 </span>            :   if (max_timescale_ &lt;= min_timescale_) {
+<span class="lineNum">      50 </span>            :     ERROR(&quot;The maximum timescale &quot;
+<span class="lineNum">      51 </span>            :           &lt;&lt; max_timescale_
+<span class="lineNum">      52 </span>            :           &lt;&lt; &quot; must be &gt; than the specified minimum timescale &quot;
+<span class="lineNum">      53 </span>            :           &lt;&lt; min_timescale_);
+<span class="lineNum">      54 </span>            :   }
+<span class="lineNum">      55 </span>            :   if (increase_timescale_threshold_ &lt;= 0.0) {
+<span class="lineNum">      56 </span>            :     ERROR(&quot;The specified increase-timescale threshold &quot;
+<span class="lineNum">      57 </span>            :           &lt;&lt; increase_timescale_threshold_ &lt;&lt; &quot; must be &gt; 0&quot;);
+<span class="lineNum">      58 </span>            :   }
+<span class="lineNum">      59 </span>            :   if (decrease_timescale_threshold_ &lt;= increase_timescale_threshold_) {
+<span class="lineNum">      60 </span>            :     ERROR(&quot;The decrease-timescale threshold &quot;
+<span class="lineNum">      61 </span>            :           &lt;&lt; decrease_timescale_threshold_
+<span class="lineNum">      62 </span>            :           &lt;&lt; &quot; must be &gt; than the specified increase-timescale threshold &quot;
+<span class="lineNum">      63 </span>            :           &lt;&lt; increase_timescale_threshold_);
+<span class="lineNum">      64 </span>            :   }
+<span class="lineNum">      65 </span>            : }
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span>            : void TimescaleTuner::set_timescale_if_in_allowable_range(
+<span class="lineNum">      68 </span>            :     const double suggested_timescale) noexcept {
+<span class="lineNum">      69 </span>            :   for (auto&amp; t_scale : timescale_) {
+<span class="lineNum">      70 </span>            :     t_scale = cpp17::clamp(suggested_timescale, min_timescale_, max_timescale_);
+<span class="lineNum">      71 </span>            :   }
+<span class="lineNum">      72 </span>            : }
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span>            : void TimescaleTuner::update_timescale(
+<span class="lineNum">      75 </span>            :     const std::array&lt;DataVector, 2&gt;&amp; q_and_dtq) noexcept {
+<span class="lineNum">      76 </span>            :   ASSERT(q_and_dtq[0].size() == timescale_.size() and
+<span class="lineNum">      77 </span>            :              q_and_dtq[1].size() == timescale_.size(),
+<span class="lineNum">      78 </span>            :          &quot;One or both of the number of components in q_and_dtq(&quot;
+<span class="lineNum">      79 </span>            :              &lt;&lt; q_and_dtq[0].size() &lt;&lt; &quot;,&quot; &lt;&lt; q_and_dtq[1].size()
+<span class="lineNum">      80 </span>            :              &lt;&lt; &quot;) is inconsistent with the number of timescales(&quot;
+<span class="lineNum">      81 </span>            :              &lt;&lt; timescale_.size() &lt;&lt; &quot;)&quot;);
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span>            :   const DataVector&amp; q = gsl::at(q_and_dtq, 0);
+<span class="lineNum">      84 </span>            :   const DataVector&amp; dtq = gsl::at(q_and_dtq, 1);
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span>            :   for (size_t i = 0; i &lt; q.size(); i++) {
+<span class="lineNum">      87 </span>            :     // check whether we need to decrease the timescale:
+<span class="lineNum">      88 </span>            :     if ((fabs(q[i]) &gt; decrease_timescale_threshold_ or
+<span class="lineNum">      89 </span>            :          fabs(dtq[i] * timescale_[i]) &gt; decrease_timescale_threshold_) and
+<span class="lineNum">      90 </span>            :         (dtq[i] * q[i] &gt; 0.0 or
+<span class="lineNum">      91 </span>            :          fabs(dtq[i]) * timescale_[i] &lt; 0.5 * fabs(q[i]))) {
+<span class="lineNum">      92 </span>            :       // the first check is if Q `or` dtQ are above the maximum tolerance.
+<span class="lineNum">      93 </span>            :       // the second condition of the `and` is
+<span class="lineNum">      94 </span>            :       // that Q and dtQ are the same sign (the error is growing)
+<span class="lineNum">      95 </span>            :       // `or` that Q is not expected to drop to half of its current value in
+<span class="lineNum">      96 </span>            :       // one timescale (not decreasing fast enough)
+<span class="lineNum">      97 </span>            :       timescale_[i] *= decrease_factor_;
+<span class="lineNum">      98 </span>            :     }
+<span class="lineNum">      99 </span>            :     // check whether we need to increase the timescale:
+<span class="lineNum">     100 </span>            :     else if (fabs(q[i]) &lt; increase_timescale_threshold_ and
+<span class="lineNum">     101 </span>            :              fabs(dtq[i] * timescale_[i]) &lt;
+<span class="lineNum">     102 </span>            :                  (increase_timescale_threshold_ - fabs(q[i]))) {
+<span class="lineNum">     103 </span>            :       // if Q `and` dtQ are below the minimum required threshold
+<span class="lineNum">     104 </span>            :       timescale_[i] *= increase_factor_;
+<span class="lineNum">     105 </span>            :     }
+<span class="lineNum">     106 </span>            : 
+<span class="lineNum">     107 </span>            :     // make sure the timescale has not increased(decreased) above(below) the
+<span class="lineNum">     108 </span>            :     // maximum(minimum) value.
+<span class="lineNum">     109 </span>            :     timescale_[i] = cpp17::clamp(timescale_[i], min_timescale_, max_timescale_);
+<span class="lineNum">     110 </span>            :   }
+<span class="lineNum">     111 </span>            : }
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

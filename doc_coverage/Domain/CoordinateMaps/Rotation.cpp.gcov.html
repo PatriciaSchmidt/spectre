@@ -1,0 +1,309 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Domain/CoordinateMaps/Rotation.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">Domain/CoordinateMaps</a> - Rotation.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;Domain/CoordinateMaps/Rotation.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;cmath&gt;
+<span class="lineNum">       7 </span>            : #include &lt;pup.h&gt;
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : #include &quot;Utilities/DereferenceWrapper.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;Utilities/GenerateInstantiations.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;Utilities/MakeWithValue.hpp&quot;
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            : namespace domain {
+<span class="lineNum">      14 </span>            : namespace CoordinateMaps {
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : Rotation&lt;2&gt;::Rotation(const double rotation_angle)
+<span class="lineNum">      17 </span>            :     : rotation_angle_(rotation_angle),
+<span class="lineNum">      18 </span>            :       rotation_matrix_(std::numeric_limits&lt;double&gt;::signaling_NaN()),
+<span class="lineNum">      19 </span>            :       is_identity_(rotation_angle_ == 0.0) {
+<span class="lineNum">      20 </span>            :   const double cos_alpha = cos(rotation_angle_);
+<span class="lineNum">      21 </span>            :   const double sin_alpha = sin(rotation_angle_);
+<span class="lineNum">      22 </span>            :   get&lt;0, 0&gt;(rotation_matrix_) = cos_alpha;
+<span class="lineNum">      23 </span>            :   get&lt;0, 1&gt;(rotation_matrix_) = -sin_alpha;
+<span class="lineNum">      24 </span>            :   get&lt;1, 0&gt;(rotation_matrix_) = sin_alpha;
+<span class="lineNum">      25 </span>            :   get&lt;1, 1&gt;(rotation_matrix_) = cos_alpha;
+<span class="lineNum">      26 </span>            : }
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      29 </span>            : std::array&lt;tt::remove_cvref_wrap_t&lt;T&gt;, 2&gt; Rotation&lt;2&gt;::operator()(
+<span class="lineNum">      30 </span>            :     const std::array&lt;T, 2&gt;&amp; source_coords) const noexcept {
+<span class="lineNum">      31 </span>            :   return {{source_coords[0] * get&lt;0, 0&gt;(rotation_matrix_) +
+<span class="lineNum">      32 </span>            :                source_coords[1] * get&lt;0, 1&gt;(rotation_matrix_),
+<span class="lineNum">      33 </span>            :            source_coords[0] * get&lt;1, 0&gt;(rotation_matrix_) +
+<span class="lineNum">      34 </span>            :                source_coords[1] * get&lt;1, 1&gt;(rotation_matrix_)}};
+<span class="lineNum">      35 </span>            : }
+<span class="lineNum">      36 </span>            : 
+<span class="lineNum">      37 </span>            : boost::optional&lt;std::array&lt;double, 2&gt;&gt; Rotation&lt;2&gt;::inverse(
+<span class="lineNum">      38 </span>            :     const std::array&lt;double, 2&gt;&amp; target_coords) const noexcept {
+<span class="lineNum">      39 </span>            :   return {{{target_coords[0] * get&lt;0, 0&gt;(rotation_matrix_) +
+<span class="lineNum">      40 </span>            :                 target_coords[1] * get&lt;1, 0&gt;(rotation_matrix_),
+<span class="lineNum">      41 </span>            :             target_coords[0] * get&lt;0, 1&gt;(rotation_matrix_) +
+<span class="lineNum">      42 </span>            :                 target_coords[1] * get&lt;1, 1&gt;(rotation_matrix_)}}};
+<span class="lineNum">      43 </span>            : }
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      46 </span>            : tnsr::Ij&lt;tt::remove_cvref_wrap_t&lt;T&gt;, 2, Frame::NoFrame&gt; Rotation&lt;2&gt;::jacobian(
+<span class="lineNum">      47 </span>            :     const std::array&lt;T, 2&gt;&amp; source_coords) const noexcept {
+<span class="lineNum">      48 </span>            :   tnsr::Ij&lt;tt::remove_cvref_wrap_t&lt;T&gt;, 2, Frame::NoFrame&gt; jacobian_matrix{
+<span class="lineNum">      49 </span>            :       make_with_value&lt;tt::remove_cvref_wrap_t&lt;T&gt;&gt;(
+<span class="lineNum">      50 </span>            :           dereference_wrapper(source_coords[0]), 0.0)};
+<span class="lineNum">      51 </span>            :   get&lt;0, 0&gt;(jacobian_matrix) = get&lt;0, 0&gt;(rotation_matrix_);
+<span class="lineNum">      52 </span>            :   get&lt;1, 0&gt;(jacobian_matrix) = get&lt;1, 0&gt;(rotation_matrix_);
+<span class="lineNum">      53 </span>            :   get&lt;0, 1&gt;(jacobian_matrix) = get&lt;0, 1&gt;(rotation_matrix_);
+<span class="lineNum">      54 </span>            :   get&lt;1, 1&gt;(jacobian_matrix) = get&lt;1, 1&gt;(rotation_matrix_);
+<span class="lineNum">      55 </span>            :   return jacobian_matrix;
+<span class="lineNum">      56 </span>            : }
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      59 </span>            : tnsr::Ij&lt;tt::remove_cvref_wrap_t&lt;T&gt;, 2, Frame::NoFrame&gt;
+<span class="lineNum">      60 </span>            : Rotation&lt;2&gt;::inv_jacobian(const std::array&lt;T, 2&gt;&amp; source_coords) const
+<span class="lineNum">      61 </span>            :     noexcept {
+<span class="lineNum">      62 </span>            :   tnsr::Ij&lt;tt::remove_cvref_wrap_t&lt;T&gt;, 2, Frame::NoFrame&gt; inv_jacobian_matrix{
+<span class="lineNum">      63 </span>            :       make_with_value&lt;tt::remove_cvref_wrap_t&lt;T&gt;&gt;(
+<span class="lineNum">      64 </span>            :           dereference_wrapper(source_coords[0]), 0.0)};
+<span class="lineNum">      65 </span>            :   get&lt;0, 0&gt;(inv_jacobian_matrix) = get&lt;0, 0&gt;(rotation_matrix_);
+<span class="lineNum">      66 </span>            :   get&lt;1, 0&gt;(inv_jacobian_matrix) = get&lt;0, 1&gt;(rotation_matrix_);
+<span class="lineNum">      67 </span>            :   get&lt;0, 1&gt;(inv_jacobian_matrix) = get&lt;1, 0&gt;(rotation_matrix_);
+<span class="lineNum">      68 </span>            :   get&lt;1, 1&gt;(inv_jacobian_matrix) = get&lt;1, 1&gt;(rotation_matrix_);
+<span class="lineNum">      69 </span>            :   return inv_jacobian_matrix;
+<span class="lineNum">      70 </span>            : }
+<span class="lineNum">      71 </span>            : 
+<span class="lineNum">      72 </span>            : void Rotation&lt;2&gt;::pup(PUP::er&amp; p) {
+<span class="lineNum">      73 </span>            :   p | rotation_angle_;
+<span class="lineNum">      74 </span>            :   p | rotation_matrix_;
+<span class="lineNum">      75 </span>            :   p | is_identity_;
+<span class="lineNum">      76 </span>            : }
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span><span class="lineNoCov">          0 : bool operator==(const Rotation&lt;2&gt;&amp; lhs, const Rotation&lt;2&gt;&amp; rhs) noexcept {</span>
+<span class="lineNum">      79 </span>            :   return lhs.rotation_angle_ == rhs.rotation_angle_ and
+<span class="lineNum">      80 </span>            :          lhs.is_identity_ == rhs.is_identity_;
+<span class="lineNum">      81 </span>            : }
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span><span class="lineNoCov">          0 : bool operator!=(const Rotation&lt;2&gt;&amp; lhs, const Rotation&lt;2&gt;&amp; rhs) noexcept {</span>
+<span class="lineNum">      84 </span>            :   return not(lhs == rhs);
+<span class="lineNum">      85 </span>            : }
+<span class="lineNum">      86 </span>            : 
+<span class="lineNum">      87 </span>            : Rotation&lt;3&gt;::Rotation(const double rotation_about_z,
+<span class="lineNum">      88 </span>            :                       const double rotation_about_rotated_y,
+<span class="lineNum">      89 </span>            :                       const double rotation_about_rotated_z)
+<span class="lineNum">      90 </span>            :     : rotation_about_z_(rotation_about_z),
+<span class="lineNum">      91 </span>            :       rotation_about_rotated_y_(rotation_about_rotated_y),
+<span class="lineNum">      92 </span>            :       rotation_about_rotated_z_(rotation_about_rotated_z),
+<span class="lineNum">      93 </span>            :       rotation_matrix_(std::numeric_limits&lt;double&gt;::signaling_NaN()),
+<span class="lineNum">      94 </span>            :       is_identity_(rotation_about_z_ == 0.0 and
+<span class="lineNum">      95 </span>            :                    rotation_about_rotated_y_ == 0.0 and
+<span class="lineNum">      96 </span>            :                    rotation_about_rotated_z_ == 0.0) {
+<span class="lineNum">      97 </span>            :   const double cos_alpha = cos(rotation_about_z_);
+<span class="lineNum">      98 </span>            :   const double sin_alpha = sin(rotation_about_z_);
+<span class="lineNum">      99 </span>            :   const double cos_beta = cos(rotation_about_rotated_y_);
+<span class="lineNum">     100 </span>            :   const double sin_beta = sin(rotation_about_rotated_y_);
+<span class="lineNum">     101 </span>            :   const double cos_gamma = cos(rotation_about_rotated_z_);
+<span class="lineNum">     102 </span>            :   const double sin_gamma = sin(rotation_about_rotated_z_);
+<span class="lineNum">     103 </span>            :   get&lt;0, 0&gt;(rotation_matrix_) =
+<span class="lineNum">     104 </span>            :       cos_gamma * cos_beta * cos_alpha - sin_gamma * sin_alpha;
+<span class="lineNum">     105 </span>            :   get&lt;0, 1&gt;(rotation_matrix_) =
+<span class="lineNum">     106 </span>            :       -sin_gamma * cos_beta * cos_alpha - cos_gamma * sin_alpha;
+<span class="lineNum">     107 </span>            :   get&lt;0, 2&gt;(rotation_matrix_) = sin_beta * cos_alpha;
+<span class="lineNum">     108 </span>            :   get&lt;1, 0&gt;(rotation_matrix_) =
+<span class="lineNum">     109 </span>            :       cos_gamma * cos_beta * sin_alpha + sin_gamma * cos_alpha;
+<span class="lineNum">     110 </span>            :   get&lt;1, 1&gt;(rotation_matrix_) =
+<span class="lineNum">     111 </span>            :       -sin_gamma * cos_beta * sin_alpha + cos_gamma * cos_alpha;
+<span class="lineNum">     112 </span>            :   get&lt;1, 2&gt;(rotation_matrix_) = sin_beta * sin_alpha;
+<span class="lineNum">     113 </span>            :   get&lt;2, 0&gt;(rotation_matrix_) = -cos_gamma * sin_beta;
+<span class="lineNum">     114 </span>            :   get&lt;2, 1&gt;(rotation_matrix_) = sin_gamma * sin_beta;
+<span class="lineNum">     115 </span>            :   get&lt;2, 2&gt;(rotation_matrix_) = cos_beta;
+<span class="lineNum">     116 </span>            : }
+<span class="lineNum">     117 </span>            : 
+<span class="lineNum">     118 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     119 </span>            : std::array&lt;tt::remove_cvref_wrap_t&lt;T&gt;, 3&gt; Rotation&lt;3&gt;::operator()(
+<span class="lineNum">     120 </span>            :     const std::array&lt;T, 3&gt;&amp; source_coords) const noexcept {
+<span class="lineNum">     121 </span>            :   return {{source_coords[0] * get&lt;0, 0&gt;(rotation_matrix_) +
+<span class="lineNum">     122 </span>            :                source_coords[1] * get&lt;0, 1&gt;(rotation_matrix_) +
+<span class="lineNum">     123 </span>            :                source_coords[2] * get&lt;0, 2&gt;(rotation_matrix_),
+<span class="lineNum">     124 </span>            :            source_coords[0] * get&lt;1, 0&gt;(rotation_matrix_) +
+<span class="lineNum">     125 </span>            :                source_coords[1] * get&lt;1, 1&gt;(rotation_matrix_) +
+<span class="lineNum">     126 </span>            :                source_coords[2] * get&lt;1, 2&gt;(rotation_matrix_),
+<span class="lineNum">     127 </span>            :            source_coords[0] * get&lt;2, 0&gt;(rotation_matrix_) +
+<span class="lineNum">     128 </span>            :                source_coords[1] * get&lt;2, 1&gt;(rotation_matrix_) +
+<span class="lineNum">     129 </span>            :                source_coords[2] * get&lt;2, 2&gt;(rotation_matrix_)}};
+<span class="lineNum">     130 </span>            : }
+<span class="lineNum">     131 </span>            : 
+<span class="lineNum">     132 </span>            : boost::optional&lt;std::array&lt;double, 3&gt;&gt; Rotation&lt;3&gt;::inverse(
+<span class="lineNum">     133 </span>            :     const std::array&lt;double, 3&gt;&amp; target_coords) const noexcept {
+<span class="lineNum">     134 </span>            :   // Inverse rotation matrix is the same as the transpose.
+<span class="lineNum">     135 </span>            :   return {{{target_coords[0] * get&lt;0, 0&gt;(rotation_matrix_) +
+<span class="lineNum">     136 </span>            :                 target_coords[1] * get&lt;1, 0&gt;(rotation_matrix_) +
+<span class="lineNum">     137 </span>            :                 target_coords[2] * get&lt;2, 0&gt;(rotation_matrix_),
+<span class="lineNum">     138 </span>            :             target_coords[0] * get&lt;0, 1&gt;(rotation_matrix_) +
+<span class="lineNum">     139 </span>            :                 target_coords[1] * get&lt;1, 1&gt;(rotation_matrix_) +
+<span class="lineNum">     140 </span>            :                 target_coords[2] * get&lt;2, 1&gt;(rotation_matrix_),
+<span class="lineNum">     141 </span>            :             target_coords[0] * get&lt;0, 2&gt;(rotation_matrix_) +
+<span class="lineNum">     142 </span>            :                 target_coords[1] * get&lt;1, 2&gt;(rotation_matrix_) +
+<span class="lineNum">     143 </span>            :                 target_coords[2] * get&lt;2, 2&gt;(rotation_matrix_)}}};
+<span class="lineNum">     144 </span>            : }
+<span class="lineNum">     145 </span>            : 
+<span class="lineNum">     146 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     147 </span>            : tnsr::Ij&lt;tt::remove_cvref_wrap_t&lt;T&gt;, 3, Frame::NoFrame&gt; Rotation&lt;3&gt;::jacobian(
+<span class="lineNum">     148 </span>            :     const std::array&lt;T, 3&gt;&amp; source_coords) const noexcept {
+<span class="lineNum">     149 </span>            :   tnsr::Ij&lt;tt::remove_cvref_wrap_t&lt;T&gt;, 3, Frame::NoFrame&gt; jacobian_matrix{
+<span class="lineNum">     150 </span>            :       make_with_value&lt;tt::remove_cvref_wrap_t&lt;T&gt;&gt;(
+<span class="lineNum">     151 </span>            :           dereference_wrapper(source_coords[0]), 0.0)};
+<span class="lineNum">     152 </span>            :   get&lt;0, 0&gt;(jacobian_matrix) = get&lt;0, 0&gt;(rotation_matrix_);
+<span class="lineNum">     153 </span>            :   get&lt;1, 0&gt;(jacobian_matrix) = get&lt;1, 0&gt;(rotation_matrix_);
+<span class="lineNum">     154 </span>            :   get&lt;0, 1&gt;(jacobian_matrix) = get&lt;0, 1&gt;(rotation_matrix_);
+<span class="lineNum">     155 </span>            :   get&lt;1, 1&gt;(jacobian_matrix) = get&lt;1, 1&gt;(rotation_matrix_);
+<span class="lineNum">     156 </span>            :   get&lt;2, 0&gt;(jacobian_matrix) = get&lt;2, 0&gt;(rotation_matrix_);
+<span class="lineNum">     157 </span>            :   get&lt;2, 1&gt;(jacobian_matrix) = get&lt;2, 1&gt;(rotation_matrix_);
+<span class="lineNum">     158 </span>            :   get&lt;0, 2&gt;(jacobian_matrix) = get&lt;0, 2&gt;(rotation_matrix_);
+<span class="lineNum">     159 </span>            :   get&lt;1, 2&gt;(jacobian_matrix) = get&lt;1, 2&gt;(rotation_matrix_);
+<span class="lineNum">     160 </span>            :   get&lt;2, 2&gt;(jacobian_matrix) = get&lt;2, 2&gt;(rotation_matrix_);
+<span class="lineNum">     161 </span>            :   return jacobian_matrix;
+<span class="lineNum">     162 </span>            : }
+<span class="lineNum">     163 </span>            : 
+<span class="lineNum">     164 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     165 </span>            : tnsr::Ij&lt;tt::remove_cvref_wrap_t&lt;T&gt;, 3, Frame::NoFrame&gt;
+<span class="lineNum">     166 </span>            : Rotation&lt;3&gt;::inv_jacobian(const std::array&lt;T, 3&gt;&amp; source_coords) const
+<span class="lineNum">     167 </span>            :     noexcept {
+<span class="lineNum">     168 </span>            :   tnsr::Ij&lt;tt::remove_cvref_wrap_t&lt;T&gt;, 3, Frame::NoFrame&gt; inv_jacobian_matrix{
+<span class="lineNum">     169 </span>            :       make_with_value&lt;tt::remove_cvref_wrap_t&lt;T&gt;&gt;(
+<span class="lineNum">     170 </span>            :           dereference_wrapper(source_coords[0]), 0.0)};
+<span class="lineNum">     171 </span>            :   get&lt;0, 0&gt;(inv_jacobian_matrix) = get&lt;0, 0&gt;(rotation_matrix_);
+<span class="lineNum">     172 </span>            :   get&lt;1, 0&gt;(inv_jacobian_matrix) = get&lt;0, 1&gt;(rotation_matrix_);
+<span class="lineNum">     173 </span>            :   get&lt;0, 1&gt;(inv_jacobian_matrix) = get&lt;1, 0&gt;(rotation_matrix_);
+<span class="lineNum">     174 </span>            :   get&lt;1, 1&gt;(inv_jacobian_matrix) = get&lt;1, 1&gt;(rotation_matrix_);
+<span class="lineNum">     175 </span>            :   get&lt;2, 0&gt;(inv_jacobian_matrix) = get&lt;0, 2&gt;(rotation_matrix_);
+<span class="lineNum">     176 </span>            :   get&lt;2, 1&gt;(inv_jacobian_matrix) = get&lt;1, 2&gt;(rotation_matrix_);
+<span class="lineNum">     177 </span>            :   get&lt;0, 2&gt;(inv_jacobian_matrix) = get&lt;2, 0&gt;(rotation_matrix_);
+<span class="lineNum">     178 </span>            :   get&lt;1, 2&gt;(inv_jacobian_matrix) = get&lt;2, 1&gt;(rotation_matrix_);
+<span class="lineNum">     179 </span>            :   get&lt;2, 2&gt;(inv_jacobian_matrix) = get&lt;2, 2&gt;(rotation_matrix_);
+<span class="lineNum">     180 </span>            :   return inv_jacobian_matrix;
+<span class="lineNum">     181 </span>            : }
+<span class="lineNum">     182 </span>            : 
+<span class="lineNum">     183 </span>            : void Rotation&lt;3&gt;::pup(PUP::er&amp; p) {  // NOLINT
+<span class="lineNum">     184 </span>            :   p | rotation_about_z_;
+<span class="lineNum">     185 </span>            :   p | rotation_about_rotated_y_;
+<span class="lineNum">     186 </span>            :   p | rotation_about_rotated_z_;
+<span class="lineNum">     187 </span>            :   p | rotation_matrix_;
+<span class="lineNum">     188 </span>            :   p | is_identity_;
+<span class="lineNum">     189 </span>            : }
+<span class="lineNum">     190 </span>            : 
+<span class="lineNum">     191 </span><span class="lineNoCov">          0 : bool operator==(const Rotation&lt;3&gt;&amp; lhs, const Rotation&lt;3&gt;&amp; rhs) noexcept {</span>
+<span class="lineNum">     192 </span>            :   return lhs.rotation_about_z_ == rhs.rotation_about_z_ and
+<span class="lineNum">     193 </span>            :          lhs.rotation_about_rotated_y_ == rhs.rotation_about_rotated_y_ and
+<span class="lineNum">     194 </span>            :          lhs.rotation_about_rotated_z_ == rhs.rotation_about_rotated_z_ and
+<span class="lineNum">     195 </span>            :          lhs.is_identity_ == rhs.is_identity_;
+<span class="lineNum">     196 </span>            : }
+<span class="lineNum">     197 </span>            : 
+<span class="lineNum">     198 </span><span class="lineNoCov">          0 : bool operator!=(const Rotation&lt;3&gt;&amp; lhs, const Rotation&lt;3&gt;&amp; rhs) noexcept {</span>
+<span class="lineNum">     199 </span>            :   return not(lhs == rhs);
+<span class="lineNum">     200 </span>            : }
+<span class="lineNum">     201 </span>            : // Explicit instantiations
+<span class="lineNum">     202 </span>            : /// \cond
+<span class="lineNum">     203 </span>            : #define DIM(data) BOOST_PP_TUPLE_ELEM(0, data)
+<span class="lineNum">     204 </span>            : #define DTYPE(data) BOOST_PP_TUPLE_ELEM(1, data)
+<span class="lineNum">     205 </span>            : 
+<span class="lineNum">     206 </span>            : #define INSTANTIATE(_, data)                                                   \
+<span class="lineNum">     207 </span>            :   template std::array&lt;tt::remove_cvref_wrap_t&lt;DTYPE(data)&gt;, DIM(data)&gt;         \
+<span class="lineNum">     208 </span>            :   Rotation&lt;DIM(data)&gt;::operator()(                                             \
+<span class="lineNum">     209 </span>            :       const std::array&lt;DTYPE(data), DIM(data)&gt;&amp; source_coords) const noexcept; \
+<span class="lineNum">     210 </span>            :   template tnsr::Ij&lt;tt::remove_cvref_wrap_t&lt;DTYPE(data)&gt;, DIM(data),           \
+<span class="lineNum">     211 </span>            :                     Frame::NoFrame&gt;                                            \
+<span class="lineNum">     212 </span>            :   Rotation&lt;DIM(data)&gt;::jacobian(                                               \
+<span class="lineNum">     213 </span>            :       const std::array&lt;DTYPE(data), DIM(data)&gt;&amp; source_coords) const noexcept; \
+<span class="lineNum">     214 </span>            :   template tnsr::Ij&lt;tt::remove_cvref_wrap_t&lt;DTYPE(data)&gt;, DIM(data),           \
+<span class="lineNum">     215 </span>            :                     Frame::NoFrame&gt;                                            \
+<span class="lineNum">     216 </span>            :   Rotation&lt;DIM(data)&gt;::inv_jacobian(                                           \
+<span class="lineNum">     217 </span>            :       const std::array&lt;DTYPE(data), DIM(data)&gt;&amp; source_coords) const noexcept;
+<span class="lineNum">     218 </span>            : 
+<span class="lineNum">     219 </span>            : GENERATE_INSTANTIATIONS(INSTANTIATE, (2, 3),
+<span class="lineNum">     220 </span>            :                         (double, DataVector,
+<span class="lineNum">     221 </span>            :                          std::reference_wrapper&lt;const double&gt;,
+<span class="lineNum">     222 </span>            :                          std::reference_wrapper&lt;const DataVector&gt;))
+<span class="lineNum">     223 </span>            : #undef DIM
+<span class="lineNum">     224 </span>            : #undef DTYPE
+<span class="lineNum">     225 </span>            : #undef INSTANTIATE
+<span class="lineNum">     226 </span>            : /// \endcond
+<span class="lineNum">     227 </span>            : 
+<span class="lineNum">     228 </span>            : }  // namespace CoordinateMaps
+<span class="lineNum">     229 </span>            : }  // namespace domain
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

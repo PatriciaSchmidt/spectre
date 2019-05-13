@@ -1,0 +1,226 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Evolution/Systems/GrMhd/ValenciaDivClean/FixConservatives.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">Evolution/Systems/GrMhd/ValenciaDivClean</a> - FixConservatives.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntry">36</td>
+            <td class="headerCovTableEntryLo">13.9 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;limits&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : #include &quot;DataStructures/Tensor/TypeAliases.hpp&quot;
+<span class="lineNum">       9 </span>            : #include &quot;Evolution/Systems/GrMhd/ValenciaDivClean/TagsDeclarations.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      10 </span>            : #include &quot;Options/Options.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;PointwiseFunctions/GeneralRelativity/TagsDeclarations.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      12 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : /// \cond
+<span class="lineNum">      16 </span>            : namespace PUP {
+<span class="lineNum">      17 </span>            : class er;
+<span class="lineNum">      18 </span>            : }  // namespace PUP
+<span class="lineNum">      19 </span>            : class DataVector;
+<span class="lineNum">      20 </span>            : /// \endcond
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : // IWYU pragma: no_forward_declare EquationsOfState::EquationOfState
+<span class="lineNum">      23 </span>            : // IWYU pragma: no_forward_declare Tensor
+<span class="lineNum">      24 </span>            : // IWYU pragma: no_forward_declare grmhd::ValenciaDivClean::Tags::TildeD
+<span class="lineNum">      25 </span>            : // IWYU pragma: no_forward_declare grmhd::ValenciaDivClean::Tags::TildeTau
+<span class="lineNum">      26 </span>            : // IWYU pragma: no_forward_declare grmhd::ValenciaDivClean::Tags::TildeS
+<span class="lineNum">      27 </span>            : // IWYU pragma: no_forward_declare grmhd::ValenciaDivClean::Tags::TildeB
+<span class="lineNum">      28 </span>            : // IWYU pragma: no_forward_declare gr::Tags::SpatialMetric
+<span class="lineNum">      29 </span>            : // IWYU pragma: no_forward_declare gr::Tags::InverseSpatialMetric
+<span class="lineNum">      30 </span>            : // IWYU pragma: no_forward_declare gr::Tags::SqrtDetSpatialMetric
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span>            : namespace VariableFixing {
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            : /// \ingroup VariableFixingGroup
+<span class="lineNum">      35 </span>            : /// \brief Fix conservative variables using method developed by Foucart.
+<span class="lineNum">      36 </span>            : ///
+<span class="lineNum">      37 </span>            : /// Adjusts the conservative variables as follows:
+<span class="lineNum">      38 </span>            : /// - Changes \f${\tilde D}\f$, the generalized mass-energy density, such
+<span class="lineNum">      39 </span>            : ///   that \f$D\f$, the product of the rest mass density \f$\rho\f$ and the
+<span class="lineNum">      40 </span>            : ///   Lorentz factor \f$W\f$, is set to value of the option `MinimumValueOfD`,
+<span class="lineNum">      41 </span>            : ///   whenever \f$D\f$ is below the value of the option `CutoffD`.
+<span class="lineNum">      42 </span>            : /// - Increases \f${\tilde \tau}\f$, the generalized internal energy density,
+<span class="lineNum">      43 </span>            : ///   such that
+<span class="lineNum">      44 </span>            : ///   \f${\tilde B}^2 \leq 2 \sqrt{\gamma} (1 - \epsilon_B) {\tilde \tau}\f$,
+<span class="lineNum">      45 </span>            : ///   where \f${\tilde B}^i\f$ is the generalized magnetic field,
+<span class="lineNum">      46 </span>            : ///   \f$\gamma\f$ is the determinant of the spatial metric, and
+<span class="lineNum">      47 </span>            : ///   \f$\epsilon_B\f$ is the option `SafetyFactorForB`.
+<span class="lineNum">      48 </span>            : /// - Decreases \f${\tilde S}_i\f$, the generalized momentum density, such that
+<span class="lineNum">      49 </span>            : ///   \f${\tilde S}^2 \leq (1 - \epsilon_S) {\tilde S}^2_{max}\f$, where
+<span class="lineNum">      50 </span>            : ///   \f$\epsilon_S\f$ is the option `SafetyFactorForS`, and
+<span class="lineNum">      51 </span>            : ///   \f${\tilde S}^2_{max}\f$ is a complicated function of the conservative
+<span class="lineNum">      52 </span>            : ///   variables which can only be found through root finding. There are
+<span class="lineNum">      53 </span>            : ///   sufficient conditions for a set of conservative variables to satisfy the
+<span class="lineNum">      54 </span>            : ///   inequality, which can be used to avoid root finding at most points.
+<span class="lineNum">      55 </span>            : ///
+<span class="lineNum">      56 </span>            : /// \note The routine currently assumes the minimum specific enthalpy is one.
+<span class="lineNum">      57 </span>            : ///
+<span class="lineNum">      58 </span>            : /// For more details see Appendix B from the [thesis of Francois
+<span class="lineNum">      59 </span>            : /// Foucart](https://ecommons.cornell.edu/handle/1813/30652)
+<span class="lineNum">      60 </span><span class="lineCov">          1 : class FixConservatives {</span>
+<span class="lineNum">      61 </span>            :  public:
+<span class="lineNum">      62 </span>            :   /// \brief Minimum value of rest-mass density times lorentz factor
+<span class="lineNum">      63 </span><span class="lineCov">          1 :   struct MinimumValueOfD {</span>
+<span class="lineNum">      64 </span><span class="lineNoCov">          0 :     using type = double;</span>
+<span class="lineNum">      65 </span><span class="lineNoCov">          0 :     static type lower_bound() noexcept { return 0.0; }</span>
+<span class="lineNum">      66 </span><span class="lineNoCov">          0 :     static constexpr OptionString help = {</span>
+<span class="lineNum">      67 </span>            :         &quot;Minimum value of rest-mass density times lorentz factor&quot;};
+<span class="lineNum">      68 </span>            :   };
+<span class="lineNum">      69 </span>            :   /// \brief Cutoff below which \f$D = \rho W\f$ is set to MinimumValueOfD
+<span class="lineNum">      70 </span><span class="lineCov">          1 :   struct CutoffD {</span>
+<span class="lineNum">      71 </span><span class="lineNoCov">          0 :     using type = double;</span>
+<span class="lineNum">      72 </span><span class="lineNoCov">          0 :     static type lower_bound() noexcept { return 0.0; }</span>
+<span class="lineNum">      73 </span><span class="lineNoCov">          0 :     static constexpr OptionString help = {</span>
+<span class="lineNum">      74 </span>            :         &quot;Cutoff below which D is set to MinimumValueOfD&quot;};
+<span class="lineNum">      75 </span>            :   };
+<span class="lineNum">      76 </span>            : 
+<span class="lineNum">      77 </span>            :   /// \brief Safety factor \f$\epsilon_B\f$.
+<span class="lineNum">      78 </span><span class="lineCov">          1 :   struct SafetyFactorForB {</span>
+<span class="lineNum">      79 </span><span class="lineNoCov">          0 :     using type = double;</span>
+<span class="lineNum">      80 </span><span class="lineNoCov">          0 :     static type lower_bound() noexcept { return 0.0; }</span>
+<span class="lineNum">      81 </span><span class="lineNoCov">          0 :     static constexpr OptionString help = {</span>
+<span class="lineNum">      82 </span>            :         &quot;Safety factor for magnetic field bound.&quot;};
+<span class="lineNum">      83 </span>            :   };
+<span class="lineNum">      84 </span>            :   /// \brief Safety factor \f$\epsilon_S\f$.
+<span class="lineNum">      85 </span><span class="lineCov">          1 :   struct SafetyFactorForS {</span>
+<span class="lineNum">      86 </span><span class="lineNoCov">          0 :     using type = double;</span>
+<span class="lineNum">      87 </span><span class="lineNoCov">          0 :     static type lower_bound() noexcept { return 0.0; }</span>
+<span class="lineNum">      88 </span><span class="lineNoCov">          0 :     static constexpr OptionString help = {</span>
+<span class="lineNum">      89 </span>            :         &quot;Safety factor for momentum density bound.&quot;};
+<span class="lineNum">      90 </span>            :   };
+<span class="lineNum">      91 </span><span class="lineNoCov">          0 :   using options =</span>
+<span class="lineNum">      92 </span>            :       tmpl::list&lt;MinimumValueOfD, CutoffD, SafetyFactorForB, SafetyFactorForS&gt;;
+<span class="lineNum">      93 </span><span class="lineNoCov">          0 :   static constexpr OptionString help = {</span>
+<span class="lineNum">      94 </span>            :       &quot;Variable fixing used in Foucart's thesis.\n&quot;};
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span><span class="lineNoCov">          0 :   FixConservatives(double minimum_rest_mass_density_times_lorentz_factor,</span>
+<span class="lineNum">      97 </span>            :                    double rest_mass_density_times_lorentz_factor_cutoff,
+<span class="lineNum">      98 </span>            :                    double safety_factor_for_magnetic_field,
+<span class="lineNum">      99 </span>            :                    double safety_factor_for_momentum_density,
+<span class="lineNum">     100 </span>            :                    const OptionContext&amp; context = {});
+<span class="lineNum">     101 </span>            : 
+<span class="lineNum">     102 </span><span class="lineNoCov">          0 :   FixConservatives() = default;</span>
+<span class="lineNum">     103 </span><span class="lineNoCov">          0 :   FixConservatives(const FixConservatives&amp; /*rhs*/) = default;</span>
+<span class="lineNum">     104 </span><span class="lineNoCov">          0 :   FixConservatives&amp; operator=(const FixConservatives&amp; /*rhs*/) = default;</span>
+<span class="lineNum">     105 </span><span class="lineNoCov">          0 :   FixConservatives(FixConservatives&amp;&amp; /*rhs*/) noexcept = default;</span>
+<span class="lineNum">     106 </span><span class="lineNoCov">          0 :   FixConservatives&amp; operator=(FixConservatives&amp;&amp; /*rhs*/) noexcept = default;</span>
+<span class="lineNum">     107 </span><span class="lineNoCov">          0 :   ~FixConservatives() = default;</span>
+<span class="lineNum">     108 </span>            : 
+<span class="lineNum">     109 </span>            :   // NOLINTNEXTLINE(google-runtime-references)
+<span class="lineNum">     110 </span><span class="lineNoCov">          0 :   void pup(PUP::er&amp; p) noexcept;</span>
+<span class="lineNum">     111 </span>            : 
+<span class="lineNum">     112 </span><span class="lineNoCov">          0 :   using return_tags = tmpl::list&lt;grmhd::ValenciaDivClean::Tags::TildeD,</span>
+<span class="lineNum">     113 </span>            :                                  grmhd::ValenciaDivClean::Tags::TildeTau,
+<span class="lineNum">     114 </span>            :                                  grmhd::ValenciaDivClean::Tags::TildeS&lt;&gt;&gt;;
+<span class="lineNum">     115 </span><span class="lineNoCov">          0 :   using argument_tags =</span>
+<span class="lineNum">     116 </span>            :       tmpl::list&lt;grmhd::ValenciaDivClean::Tags::TildeB&lt;&gt;,
+<span class="lineNum">     117 </span>            :                  gr::Tags::SpatialMetric&lt;3&gt;, gr::Tags::InverseSpatialMetric&lt;3&gt;,
+<span class="lineNum">     118 </span>            :                  gr::Tags::SqrtDetSpatialMetric&lt;&gt;&gt;;
+<span class="lineNum">     119 </span>            : 
+<span class="lineNum">     120 </span><span class="lineNoCov">          0 :   void operator()(</span>
+<span class="lineNum">     121 </span>            :       gsl::not_null&lt;Scalar&lt;DataVector&gt;*&gt; tilde_d,
+<span class="lineNum">     122 </span>            :       gsl::not_null&lt;Scalar&lt;DataVector&gt;*&gt; tilde_tau,
+<span class="lineNum">     123 </span>            :       gsl::not_null&lt;tnsr::i&lt;DataVector, 3, Frame::Inertial&gt;*&gt; tilde_s,
+<span class="lineNum">     124 </span>            :       const tnsr::I&lt;DataVector, 3, Frame::Inertial&gt;&amp; tilde_b,
+<span class="lineNum">     125 </span>            :       const tnsr::ii&lt;DataVector, 3, Frame::Inertial&gt;&amp; spatial_metric,
+<span class="lineNum">     126 </span>            :       const tnsr::II&lt;DataVector, 3, Frame::Inertial&gt;&amp; inv_spatial_metric,
+<span class="lineNum">     127 </span>            :       const Scalar&lt;DataVector&gt;&amp; sqrt_det_spatial_metric) const noexcept;
+<span class="lineNum">     128 </span>            : 
+<span class="lineNum">     129 </span>            :  private:
+<span class="lineNum">     130 </span><span class="lineNoCov">          0 :   friend bool operator==(const FixConservatives&amp; lhs,</span>
+<span class="lineNum">     131 </span>            :                          const FixConservatives&amp; rhs) noexcept;
+<span class="lineNum">     132 </span>            : 
+<span class="lineNum">     133 </span><span class="lineNoCov">          0 :   double minimum_rest_mass_density_times_lorentz_factor_{</span>
+<span class="lineNum">     134 </span>            :       std::numeric_limits&lt;double&gt;::signaling_NaN()};
+<span class="lineNum">     135 </span><span class="lineNoCov">          0 :   double rest_mass_density_times_lorentz_factor_cutoff_{</span>
+<span class="lineNum">     136 </span>            :       std::numeric_limits&lt;double&gt;::signaling_NaN()};
+<span class="lineNum">     137 </span><span class="lineNoCov">          0 :   double one_minus_safety_factor_for_magnetic_field_{</span>
+<span class="lineNum">     138 </span>            :       std::numeric_limits&lt;double&gt;::signaling_NaN()};
+<span class="lineNum">     139 </span><span class="lineNoCov">          0 :   double one_minus_safety_factor_for_momentum_density_{</span>
+<span class="lineNum">     140 </span>            :       std::numeric_limits&lt;double&gt;::signaling_NaN()};
+<span class="lineNum">     141 </span>            : };
+<span class="lineNum">     142 </span>            : 
+<span class="lineNum">     143 </span>            : bool operator!=(const FixConservatives&amp; lhs,
+<span class="lineNum">     144 </span>            :                 const FixConservatives&amp; rhs) noexcept;
+<span class="lineNum">     145 </span>            : 
+<span class="lineNum">     146 </span>            : }  // namespace VariableFixing
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

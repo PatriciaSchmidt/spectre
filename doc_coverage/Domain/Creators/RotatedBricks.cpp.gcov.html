@@ -1,0 +1,183 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Domain/Creators/RotatedBricks.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">Domain/Creators</a> - RotatedBricks.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;Domain/Creators/RotatedBricks.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &quot;DataStructures/Index.hpp&quot;
+<span class="lineNum">       7 </span>            : #include &quot;Domain/Direction.hpp&quot;
+<span class="lineNum">       8 </span>            : #include &quot;Domain/Domain.hpp&quot;
+<span class="lineNum">       9 </span>            : #include &quot;Domain/DomainHelpers.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;Domain/OrientationMap.hpp&quot;
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : namespace Frame {
+<span class="lineNum">      13 </span>            : struct Grid;
+<span class="lineNum">      14 </span>            : struct Inertial;
+<span class="lineNum">      15 </span>            : }  // namespace Frame
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            : namespace domain {
+<span class="lineNum">      18 </span>            : namespace creators {
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : template &lt;typename TargetFrame&gt;
+<span class="lineNum">      21 </span>            : RotatedBricks&lt;TargetFrame&gt;::RotatedBricks(
+<span class="lineNum">      22 </span>            :     const typename LowerBound::type lower_xyz,
+<span class="lineNum">      23 </span>            :     const typename Midpoint::type midpoint_xyz,
+<span class="lineNum">      24 </span>            :     const typename UpperBound::type upper_xyz,
+<span class="lineNum">      25 </span>            :     const typename IsPeriodicIn::type is_periodic_in,
+<span class="lineNum">      26 </span>            :     const typename InitialRefinement::type initial_refinement_level_xyz,
+<span class="lineNum">      27 </span>            :     const typename InitialGridPoints::type
+<span class="lineNum">      28 </span>            :         initial_number_of_grid_points_in_xyz) noexcept
+<span class="lineNum">      29 </span>            :     // clang-tidy: trivially copyable
+<span class="lineNum">      30 </span>            :     : lower_xyz_(std::move(lower_xyz)),                        // NOLINT
+<span class="lineNum">      31 </span>            :       midpoint_xyz_(std::move(midpoint_xyz)),                  // NOLINT
+<span class="lineNum">      32 </span>            :       upper_xyz_(std::move(upper_xyz)),                        // NOLINT
+<span class="lineNum">      33 </span>            :       is_periodic_in_(std::move(is_periodic_in)),              // NOLINT
+<span class="lineNum">      34 </span>            :       initial_refinement_level_xyz_(                           // NOLINT
+<span class="lineNum">      35 </span>            :           std::move(initial_refinement_level_xyz)),            // NOLINT
+<span class="lineNum">      36 </span>            :       initial_number_of_grid_points_in_xyz_(                   // NOLINT
+<span class="lineNum">      37 </span>            :           std::move(initial_number_of_grid_points_in_xyz)) {}  // NOLINT
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span>            : template &lt;typename TargetFrame&gt;
+<span class="lineNum">      40 </span>            : Domain&lt;3, TargetFrame&gt; RotatedBricks&lt;TargetFrame&gt;::create_domain() const
+<span class="lineNum">      41 </span>            :     noexcept {
+<span class="lineNum">      42 </span>            :   return rectilinear_domain&lt;3, TargetFrame&gt;(
+<span class="lineNum">      43 </span>            :       Index&lt;3&gt;{2, 2, 2},
+<span class="lineNum">      44 </span>            :       std::array&lt;std::vector&lt;double&gt;, 3&gt;{
+<span class="lineNum">      45 </span>            :           {{lower_xyz_[0], midpoint_xyz_[0], upper_xyz_[0]},
+<span class="lineNum">      46 </span>            :            {lower_xyz_[1], midpoint_xyz_[1], upper_xyz_[1]},
+<span class="lineNum">      47 </span>            :            {lower_xyz_[2], midpoint_xyz_[2], upper_xyz_[2]}}},
+<span class="lineNum">      48 </span>            :       {},
+<span class="lineNum">      49 </span>            :       std::vector&lt;OrientationMap&lt;3&gt;&gt;{
+<span class="lineNum">      50 </span>            :           OrientationMap&lt;3&gt;{},
+<span class="lineNum">      51 </span>            :           OrientationMap&lt;3&gt;{std::array&lt;Direction&lt;3&gt;, 3&gt;{
+<span class="lineNum">      52 </span>            :               {Direction&lt;3&gt;::upper_zeta(), Direction&lt;3&gt;::upper_eta(),
+<span class="lineNum">      53 </span>            :                Direction&lt;3&gt;::lower_xi()}}},
+<span class="lineNum">      54 </span>            :           OrientationMap&lt;3&gt;{std::array&lt;Direction&lt;3&gt;, 3&gt;{
+<span class="lineNum">      55 </span>            :               {Direction&lt;3&gt;::upper_xi(), Direction&lt;3&gt;::upper_zeta(),
+<span class="lineNum">      56 </span>            :                Direction&lt;3&gt;::lower_eta()}}},
+<span class="lineNum">      57 </span>            :           OrientationMap&lt;3&gt;{std::array&lt;Direction&lt;3&gt;, 3&gt;{
+<span class="lineNum">      58 </span>            :               {Direction&lt;3&gt;::upper_zeta(), Direction&lt;3&gt;::lower_xi(),
+<span class="lineNum">      59 </span>            :                Direction&lt;3&gt;::lower_eta()}}},
+<span class="lineNum">      60 </span>            :           OrientationMap&lt;3&gt;{std::array&lt;Direction&lt;3&gt;, 3&gt;{
+<span class="lineNum">      61 </span>            :               {Direction&lt;3&gt;::upper_eta(), Direction&lt;3&gt;::lower_xi(),
+<span class="lineNum">      62 </span>            :                Direction&lt;3&gt;::upper_zeta()}}},
+<span class="lineNum">      63 </span>            :           OrientationMap&lt;3&gt;{std::array&lt;Direction&lt;3&gt;, 3&gt;{
+<span class="lineNum">      64 </span>            :               {Direction&lt;3&gt;::upper_eta(), Direction&lt;3&gt;::lower_zeta(),
+<span class="lineNum">      65 </span>            :                Direction&lt;3&gt;::lower_xi()}}},
+<span class="lineNum">      66 </span>            :           OrientationMap&lt;3&gt;{std::array&lt;Direction&lt;3&gt;, 3&gt;{
+<span class="lineNum">      67 </span>            :               {Direction&lt;3&gt;::upper_zeta(), Direction&lt;3&gt;::lower_xi(),
+<span class="lineNum">      68 </span>            :                Direction&lt;3&gt;::lower_eta()}}},
+<span class="lineNum">      69 </span>            :           OrientationMap&lt;3&gt;{std::array&lt;Direction&lt;3&gt;, 3&gt;{
+<span class="lineNum">      70 </span>            :               {Direction&lt;3&gt;::upper_xi(), Direction&lt;3&gt;::upper_eta(),
+<span class="lineNum">      71 </span>            :                Direction&lt;3&gt;::upper_zeta()}}}},
+<span class="lineNum">      72 </span>            :       is_periodic_in_);
+<span class="lineNum">      73 </span>            : }
+<span class="lineNum">      74 </span>            : 
+<span class="lineNum">      75 </span>            : template &lt;typename TargetFrame&gt;
+<span class="lineNum">      76 </span>            : std::vector&lt;std::array&lt;size_t, 3&gt;&gt; RotatedBricks&lt;TargetFrame&gt;::initial_extents()
+<span class="lineNum">      77 </span>            :     const noexcept {
+<span class="lineNum">      78 </span>            :   const size_t&amp; x_0 = initial_number_of_grid_points_in_xyz_[0][0];
+<span class="lineNum">      79 </span>            :   const size_t&amp; x_1 = initial_number_of_grid_points_in_xyz_[0][1];
+<span class="lineNum">      80 </span>            :   const size_t&amp; y_0 = initial_number_of_grid_points_in_xyz_[1][0];
+<span class="lineNum">      81 </span>            :   const size_t&amp; y_1 = initial_number_of_grid_points_in_xyz_[1][1];
+<span class="lineNum">      82 </span>            :   const size_t&amp; z_0 = initial_number_of_grid_points_in_xyz_[2][0];
+<span class="lineNum">      83 </span>            :   const size_t&amp; z_1 = initial_number_of_grid_points_in_xyz_[2][1];
+<span class="lineNum">      84 </span>            :   return {{{x_0, y_0, z_0}}, {{z_0, y_0, x_1}}, {{x_0, z_0, y_1}},
+<span class="lineNum">      85 </span>            :           {{y_1, z_0, x_1}}, {{y_0, x_0, z_1}}, {{z_1, x_1, y_0}},
+<span class="lineNum">      86 </span>            :           {{y_1, z_1, x_0}}, {{x_1, y_1, z_1}}};
+<span class="lineNum">      87 </span>            : }
+<span class="lineNum">      88 </span>            : 
+<span class="lineNum">      89 </span>            : template &lt;typename TargetFrame&gt;
+<span class="lineNum">      90 </span>            : std::vector&lt;std::array&lt;size_t, 3&gt;&gt;
+<span class="lineNum">      91 </span>            : RotatedBricks&lt;TargetFrame&gt;::initial_refinement_levels() const noexcept {
+<span class="lineNum">      92 </span>            :   const size_t&amp; x_0 = initial_refinement_level_xyz_[0];
+<span class="lineNum">      93 </span>            :   const size_t&amp; y_0 = initial_refinement_level_xyz_[1];
+<span class="lineNum">      94 </span>            :   const size_t&amp; z_0 = initial_refinement_level_xyz_[2];
+<span class="lineNum">      95 </span>            :   return {{{x_0, y_0, z_0}}, {{z_0, y_0, x_0}}, {{x_0, z_0, y_0}},
+<span class="lineNum">      96 </span>            :           {{y_0, z_0, x_0}}, {{y_0, x_0, z_0}}, {{z_0, x_0, y_0}},
+<span class="lineNum">      97 </span>            :           {{y_0, z_0, x_0}}, {{x_0, y_0, z_0}}};
+<span class="lineNum">      98 </span>            : }
+<span class="lineNum">      99 </span>            : 
+<span class="lineNum">     100 </span>            : template class RotatedBricks&lt;Frame::Inertial&gt;;
+<span class="lineNum">     101 </span>            : template class RotatedBricks&lt;Frame::Grid&gt;;
+<span class="lineNum">     102 </span>            : }  // namespace creators
+<span class="lineNum">     103 </span>            : }  // namespace domain
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

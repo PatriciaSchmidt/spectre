@@ -1,0 +1,280 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - ControlSystem/Averager.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">ControlSystem</a> - Averager.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;ControlSystem/Averager.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;boost/none.hpp&gt;
+<span class="lineNum">       7 </span>            : #include &lt;ostream&gt;
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : #include &quot;ErrorHandling/Error.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;Utilities/MakeArray.hpp&quot;
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            : template &lt;size_t DerivOrder&gt;
+<span class="lineNum">      14 </span>            : Averager&lt;DerivOrder&gt;::Averager(const double avg_timescale_frac,
+<span class="lineNum">      15 </span>            :                                const bool average_0th_deriv_of_q) noexcept
+<span class="lineNum">      16 </span>            :     : avg_tscale_frac_(avg_timescale_frac),
+<span class="lineNum">      17 </span>            :       average_0th_deriv_of_q_(average_0th_deriv_of_q) {
+<span class="lineNum">      18 </span>            :   if (avg_tscale_frac_ &lt;= 0.0) {
+<span class="lineNum">      19 </span>            :     ERROR(
+<span class="lineNum">      20 </span>            :         &quot;The specified avg_timescale_frac, the fraction of the damping &quot;
+<span class="lineNum">      21 </span>            :         &quot;timescale over which averaging is performed, (&quot;
+<span class="lineNum">      22 </span>            :         &lt;&lt; avg_tscale_frac_ &lt;&lt; &quot;) must be positive&quot;);
+<span class="lineNum">      23 </span>            :   }
+<span class="lineNum">      24 </span>            : }
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            : template &lt;size_t DerivOrder&gt;
+<span class="lineNum">      27 </span>            : Averager&lt;DerivOrder&gt;::Averager(Averager&amp;&amp; rhs) noexcept
+<span class="lineNum">      28 </span>            :     : avg_tscale_frac_(std::move(rhs.avg_tscale_frac_)),
+<span class="lineNum">      29 </span>            :       average_0th_deriv_of_q_(std::move(rhs.average_0th_deriv_of_q_)),
+<span class="lineNum">      30 </span>            :       averaged_values_(std::move(rhs.averaged_values_)),
+<span class="lineNum">      31 </span>            :       boost_none_(std::move(rhs.boost_none_)),
+<span class="lineNum">      32 </span>            :       times_(std::move(rhs.times_)),
+<span class="lineNum">      33 </span>            :       raw_qs_(std::move(rhs.raw_qs_)),
+<span class="lineNum">      34 </span>            :       weight_k_(std::move(rhs.weight_k_)),
+<span class="lineNum">      35 </span>            :       tau_k_(std::move(rhs.tau_k_)) {}
+<span class="lineNum">      36 </span>            : 
+<span class="lineNum">      37 </span>            : template &lt;size_t DerivOrder&gt;
+<span class="lineNum">      38 </span>            : Averager&lt;DerivOrder&gt;&amp; Averager&lt;DerivOrder&gt;::operator=(Averager&amp;&amp; rhs) noexcept {
+<span class="lineNum">      39 </span>            :   if (this != &amp;rhs) {
+<span class="lineNum">      40 </span>            :     avg_tscale_frac_ = std::move(rhs.avg_tscale_frac_);
+<span class="lineNum">      41 </span>            :     average_0th_deriv_of_q_ = std::move(rhs.average_0th_deriv_of_q_);
+<span class="lineNum">      42 </span>            :     averaged_values_ = std::move(rhs.averaged_values_);
+<span class="lineNum">      43 </span>            :     boost_none_ = std::move(rhs.boost_none_);
+<span class="lineNum">      44 </span>            :     times_ = std::move(rhs.times_);
+<span class="lineNum">      45 </span>            :     raw_qs_ = std::move(rhs.raw_qs_);
+<span class="lineNum">      46 </span>            :     weight_k_ = std::move(rhs.weight_k_);
+<span class="lineNum">      47 </span>            :     tau_k_ = std::move(rhs.tau_k_);
+<span class="lineNum">      48 </span>            :   }
+<span class="lineNum">      49 </span>            :   return *this;
+<span class="lineNum">      50 </span>            : }
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            : template &lt;size_t DerivOrder&gt;
+<span class="lineNum">      53 </span>            : const boost::optional&lt;std::array&lt;DataVector, DerivOrder + 1&gt;&gt;&amp;
+<span class="lineNum">      54 </span>            : Averager&lt;DerivOrder&gt;::operator()(const double time) const noexcept {
+<span class="lineNum">      55 </span>            :   if (times_.size() &gt; DerivOrder and time == times_[0]) {
+<span class="lineNum">      56 </span>            :     return averaged_values_;
+<span class="lineNum">      57 </span>            :   }
+<span class="lineNum">      58 </span>            :   return boost_none_;
+<span class="lineNum">      59 </span>            : }
+<span class="lineNum">      60 </span>            : 
+<span class="lineNum">      61 </span>            : template &lt;size_t DerivOrder&gt;
+<span class="lineNum">      62 </span>            : void Averager&lt;DerivOrder&gt;::clear() noexcept {
+<span class="lineNum">      63 </span>            :   averaged_values_ = boost::none;
+<span class="lineNum">      64 </span>            :   times_.clear();
+<span class="lineNum">      65 </span>            :   raw_qs_.clear();
+<span class="lineNum">      66 </span>            :   weight_k_ = 0.0;
+<span class="lineNum">      67 </span>            :   tau_k_ = 0.0;
+<span class="lineNum">      68 </span>            : }
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span>            : template &lt;size_t DerivOrder&gt;
+<span class="lineNum">      71 </span>            : void Averager&lt;DerivOrder&gt;::update(const double time, const DataVector&amp; raw_q,
+<span class="lineNum">      72 </span>            :                                   const DataVector&amp; timescales) noexcept {
+<span class="lineNum">      73 </span>            :   if (not raw_qs_.empty()) {
+<span class="lineNum">      74 </span>            :     if (UNLIKELY(raw_q.size() != raw_qs_[0].size())) {
+<span class="lineNum">      75 </span>            :       ERROR(&quot;The number of components in the raw_q provided (&quot;
+<span class="lineNum">      76 </span>            :             &lt;&lt; raw_q.size()
+<span class="lineNum">      77 </span>            :             &lt;&lt; &quot;) does not match the size of previously supplied raw_q (&quot;
+<span class="lineNum">      78 </span>            :             &lt;&lt; raw_qs_[0].size() &lt;&lt; &quot;).&quot;);
+<span class="lineNum">      79 </span>            :     }
+<span class="lineNum">      80 </span>            :   } else {
+<span class="lineNum">      81 </span>            :     // This is the first call to update: initialize averaged values, weights and
+<span class="lineNum">      82 </span>            :     // effective time (with proper number of components)
+<span class="lineNum">      83 </span>            :     averaged_values_ =
+<span class="lineNum">      84 </span>            :         make_array&lt;DerivOrder + 1&gt;(DataVector(raw_q.size(), 0.0));
+<span class="lineNum">      85 </span>            :     weight_k_ = 0.0;
+<span class="lineNum">      86 </span>            :     tau_k_ = 0.0;
+<span class="lineNum">      87 </span>            :   }
+<span class="lineNum">      88 </span>            : 
+<span class="lineNum">      89 </span>            :   // Ensure that the number of timescales matches the number of components
+<span class="lineNum">      90 </span>            :   if (UNLIKELY(timescales.size() != raw_q.size())) {
+<span class="lineNum">      91 </span>            :     ERROR(&quot;The number of supplied timescales (&quot;
+<span class="lineNum">      92 </span>            :           &lt;&lt; timescales.size() &lt;&lt; &quot;) does not match the number of components (&quot;
+<span class="lineNum">      93 </span>            :           &lt;&lt; raw_q.size() &lt;&lt; &quot;).&quot;);
+<span class="lineNum">      94 </span>            :   }
+<span class="lineNum">      95 </span>            :   // Get the minimum damping time from all component timescales. This will be
+<span class="lineNum">      96 </span>            :   // used to determine the averaging timescale for ALL components.
+<span class="lineNum">      97 </span>            :   const double min_timescale = min(timescales);
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span>            :   // Do not allow updates at or before last update time
+<span class="lineNum">     100 </span>            :   if (UNLIKELY(not times_.empty() and time &lt;= last_time_updated())) {
+<span class="lineNum">     101 </span>            :     ERROR(&quot;The specified time t=&quot; &lt;&lt; time &lt;&lt; &quot; is at or before the last time &quot;
+<span class="lineNum">     102 </span>            :                                              &quot;updated, t_update=&quot;
+<span class="lineNum">     103 </span>            :                                   &lt;&lt; last_time_updated() &lt;&lt; &quot;.&quot;);
+<span class="lineNum">     104 </span>            :   }
+<span class="lineNum">     105 </span>            : 
+<span class="lineNum">     106 </span>            :   // update deques
+<span class="lineNum">     107 </span>            :   times_.emplace_front(time);
+<span class="lineNum">     108 </span>            :   raw_qs_.emplace_front(raw_q);
+<span class="lineNum">     109 </span>            :   if (times_.size() &gt; DerivOrder + 1) {
+<span class="lineNum">     110 </span>            :     // get rid of old data once we have a sufficient number of points
+<span class="lineNum">     111 </span>            :     times_.pop_back();
+<span class="lineNum">     112 </span>            :     raw_qs_.pop_back();
+<span class="lineNum">     113 </span>            :   }
+<span class="lineNum">     114 </span>            : 
+<span class="lineNum">     115 </span>            :   if (times_.size() &gt; DerivOrder) {
+<span class="lineNum">     116 </span>            :     // we now have enough data points to begin averaging
+<span class="lineNum">     117 </span>            :     const double tau_avg = min_timescale * avg_tscale_frac_;
+<span class="lineNum">     118 </span>            :     const double tau_m = times_[0] - times_[1];
+<span class="lineNum">     119 </span>            : 
+<span class="lineNum">     120 </span>            :     // update the weights and effective time
+<span class="lineNum">     121 </span>            :     const double old_weight = weight_k_;
+<span class="lineNum">     122 </span>            :     weight_k_ = (tau_m + old_weight) * tau_avg / (tau_m + tau_avg);
+<span class="lineNum">     123 </span>            :     tau_k_ = (time * tau_m + tau_k_ * old_weight) * tau_avg /
+<span class="lineNum">     124 </span>            :              (weight_k_ * (tau_m + tau_avg));
+<span class="lineNum">     125 </span>            : 
+<span class="lineNum">     126 </span>            :     std::array&lt;DataVector, DerivOrder + 1&gt; raw_derivs = get_derivs();
+<span class="lineNum">     127 </span>            :     // use raw value if not using `average_0th_deriv_of_q`
+<span class="lineNum">     128 </span>            :     size_t start_ind = 0;
+<span class="lineNum">     129 </span>            :     if (not average_0th_deriv_of_q_) {
+<span class="lineNum">     130 </span>            :       (*averaged_values_)[0] = raw_qs_[0];
+<span class="lineNum">     131 </span>            :       start_ind = 1;
+<span class="lineNum">     132 </span>            :     }
+<span class="lineNum">     133 </span>            : 
+<span class="lineNum">     134 </span>            :     for (size_t i = start_ind; i &lt;= DerivOrder; i++) {
+<span class="lineNum">     135 </span>            :       gsl::at(*averaged_values_, i) =
+<span class="lineNum">     136 </span>            :           (gsl::at(raw_derivs, i) * tau_m +
+<span class="lineNum">     137 </span>            :            gsl::at(*averaged_values_, i) * old_weight) *
+<span class="lineNum">     138 </span>            :           tau_avg / (weight_k_ * (tau_m + tau_avg));
+<span class="lineNum">     139 </span>            :     }
+<span class="lineNum">     140 </span>            :   }
+<span class="lineNum">     141 </span>            : }
+<span class="lineNum">     142 </span>            : 
+<span class="lineNum">     143 </span>            : template &lt;size_t DerivOrder&gt;
+<span class="lineNum">     144 </span>            : double Averager&lt;DerivOrder&gt;::last_time_updated() const noexcept {
+<span class="lineNum">     145 </span>            :   if (UNLIKELY(times_.empty())) {
+<span class="lineNum">     146 </span>            :     ERROR(&quot;The time history has not been updated yet.&quot;);
+<span class="lineNum">     147 </span>            :   }
+<span class="lineNum">     148 </span>            :   return times_[0];
+<span class="lineNum">     149 </span>            : }
+<span class="lineNum">     150 </span>            : 
+<span class="lineNum">     151 </span>            : template &lt;size_t DerivOrder&gt;
+<span class="lineNum">     152 </span>            : double Averager&lt;DerivOrder&gt;::average_time(const double time) const noexcept {
+<span class="lineNum">     153 </span>            :   if (LIKELY(times_.size() &gt; DerivOrder and time == times_[0])) {
+<span class="lineNum">     154 </span>            :     return tau_k_;
+<span class="lineNum">     155 </span>            :   }
+<span class="lineNum">     156 </span>            :   ERROR(
+<span class="lineNum">     157 </span>            :       &quot;Cannot return averaged values because the averager does not have &quot;
+<span class="lineNum">     158 </span>            :       &quot;up-to-date information.&quot;);
+<span class="lineNum">     159 </span>            : }
+<span class="lineNum">     160 </span>            : 
+<span class="lineNum">     161 </span>            : template &lt;size_t DerivOrder&gt;
+<span class="lineNum">     162 </span>            : std::array&lt;DataVector, DerivOrder + 1&gt; Averager&lt;DerivOrder&gt;::get_derivs() const
+<span class="lineNum">     163 </span>            :     noexcept {
+<span class="lineNum">     164 </span>            :   static_assert(DerivOrder == 2,
+<span class="lineNum">     165 </span>            :                 &quot;Finite differencing currently only implemented for DerivOrder &quot;
+<span class="lineNum">     166 </span>            :                 &quot;= 2. If a different DerivOrder is desired, please add stencil &quot;
+<span class="lineNum">     167 </span>            :                 &quot;coefficients for that order.&quot;);
+<span class="lineNum">     168 </span>            : 
+<span class="lineNum">     169 </span>            :   // initialize the finite difference coefs
+<span class="lineNum">     170 </span>            :   std::array&lt;std::array&lt;double, 3&gt;, 3&gt; coefs{};
+<span class="lineNum">     171 </span>            : 
+<span class="lineNum">     172 </span>            :   const double delta_t1 = times_[0] - times_[1];
+<span class="lineNum">     173 </span>            :   const double delta_t2 = times_[1] - times_[2];
+<span class="lineNum">     174 </span>            :   const double delta_t = delta_t1 + delta_t2;
+<span class="lineNum">     175 </span>            :   const double denom = 1.0 / delta_t;
+<span class="lineNum">     176 </span>            :   const double dts = delta_t1 * delta_t2;
+<span class="lineNum">     177 </span>            : 
+<span class="lineNum">     178 </span>            :   // set coefs for function value
+<span class="lineNum">     179 </span>            :   coefs[0] = {{1.0, 0.0, 0.0}};
+<span class="lineNum">     180 </span>            :   // first deriv coefs
+<span class="lineNum">     181 </span>            :   coefs[1] = {{(2.0 + delta_t2 / delta_t1) * denom, -delta_t / dts,
+<span class="lineNum">     182 </span>            :                delta_t1 / delta_t2 * denom}};
+<span class="lineNum">     183 </span>            :   // second deriv coefs
+<span class="lineNum">     184 </span>            :   coefs[2] = {{2.0 / delta_t1 * denom, -2.0 / dts, 2.0 / delta_t2 * denom}};
+<span class="lineNum">     185 </span>            : 
+<span class="lineNum">     186 </span>            :   std::array&lt;DataVector, 3&gt; result =
+<span class="lineNum">     187 </span>            :       make_array&lt;3&gt;(DataVector(raw_qs_[0].size(), 0.0));
+<span class="lineNum">     188 </span>            :   // compute derivatives
+<span class="lineNum">     189 </span>            :   for (size_t i = 0; i &lt; 3; i++) {
+<span class="lineNum">     190 </span>            :     for (size_t j = 0; j &lt; 3; j++) {
+<span class="lineNum">     191 </span>            :       gsl::at(result, i) += raw_qs_[j] * gsl::at(gsl::at(coefs, i), j);
+<span class="lineNum">     192 </span>            :     }
+<span class="lineNum">     193 </span>            :   }
+<span class="lineNum">     194 </span>            :   return result;
+<span class="lineNum">     195 </span>            : }
+<span class="lineNum">     196 </span>            : 
+<span class="lineNum">     197 </span>            : // explicit instantiations
+<span class="lineNum">     198 </span>            : /// \cond
+<span class="lineNum">     199 </span>            : template class Averager&lt;2&gt;;
+<span class="lineNum">     200 </span>            : /// \endcond
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

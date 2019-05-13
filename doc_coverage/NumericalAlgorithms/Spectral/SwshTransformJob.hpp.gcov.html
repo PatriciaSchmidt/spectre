@@ -1,0 +1,512 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - NumericalAlgorithms/Spectral/SwshTransformJob.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">NumericalAlgorithms/Spectral</a> - SwshTransformJob.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">7</td>
+            <td class="headerCovTableEntry">16</td>
+            <td class="headerCovTableEntryLo">43.8 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;cmath&gt;
+<span class="lineNum">       7 </span>            : #include &lt;complex&gt;
+<span class="lineNum">       8 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       9 </span>            : #include &lt;sharp_cxx.h&gt;
+<span class="lineNum">      10 </span>            : #include &lt;utility&gt;
+<span class="lineNum">      11 </span>            : #include &lt;vector&gt;
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            : #include &quot;DataStructures/DataBox/DataBoxTag.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;DataStructures/Variables.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      15 </span>            : #include &quot;NumericalAlgorithms/Spectral/ComplexDataView.hpp&quot;
+<span class="lineNum">      16 </span>            : #include &quot;NumericalAlgorithms/Spectral/SwshCoefficients.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      17 </span>            : #include &quot;NumericalAlgorithms/Spectral/SwshCollocation.hpp&quot;
+<span class="lineNum">      18 </span>            : #include &quot;NumericalAlgorithms/Spectral/SwshTags.hpp&quot;
+<span class="lineNum">      19 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      20 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : // IWYU pragma: no_forward_declare Variables
+<span class="lineNum">      23 </span>            : // IWYU pragma: no_forward_declare Coefficients
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            : namespace Spectral {
+<span class="lineNum">      26 </span>            : namespace Swsh {
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            : /*!
+<span class="lineNum">      29 </span>            :  * \ingroup SwshGroup
+<span class="lineNum">      30 </span>            :  * \brief A class which gathers all necessary shared structure among several
+<span class="lineNum">      31 </span>            :  * spin-weighted spherical harmonic transforms and dispatches to libsharp. Each
+<span class="lineNum">      32 </span>            :  * `TransformJob` represents exactly one spin-weighted transform libsharp
+<span class="lineNum">      33 </span>            :  * execution call, and one inverse transform libsharp execution call.
+<span class="lineNum">      34 </span>            :  *
+<span class="lineNum">      35 </span>            :  *
+<span class="lineNum">      36 </span>            :  * \details
+<span class="lineNum">      37 </span>            :  * Template Parameters:
+<span class="lineNum">      38 </span>            :  * - `Spin`: The spin weight for all of the fields to transform with this job.
+<span class="lineNum">      39 </span>            :  * - `Representation`: The element of the `ComplexRepresentation` enum which
+<span class="lineNum">      40 </span>            :  *   parameterizes how the data passed to libsharp will be represented. Two
+<span class="lineNum">      41 </span>            :  *   options are available:
+<span class="lineNum">      42 </span>            :  *  - `ComplexRepresentation:Interleaved`: indicates that the real and imaginary
+<span class="lineNum">      43 </span>            :  *    parts of the collocation values will be passed to libsharp as pointers
+<span class="lineNum">      44 </span>            :  *    into existing complex data structures, minimizing copies, but maintaining
+<span class="lineNum">      45 </span>            :  *    a stride of 2 for 'adjacent' real or imaginary values.
+<span class="lineNum">      46 </span>            :  *  - `ComplexRepresentation::RealsThenImags`: indicates that the real and
+<span class="lineNum">      47 </span>            :  *    imaginary parts of the collocation values will be passed to libsharp as
+<span class="lineNum">      48 </span>            :  *    separate contiguous blocks. At current, this introduces both allocations
+<span class="lineNum">      49 </span>            :  *    and copies.  **optimization note** In the future most of the allocations
+<span class="lineNum">      50 </span>            :  *    can be aggregated to calling code, which would pass in buffers by
+<span class="lineNum">      51 </span>            :  *    `not_null` pointers.
+<span class="lineNum">      52 </span>            :  *
+<span class="lineNum">      53 </span>            :  *  For performance-sensitive code, both options should be tested, as each
+<span class="lineNum">      54 </span>            :  *  strategy has trade-offs.
+<span class="lineNum">      55 </span>            :  * - `TagList`: A `tmpl::list` of Tags to be forward and/or backward transformed
+<span class="lineNum">      56 </span>            :  *   with the `TransformJob`.
+<span class="lineNum">      57 </span>            :  *
+<span class="lineNum">      58 </span>            :  * \note The signs obtained from libsharp transformations must be handled
+<span class="lineNum">      59 </span>            :  * carefully. (In particular, it does not use the sign convention you will find
+<span class="lineNum">      60 </span>            :  * in [Wikipedia]
+<span class="lineNum">      61 </span>            :  * (https://en.wikipedia.org/wiki/Spin-weighted_spherical_harmonics)).
+<span class="lineNum">      62 </span>            :  * - libsharp deals only with the transformation of real values, so
+<span class="lineNum">      63 </span>            :  *   transformation of complex values must be done for real and imaginary parts
+<span class="lineNum">      64 </span>            :  *   separately.
+<span class="lineNum">      65 </span>            :  * - due to only transforming real components, it stores only the positive
+<span class="lineNum">      66 </span>            :  *   \f$m\f$ modes (as the rest would be redundant). Therefore, the negative
+<span class="lineNum">      67 </span>            :  *   \f$m\f$ modes must be inferred from conjugation and further sign changes.
+<span class="lineNum">      68 </span>            :  * - libsharp only has the capability of transforming positive spin weighted
+<span class="lineNum">      69 </span>            :  *   quantities. Therefore, additional steps are taken (involving further
+<span class="lineNum">      70 </span>            :  *   conjugation of the provided data) in order to use those utilities on
+<span class="lineNum">      71 </span>            :  *   negative spin-weighted quantities. The resulting modes have yet more sign
+<span class="lineNum">      72 </span>            :  *   changes that must be taken into account.
+<span class="lineNum">      73 </span>            :  *
+<span class="lineNum">      74 </span>            :  * The decomposition resulting from the libsharp transform for spin \f$s\f$ and
+<span class="lineNum">      75 </span>            :  * complex spin-weighted \f${}_s f\f$ can be represented mathematically as:
+<span class="lineNum">      76 </span>            :  *
+<span class="lineNum">      77 </span>            :  * \f{align*}{
+<span class="lineNum">      78 </span>            :  * {}_s f(\theta, \phi) = \sum_{\ell = 0}^{\ell_\mathrm{max}} \Bigg\{&amp;
+<span class="lineNum">      79 </span>            :  * \left(\sum_{m = 0}^{\ell} a^\mathrm{sharp, real}_{l m} {}_s Y_{\ell
+<span class="lineNum">      80 </span>            :  * m}^\mathrm{sharp, real}\right) + \left(\sum_{m=1}^{\ell}
+<span class="lineNum">      81 </span>            :  * \left(a^\mathrm{sharp, real}_{l m}{}\right)^*
+<span class="lineNum">      82 </span>            :  * {}_s Y_{\ell -m}^\mathrm{sharp, real}\right) \notag\\
+<span class="lineNum">      83 </span>            :  * &amp;+ i \left[\left(\sum_{m = 0}^{\ell} a^\mathrm{sharp, imag}_{l m} {}_s
+<span class="lineNum">      84 </span>            :  * Y_{\ell m}^\mathrm{sharp, imag}\right) + \left(\sum_{m=1}^{\ell}
+<span class="lineNum">      85 </span>            :  * \left(a^\mathrm{sharp, imag}_{l m}{}\right)^* {}_s Y_{\ell -m}^\mathrm{sharp,
+<span class="lineNum">      86 </span>            :  * imag} \right)\right] \Bigg\},
+<span class="lineNum">      87 </span>            :  * \f}
+<span class="lineNum">      88 </span>            :  *
+<span class="lineNum">      89 </span>            :  * where
+<span class="lineNum">      90 </span>            :  *
+<span class="lineNum">      91 </span>            :  * \f{align*}{
+<span class="lineNum">      92 </span>            :  * {}_s Y_{\ell m}^\mathrm{sharp, real} &amp;=
+<span class="lineNum">      93 </span>            :  * \begin{cases}
+<span class="lineNum">      94 </span>            :  * (-1)^{s + 1} {}_s Y_{\ell m}, &amp; \mathrm{for}\; s &lt; 0, m \ge 0 \\
+<span class="lineNum">      95 </span>            :  * {}_s Y_{\ell m}, &amp; \mathrm{for}\; s = 0, m \ge 0 \\
+<span class="lineNum">      96 </span>            :  * - {}_s Y_{\ell m}, &amp; \mathrm{for}\; s &gt; 0, m \ge 0 \\
+<span class="lineNum">      97 </span>            :  * (-1)^{s + m + 1} {}_s Y_{\ell m}, &amp; \mathrm{for}\; s &lt; 0, m &lt; 0 \\
+<span class="lineNum">      98 </span>            :  * (-1)^{m} {}_s Y_{\ell m}, &amp; \mathrm{for}\; s = 0, m &lt; 0 \\
+<span class="lineNum">      99 </span>            :  * (-1)^{m + 1} {}_s Y_{\ell m}, &amp; \mathrm{for}\; s &gt; 0, m &lt; 0
+<span class="lineNum">     100 </span>            :  * \end{cases} \\
+<span class="lineNum">     101 </span>            :  * &amp;\equiv {}_s S_{\ell m}^{\mathrm{real}} {}_s Y_{\ell m}\\
+<span class="lineNum">     102 </span>            :  * {}_s Y_{\ell m}^\mathrm{sharp, imag} &amp;=
+<span class="lineNum">     103 </span>            :  * \begin{cases}
+<span class="lineNum">     104 </span>            :  * (-1)^{s + 1} {}_s Y_{\ell m}, &amp; \mathrm{for}\; s &lt; 0, m \ge 0 \\
+<span class="lineNum">     105 </span>            :  * -{}_s Y_{\ell m}, &amp; \mathrm{for}\; s = 0, m \ge 0 \\
+<span class="lineNum">     106 </span>            :  * {}_s Y_{\ell m}, &amp; \mathrm{for}\; s &gt; 0, m \ge 0 \\
+<span class="lineNum">     107 </span>            :  * (-1)^{s + m} {}_s Y_{\ell m}, &amp; \mathrm{for}\; s &lt; 0, m &lt; 0 \\
+<span class="lineNum">     108 </span>            :  * (-1)^{m} {}_s Y_{\ell m}, &amp; \mathrm{for}\; s = 0, m &lt; 0 \\
+<span class="lineNum">     109 </span>            :  * (-1)^{m + 1} {}_s Y_{\ell m}, &amp; \mathrm{for}\; s &gt; 0, m &lt; 0
+<span class="lineNum">     110 </span>            :  * \end{cases} \\
+<span class="lineNum">     111 </span>            :  * &amp;\equiv {}_s S_{\ell m}^{\mathrm{real}} {}_s Y_{\ell m},
+<span class="lineNum">     112 </span>            :  * \f}
+<span class="lineNum">     113 </span>            :  *
+<span class="lineNum">     114 </span>            :  * where the unadorned \f${}_s Y_{\ell m}\f$ on the right-hand-sides follow the
+<span class="lineNum">     115 </span>            :  * (older) convention of \cite Goldberg1966uu. Note the phase in these
+<span class="lineNum">     116 </span>            :  * expressions is not completely standardized, so should be checked carefully
+<span class="lineNum">     117 </span>            :  * whenever coefficient data is directly manipulated.
+<span class="lineNum">     118 </span>            :  *
+<span class="lineNum">     119 </span>            :  * For reference, we can compute the relation between Goldberg spin-weighted
+<span class="lineNum">     120 </span>            :  * moments \f${}_s f_{\ell m}\f$, defined as
+<span class="lineNum">     121 </span>            :  *
+<span class="lineNum">     122 </span>            :  * \f[ {}_s f(\theta, \phi) = \sum_{\ell = 0}^{\ell_\mathrm{max}} \sum_{m =
+<span class="lineNum">     123 </span>            :  * -\ell}^{\ell} {}_s f_{\ell m} {}_s Y_{\ell m}
+<span class="lineNum">     124 </span>            :  * \f]
+<span class="lineNum">     125 </span>            :  *
+<span class="lineNum">     126 </span>            :  * so,
+<span class="lineNum">     127 </span>            :  * \f[
+<span class="lineNum">     128 </span>            :  * {}_s f_{\ell m} =
+<span class="lineNum">     129 </span>            :  * \begin{cases}
+<span class="lineNum">     130 </span>            :  * a_{\ell m}^{\mathrm{sharp}, \mathrm{real}}  {}_s S_{\ell m}^{\mathrm{real}} +
+<span class="lineNum">     131 </span>            :  * a_{\ell m}^{\mathrm{sharp}, \mathrm{imag}}  {}_s S_{\ell m}^{\mathrm{imag}} &amp;
+<span class="lineNum">     132 </span>            :  * \mathrm{for} \; m \ge 0 \\
+<span class="lineNum">     133 </span>            :  * \left(a_{\ell -m}^{\mathrm{sharp}, \mathrm{real}}\right)^* {}_s S_{\ell
+<span class="lineNum">     134 </span>            :  * m}^{\mathrm{real}} + \left(a_{\ell -m}^{\mathrm{sharp},
+<span class="lineNum">     135 </span>            :  * \mathrm{imag}}\right)^* {}_s S_{\ell m}^{\mathrm{imag}} &amp;
+<span class="lineNum">     136 </span>            :  * \mathrm{for} \; m &lt; 0 \\
+<span class="lineNum">     137 </span>            :  * \end{cases} \f]
+<span class="lineNum">     138 </span>            :  *
+<span class="lineNum">     139 </span>            :  *
+<span class="lineNum">     140 </span>            :  * The resulting coefficients \f$a_{\ell m}\f$ are stored in a triangular,
+<span class="lineNum">     141 </span>            :  * \f$\ell\f$-varies-fastest configuration. So, for instance, the first
+<span class="lineNum">     142 </span>            :  * \f$\ell_\mathrm{max}\f$ entries contain the coefficients for \f$m=0\f$ and
+<span class="lineNum">     143 </span>            :  * all \f$\ell\f$s, and the next \f$\ell_\mathrm{max} - 1\f$ entries contain the
+<span class="lineNum">     144 </span>            :  * coefficients for \f$m=1\f$ and \f$1 \le \ell \le \ell_\mathrm{max} \f$, and
+<span class="lineNum">     145 </span>            :  * so on.
+<span class="lineNum">     146 </span>            :  */
+<span class="lineNum">     147 </span>            : template &lt;int Spin, ComplexRepresentation Representation, typename TagList&gt;
+<span class="lineNum">     148 </span><span class="lineCov">          1 : class TransformJob {</span>
+<span class="lineNum">     149 </span>            :  public:
+<span class="lineNum">     150 </span>            :   static_assert(cpp17::is_same_v&lt;get_tags_with_spin&lt;Spin, TagList&gt;, TagList&gt;,
+<span class="lineNum">     151 </span>            :                 &quot;All Tags in TagList submitted to TransformJob must have the &quot;
+<span class="lineNum">     152 </span>            :                 &quot;same spin weight as the TransformJob Spin template parameter&quot;);
+<span class="lineNum">     153 </span><span class="lineNoCov">          0 :   using CoefficientTagList = db::wrap_tags_in&lt;Tags::SwshTransform, TagList&gt;;</span>
+<span class="lineNum">     154 </span><span class="lineNoCov">          0 :   static constexpr int spin = Spin;</span>
+<span class="lineNum">     155 </span>            : 
+<span class="lineNum">     156 </span>            :   /// \brief Constructor for transform job. Both the `l_max` and
+<span class="lineNum">     157 </span>            :   /// `number_of_radial_grid_points` must be specified for the transformation to
+<span class="lineNum">     158 </span>            :   /// appropriately find all of the data in memory and associate it with the
+<span class="lineNum">     159 </span>            :   /// correct collocation grid.
+<span class="lineNum">     160 </span><span class="lineCov">          1 :   TransformJob(size_t l_max, size_t number_of_radial_grid_points) noexcept;</span>
+<span class="lineNum">     161 </span>            : 
+<span class="lineNum">     162 </span>            :   /// \brief Helper function for determining the size of allocation necessary to
+<span class="lineNum">     163 </span>            :   /// store the coefficient data.
+<span class="lineNum">     164 </span>            :   ///
+<span class="lineNum">     165 </span>            :   /// \note This size is not the same as the collocation data size, as the
+<span class="lineNum">     166 </span>            :   /// coefficients are stored in the efficient 'triangular' form noted in the
+<span class="lineNum">     167 </span>            :   /// documentation for `TransformJob`.
+<span class="lineNum">     168 </span><span class="lineCov">          1 :   constexpr size_t coefficient_output_size() const noexcept {</span>
+<span class="lineNum">     169 </span>            :     return number_of_swsh_coefficients(l_max_) * number_of_radial_grid_points_;
+<span class="lineNum">     170 </span>            :   }
+<span class="lineNum">     171 </span>            : 
+<span class="lineNum">     172 </span>            :   /// \brief Execute the forward spin-weighted spherical harmonic transform
+<span class="lineNum">     173 </span>            :   /// using libsharp.
+<span class="lineNum">     174 </span>            :   ///
+<span class="lineNum">     175 </span>            :   /// \param output A `Variables` which must contain `CoefficientTag&lt;...&gt;`s
+<span class="lineNum">     176 </span>            :   /// for each of the tags provided via `TagList`. The coefficients will be
+<span class="lineNum">     177 </span>            :   /// stored appropriately in this Variables.
+<span class="lineNum">     178 </span>            :   /// \param input A `Variables` which must contain each of the tags provided
+<span class="lineNum">     179 </span>            :   /// via `TagList`. The collocation points may be temporarily altered
+<span class="lineNum">     180 </span>            :   /// (conjugated) during the execution of the transform if the `Spin` is
+<span class="lineNum">     181 </span>            :   /// negative, but are reverted to their original state by the end of the
+<span class="lineNum">     182 </span>            :   /// function execution.
+<span class="lineNum">     183 </span>            :   template &lt;typename InputVarsTagList, typename OutputVarsTagList&gt;
+<span class="lineNum">     184 </span><span class="lineCov">          1 :   void execute_transform(</span>
+<span class="lineNum">     185 </span>            :       gsl::not_null&lt;Variables&lt;OutputVarsTagList&gt;*&gt; output,
+<span class="lineNum">     186 </span>            :       gsl::not_null&lt;Variables&lt;InputVarsTagList&gt;*&gt; input) const noexcept;
+<span class="lineNum">     187 </span>            : 
+<span class="lineNum">     188 </span>            :   /// \brief Execute the inverse spin-weighted spherical harmonic transform
+<span class="lineNum">     189 </span>            :   /// using libsharp.
+<span class="lineNum">     190 </span>            :   ///
+<span class="lineNum">     191 </span>            :   /// \param input A `Variables` which must contain `CoefficientTag&lt;...&gt;`s
+<span class="lineNum">     192 </span>            :   /// for each of the tags provided via `TagList`. The coefficients may be
+<span class="lineNum">     193 </span>            :   /// temporarily altered (conjugated) during the execution of the transform if
+<span class="lineNum">     194 </span>            :   /// the `Spin` is negative, but are reverted to their original state by the
+<span class="lineNum">     195 </span>            :   /// end of the function execution.
+<span class="lineNum">     196 </span>            :   /// \param output A `Variables` which must contain each of the tags provided
+<span class="lineNum">     197 </span>            :   /// via `TagList`. The collocation data will be stored appropriately in this
+<span class="lineNum">     198 </span>            :   /// Variables.
+<span class="lineNum">     199 </span>            :   template &lt;typename InputVarsTagList, typename OutputVarsTagList&gt;
+<span class="lineNum">     200 </span><span class="lineCov">          1 :   void execute_inverse_transform(</span>
+<span class="lineNum">     201 </span>            :       gsl::not_null&lt;Variables&lt;OutputVarsTagList&gt;*&gt; output,
+<span class="lineNum">     202 </span>            :       gsl::not_null&lt;Variables&lt;InputVarsTagList&gt;*&gt; input) const noexcept;
+<span class="lineNum">     203 </span>            : 
+<span class="lineNum">     204 </span>            :  private:
+<span class="lineNum">     205 </span><span class="lineNoCov">          0 :   size_t number_of_radial_grid_points_;</span>
+<span class="lineNum">     206 </span><span class="lineNoCov">          0 :   size_t l_max_;</span>
+<span class="lineNum">     207 </span><span class="lineNoCov">          0 :   sharp_alm_info* alm_info_;</span>
+<span class="lineNum">     208 </span><span class="lineNoCov">          0 :   const Collocation&lt;Representation&gt;* collocation_metadata_;</span>
+<span class="lineNum">     209 </span>            : };
+<span class="lineNum">     210 </span>            : 
+<span class="lineNum">     211 </span>            : template &lt;int Spin, ComplexRepresentation Representation, typename TagList&gt;
+<span class="lineNum">     212 </span>            : TransformJob&lt;Spin, Representation, TagList&gt;::TransformJob(
+<span class="lineNum">     213 </span>            :     const size_t l_max, const size_t number_of_radial_grid_points) noexcept
+<span class="lineNum">     214 </span>            :     : number_of_radial_grid_points_{number_of_radial_grid_points},
+<span class="lineNum">     215 </span>            :       l_max_{l_max},
+<span class="lineNum">     216 </span>            :       collocation_metadata_{&amp;precomputed_collocation&lt;Representation&gt;(l_max_)} {
+<span class="lineNum">     217 </span>            :   alm_info_ = detail::precomputed_coefficients(l_max_).get_sharp_alm_info();
+<span class="lineNum">     218 </span>            : }
+<span class="lineNum">     219 </span>            : 
+<span class="lineNum">     220 </span>            : template &lt;int Spin, ComplexRepresentation Representation, typename TagList&gt;
+<span class="lineNum">     221 </span>            : template &lt;typename InputVarsTagList, typename OutputVarsTagList&gt;
+<span class="lineNum">     222 </span><span class="lineNoCov">          0 : void TransformJob&lt;Spin, Representation, TagList&gt;::execute_transform(</span>
+<span class="lineNum">     223 </span>            :     const gsl::not_null&lt;Variables&lt;OutputVarsTagList&gt;*&gt; output,
+<span class="lineNum">     224 </span>            :     const gsl::not_null&lt;Variables&lt;InputVarsTagList&gt;*&gt; input) const noexcept {
+<span class="lineNum">     225 </span>            :   // assemble a list of pointers into the collocation point data. This is
+<span class="lineNum">     226 </span>            :   // required because libsharp expects pointers to pointers.
+<span class="lineNum">     227 </span>            :   std::vector&lt;detail::ComplexDataView&lt;Representation&gt;&gt; pre_transform_views;
+<span class="lineNum">     228 </span>            :   pre_transform_views.reserve(number_of_radial_grid_points_ *
+<span class="lineNum">     229 </span>            :                               tmpl::size&lt;TagList&gt;::value);
+<span class="lineNum">     230 </span>            :   std::vector&lt;const double*&gt; pre_transform_collocation_data;
+<span class="lineNum">     231 </span>            :   pre_transform_collocation_data.reserve(2 * number_of_radial_grid_points_ *
+<span class="lineNum">     232 </span>            :                                          tmpl::size&lt;TagList&gt;::value);
+<span class="lineNum">     233 </span>            : 
+<span class="lineNum">     234 </span>            :   // for each Tag and each slice block in the radial direction, construct a
+<span class="lineNum">     235 </span>            :   // ComplexDataView at the appropriate locations, then retrieve its real
+<span class="lineNum">     236 </span>            :   // and imaginary data and put it in subsequent slots in the
+<span class="lineNum">     237 </span>            :   // pre_transform_collocation_data.
+<span class="lineNum">     238 </span>            :   size_t num_transforms = 0;
+<span class="lineNum">     239 </span>            :   tmpl::for_each&lt;TagList&gt;([
+<span class="lineNum">     240 </span>            :     &amp;pre_transform_collocation_data, &amp;pre_transform_views, &amp;num_transforms,
+<span class="lineNum">     241 </span>            :     &amp;input, this
+<span class="lineNum">     242 </span>            :   ](auto x) noexcept {
+<span class="lineNum">     243 </span>            :     using transform_var_tag = typename decltype(x)::type;
+<span class="lineNum">     244 </span>            :     decltype(auto) input_vector = get(get&lt;transform_var_tag&gt;(*input)).data();
+<span class="lineNum">     245 </span>            :     for (size_t i = 0; i &lt; number_of_radial_grid_points_; ++i) {
+<span class="lineNum">     246 </span>            :       pre_transform_views.push_back(detail::ComplexDataView&lt;Representation&gt;{
+<span class="lineNum">     247 </span>            :           make_not_null(&amp;input_vector), collocation_metadata_-&gt;size(),
+<span class="lineNum">     248 </span>            :           i * collocation_metadata_-&gt;size()});
+<span class="lineNum">     249 </span>            :       pre_transform_collocation_data.push_back(
+<span class="lineNum">     250 </span>            :           pre_transform_views.back().real_data());
+<span class="lineNum">     251 </span>            :       // alteration needed because libsharp doesn't support negative spins
+<span class="lineNum">     252 </span>            :       if (spin &lt; 0) {
+<span class="lineNum">     253 </span>            :         pre_transform_views.back().conjugate();
+<span class="lineNum">     254 </span>            :       }
+<span class="lineNum">     255 </span>            :       pre_transform_collocation_data.push_back(
+<span class="lineNum">     256 </span>            :           pre_transform_views.back().imag_data());
+<span class="lineNum">     257 </span>            :       // libsharp considers two arrays per transform when spin is not zero.
+<span class="lineNum">     258 </span>            :       num_transforms += (spin == 0 ? 2 : 1);
+<span class="lineNum">     259 </span>            :     }
+<span class="lineNum">     260 </span>            :   });
+<span class="lineNum">     261 </span>            : 
+<span class="lineNum">     262 </span>            :   std::vector&lt;std::complex&lt;double&gt;*&gt; post_transform_coefficient_data;
+<span class="lineNum">     263 </span>            :   post_transform_coefficient_data.reserve(2 * number_of_radial_grid_points_ *
+<span class="lineNum">     264 </span>            :                                           tmpl::size&lt;TagList&gt;::value);
+<span class="lineNum">     265 </span>            : 
+<span class="lineNum">     266 </span>            :   // assemble list of locations in the output Variables for the destinations
+<span class="lineNum">     267 </span>            :   // of the coefficient data
+<span class="lineNum">     268 </span>            :   tmpl::for_each&lt;CoefficientTagList&gt;([
+<span class="lineNum">     269 </span>            :     &amp;post_transform_coefficient_data, &amp;output, this
+<span class="lineNum">     270 </span>            :   ](auto x) noexcept {
+<span class="lineNum">     271 </span>            :     using coefficient_var_tag = typename decltype(x)::type;
+<span class="lineNum">     272 </span>            :     decltype(auto) output_vector =
+<span class="lineNum">     273 </span>            :         get(get&lt;coefficient_var_tag&gt;(*output)).data();
+<span class="lineNum">     274 </span>            :     for (size_t i = 0; i &lt; number_of_radial_grid_points_; ++i) {
+<span class="lineNum">     275 </span>            :       // coefficients associated with the real part
+<span class="lineNum">     276 </span>            :       post_transform_coefficient_data.push_back(
+<span class="lineNum">     277 </span>            :           output_vector.data() + 2 * i * number_of_swsh_coefficients(l_max_));
+<span class="lineNum">     278 </span>            :       // coefficients associated with the imaginary part
+<span class="lineNum">     279 </span>            :       post_transform_coefficient_data.push_back(
+<span class="lineNum">     280 </span>            :           output_vector.data() +
+<span class="lineNum">     281 </span>            :           (2 * i + 1) * number_of_swsh_coefficients(l_max_));
+<span class="lineNum">     282 </span>            :     }
+<span class="lineNum">     283 </span>            :   });
+<span class="lineNum">     284 </span>            : 
+<span class="lineNum">     285 </span>            :   sharp_execute(SHARP_MAP2ALM, abs(spin),
+<span class="lineNum">     286 </span>            :                 post_transform_coefficient_data.data(),
+<span class="lineNum">     287 </span>            :                 pre_transform_collocation_data.data(),
+<span class="lineNum">     288 </span>            :                 collocation_metadata_-&gt;get_sharp_geom_info(), alm_info_,
+<span class="lineNum">     289 </span>            :                 num_transforms, SHARP_DP, nullptr, nullptr);
+<span class="lineNum">     290 </span>            : 
+<span class="lineNum">     291 </span>            :   // libsharp only has the ability to transform positive spins, so we have to
+<span class="lineNum">     292 </span>            :   // perform conjugation to deal with negative spins.
+<span class="lineNum">     293 </span>            :   if (spin &lt; 0) {
+<span class="lineNum">     294 </span>            :     // fix the conjugation performed prior to transformation.
+<span class="lineNum">     295 </span>            :     for (auto&amp; view : pre_transform_views) {
+<span class="lineNum">     296 </span>            :       view.conjugate();
+<span class="lineNum">     297 </span>            :     }
+<span class="lineNum">     298 </span>            :   }
+<span class="lineNum">     299 </span>            : }
+<span class="lineNum">     300 </span>            : 
+<span class="lineNum">     301 </span>            : template &lt;int Spin, ComplexRepresentation Representation, typename TagList&gt;
+<span class="lineNum">     302 </span>            : template &lt;typename InputVarsTagList, typename OutputVarsTagList&gt;
+<span class="lineNum">     303 </span><span class="lineNoCov">          0 : void TransformJob&lt;Spin, Representation, TagList&gt;::execute_inverse_transform(</span>
+<span class="lineNum">     304 </span>            :     const gsl::not_null&lt;Variables&lt;OutputVarsTagList&gt;*&gt; output,
+<span class="lineNum">     305 </span>            :     const gsl::not_null&lt;Variables&lt;InputVarsTagList&gt;*&gt; input) const noexcept {
+<span class="lineNum">     306 </span>            :   std::vector&lt;std::complex&lt;double&gt;*&gt; pre_transform_coefficient_data;
+<span class="lineNum">     307 </span>            :   pre_transform_coefficient_data.reserve(2 * number_of_radial_grid_points_ *
+<span class="lineNum">     308 </span>            :                                          tmpl::size&lt;CoefficientTagList&gt;::value);
+<span class="lineNum">     309 </span>            :   // assemble list of locations in the input Variables for the locations
+<span class="lineNum">     310 </span>            :   // of the coefficient data
+<span class="lineNum">     311 </span>            :   tmpl::for_each&lt;CoefficientTagList&gt;([&amp;pre_transform_coefficient_data, &amp;input,
+<span class="lineNum">     312 </span>            :                                       this](auto x) {
+<span class="lineNum">     313 </span>            :     using coefficient_var_tag = typename decltype(x)::type;
+<span class="lineNum">     314 </span>            :     decltype(auto) input_vector = get(get&lt;coefficient_var_tag&gt;(*input)).data();
+<span class="lineNum">     315 </span>            :     for (size_t i = 0; i &lt; number_of_radial_grid_points_; ++i) {
+<span class="lineNum">     316 </span>            :       pre_transform_coefficient_data.push_back(
+<span class="lineNum">     317 </span>            :           input_vector.data() + 2 * i * number_of_swsh_coefficients(l_max_));
+<span class="lineNum">     318 </span>            :       pre_transform_coefficient_data.push_back(
+<span class="lineNum">     319 </span>            :           input_vector.data() +
+<span class="lineNum">     320 </span>            :           (2 * i + 1) * number_of_swsh_coefficients(l_max_));
+<span class="lineNum">     321 </span>            :     }
+<span class="lineNum">     322 </span>            :   });
+<span class="lineNum">     323 </span>            : 
+<span class="lineNum">     324 </span>            :   std::vector&lt;detail::ComplexDataView&lt;Representation&gt;&gt; post_transform_views;
+<span class="lineNum">     325 </span>            :   post_transform_views.reserve(number_of_radial_grid_points_ *
+<span class="lineNum">     326 </span>            :                                tmpl::size&lt;TagList&gt;::value);
+<span class="lineNum">     327 </span>            :   std::vector&lt;const double*&gt; post_transform_collocation_data;
+<span class="lineNum">     328 </span>            :   post_transform_collocation_data.reserve(2 * number_of_radial_grid_points_ *
+<span class="lineNum">     329 </span>            :                                           tmpl::size&lt;TagList&gt;::value);
+<span class="lineNum">     330 </span>            : 
+<span class="lineNum">     331 </span>            :   // for each tag in `TagList`, construct a ComplexDataView at the
+<span class="lineNum">     332 </span>            :   // appropriate locations, then retrieve its real and imaginary data and put
+<span class="lineNum">     333 </span>            :   // it in subsequent slots in the pre_transform_collocation_data
+<span class="lineNum">     334 </span>            :   size_t num_transforms = 0;
+<span class="lineNum">     335 </span>            :   tmpl::for_each&lt;TagList&gt;([&amp;post_transform_collocation_data, &amp;num_transforms,
+<span class="lineNum">     336 </span>            :                            &amp;post_transform_views, &amp;output, this](auto x) {
+<span class="lineNum">     337 </span>            :     using transform_var_tag = typename decltype(x)::type;
+<span class="lineNum">     338 </span>            :     decltype(auto) output_vector = get(get&lt;transform_var_tag&gt;(*output)).data();
+<span class="lineNum">     339 </span>            :     for (size_t i = 0; i &lt; number_of_radial_grid_points_; ++i) {
+<span class="lineNum">     340 </span>            :       post_transform_views.push_back(detail::ComplexDataView&lt;Representation&gt;{
+<span class="lineNum">     341 </span>            :           make_not_null(&amp;output_vector), collocation_metadata_-&gt;size(),
+<span class="lineNum">     342 </span>            :           i * collocation_metadata_-&gt;size()});
+<span class="lineNum">     343 </span>            :       post_transform_collocation_data.push_back(
+<span class="lineNum">     344 </span>            :           post_transform_views.back().real_data());
+<span class="lineNum">     345 </span>            :       post_transform_collocation_data.push_back(
+<span class="lineNum">     346 </span>            :           post_transform_views.back().imag_data());
+<span class="lineNum">     347 </span>            :       // libsharp considers two arrays per transform when spin is not zero.
+<span class="lineNum">     348 </span>            :       num_transforms += (spin == 0 ? 2 : 1);
+<span class="lineNum">     349 </span>            :     }
+<span class="lineNum">     350 </span>            :   });
+<span class="lineNum">     351 </span>            : 
+<span class="lineNum">     352 </span>            :   sharp_execute(SHARP_ALM2MAP, abs(spin), pre_transform_coefficient_data.data(),
+<span class="lineNum">     353 </span>            :                 post_transform_collocation_data.data(),
+<span class="lineNum">     354 </span>            :                 collocation_metadata_-&gt;get_sharp_geom_info(), alm_info_,
+<span class="lineNum">     355 </span>            :                 num_transforms, SHARP_DP, nullptr, nullptr);
+<span class="lineNum">     356 </span>            : 
+<span class="lineNum">     357 </span>            :   if (spin &lt; 0) {
+<span class="lineNum">     358 </span>            :     // the conjugate is needed because libsharp doesn't handle negative spins.
+<span class="lineNum">     359 </span>            :     for (auto&amp; view : post_transform_views) {
+<span class="lineNum">     360 </span>            :       view.conjugate();
+<span class="lineNum">     361 </span>            :     }
+<span class="lineNum">     362 </span>            :   }
+<span class="lineNum">     363 </span>            : 
+<span class="lineNum">     364 </span>            :   // The inverse transformed collocation data has just been placed in the
+<span class="lineNum">     365 </span>            :   // memory blocks controlled by the `ComplexDataView`s. Finally, that data
+<span class="lineNum">     366 </span>            :   // must be flushed back to the Variables.
+<span class="lineNum">     367 </span>            :   for (auto&amp; view : post_transform_views) {
+<span class="lineNum">     368 </span>            :     view.copy_back_to_source();
+<span class="lineNum">     369 </span>            :   }
+<span class="lineNum">     370 </span>            : }
+<span class="lineNum">     371 </span>            : 
+<span class="lineNum">     372 </span>            : namespace detail {
+<span class="lineNum">     373 </span>            : template &lt;typename Job&gt;
+<span class="lineNum">     374 </span>            : struct transform_job_is_not_empty : std::true_type {};
+<span class="lineNum">     375 </span>            : 
+<span class="lineNum">     376 </span>            : template &lt;int Spin, ComplexRepresentation Representation&gt;
+<span class="lineNum">     377 </span>            : struct transform_job_is_not_empty&lt;
+<span class="lineNum">     378 </span>            :     TransformJob&lt;Spin, Representation, tmpl::list&lt;&gt;&gt;&gt; : std::false_type {};
+<span class="lineNum">     379 </span>            : 
+<span class="lineNum">     380 </span>            : template &lt;int MinSpin, ComplexRepresentation Representation, typename TagList,
+<span class="lineNum">     381 </span>            :           typename IndexSequence&gt;
+<span class="lineNum">     382 </span>            : struct make_swsh_transform_job_list_impl;
+<span class="lineNum">     383 </span>            : 
+<span class="lineNum">     384 </span>            : template &lt;int MinSpin, ComplexRepresentation Representation, typename TagList,
+<span class="lineNum">     385 </span>            :           int... Is&gt;
+<span class="lineNum">     386 </span>            : struct make_swsh_transform_job_list_impl&lt;MinSpin, Representation, TagList,
+<span class="lineNum">     387 </span>            :                                          std::integer_sequence&lt;int, Is...&gt;&gt; {
+<span class="lineNum">     388 </span>            :   using type = tmpl::filter&lt;
+<span class="lineNum">     389 </span>            :       tmpl::list&lt;TransformJob&lt;Is + MinSpin, Representation,
+<span class="lineNum">     390 </span>            :                               get_tags_with_spin&lt;Is + MinSpin, TagList&gt;&gt;...&gt;,
+<span class="lineNum">     391 </span>            :       transform_job_is_not_empty&lt;tmpl::_1&gt;&gt;;
+<span class="lineNum">     392 </span>            : };
+<span class="lineNum">     393 </span>            : }  // namespace detail
+<span class="lineNum">     394 </span>            : 
+<span class="lineNum">     395 </span>            : /// \ingroup SpectralGroup
+<span class="lineNum">     396 </span>            : /// \brief Assemble a `tmpl::list` of `TransformJob` given a list of tags
+<span class="lineNum">     397 </span>            : /// `TagList` that need to be transformed. The `Representation` is the
+<span class="lineNum">     398 </span>            : /// `ComplexRepresentation` to use for the transformations.
+<span class="lineNum">     399 </span>            : ///
+<span class="lineNum">     400 </span>            : /// \details Up to five `TransformJob` will be returned, corresponding to
+<span class="lineNum">     401 </span>            : /// the possible spin values. Any number of transformations are aggregated into
+<span class="lineNum">     402 </span>            : /// that set of `TransformJob`s. The number of transforms is up to five because
+<span class="lineNum">     403 </span>            : /// the libsharp utility only has capability to perform spin-weighted spherical
+<span class="lineNum">     404 </span>            : /// harmonic transforms for integer spin-weights from -2 to 2.
+<span class="lineNum">     405 </span>            : ///
+<span class="lineNum">     406 </span>            : /// \snippet Test_SwshTransformJob.cpp make_swsh_transform_job_list
+<span class="lineNum">     407 </span>            : template &lt;ComplexRepresentation Representation, typename TagList&gt;
+<span class="lineNum">     408 </span><span class="lineCov">          1 : using make_swsh_transform_job_list =</span>
+<span class="lineNum">     409 </span>            :     typename detail::make_swsh_transform_job_list_impl&lt;
+<span class="lineNum">     410 </span>            :         -2, Representation, TagList,
+<span class="lineNum">     411 </span>            :         decltype(std::make_integer_sequence&lt;int, 5&gt;{})&gt;::type;
+<span class="lineNum">     412 </span>            : 
+<span class="lineNum">     413 </span>            : /// \ingroup SpectralGroup
+<span class="lineNum">     414 </span>            : /// \brief Assemble a `tmpl::list` of `TransformJob`s given a list of
+<span class="lineNum">     415 </span>            : /// `Derivative&lt;Tag, Derivative&gt;` that need to be computed. The
+<span class="lineNum">     416 </span>            : /// `TransformJob`s constructed by this type alias correspond to the
+<span class="lineNum">     417 </span>            : /// `Tag`s in the list.
+<span class="lineNum">     418 </span>            : ///
+<span class="lineNum">     419 </span>            : /// \details This is intended as a convenience utility for the first step of a
+<span class="lineNum">     420 </span>            : /// derivative routine, where one transforms the set of fields for which
+<span class="lineNum">     421 </span>            : /// derivatives are required.
+<span class="lineNum">     422 </span>            : ///
+<span class="lineNum">     423 </span>            : /// \snippet Test_SwshTransformJob.cpp make_swsh_transform_from_derivative_tags
+<span class="lineNum">     424 </span>            : template &lt;ComplexRepresentation Representation, typename DerivativeTagList&gt;
+<span class="lineNum">     425 </span><span class="lineCov">          1 : using make_swsh_transform_job_list_from_derivative_tags =</span>
+<span class="lineNum">     426 </span>            :     typename detail::make_swsh_transform_job_list_impl&lt;
+<span class="lineNum">     427 </span>            :         -2, Representation,
+<span class="lineNum">     428 </span>            :         tmpl::transform&lt;DerivativeTagList,
+<span class="lineNum">     429 </span>            :                         tmpl::bind&lt;db::remove_tag_prefix, tmpl::_1&gt;&gt;,
+<span class="lineNum">     430 </span>            :         decltype(std::make_integer_sequence&lt;int, 5&gt;{})&gt;::type;
+<span class="lineNum">     431 </span>            : }  // namespace Swsh
+<span class="lineNum">     432 </span>            : }  // namespace Spectral
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

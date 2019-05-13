@@ -1,0 +1,169 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - NumericalAlgorithms/Interpolation/BarycentricRational.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">NumericalAlgorithms/Interpolation</a> - BarycentricRational.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;NumericalAlgorithms/Interpolation/BarycentricRational.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;algorithm&gt;
+<span class="lineNum">       7 </span>            : #include &lt;ostream&gt;
+<span class="lineNum">       8 </span>            : #include &lt;pup.h&gt;
+<span class="lineNum">       9 </span>            : #include &lt;pup_stl.h&gt;
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : #include &quot;ErrorHandling/Assert.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            : namespace intrp {
+<span class="lineNum">      15 </span>            : BarycentricRational::BarycentricRational(std::vector&lt;double&gt; x_values,
+<span class="lineNum">      16 </span>            :                                          std::vector&lt;double&gt; y_values,
+<span class="lineNum">      17 </span>            :                                          const size_t order) noexcept
+<span class="lineNum">      18 </span>            :     : x_values_(std::move(x_values)),
+<span class="lineNum">      19 </span>            :       y_values_(std::move(y_values)),
+<span class="lineNum">      20 </span>            :       weights_(x_values_.size(), 0.0),
+<span class="lineNum">      21 </span>            :       order_(static_cast&lt;ssize_t&gt;(order)) {
+<span class="lineNum">      22 </span>            :   ASSERT(x_values_.size() == y_values_.size(),
+<span class="lineNum">      23 </span>            :          &quot;The x-value and y-value vectors must be of the same length, but &quot;
+<span class="lineNum">      24 </span>            :          &quot;receives x-value of size: &quot;
+<span class="lineNum">      25 </span>            :              &lt;&lt; x_values_.size()
+<span class="lineNum">      26 </span>            :              &lt;&lt; &quot; and y-value of size: &quot; &lt;&lt; y_values_.size());
+<span class="lineNum">      27 </span>            :   ASSERT(x_values_.size() &gt;= order,
+<span class="lineNum">      28 </span>            :          &quot; The size of the x-value and y-value vectors must be at least the &quot;
+<span class="lineNum">      29 </span>            :          &quot;requested order of interpolation. The requested order is: &quot;
+<span class="lineNum">      30 </span>            :              &lt;&lt; order_
+<span class="lineNum">      31 </span>            :              &lt;&lt; &quot; while the size of the vectors is: &quot; &lt;&lt; x_values_.size());
+<span class="lineNum">      32 </span>            :   // Use ssize_t because we do signed arithmetic
+<span class="lineNum">      33 </span>            :   const auto size = static_cast&lt;ssize_t&gt;(x_values_.size());
+<span class="lineNum">      34 </span>            :   // for each weights[k]...
+<span class="lineNum">      35 </span>            :   for (ssize_t k = 0; k &lt; size; ++k) {
+<span class="lineNum">      36 </span>            :     const ssize_t i_lower_bound = std::max(k - order_, ssize_t{0});
+<span class="lineNum">      37 </span>            :     const ssize_t i_upper_bound = std::min(size - order_ - 1, k);
+<span class="lineNum">      38 </span>            :     // perform sum w_k = \sum_{i=k-order, 0 \le i &lt; N - order}^{k} (-1)^i where
+<span class="lineNum">      39 </span>            :     // N is the size of the input vectors, order the interpolation order, k is
+<span class="lineNum">      40 </span>            :     // the index of the weights (which is in [0, order_]).
+<span class="lineNum">      41 </span>            :     for (ssize_t i = i_lower_bound; i &lt;= i_upper_bound; ++i) {
+<span class="lineNum">      42 </span>            :       const ssize_t j_max = std::min(i + order_, size - 1);
+<span class="lineNum">      43 </span>            :       double inv_product = 1.0;
+<span class="lineNum">      44 </span>            :       // perform product: \prod_{j=i, j!=k}^{i+order} 1 / (x_k - x_j)
+<span class="lineNum">      45 </span>            :       for (ssize_t j = i; j &lt;= j_max; ++j) {
+<span class="lineNum">      46 </span>            :         if (UNLIKELY(j == k)) {
+<span class="lineNum">      47 </span>            :           continue;
+<span class="lineNum">      48 </span>            :         }
+<span class="lineNum">      49 </span>            :         inv_product *= (x_values_[static_cast&lt;size_t&gt;(k)] -
+<span class="lineNum">      50 </span>            :                         x_values_[static_cast&lt;size_t&gt;(j)]);
+<span class="lineNum">      51 </span>            :       }
+<span class="lineNum">      52 </span>            :       if ((i &amp; static_cast&lt;ssize_t&gt;(1)) == 1) {
+<span class="lineNum">      53 </span>            :         // if i is odd subtract
+<span class="lineNum">      54 </span>            :         weights_[static_cast&lt;size_t&gt;(k)] -= 1.0 / inv_product;
+<span class="lineNum">      55 </span>            :       } else {
+<span class="lineNum">      56 </span>            :         // if i is even add
+<span class="lineNum">      57 </span>            :         weights_[static_cast&lt;size_t&gt;(k)] += 1.0 / inv_product;
+<span class="lineNum">      58 </span>            :       }
+<span class="lineNum">      59 </span>            :     }
+<span class="lineNum">      60 </span>            :   }
+<span class="lineNum">      61 </span>            : }
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span>            : double BarycentricRational::operator()(const double x_to_interp_to) const
+<span class="lineNum">      64 </span>            :     noexcept {
+<span class="lineNum">      65 </span>            :   double numerator = 0.0;
+<span class="lineNum">      66 </span>            :   double denominator = 0.0;
+<span class="lineNum">      67 </span>            :   const size_t size = x_values_.size();
+<span class="lineNum">      68 </span>            :   for (size_t i = 0; i &lt; size; ++i) {
+<span class="lineNum">      69 </span>            :     if (x_to_interp_to == x_values_[i]) {
+<span class="lineNum">      70 </span>            :       return y_values_[i];
+<span class="lineNum">      71 </span>            :     }
+<span class="lineNum">      72 </span>            :     const double temp = weights_[i] / (x_to_interp_to - x_values_[i]);
+<span class="lineNum">      73 </span>            :     numerator += temp * y_values_[i];
+<span class="lineNum">      74 </span>            :     denominator += temp;
+<span class="lineNum">      75 </span>            :   }
+<span class="lineNum">      76 </span>            :   return numerator / denominator;
+<span class="lineNum">      77 </span>            : }
+<span class="lineNum">      78 </span>            : 
+<span class="lineNum">      79 </span>            : size_t BarycentricRational::order() const noexcept {
+<span class="lineNum">      80 </span>            :   return static_cast&lt;size_t&gt;(order_);
+<span class="lineNum">      81 </span>            : }
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span>            : void BarycentricRational::pup(PUP::er&amp; p) noexcept {
+<span class="lineNum">      84 </span>            :   p | x_values_;
+<span class="lineNum">      85 </span>            :   p | y_values_;
+<span class="lineNum">      86 </span>            :   p | weights_;
+<span class="lineNum">      87 </span>            :   p | order_;
+<span class="lineNum">      88 </span>            : }
+<span class="lineNum">      89 </span>            : }  // namespace intrp
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

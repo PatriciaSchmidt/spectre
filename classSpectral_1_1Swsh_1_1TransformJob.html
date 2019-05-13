@@ -1,0 +1,425 @@
+<!-- HTML header for doxygen 1.8.10-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=9"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="SXS Collaboration">
+    <meta name="generator" content="Doxygen 1.8.13"/>
+    <style>
+        /*!
+         * IE10 viewport hack for Surface/desktop Windows 8 bug
+         * Copyright 2014-2015 Twitter, Inc.
+         * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+         */
+        @-webkit-viewport { width: device-width; }
+        @-moz-viewport    { width: device-width; }
+        @-ms-viewport     { width: device-width; }
+        @-o-viewport      { width: device-width; }
+        @viewport         { width: device-width; }
+      </style>
+  <title>SpECTRE: Spectral::Swsh::TransformJob&lt; Spin, Representation, TagList &gt; Class Template Reference</title>
+  <link href="tabs.css" rel="stylesheet" type="text/css"/>
+  <script type="text/javascript" src="jquery.js"></script>
+  <script type="text/javascript" src="dynsections.js"></script>
+  <link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js", "color.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+});
+MathJax.Hub.Config({
+    TeX: { equationNumbers: { autoNumber: "AMS" } }
+});
+MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['^^','^^'], ['\\(', '\\)']]}
+});
+</script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js"></script>
+  <link href="octicons.css" rel="stylesheet">
+  <link href="bootstrap.min.css" rel="stylesheet">
+  <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <script type="text/javascript" src="jquery.js"></script>
+  <script type="text/javascript" src="popper.min.js"></script>
+  <script type="text/javascript" src="bootstrap.min.js"></script>
+  <script type="text/javascript" src="spectre.js"></script>
+  </head>
+  <body>
+  <div id="top" class="navbar-fixed-top"><!-- do not remove this div, it is closed by doxygen! -->
+  <!-- BEGIN TITLEAREA -->
+  <div id="titlearea">
+  <script type="text/javascript">
+  var searchBox = new SearchBox("searchBox", "search",false,'Search');
+  </script>
+  <div id="main-nav">
+    <ul class="sm sm-dox" id="main-menu">
+      <li>
+      <a href="index.html">
+      SpECTRE &#160;
+        <span id="projectnumber">v0.0.0</span>
+      </a>
+      </li>
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="selected">
+          <span id="selected">
+            <i class="octicon octicon-book"></i><span>Documentation</span>
+          </span>
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li style="min-width: 135px;">
+            <a href="index.html">
+            <i class="octicon octicon-book"></i><span>Introduction</span></a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="installation.html">
+              <i class="octicon octicon-desktop-download"></i><span>Installation</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="tutorials.html">
+              <i class="octicon octicon-mortar-board"></i><span>User Tutorials</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="dev_guide.html">
+              <i class="octicon octicon-gist-secret"></i><span>Dev Guide</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="code_of_conduct.html">
+              <i class="octicon octicon-comment-discussion"></i><span>Code of Conduct</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="contributing_to_spectre.html">
+              <i class="octicon octicon-git-pull-request"></i><span>Contributing Guide</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="selected">
+          <span id="selected">
+            <i class="octicon octicon-code"></i>
+              <span>Code Reference</span>
+          </span>
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li style="min-width: 130px;">
+            <a href="modules.html">
+              <i class="octicon octicon-code"></i>
+              <span>Topics</span>
+            </a>
+          </li>
+          <li style="min-width: 130px;">
+            <a href="namespaces.html">
+              <i class="octicon octicon-gist"></i>
+              <span>Namespaces</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <a href="files.html">
+          <i class="octicon octicon-file-directory"></i><span>Files</span>
+        </a>
+      </li>
+      <li>
+        <a href="citelist.html">
+          <i class="octicon octicon-file-text"></i><span>Bibliography</span>
+        </a>
+      </li>
+      <li>
+        <a href="https://github.com/sxs-collaboration/spectre" target="_blank">
+          <i class="octicon octicon-mark-github"></i><span>View on GitHub</span>
+        </a>
+      </li>
+      <!--The Search <li> is added by doxygen later-->
+    </ul>
+  </div><!-- main-nav -->
+  </div><!-- titlearea -->
+  <!-- window showing the filter options -->
+  <div id="MSearchSelectWindow"  style="position: fixed;"
+       onmouseover="return searchBox.OnSearchSelectShow()"
+       onmouseout="return searchBox.OnSearchSelectHide()"
+       onkeydown="return searchBox.OnSearchSelectKey(event)">
+  </div>
+  <!-- iframe showing the search results (closed by default) -->
+  <div id="MSearchResultsWindow"  style="position: fixed;">
+  <iframe src="javascript:void(0)" frameborder="0"
+          name="MSearchResults" id="MSearchResults">
+  </iframe>
+  </div>
+<!-- Generated by Doxygen 1.8.13 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search",false,'Search');
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="namespaceSpectral.html">Spectral</a></li><li class="navelem"><a class="el" href="namespaceSpectral_1_1Swsh.html">Swsh</a></li><li class="navelem"><a class="el" href="classSpectral_1_1Swsh_1_1TransformJob.html">TransformJob</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
+<a href="classSpectral_1_1Swsh_1_1TransformJob-members.html">List of all members</a>  </div>
+  <div class="headertitle">
+<div class="title">Spectral::Swsh::TransformJob&lt; Spin, Representation, TagList &gt; Class Template Reference<div class="ingroups"><a class="el" href="group__SwshGroup.html">Spin-weighted spherical harmonics</a></div></div>  </div>
+</div><!--header-->
+<div class="contents">
+
+<p>A class which gathers all necessary shared structure among several spin-weighted spherical harmonic transforms and dispatches to libsharp. Each <code><a class="el" href="classSpectral_1_1Swsh_1_1TransformJob.html" title="A class which gathers all necessary shared structure among several spin-weighted spherical harmonic t...">TransformJob</a></code> represents exactly one spin-weighted transform libsharp execution call, and one inverse transform libsharp execution call.  
+ <a href="classSpectral_1_1Swsh_1_1TransformJob.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="SwshTransformJob_8hpp_source.html">SwshTransformJob.hpp</a>&gt;</code></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:a3b52ddd1e26b04150deb83db23a954d0"><td class="memItemLeft" align="right" valign="top"><a id="a3b52ddd1e26b04150deb83db23a954d0"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>CoefficientTagList</b> = <a class="el" href="group__DataBoxTagsGroup.html#ga3dda5a16c7f6baccd115de2c8f12394e">db::wrap_tags_in</a>&lt; <a class="el" href="structSpectral_1_1Swsh_1_1Tags_1_1SwshTransform.html">Tags::SwshTransform</a>, TagList &gt;</td></tr>
+<tr class="separator:a3b52ddd1e26b04150deb83db23a954d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a70ce44a875ddb394b09c145bfd152e2d"><td class="memItemLeft" align="right" valign="top"><a id="a70ce44a875ddb394b09c145bfd152e2d"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectral_1_1Swsh_1_1TransformJob.html#a70ce44a875ddb394b09c145bfd152e2d">TransformJob</a> (size_t l_max, size_t number_of_radial_grid_points) noexcept</td></tr>
+<tr class="memdesc:a70ce44a875ddb394b09c145bfd152e2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for transform job. Both the <code>l_max</code> and <code>number_of_radial_grid_points</code> must be specified for the transformation to appropriately find all of the data in memory and associate it with the correct collocation grid. <br /></td></tr>
+<tr class="separator:a70ce44a875ddb394b09c145bfd152e2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9ca9f722bf71bd2262b4055807a35c7c"><td class="memItemLeft" align="right" valign="top">constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectral_1_1Swsh_1_1TransformJob.html#a9ca9f722bf71bd2262b4055807a35c7c">coefficient_output_size</a> () const noexcept</td></tr>
+<tr class="memdesc:a9ca9f722bf71bd2262b4055807a35c7c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper function for determining the size of allocation necessary to store the coefficient data.  <a href="#a9ca9f722bf71bd2262b4055807a35c7c">More...</a><br /></td></tr>
+<tr class="separator:a9ca9f722bf71bd2262b4055807a35c7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7bfb61bc6b9503bd899966a4050d3513"><td class="memTemplParams" colspan="2">template&lt;typename InputVarsTagList , typename OutputVarsTagList &gt; </td></tr>
+<tr class="memitem:a7bfb61bc6b9503bd899966a4050d3513"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classSpectral_1_1Swsh_1_1TransformJob.html#a7bfb61bc6b9503bd899966a4050d3513">execute_transform</a> (<a class="el" href="classgsl_1_1not__null.html">gsl::not_null</a>&lt; Variables&lt; OutputVarsTagList &gt; *&gt; output, <a class="el" href="classgsl_1_1not__null.html">gsl::not_null</a>&lt; Variables&lt; InputVarsTagList &gt; *&gt; input) const noexcept</td></tr>
+<tr class="memdesc:a7bfb61bc6b9503bd899966a4050d3513"><td class="mdescLeft">&#160;</td><td class="mdescRight">Execute the forward spin-weighted spherical harmonic transform using libsharp.  <a href="#a7bfb61bc6b9503bd899966a4050d3513">More...</a><br /></td></tr>
+<tr class="separator:a7bfb61bc6b9503bd899966a4050d3513"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f75cb2b4fd52b2494db1d83d988be2d"><td class="memTemplParams" colspan="2">template&lt;typename InputVarsTagList , typename OutputVarsTagList &gt; </td></tr>
+<tr class="memitem:a8f75cb2b4fd52b2494db1d83d988be2d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classSpectral_1_1Swsh_1_1TransformJob.html#a8f75cb2b4fd52b2494db1d83d988be2d">execute_inverse_transform</a> (<a class="el" href="classgsl_1_1not__null.html">gsl::not_null</a>&lt; Variables&lt; OutputVarsTagList &gt; *&gt; output, <a class="el" href="classgsl_1_1not__null.html">gsl::not_null</a>&lt; Variables&lt; InputVarsTagList &gt; *&gt; input) const noexcept</td></tr>
+<tr class="memdesc:a8f75cb2b4fd52b2494db1d83d988be2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Execute the inverse spin-weighted spherical harmonic transform using libsharp.  <a href="#a8f75cb2b4fd52b2494db1d83d988be2d">More...</a><br /></td></tr>
+<tr class="separator:a8f75cb2b4fd52b2494db1d83d988be2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa6b3b14877198507e22730dacfd4a3d3"><td class="memTemplParams" colspan="2"><a id="aa6b3b14877198507e22730dacfd4a3d3"></a>
+template&lt;typename InputVarsTagList , typename OutputVarsTagList &gt; </td></tr>
+<tr class="memitem:aa6b3b14877198507e22730dacfd4a3d3"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>execute_transform</b> (const <a class="el" href="classgsl_1_1not__null.html">gsl::not_null</a>&lt; Variables&lt; OutputVarsTagList &gt; *&gt; output, const <a class="el" href="classgsl_1_1not__null.html">gsl::not_null</a>&lt; Variables&lt; InputVarsTagList &gt; *&gt; input) const noexcept</td></tr>
+<tr class="separator:aa6b3b14877198507e22730dacfd4a3d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a42519b32248fefbe1808e301efd581f1"><td class="memTemplParams" colspan="2"><a id="a42519b32248fefbe1808e301efd581f1"></a>
+template&lt;typename InputVarsTagList , typename OutputVarsTagList &gt; </td></tr>
+<tr class="memitem:a42519b32248fefbe1808e301efd581f1"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>execute_inverse_transform</b> (const <a class="el" href="classgsl_1_1not__null.html">gsl::not_null</a>&lt; Variables&lt; OutputVarsTagList &gt; *&gt; output, const <a class="el" href="classgsl_1_1not__null.html">gsl::not_null</a>&lt; Variables&lt; InputVarsTagList &gt; *&gt; input) const noexcept</td></tr>
+<tr class="separator:a42519b32248fefbe1808e301efd581f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:a9b57974cf0c187d8c381da0859f399e9"><td class="memItemLeft" align="right" valign="top"><a id="a9b57974cf0c187d8c381da0859f399e9"></a>
+static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><b>spin</b> = Spin</td></tr>
+<tr class="separator:a9b57974cf0c187d8c381da0859f399e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;int Spin, ComplexRepresentation Representation, typename TagList&gt;<br />
+class Spectral::Swsh::TransformJob&lt; Spin, Representation, TagList &gt;</h3>
+
+<p>A class which gathers all necessary shared structure among several spin-weighted spherical harmonic transforms and dispatches to libsharp. Each <code><a class="el" href="classSpectral_1_1Swsh_1_1TransformJob.html" title="A class which gathers all necessary shared structure among several spin-weighted spherical harmonic t...">TransformJob</a></code> represents exactly one spin-weighted transform libsharp execution call, and one inverse transform libsharp execution call. </p>
+<h3>Details</h3>
+<p>Template Parameters:</p><ul>
+<li><code>Spin</code>: The spin weight for all of the fields to transform with this job.</li>
+<li><p class="startli"><code>Representation</code>: The element of the <code>ComplexRepresentation</code> enum which parameterizes how the data passed to libsharp will be represented. Two options are available:</p><ul>
+<li><code>ComplexRepresentation:Interleaved</code>: indicates that the real and imaginary parts of the collocation values will be passed to libsharp as pointers into existing complex data structures, minimizing copies, but maintaining a stride of 2 for 'adjacent' real or imaginary values.</li>
+<li><code>ComplexRepresentation::RealsThenImags</code>: indicates that the real and imaginary parts of the collocation values will be passed to libsharp as separate contiguous blocks. At current, this introduces both allocations and copies. <b>optimization note</b> In the future most of the allocations can be aggregated to calling code, which would pass in buffers by <code>not_null</code> pointers.</li>
+</ul>
+<p class="startli">For performance-sensitive code, both options should be tested, as each strategy has trade-offs.</p>
+</li>
+<li><code>TagList</code>: A <code>tmpl::list</code> of Tags to be forward and/or backward transformed with the <code><a class="el" href="classSpectral_1_1Swsh_1_1TransformJob.html" title="A class which gathers all necessary shared structure among several spin-weighted spherical harmonic t...">TransformJob</a></code>.</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd>The signs obtained from libsharp transformations must be handled carefully. (In particular, it does not use the sign convention you will find in <a href="https://en.wikipedia.org/wiki/Spin-weighted_spherical_harmonics">Wikipedia</a>).<ul>
+<li>libsharp deals only with the transformation of real values, so transformation of complex values must be done for real and imaginary parts separately.</li>
+<li>due to only transforming real components, it stores only the positive \(m\) modes (as the rest would be redundant). Therefore, the negative \(m\) modes must be inferred from conjugation and further sign changes.</li>
+<li>libsharp only has the capability of transforming positive spin weighted quantities. Therefore, additional steps are taken (involving further conjugation of the provided data) in order to use those utilities on negative spin-weighted quantities. The resulting modes have yet more sign changes that must be taken into account.</li>
+</ul>
+</dd></dl>
+<p>The decomposition resulting from the libsharp transform for spin \(s\) and complex spin-weighted \({}_s f\) can be represented mathematically as:</p>
+<p class="formulaDsp">
+\begin{align*} {}_s f(\theta, \phi) = \sum_{\ell = 0}^{\ell_\mathrm{max}} \Bigg\{&amp; \left(\sum_{m = 0}^{\ell} a^\mathrm{sharp, real}_{l m} {}_s Y_{\ell m}^\mathrm{sharp, real}\right) + \left(\sum_{m=1}^{\ell} \left(a^\mathrm{sharp, real}_{l m}{}\right)^* {}_s Y_{\ell -m}^\mathrm{sharp, real}\right) \notag\\ &amp;+ i \left[\left(\sum_{m = 0}^{\ell} a^\mathrm{sharp, imag}_{l m} {}_s Y_{\ell m}^\mathrm{sharp, imag}\right) + \left(\sum_{m=1}^{\ell} \left(a^\mathrm{sharp, imag}_{l m}{}\right)^* {}_s Y_{\ell -m}^\mathrm{sharp, imag} \right)\right] \Bigg\}, \end{align*}
+</p>
+<p>where</p>
+<p class="formulaDsp">
+\begin{align*} {}_s Y_{\ell m}^\mathrm{sharp, real} &amp;= \begin{cases} (-1)^{s + 1} {}_s Y_{\ell m}, &amp; \mathrm{for}\; s &lt; 0, m \ge 0 \\ {}_s Y_{\ell m}, &amp; \mathrm{for}\; s = 0, m \ge 0 \\ - {}_s Y_{\ell m}, &amp; \mathrm{for}\; s &gt; 0, m \ge 0 \\ (-1)^{s + m + 1} {}_s Y_{\ell m}, &amp; \mathrm{for}\; s &lt; 0, m &lt; 0 \\ (-1)^{m} {}_s Y_{\ell m}, &amp; \mathrm{for}\; s = 0, m &lt; 0 \\ (-1)^{m + 1} {}_s Y_{\ell m}, &amp; \mathrm{for}\; s &gt; 0, m &lt; 0 \end{cases} \\ &amp;\equiv {}_s S_{\ell m}^{\mathrm{real}} {}_s Y_{\ell m}\\ {}_s Y_{\ell m}^\mathrm{sharp, imag} &amp;= \begin{cases} (-1)^{s + 1} {}_s Y_{\ell m}, &amp; \mathrm{for}\; s &lt; 0, m \ge 0 \\ -{}_s Y_{\ell m}, &amp; \mathrm{for}\; s = 0, m \ge 0 \\ {}_s Y_{\ell m}, &amp; \mathrm{for}\; s &gt; 0, m \ge 0 \\ (-1)^{s + m} {}_s Y_{\ell m}, &amp; \mathrm{for}\; s &lt; 0, m &lt; 0 \\ (-1)^{m} {}_s Y_{\ell m}, &amp; \mathrm{for}\; s = 0, m &lt; 0 \\ (-1)^{m + 1} {}_s Y_{\ell m}, &amp; \mathrm{for}\; s &gt; 0, m &lt; 0 \end{cases} \\ &amp;\equiv {}_s S_{\ell m}^{\mathrm{real}} {}_s Y_{\ell m}, \end{align*}
+</p>
+<p>where the unadorned \({}_s Y_{\ell m}\) on the right-hand-sides follow the (older) convention of <a class="el" href="citelist.html#CITEREF_Goldberg1966uu">[13]</a>. Note the phase in these expressions is not completely standardized, so should be checked carefully whenever coefficient data is directly manipulated.</p>
+<p>For reference, we can compute the relation between Goldberg spin-weighted moments \({}_s f_{\ell m}\), defined as</p>
+<p class="formulaDsp">
+\[ {}_s f(\theta, \phi) = \sum_{\ell = 0}^{\ell_\mathrm{max}} \sum_{m = -\ell}^{\ell} {}_s f_{\ell m} {}_s Y_{\ell m} \]
+</p>
+<p>so, </p><p class="formulaDsp">
+\[ {}_s f_{\ell m} = \begin{cases} a_{\ell m}^{\mathrm{sharp}, \mathrm{real}} {}_s S_{\ell m}^{\mathrm{real}} + a_{\ell m}^{\mathrm{sharp}, \mathrm{imag}} {}_s S_{\ell m}^{\mathrm{imag}} &amp; \mathrm{for} \; m \ge 0 \\ \left(a_{\ell -m}^{\mathrm{sharp}, \mathrm{real}}\right)^* {}_s S_{\ell m}^{\mathrm{real}} + \left(a_{\ell -m}^{\mathrm{sharp}, \mathrm{imag}}\right)^* {}_s S_{\ell m}^{\mathrm{imag}} &amp; \mathrm{for} \; m &lt; 0 \\ \end{cases} \]
+</p>
+<p>The resulting coefficients \(a_{\ell m}\) are stored in a triangular, \(\ell\)-varies-fastest configuration. So, for instance, the first \(\ell_\mathrm{max}\) entries contain the coefficients for \(m=0\) and all \(\ell\)s, and the next \(\ell_\mathrm{max} - 1\) entries contain the coefficients for \(m=1\) and \(1 \le \ell \le \ell_\mathrm{max} \), and so on. </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a9ca9f722bf71bd2262b4055807a35c7c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9ca9f722bf71bd2262b4055807a35c7c">&#9670;&nbsp;</a></span>coefficient_output_size()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int Spin, ComplexRepresentation Representation, typename TagList &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr size_t <a class="el" href="classSpectral_1_1Swsh_1_1TransformJob.html">Spectral::Swsh::TransformJob</a>&lt; Spin, Representation, TagList &gt;::coefficient_output_size </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Helper function for determining the size of allocation necessary to store the coefficient data. </p>
+<dl class="section note"><dt>Note</dt><dd>This size is not the same as the collocation data size, as the coefficients are stored in the efficient 'triangular' form noted in the documentation for <code><a class="el" href="classSpectral_1_1Swsh_1_1TransformJob.html" title="A class which gathers all necessary shared structure among several spin-weighted spherical harmonic t...">TransformJob</a></code>. </dd></dl>
+
+</div>
+</div>
+<a id="a8f75cb2b4fd52b2494db1d83d988be2d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f75cb2b4fd52b2494db1d83d988be2d">&#9670;&nbsp;</a></span>execute_inverse_transform()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int Spin, ComplexRepresentation Representation, typename TagList &gt; </div>
+<div class="memtemplate">
+template&lt;typename InputVarsTagList , typename OutputVarsTagList &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classSpectral_1_1Swsh_1_1TransformJob.html">Spectral::Swsh::TransformJob</a>&lt; Spin, Representation, TagList &gt;::execute_inverse_transform </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classgsl_1_1not__null.html">gsl::not_null</a>&lt; Variables&lt; OutputVarsTagList &gt; *&gt;&#160;</td>
+          <td class="paramname"><em>output</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classgsl_1_1not__null.html">gsl::not_null</a>&lt; Variables&lt; InputVarsTagList &gt; *&gt;&#160;</td>
+          <td class="paramname"><em>input</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Execute the inverse spin-weighted spherical harmonic transform using libsharp. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">input</td><td>A <code>Variables</code> which must contain <code>CoefficientTag&lt;...&gt;</code>s for each of the tags provided via <code>TagList</code>. The coefficients may be temporarily altered (conjugated) during the execution of the transform if the <code>Spin</code> is negative, but are reverted to their original state by the end of the function execution. </td></tr>
+    <tr><td class="paramname">output</td><td>A <code>Variables</code> which must contain each of the tags provided via <code>TagList</code>. The collocation data will be stored appropriately in this Variables. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a7bfb61bc6b9503bd899966a4050d3513"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7bfb61bc6b9503bd899966a4050d3513">&#9670;&nbsp;</a></span>execute_transform()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int Spin, ComplexRepresentation Representation, typename TagList &gt; </div>
+<div class="memtemplate">
+template&lt;typename InputVarsTagList , typename OutputVarsTagList &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classSpectral_1_1Swsh_1_1TransformJob.html">Spectral::Swsh::TransformJob</a>&lt; Spin, Representation, TagList &gt;::execute_transform </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classgsl_1_1not__null.html">gsl::not_null</a>&lt; Variables&lt; OutputVarsTagList &gt; *&gt;&#160;</td>
+          <td class="paramname"><em>output</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classgsl_1_1not__null.html">gsl::not_null</a>&lt; Variables&lt; InputVarsTagList &gt; *&gt;&#160;</td>
+          <td class="paramname"><em>input</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Execute the forward spin-weighted spherical harmonic transform using libsharp. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">output</td><td>A <code>Variables</code> which must contain <code>CoefficientTag&lt;...&gt;</code>s for each of the tags provided via <code>TagList</code>. The coefficients will be stored appropriately in this Variables. </td></tr>
+    <tr><td class="paramname">input</td><td>A <code>Variables</code> which must contain each of the tags provided via <code>TagList</code>. The collocation points may be temporarily altered (conjugated) during the execution of the transform if the <code>Spin</code> is negative, but are reverted to their original state by the end of the function execution. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following file:<ul>
+<li>src/NumericalAlgorithms/Spectral/<a class="el" href="SwshTransformJob_8hpp_source.html">SwshTransformJob.hpp</a></li>
+</ul>
+</div><!-- contents -->
+<!-- HTML footer for doxygen 1.8.10-->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+&copy; Copyright 2017 - 2019
+<a href="https://black-holes.org">SXS Collaboration</a>,
+<a href="LICENSE.txt" target="_blank">
+<span class="hidden-xs">Distributed under the</span>
+MIT License</a>
+</small></address>
+</body>
+</html>

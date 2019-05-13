@@ -1,0 +1,278 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Elliptic/Initialization/DiscontinuousGalerkin.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">Elliptic/Initialization</a> - DiscontinuousGalerkin.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">13</td>
+            <td class="headerCovTableEntryLo">7.7 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;array&gt;
+<span class="lineNum">       7 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       8 </span>            : #include &lt;utility&gt;
+<span class="lineNum">       9 </span>            : #include &lt;vector&gt;
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : #include &quot;DataStructures/DataBox/DataBox.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;DataStructures/DataBox/DataBoxTag.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;DataStructures/DataBox/Prefixes.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;DataStructures/Tensor/EagerMath/Magnitude.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;Domain/Direction.hpp&quot;
+<span class="lineNum">      16 </span>            : #include &quot;Domain/Element.hpp&quot;
+<span class="lineNum">      17 </span>            : #include &quot;Domain/Mesh.hpp&quot;
+<span class="lineNum">      18 </span>            : #include &quot;Domain/Neighbors.hpp&quot;
+<span class="lineNum">      19 </span>            : #include &quot;Domain/OrientationMap.hpp&quot;
+<span class="lineNum">      20 </span>            : #include &quot;Domain/Tags.hpp&quot;
+<span class="lineNum">      21 </span>            : #include &quot;Evolution/Initialization/Helpers.hpp&quot;
+<span class="lineNum">      22 </span>            : #include &quot;NumericalAlgorithms/DiscontinuousGalerkin/FluxCommunicationTypes.hpp&quot;
+<span class="lineNum">      23 </span>            : #include &quot;NumericalAlgorithms/DiscontinuousGalerkin/MortarHelpers.hpp&quot;
+<span class="lineNum">      24 </span>            : #include &quot;NumericalAlgorithms/DiscontinuousGalerkin/Tags.hpp&quot;
+<span class="lineNum">      25 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      26 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            : /// \cond
+<span class="lineNum">      29 </span>            : namespace Frame {
+<span class="lineNum">      30 </span>            : struct Inertial;
+<span class="lineNum">      31 </span>            : }  // namespace Frame
+<span class="lineNum">      32 </span>            : /// \endcond
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            : namespace Elliptic {
+<span class="lineNum">      35 </span>            : namespace Initialization {
+<span class="lineNum">      36 </span>            : 
+<span class="lineNum">      37 </span>            : /*!
+<span class="lineNum">      38 </span>            :  * \brief Initializes DataBox tags related to discontinuous Galerkin fluxes
+<span class="lineNum">      39 </span>            :  *
+<span class="lineNum">      40 </span>            :  * With:
+<span class="lineNum">      41 </span>            :  * - `flux_comm_types` = `dg::FluxCommunicationTypes&lt;Metavariables&gt;`
+<span class="lineNum">      42 </span>            :  * - `mortar_data_tag` = `flux_comm_types::simple_mortar_data_tag`
+<span class="lineNum">      43 </span>            :  * - `interface&lt;Tag&gt;` =
+<span class="lineNum">      44 </span>            :  * `Tags::Interface&lt;Tags::InternalDirections&lt;volume_dim&gt;, Tag&gt;`
+<span class="lineNum">      45 </span>            :  * - `boundary&lt;Tag&gt;` =
+<span class="lineNum">      46 </span>            :  * `Tags::Interface&lt;Tags::BoundaryDirectionsInterior&lt;volume_dim&gt;, Tag&gt;`
+<span class="lineNum">      47 </span>            :  * - `mortar&lt;Tag&gt;` = `Tags::Mortars&lt;Tag, volume_dim&gt;`
+<span class="lineNum">      48 </span>            :  *
+<span class="lineNum">      49 </span>            :  * Uses:
+<span class="lineNum">      50 </span>            :  * - Metavariables:
+<span class="lineNum">      51 </span>            :  *   - `temporal_id`
+<span class="lineNum">      52 </span>            :  *   - Items required by `flux_comm_types`
+<span class="lineNum">      53 </span>            :  * - System:
+<span class="lineNum">      54 </span>            :  *   - `volume_dim`
+<span class="lineNum">      55 </span>            :  * - DataBox:
+<span class="lineNum">      56 </span>            :  *   - `Tags::Element&lt;volume_dim&gt;`
+<span class="lineNum">      57 </span>            :  *   - `Tags::Mesh&lt;volume_dim&gt;`
+<span class="lineNum">      58 </span>            :  *   - `temporal_id`
+<span class="lineNum">      59 </span>            :  *   - `Tags::InternalDirections&lt;volume_dim&gt;`
+<span class="lineNum">      60 </span>            :  *   - `Tags::BoundaryDirectionsInterior&lt;volume_dim&gt;`
+<span class="lineNum">      61 </span>            :  *   - `interface&lt;Tags::Mesh&lt;volume_dim - 1&gt;&gt;`
+<span class="lineNum">      62 </span>            :  *   - `boundary&lt;Tags::Mesh&lt;volume_dim - 1&gt;&gt;`
+<span class="lineNum">      63 </span>            :  *
+<span class="lineNum">      64 </span>            :  * DataBox:
+<span class="lineNum">      65 </span>            :  * - Adds:
+<span class="lineNum">      66 </span>            :  *   - `mortar_data_tag`
+<span class="lineNum">      67 </span>            :  *   - `mortar&lt;Tags::Next&lt;temporal_id&gt;&gt;`
+<span class="lineNum">      68 </span>            :  *   - `mortar&lt;Tags::Mesh&lt;volume_dim - 1&gt;&gt;`
+<span class="lineNum">      69 </span>            :  *   - `mortar&lt;Tags::MortarSize&lt;volume_dim - 1&gt;&gt;`
+<span class="lineNum">      70 </span>            :  *   - `interface&lt;flux_comm_types::normal_dot_fluxes_tag&gt;`
+<span class="lineNum">      71 </span>            :  *   - `boundary&lt;flux_comm_types::normal_dot_fluxes_tag&gt;`
+<span class="lineNum">      72 </span>            :  */
+<span class="lineNum">      73 </span>            : template &lt;typename Metavariables&gt;
+<span class="lineNum">      74 </span><span class="lineCov">          1 : struct DiscontinuousGalerkin {</span>
+<span class="lineNum">      75 </span><span class="lineNoCov">          0 :   static constexpr size_t volume_dim = Metavariables::system::volume_dim;</span>
+<span class="lineNum">      76 </span><span class="lineNoCov">          0 :   using temporal_id_tag = typename Metavariables::temporal_id;</span>
+<span class="lineNum">      77 </span><span class="lineNoCov">          0 :   using flux_comm_types = ::dg::FluxCommunicationTypes&lt;Metavariables&gt;;</span>
+<span class="lineNum">      78 </span><span class="lineNoCov">          0 :   using mortar_data_tag = typename flux_comm_types::simple_mortar_data_tag;</span>
+<span class="lineNum">      79 </span>            : 
+<span class="lineNum">      80 </span>            :   template &lt;typename Tag&gt;
+<span class="lineNum">      81 </span><span class="lineNoCov">          0 :   using interface_tag =</span>
+<span class="lineNum">      82 </span>            :       Tags::Interface&lt;Tags::InternalDirections&lt;volume_dim&gt;, Tag&gt;;
+<span class="lineNum">      83 </span>            :   template &lt;typename Tag&gt;
+<span class="lineNum">      84 </span><span class="lineNoCov">          0 :   using boundary_tag =</span>
+<span class="lineNum">      85 </span>            :       Tags::Interface&lt;Tags::BoundaryDirectionsInterior&lt;volume_dim&gt;, Tag&gt;;
+<span class="lineNum">      86 </span>            :   template &lt;typename Tag&gt;
+<span class="lineNum">      87 </span><span class="lineNoCov">          0 :   using mortar_tag = Tags::Mortars&lt;Tag, volume_dim&gt;;</span>
+<span class="lineNum">      88 </span>            : 
+<span class="lineNum">      89 </span><span class="lineNoCov">          0 :   using simple_tags = db::AddSimpleTags&lt;</span>
+<span class="lineNum">      90 </span>            :       mortar_data_tag, mortar_tag&lt;Tags::Next&lt;temporal_id_tag&gt;&gt;,
+<span class="lineNum">      91 </span>            :       mortar_tag&lt;Tags::Mesh&lt;volume_dim - 1&gt;&gt;,
+<span class="lineNum">      92 </span>            :       mortar_tag&lt;Tags::MortarSize&lt;volume_dim - 1&gt;&gt;,
+<span class="lineNum">      93 </span>            :       interface_tag&lt;typename flux_comm_types::normal_dot_fluxes_tag&gt;,
+<span class="lineNum">      94 </span>            :       boundary_tag&lt;typename flux_comm_types::normal_dot_fluxes_tag&gt;&gt;;
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span><span class="lineNoCov">          0 :   using compute_tags = db::AddComputeTags&lt;&gt;;</span>
+<span class="lineNum">      97 </span>            : 
+<span class="lineNum">      98 </span>            :   // This function is mostly copied from
+<span class="lineNum">      99 </span>            :   // `Evolution/Initialization/DiscontinuousGalerkin.hpp`.
+<span class="lineNum">     100 </span>            :   // It could be useful to move some of this functionality into compute items.
+<span class="lineNum">     101 </span>            :   template &lt;typename TagsList&gt;
+<span class="lineNum">     102 </span><span class="lineNoCov">          0 :   static auto add_mortar_data(db::DataBox&lt;TagsList&gt;&amp;&amp; box,</span>
+<span class="lineNum">     103 </span>            :                               const std::vector&lt;std::array&lt;size_t, volume_dim&gt;&gt;&amp;
+<span class="lineNum">     104 </span>            :                                   initial_extents) noexcept {
+<span class="lineNum">     105 </span>            :     const auto&amp; element = db::get&lt;Tags::Element&lt;volume_dim&gt;&gt;(box);
+<span class="lineNum">     106 </span>            :     const auto&amp; mesh = db::get&lt;Tags::Mesh&lt;volume_dim&gt;&gt;(box);
+<span class="lineNum">     107 </span>            : 
+<span class="lineNum">     108 </span>            :     db::item_type&lt;mortar_data_tag&gt; mortar_data{};
+<span class="lineNum">     109 </span>            :     db::item_type&lt;mortar_tag&lt;Tags::Next&lt;temporal_id_tag&gt;&gt;&gt;
+<span class="lineNum">     110 </span>            :         mortar_next_temporal_ids{};
+<span class="lineNum">     111 </span>            :     db::item_type&lt;mortar_tag&lt;Tags::Mesh&lt;volume_dim - 1&gt;&gt;&gt; mortar_meshes{};
+<span class="lineNum">     112 </span>            :     db::item_type&lt;mortar_tag&lt;Tags::MortarSize&lt;volume_dim - 1&gt;&gt;&gt; mortar_sizes{};
+<span class="lineNum">     113 </span>            :     const auto&amp; temporal_id = get&lt;temporal_id_tag&gt;(box);
+<span class="lineNum">     114 </span>            :     for (const auto&amp; direction_neighbors : element.neighbors()) {
+<span class="lineNum">     115 </span>            :       const auto&amp; direction = direction_neighbors.first;
+<span class="lineNum">     116 </span>            :       const auto&amp; neighbors = direction_neighbors.second;
+<span class="lineNum">     117 </span>            :       for (const auto&amp; neighbor : neighbors) {
+<span class="lineNum">     118 </span>            :         const auto mortar_id = std::make_pair(direction, neighbor);
+<span class="lineNum">     119 </span>            :         mortar_data[mortar_id];  // Default initialize data
+<span class="lineNum">     120 </span>            :         mortar_next_temporal_ids.insert({mortar_id, temporal_id});
+<span class="lineNum">     121 </span>            :         mortar_meshes.emplace(
+<span class="lineNum">     122 </span>            :             mortar_id,
+<span class="lineNum">     123 </span>            :             ::dg::mortar_mesh(
+<span class="lineNum">     124 </span>            :                 mesh.slice_away(direction.dimension()),
+<span class="lineNum">     125 </span>            :                 ::Initialization::element_mesh(initial_extents, neighbor,
+<span class="lineNum">     126 </span>            :                                                neighbors.orientation())
+<span class="lineNum">     127 </span>            :                     .slice_away(direction.dimension())));
+<span class="lineNum">     128 </span>            :         mortar_sizes.emplace(
+<span class="lineNum">     129 </span>            :             mortar_id,
+<span class="lineNum">     130 </span>            :             ::dg::mortar_size(element.id(), neighbor, direction.dimension(),
+<span class="lineNum">     131 </span>            :                               neighbors.orientation()));
+<span class="lineNum">     132 </span>            :       }
+<span class="lineNum">     133 </span>            :     }
+<span class="lineNum">     134 </span>            :     // Add mortars for external boundaries
+<span class="lineNum">     135 </span>            :     for (const auto&amp; direction : element.external_boundaries()) {
+<span class="lineNum">     136 </span>            :       const auto mortar_id = std::make_pair(
+<span class="lineNum">     137 </span>            :           direction, ElementId&lt;volume_dim&gt;::external_boundary_id());
+<span class="lineNum">     138 </span>            :       mortar_data[mortar_id];  // Default initialize data
+<span class="lineNum">     139 </span>            :       mortar_next_temporal_ids.insert({mortar_id, temporal_id});
+<span class="lineNum">     140 </span>            :       mortar_meshes.emplace(mortar_id, mesh.slice_away(direction.dimension()));
+<span class="lineNum">     141 </span>            :       mortar_sizes.emplace(
+<span class="lineNum">     142 </span>            :           mortar_id, make_array&lt;volume_dim - 1&gt;(Spectral::MortarSize::Full));
+<span class="lineNum">     143 </span>            :     }
+<span class="lineNum">     144 </span>            : 
+<span class="lineNum">     145 </span>            :     return db::create_from&lt;
+<span class="lineNum">     146 </span>            :         db::RemoveTags&lt;&gt;,
+<span class="lineNum">     147 </span>            :         db::AddSimpleTags&lt;mortar_data_tag,
+<span class="lineNum">     148 </span>            :                           mortar_tag&lt;Tags::Next&lt;temporal_id_tag&gt;&gt;,
+<span class="lineNum">     149 </span>            :                           mortar_tag&lt;Tags::Mesh&lt;volume_dim - 1&gt;&gt;,
+<span class="lineNum">     150 </span>            :                           mortar_tag&lt;Tags::MortarSize&lt;volume_dim - 1&gt;&gt;&gt;&gt;(
+<span class="lineNum">     151 </span>            :         std::move(box), std::move(mortar_data),
+<span class="lineNum">     152 </span>            :         std::move(mortar_next_temporal_ids), std::move(mortar_meshes),
+<span class="lineNum">     153 </span>            :         std::move(mortar_sizes));
+<span class="lineNum">     154 </span>            :   }
+<span class="lineNum">     155 </span>            : 
+<span class="lineNum">     156 </span>            :   template &lt;typename TagsList&gt;
+<span class="lineNum">     157 </span><span class="lineNoCov">          0 :   static auto initialize(db::DataBox&lt;TagsList&gt;&amp;&amp; box,</span>
+<span class="lineNum">     158 </span>            :                          const std::vector&lt;std::array&lt;size_t, volume_dim&gt;&gt;&amp;
+<span class="lineNum">     159 </span>            :                              initial_extents) noexcept {
+<span class="lineNum">     160 </span>            :     auto mortar_box = add_mortar_data(std::move(box), initial_extents);
+<span class="lineNum">     161 </span>            : 
+<span class="lineNum">     162 </span>            :     const auto&amp; internal_directions =
+<span class="lineNum">     163 </span>            :         db::get&lt;Tags::InternalDirections&lt;volume_dim&gt;&gt;(mortar_box);
+<span class="lineNum">     164 </span>            :     const auto&amp; boundary_directions =
+<span class="lineNum">     165 </span>            :         db::get&lt;Tags::BoundaryDirectionsInterior&lt;volume_dim&gt;&gt;(mortar_box);
+<span class="lineNum">     166 </span>            : 
+<span class="lineNum">     167 </span>            :     db::item_type&lt;
+<span class="lineNum">     168 </span>            :         interface_tag&lt;typename flux_comm_types::normal_dot_fluxes_tag&gt;&gt;
+<span class="lineNum">     169 </span>            :         normal_dot_fluxes{};
+<span class="lineNum">     170 </span>            :     for (const auto&amp; direction : internal_directions) {
+<span class="lineNum">     171 </span>            :       const auto&amp; interface_num_points =
+<span class="lineNum">     172 </span>            :           db::get&lt;interface_tag&lt;Tags::Mesh&lt;volume_dim - 1&gt;&gt;&gt;(mortar_box)
+<span class="lineNum">     173 </span>            :               .at(direction)
+<span class="lineNum">     174 </span>            :               .number_of_grid_points();
+<span class="lineNum">     175 </span>            :       normal_dot_fluxes[direction].initialize(interface_num_points, 0.);
+<span class="lineNum">     176 </span>            :     }
+<span class="lineNum">     177 </span>            :     db::item_type&lt;boundary_tag&lt;typename flux_comm_types::normal_dot_fluxes_tag&gt;&gt;
+<span class="lineNum">     178 </span>            :         boundary_normal_dot_fluxes{};
+<span class="lineNum">     179 </span>            :     for (const auto&amp; direction : boundary_directions) {
+<span class="lineNum">     180 </span>            :       const auto&amp; interface_num_points =
+<span class="lineNum">     181 </span>            :           db::get&lt;boundary_tag&lt;Tags::Mesh&lt;volume_dim - 1&gt;&gt;&gt;(mortar_box)
+<span class="lineNum">     182 </span>            :               .at(direction)
+<span class="lineNum">     183 </span>            :               .number_of_grid_points();
+<span class="lineNum">     184 </span>            :       boundary_normal_dot_fluxes[direction].initialize(interface_num_points,
+<span class="lineNum">     185 </span>            :                                                        0.);
+<span class="lineNum">     186 </span>            :     }
+<span class="lineNum">     187 </span>            : 
+<span class="lineNum">     188 </span>            :     return db::create_from&lt;
+<span class="lineNum">     189 </span>            :         db::RemoveTags&lt;&gt;,
+<span class="lineNum">     190 </span>            :         db::AddSimpleTags&lt;
+<span class="lineNum">     191 </span>            :             interface_tag&lt;typename flux_comm_types::normal_dot_fluxes_tag&gt;,
+<span class="lineNum">     192 </span>            :             boundary_tag&lt;typename flux_comm_types::normal_dot_fluxes_tag&gt;&gt;&gt;(
+<span class="lineNum">     193 </span>            :         std::move(mortar_box), std::move(normal_dot_fluxes),
+<span class="lineNum">     194 </span>            :         std::move(boundary_normal_dot_fluxes));
+<span class="lineNum">     195 </span>            :   }
+<span class="lineNum">     196 </span>            : };
+<span class="lineNum">     197 </span>            : }  // namespace Initialization
+<span class="lineNum">     198 </span>            : }  // namespace Elliptic
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

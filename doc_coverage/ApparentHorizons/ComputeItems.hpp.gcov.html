@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - ApparentHorizons/ComputeItems.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">ApparentHorizons</a> - ComputeItems.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">12</td>
+            <td class="headerCovTableEntryLo">8.3 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : /// \cond
+<span class="lineNum">       9 </span>            : class DataVector;
+<span class="lineNum">      10 </span>            : /// \endcond
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : #include &quot;DataStructures/DataBox/DataBoxTag.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;DataStructures/Tensor/EagerMath/DeterminantAndInverse.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;DataStructures/Tensor/TypeAliases.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;Evolution/Systems/GeneralizedHarmonic/Tags.hpp&quot;
+<span class="lineNum">      16 </span>            : #include &quot;PointwiseFunctions/GeneralRelativity/Christoffel.hpp&quot;
+<span class="lineNum">      17 </span>            : #include &quot;PointwiseFunctions/GeneralRelativity/ComputeGhQuantities.hpp&quot;
+<span class="lineNum">      18 </span>            : #include &quot;PointwiseFunctions/GeneralRelativity/ComputeSpacetimeQuantities.hpp&quot;
+<span class="lineNum">      19 </span>            : #include &quot;PointwiseFunctions/GeneralRelativity/IndexManipulation.hpp&quot;
+<span class="lineNum">      20 </span>            : #include &quot;PointwiseFunctions/GeneralRelativity/Tags.hpp&quot;
+<span class="lineNum">      21 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span><span class="lineNoCov">          0 : namespace ah {</span>
+<span class="lineNum">      24 </span><span class="lineNoCov">          0 : namespace Tags {</span>
+<span class="lineNum">      25 </span>            : // @{
+<span class="lineNum">      26 </span>            : /// These ComputeItems are different from those used in
+<span class="lineNum">      27 </span>            : /// GeneralizedHarmonic evolution because these live only on the
+<span class="lineNum">      28 </span>            : /// intrp::Actions::ApparentHorizon DataBox, not in the volume
+<span class="lineNum">      29 </span>            : /// DataBox.  And these ComputeItems can do fewer allocations than the
+<span class="lineNum">      30 </span>            : /// volume ones, because (for example) Lapse, SpaceTimeNormalVector,
+<span class="lineNum">      31 </span>            : /// etc.  can be inlined instead of being allocated as a separate
+<span class="lineNum">      32 </span>            : /// ComputeItem.
+<span class="lineNum">      33 </span>            : template &lt;size_t Dim, typename Frame&gt;
+<span class="lineNum">      34 </span>            : struct InverseSpatialMetricCompute : gr::Tags::InverseSpatialMetric&lt;Dim, Frame&gt;,
+<span class="lineNum">      35 </span><span class="lineCov">          1 :                                      db::ComputeTag {</span>
+<span class="lineNum">      36 </span><span class="lineNoCov">          0 :   static tnsr::II&lt;DataVector, Dim, Frame&gt; function(</span>
+<span class="lineNum">      37 </span>            :       const tnsr::aa&lt;DataVector, Dim, Frame&gt;&amp; psi) noexcept {
+<span class="lineNum">      38 </span>            :     return determinant_and_inverse(gr::spatial_metric(psi)).second;
+<span class="lineNum">      39 </span>            :   };
+<span class="lineNum">      40 </span><span class="lineNoCov">          0 :   using argument_tags = tmpl::list&lt;gr::Tags::SpacetimeMetric&lt;Dim, Frame&gt;&gt;;</span>
+<span class="lineNum">      41 </span>            : };
+<span class="lineNum">      42 </span>            : template &lt;size_t Dim, typename Frame&gt;
+<span class="lineNum">      43 </span>            : struct ExtrinsicCurvatureCompute : gr::Tags::ExtrinsicCurvature&lt;Dim, Frame&gt;,
+<span class="lineNum">      44 </span><span class="lineNoCov">          0 :                                    db::ComputeTag {</span>
+<span class="lineNum">      45 </span><span class="lineNoCov">          0 :   static tnsr::ii&lt;DataVector, Dim, Frame&gt; function(</span>
+<span class="lineNum">      46 </span>            :       const tnsr::aa&lt;DataVector, Dim, Frame&gt;&amp; psi,
+<span class="lineNum">      47 </span>            :       const tnsr::aa&lt;DataVector, Dim, Frame&gt;&amp; pi,
+<span class="lineNum">      48 </span>            :       const tnsr::iaa&lt;DataVector, Dim, Frame&gt;&amp; phi,
+<span class="lineNum">      49 </span>            :       const tnsr::II&lt;DataVector, Dim, Frame&gt;&amp; inv_g) noexcept {
+<span class="lineNum">      50 </span>            :     const auto shift = gr::shift(psi, inv_g);
+<span class="lineNum">      51 </span>            :     return GeneralizedHarmonic::extrinsic_curvature(
+<span class="lineNum">      52 </span>            :         gr::spacetime_normal_vector(gr::lapse(shift, psi), shift), pi, phi);
+<span class="lineNum">      53 </span>            :   }
+<span class="lineNum">      54 </span><span class="lineNoCov">          0 :   using argument_tags = tmpl::list&lt;gr::Tags::SpacetimeMetric&lt;Dim, Frame&gt;,</span>
+<span class="lineNum">      55 </span>            :                                    GeneralizedHarmonic::Tags::Pi&lt;Dim, Frame&gt;,
+<span class="lineNum">      56 </span>            :                                    GeneralizedHarmonic::Tags::Phi&lt;Dim, Frame&gt;,
+<span class="lineNum">      57 </span>            :                                    gr::Tags::InverseSpatialMetric&lt;Dim, Frame&gt;&gt;;
+<span class="lineNum">      58 </span>            : };
+<span class="lineNum">      59 </span>            : template &lt;size_t Dim, typename Frame&gt;
+<span class="lineNum">      60 </span>            : struct SpatialChristoffelSecondKindCompute
+<span class="lineNum">      61 </span>            :     : ::gr::Tags::SpatialChristoffelSecondKind&lt;Dim, Frame&gt;,
+<span class="lineNum">      62 </span><span class="lineNoCov">          0 :       db::ComputeTag {</span>
+<span class="lineNum">      63 </span><span class="lineNoCov">          0 :   static tnsr::Ijj&lt;DataVector, Dim, Frame&gt; function(</span>
+<span class="lineNum">      64 </span>            :       const tnsr::iaa&lt;DataVector, Dim, Frame&gt;&amp; phi,
+<span class="lineNum">      65 </span>            :       const tnsr::II&lt;DataVector, Dim, Frame&gt;&amp; inv_g) noexcept {
+<span class="lineNum">      66 </span>            :     return raise_or_lower_first_index(
+<span class="lineNum">      67 </span>            :         gr::christoffel_first_kind(
+<span class="lineNum">      68 </span>            :             GeneralizedHarmonic::deriv_spatial_metric(phi)),
+<span class="lineNum">      69 </span>            :         inv_g);
+<span class="lineNum">      70 </span>            :   }
+<span class="lineNum">      71 </span><span class="lineNoCov">          0 :   using argument_tags = tmpl::list&lt;GeneralizedHarmonic::Tags::Phi&lt;Dim, Frame&gt;,</span>
+<span class="lineNum">      72 </span>            :                                    gr::Tags::InverseSpatialMetric&lt;Dim, Frame&gt;&gt;;
+<span class="lineNum">      73 </span>            : };
+<span class="lineNum">      74 </span>            : // }@
+<span class="lineNum">      75 </span>            : }  // namespace Tags
+<span class="lineNum">      76 </span>            : }  // namespace ah
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

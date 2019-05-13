@@ -1,0 +1,346 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - NumericalAlgorithms/DiscontinuousGalerkin/Actions/ImposeBoundaryConditions.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">NumericalAlgorithms/DiscontinuousGalerkin/Actions</a> - ImposeBoundaryConditions.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">10</td>
+            <td class="headerCovTableEntryLo">10.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;algorithm&gt;
+<span class="lineNum">       7 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       8 </span>            : #include &lt;tuple&gt;
+<span class="lineNum">       9 </span>            : #include &lt;utility&gt;
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : #include &quot;DataStructures/DataBox/DataBox.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;DataStructures/DataBox/DataBoxTag.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;DataStructures/VariablesHelpers.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;Domain/FaceNormal.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;Domain/Tags.hpp&quot;
+<span class="lineNum">      16 </span>            : #include &quot;ErrorHandling/Assert.hpp&quot;
+<span class="lineNum">      17 </span>            : #include &quot;NumericalAlgorithms/DiscontinuousGalerkin/Actions/InterfaceActionHelpers.hpp&quot;
+<span class="lineNum">      18 </span>            : #include &quot;NumericalAlgorithms/DiscontinuousGalerkin/FluxCommunicationTypes.hpp&quot;
+<span class="lineNum">      19 </span>            : #include &quot;NumericalAlgorithms/DiscontinuousGalerkin/MortarHelpers.hpp&quot;
+<span class="lineNum">      20 </span>            : #include &quot;NumericalAlgorithms/DiscontinuousGalerkin/Tags.hpp&quot;
+<span class="lineNum">      21 </span>            : #include &quot;Parallel/ConstGlobalCache.hpp&quot;
+<span class="lineNum">      22 </span>            : #include &quot;Parallel/Invoke.hpp&quot;
+<span class="lineNum">      23 </span>            : #include &quot;PointwiseFunctions/AnalyticSolutions/Tags.hpp&quot;
+<span class="lineNum">      24 </span>            : #include &quot;Time/Tags.hpp&quot;
+<span class="lineNum">      25 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      26 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">      27 </span>            : #include &quot;Utilities/TaggedTuple.hpp&quot;
+<span class="lineNum">      28 </span>            : #include &quot;Utilities/TypeTraits.hpp&quot;
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span>            : /// \cond
+<span class="lineNum">      31 </span>            : namespace Tags {
+<span class="lineNum">      32 </span>            : template &lt;typename Tag&gt;
+<span class="lineNum">      33 </span>            : struct Magnitude;
+<span class="lineNum">      34 </span>            : }  // namespace Tags
+<span class="lineNum">      35 </span>            : // IWYU pragma: no_forward_declare db::DataBox
+<span class="lineNum">      36 </span>            : /// \endcond
+<span class="lineNum">      37 </span>            : 
+<span class="lineNum">      38 </span>            : namespace dg {
+<span class="lineNum">      39 </span>            : namespace Actions {
+<span class="lineNum">      40 </span>            : /// \ingroup ActionsGroup
+<span class="lineNum">      41 </span>            : /// \ingroup DiscontinuousGalerkinGroup
+<span class="lineNum">      42 </span>            : /// \brief Packages data on external boundaries for calculating numerical flux.
+<span class="lineNum">      43 </span>            : /// Computes contributions on the interior side from the volume, and imposes
+<span class="lineNum">      44 </span>            : /// Dirichlet boundary conditions on the exterior side.
+<span class="lineNum">      45 </span>            : ///
+<span class="lineNum">      46 </span>            : /// With:
+<span class="lineNum">      47 </span>            : /// - Boundary&lt;Tag&gt; =
+<span class="lineNum">      48 </span>            : ///   Tags::Interface&lt;Tags::BoundaryDirections&lt;volume_dim&gt;, Tag&gt;
+<span class="lineNum">      49 </span>            : /// - External&lt;Tag&gt; =
+<span class="lineNum">      50 </span>            : ///   Tags::Interface&lt;Tags::ExternalBoundaryDirections&lt;volume_dim&gt;, Tag&gt;
+<span class="lineNum">      51 </span>            : ///
+<span class="lineNum">      52 </span>            : /// Uses:
+<span class="lineNum">      53 </span>            : /// - ConstGlobalCache:
+<span class="lineNum">      54 </span>            : ///   - Metavariables::normal_dot_numerical_flux
+<span class="lineNum">      55 </span>            : ///   - Metavariables::boundary_condition
+<span class="lineNum">      56 </span>            : /// - DataBox:
+<span class="lineNum">      57 </span>            : ///   - Tags::Element&lt;volume_dim&gt;
+<span class="lineNum">      58 </span>            : ///   - Boundary&lt;Tags listed in
+<span class="lineNum">      59 </span>            : ///               Metavariables::normal_dot_numerical_flux::type::argument_tags&gt;
+<span class="lineNum">      60 </span>            : ///   - External&lt;Tags listed in
+<span class="lineNum">      61 </span>            : ///               Metavariables::normal_dot_numerical_flux::type::argument_tags&gt;
+<span class="lineNum">      62 </span>            : ///   - Boundary&lt;Tags::Mesh&lt;volume_dim - 1&gt;&gt;
+<span class="lineNum">      63 </span>            : ///   - External&lt;Tags::Mesh&lt;volume_dim - 1&gt;&gt;
+<span class="lineNum">      64 </span>            : ///   - Boundary&lt;Tags::Magnitude&lt;Tags::UnnormalizedFaceNormal&lt;volume_dim&gt;&gt;&gt;,
+<span class="lineNum">      65 </span>            : ///   - External&lt;Tags::Magnitude&lt;Tags::UnnormalizedFaceNormal&lt;volume_dim&gt;&gt;&gt;,
+<span class="lineNum">      66 </span>            : ///   - Boundary&lt;Tags::BoundaryCoordinates&lt;volume_dim&gt;&gt;,
+<span class="lineNum">      67 </span>            : ///   - Metavariables::temporal_id
+<span class="lineNum">      68 </span>            : ///
+<span class="lineNum">      69 </span>            : /// DataBox changes:
+<span class="lineNum">      70 </span>            : /// - Adds: nothing
+<span class="lineNum">      71 </span>            : /// - Removes: nothing
+<span class="lineNum">      72 </span>            : /// - Modifies:
+<span class="lineNum">      73 </span>            : ///      - Tags::VariablesBoundaryData
+<span class="lineNum">      74 </span>            : ///      - External&lt;typename system::variables_tag&gt;
+<span class="lineNum">      75 </span>            : ///
+<span class="lineNum">      76 </span>            : /// \see ReceiveDataForFluxes
+<span class="lineNum">      77 </span>            : template &lt;typename Metavariables&gt;
+<span class="lineNum">      78 </span><span class="lineCov">          1 : struct ImposeDirichletBoundaryConditions {</span>
+<span class="lineNum">      79 </span>            :  private:
+<span class="lineNum">      80 </span>            :   // BoundaryConditionMethod and BcSelector are used to select exactly how to
+<span class="lineNum">      81 </span>            :   // apply the Dirichlet boundary condition depending on properties of the
+<span class="lineNum">      82 </span>            :   // system. An overloaded `apply_impl` method is used that implements the
+<span class="lineNum">      83 </span>            :   // boundary condition calculation for the different types.
+<span class="lineNum">      84 </span><span class="lineNoCov">          0 :   enum class BoundaryConditionMethod {</span>
+<span class="lineNum">      85 </span>            :     AnalyticBcNoPrimitives,
+<span class="lineNum">      86 </span>            :     AnalyticBcFluxConservativeWithPrimitives,
+<span class="lineNum">      87 </span>            :     Unknown
+<span class="lineNum">      88 </span>            :   };
+<span class="lineNum">      89 </span>            :   template &lt;BoundaryConditionMethod Method&gt;
+<span class="lineNum">      90 </span><span class="lineNoCov">          0 :   using BcSelector = std::integral_constant&lt;BoundaryConditionMethod, Method&gt;;</span>
+<span class="lineNum">      91 </span>            : 
+<span class="lineNum">      92 </span>            :  public:
+<span class="lineNum">      93 </span><span class="lineNoCov">          0 :   using const_global_cache_tags =</span>
+<span class="lineNum">      94 </span>            :       tmpl::list&lt;typename Metavariables::normal_dot_numerical_flux,
+<span class="lineNum">      95 </span>            :                  typename Metavariables::boundary_condition_tag&gt;;
+<span class="lineNum">      96 </span>            : 
+<span class="lineNum">      97 </span>            :   template &lt;typename DbTags, typename... InboxTags, typename ArrayIndex,
+<span class="lineNum">      98 </span>            :             typename ActionList, typename ParallelComponent&gt;
+<span class="lineNum">      99 </span><span class="lineNoCov">          0 :   static std::tuple&lt;db::DataBox&lt;DbTags&gt;&amp;&amp;&gt; apply(</span>
+<span class="lineNum">     100 </span>            :       db::DataBox&lt;DbTags&gt;&amp; box, tuples::TaggedTuple&lt;InboxTags...&gt;&amp; /*inboxes*/,
+<span class="lineNum">     101 </span>            :       Parallel::ConstGlobalCache&lt;Metavariables&gt;&amp; cache,
+<span class="lineNum">     102 </span>            :       const ArrayIndex&amp; /*array_index*/, const ActionList /*meta*/,
+<span class="lineNum">     103 </span>            :       const ParallelComponent* const /*meta*/) noexcept {
+<span class="lineNum">     104 </span>            :     using system = typename Metavariables::system;
+<span class="lineNum">     105 </span>            :     return apply_impl&lt;Metavariables::system::volume_dim&gt;(
+<span class="lineNum">     106 </span>            :         box, cache,
+<span class="lineNum">     107 </span>            :         BcSelector&lt;(not system::has_primitive_and_conservative_vars
+<span class="lineNum">     108 </span>            :                         ? BoundaryConditionMethod::AnalyticBcNoPrimitives
+<span class="lineNum">     109 </span>            :                         : (system::has_primitive_and_conservative_vars and
+<span class="lineNum">     110 </span>            :                                    system::is_in_flux_conservative_form
+<span class="lineNum">     111 </span>            :                                ? BoundaryConditionMethod::
+<span class="lineNum">     112 </span>            :                                      AnalyticBcFluxConservativeWithPrimitives
+<span class="lineNum">     113 </span>            :                                : BoundaryConditionMethod::Unknown))&gt;{});
+<span class="lineNum">     114 </span>            :   }
+<span class="lineNum">     115 </span>            : 
+<span class="lineNum">     116 </span>            :  private:
+<span class="lineNum">     117 </span>            :   template &lt;typename DbTags&gt;
+<span class="lineNum">     118 </span><span class="lineNoCov">          0 :   static void contribute_data_to_mortar(</span>
+<span class="lineNum">     119 </span>            :       const gsl::not_null&lt;db::DataBox&lt;DbTags&gt;*&gt; box,
+<span class="lineNum">     120 </span>            :       const Parallel::ConstGlobalCache&lt;Metavariables&gt;&amp; cache) noexcept {
+<span class="lineNum">     121 </span>            :     using system = typename Metavariables::system;
+<span class="lineNum">     122 </span>            :     constexpr size_t volume_dim = system::volume_dim;
+<span class="lineNum">     123 </span>            : 
+<span class="lineNum">     124 </span>            :     const auto&amp; element = db::get&lt;Tags::Element&lt;volume_dim&gt;&gt;(*box);
+<span class="lineNum">     125 </span>            :     const auto&amp; temporal_id =
+<span class="lineNum">     126 </span>            :         db::get&lt;typename Metavariables::temporal_id&gt;(*box);
+<span class="lineNum">     127 </span>            :     const auto&amp; normal_dot_numerical_flux_computer =
+<span class="lineNum">     128 </span>            :         get&lt;typename Metavariables::normal_dot_numerical_flux&gt;(cache);
+<span class="lineNum">     129 </span>            : 
+<span class="lineNum">     130 </span>            :     for (const auto&amp; direction : element.external_boundaries()) {
+<span class="lineNum">     131 </span>            :       const auto mortar_id = std::make_pair(
+<span class="lineNum">     132 </span>            :           direction, ElementId&lt;volume_dim&gt;::external_boundary_id());
+<span class="lineNum">     133 </span>            : 
+<span class="lineNum">     134 </span>            :       auto interior_data = DgActions_detail::compute_local_mortar_data(
+<span class="lineNum">     135 </span>            :           *box, direction, normal_dot_numerical_flux_computer,
+<span class="lineNum">     136 </span>            :           Tags::BoundaryDirectionsInterior&lt;volume_dim&gt;{}, Metavariables{});
+<span class="lineNum">     137 </span>            : 
+<span class="lineNum">     138 </span>            :       auto exterior_data = DgActions_detail::compute_packaged_data(
+<span class="lineNum">     139 </span>            :           *box, direction, normal_dot_numerical_flux_computer,
+<span class="lineNum">     140 </span>            :           Tags::BoundaryDirectionsExterior&lt;volume_dim&gt;{}, Metavariables{});
+<span class="lineNum">     141 </span>            : 
+<span class="lineNum">     142 </span>            :       db::mutate&lt;Tags::VariablesBoundaryData&gt;(
+<span class="lineNum">     143 </span>            :           box, [&amp;mortar_id, &amp;temporal_id, &amp;interior_data, &amp;exterior_data ](
+<span class="lineNum">     144 </span>            :                    const gsl::not_null&lt;
+<span class="lineNum">     145 </span>            :                        db::item_type&lt;Tags::VariablesBoundaryData, DbTags&gt;*&gt;
+<span class="lineNum">     146 </span>            :                        mortar_data) noexcept {
+<span class="lineNum">     147 </span>            :             mortar_data-&gt;at(mortar_id).local_insert(temporal_id,
+<span class="lineNum">     148 </span>            :                                                     std::move(interior_data));
+<span class="lineNum">     149 </span>            :             mortar_data-&gt;at(mortar_id).remote_insert(temporal_id,
+<span class="lineNum">     150 </span>            :                                                      std::move(exterior_data));
+<span class="lineNum">     151 </span>            :           });
+<span class="lineNum">     152 </span>            :     }
+<span class="lineNum">     153 </span>            :   }
+<span class="lineNum">     154 </span>            : 
+<span class="lineNum">     155 </span>            :   template &lt;size_t VolumeDim, typename DbTags&gt;
+<span class="lineNum">     156 </span><span class="lineNoCov">          0 :   static std::tuple&lt;db::DataBox&lt;DbTags&gt;&amp;&amp;&gt; apply_impl(</span>
+<span class="lineNum">     157 </span>            :       db::DataBox&lt;DbTags&gt;&amp; box,
+<span class="lineNum">     158 </span>            :       const Parallel::ConstGlobalCache&lt;Metavariables&gt;&amp; cache,
+<span class="lineNum">     159 </span>            :       std::integral_constant&lt;
+<span class="lineNum">     160 </span>            :           BoundaryConditionMethod,
+<span class="lineNum">     161 </span>            :           BoundaryConditionMethod::AnalyticBcNoPrimitives&gt; /*meta*/) noexcept {
+<span class="lineNum">     162 </span>            :     using system = typename Metavariables::system;
+<span class="lineNum">     163 </span>            : 
+<span class="lineNum">     164 </span>            :     static_assert(
+<span class="lineNum">     165 </span>            :         system::is_in_flux_conservative_form or
+<span class="lineNum">     166 </span>            :             cpp17::is_same_v&lt;typename Metavariables::analytic_solution_tag,
+<span class="lineNum">     167 </span>            :                              typename Metavariables::boundary_condition_tag&gt;,
+<span class="lineNum">     168 </span>            :         &quot;Only analytic boundary conditions, or dirichlet boundary conditions &quot;
+<span class="lineNum">     169 </span>            :         &quot;for conservative systems are implemented&quot;);
+<span class="lineNum">     170 </span>            : 
+<span class="lineNum">     171 </span>            :     // Apply the boundary condition
+<span class="lineNum">     172 </span>            :     db::mutate_apply&lt;
+<span class="lineNum">     173 </span>            :         tmpl::list&lt;Tags::Interface&lt;Tags::BoundaryDirectionsExterior&lt;VolumeDim&gt;,
+<span class="lineNum">     174 </span>            :                                    typename system::variables_tag&gt;&gt;,
+<span class="lineNum">     175 </span>            :         tmpl::list&lt;&gt;&gt;(
+<span class="lineNum">     176 </span>            :         [](const gsl::not_null&lt;db::item_type&lt;
+<span class="lineNum">     177 </span>            :                Tags::Interface&lt;Tags::BoundaryDirectionsExterior&lt;VolumeDim&gt;,
+<span class="lineNum">     178 </span>            :                                typename system::variables_tag&gt;&gt;*&gt;
+<span class="lineNum">     179 </span>            :                external_bdry_vars,
+<span class="lineNum">     180 </span>            :            const double time, const auto&amp; boundary_condition,
+<span class="lineNum">     181 </span>            :            const auto&amp; boundary_coords) noexcept {
+<span class="lineNum">     182 </span>            :           for (auto&amp; external_direction_and_vars : *external_bdry_vars) {
+<span class="lineNum">     183 </span>            :             auto&amp; direction = external_direction_and_vars.first;
+<span class="lineNum">     184 </span>            :             auto&amp; vars = external_direction_and_vars.second;
+<span class="lineNum">     185 </span>            :             vars.assign_subset(boundary_condition.variables(
+<span class="lineNum">     186 </span>            :                 boundary_coords.at(direction), time,
+<span class="lineNum">     187 </span>            :                 typename system::variables_tag::type::tags_list{}));
+<span class="lineNum">     188 </span>            :           }
+<span class="lineNum">     189 </span>            :         },
+<span class="lineNum">     190 </span>            :         make_not_null(&amp;box), db::get&lt;Tags::Time&gt;(box).value(),
+<span class="lineNum">     191 </span>            :         get&lt;typename Metavariables::boundary_condition_tag&gt;(cache),
+<span class="lineNum">     192 </span>            :         db::get&lt;Tags::Interface&lt;Tags::BoundaryDirectionsExterior&lt;VolumeDim&gt;,
+<span class="lineNum">     193 </span>            :                                 Tags::Coordinates&lt;VolumeDim, Frame::Inertial&gt;&gt;&gt;(
+<span class="lineNum">     194 </span>            :             box));
+<span class="lineNum">     195 </span>            : 
+<span class="lineNum">     196 </span>            :     contribute_data_to_mortar(make_not_null(&amp;box), cache);
+<span class="lineNum">     197 </span>            :     return std::forward_as_tuple(std::move(box));
+<span class="lineNum">     198 </span>            :   }
+<span class="lineNum">     199 </span>            : 
+<span class="lineNum">     200 </span>            :   template &lt;typename TagsList, typename... ReturnTags, typename... ArgumentTags,
+<span class="lineNum">     201 </span>            :             typename System&gt;
+<span class="lineNum">     202 </span><span class="lineNoCov">          0 :   static void apply_impl_helper_conservative_from_primitive(</span>
+<span class="lineNum">     203 </span>            :       const gsl::not_null&lt;Variables&lt;TagsList&gt;*&gt; conservative_vars,
+<span class="lineNum">     204 </span>            :       const tuples::TaggedTuple&lt;ArgumentTags...&gt;&amp; argument_vars,
+<span class="lineNum">     205 </span>            :       tmpl::list&lt;ReturnTags...&gt; /*meta*/, tmpl::list&lt;System&gt; /*meta*/
+<span class="lineNum">     206 </span>            :       ) noexcept {
+<span class="lineNum">     207 </span>            :     System::conservative_from_primitive::apply(
+<span class="lineNum">     208 </span>            :         make_not_null(&amp;get&lt;ReturnTags&gt;(*conservative_vars))...,
+<span class="lineNum">     209 </span>            :         get&lt;ArgumentTags&gt;(argument_vars)...);
+<span class="lineNum">     210 </span>            :   }
+<span class="lineNum">     211 </span>            : 
+<span class="lineNum">     212 </span>            :   template &lt;size_t VolumeDim, typename DbTags&gt;
+<span class="lineNum">     213 </span><span class="lineNoCov">          0 :   static std::tuple&lt;db::DataBox&lt;DbTags&gt;&amp;&amp;&gt; apply_impl(</span>
+<span class="lineNum">     214 </span>            :       db::DataBox&lt;DbTags&gt;&amp; box,
+<span class="lineNum">     215 </span>            :       const Parallel::ConstGlobalCache&lt;Metavariables&gt;&amp; cache,
+<span class="lineNum">     216 </span>            :       std::integral_constant&lt;
+<span class="lineNum">     217 </span>            :           BoundaryConditionMethod,
+<span class="lineNum">     218 </span>            :           BoundaryConditionMethod::
+<span class="lineNum">     219 </span>            :               AnalyticBcFluxConservativeWithPrimitives&gt; /*meta*/) noexcept {
+<span class="lineNum">     220 </span>            :     using system = typename Metavariables::system;
+<span class="lineNum">     221 </span>            : 
+<span class="lineNum">     222 </span>            :     static_assert(
+<span class="lineNum">     223 </span>            :         system::is_in_flux_conservative_form and
+<span class="lineNum">     224 </span>            :             system::has_primitive_and_conservative_vars and
+<span class="lineNum">     225 </span>            :             cpp17::is_same_v&lt;typename Metavariables::analytic_solution_tag,
+<span class="lineNum">     226 </span>            :                              typename Metavariables::boundary_condition_tag&gt;,
+<span class="lineNum">     227 </span>            :         &quot;Only analytic boundary conditions, or dirichlet boundary conditions &quot;
+<span class="lineNum">     228 </span>            :         &quot;for conservative systems are implemented&quot;);
+<span class="lineNum">     229 </span>            : 
+<span class="lineNum">     230 </span>            :     // Apply the boundary condition
+<span class="lineNum">     231 </span>            :     db::mutate_apply&lt;
+<span class="lineNum">     232 </span>            :         tmpl::list&lt;Tags::Interface&lt;Tags::BoundaryDirectionsExterior&lt;VolumeDim&gt;,
+<span class="lineNum">     233 </span>            :                                    typename system::variables_tag&gt;&gt;,
+<span class="lineNum">     234 </span>            :         tmpl::list&lt;&gt;&gt;(
+<span class="lineNum">     235 </span>            :         [](const gsl::not_null&lt;db::item_type&lt;
+<span class="lineNum">     236 </span>            :                Tags::Interface&lt;Tags::BoundaryDirectionsExterior&lt;VolumeDim&gt;,
+<span class="lineNum">     237 </span>            :                                typename system::variables_tag&gt;&gt;*&gt;
+<span class="lineNum">     238 </span>            :                external_bdry_vars,
+<span class="lineNum">     239 </span>            :            const double time, const auto&amp; boundary_condition,
+<span class="lineNum">     240 </span>            :            const auto&amp; boundary_coords) noexcept {
+<span class="lineNum">     241 </span>            :           for (auto&amp; external_direction_and_vars : *external_bdry_vars) {
+<span class="lineNum">     242 </span>            :             auto&amp; direction = external_direction_and_vars.first;
+<span class="lineNum">     243 </span>            :             auto&amp; vars = external_direction_and_vars.second;
+<span class="lineNum">     244 </span>            : 
+<span class="lineNum">     245 </span>            :             apply_impl_helper_conservative_from_primitive(
+<span class="lineNum">     246 </span>            :                 make_not_null(&amp;vars),
+<span class="lineNum">     247 </span>            :                 boundary_condition.variables(
+<span class="lineNum">     248 </span>            :                     boundary_coords.at(direction), time,
+<span class="lineNum">     249 </span>            :                     typename system::conservative_from_primitive::
+<span class="lineNum">     250 </span>            :                         argument_tags{}),
+<span class="lineNum">     251 </span>            :                 typename system::conservative_from_primitive::return_tags{},
+<span class="lineNum">     252 </span>            :                 tmpl::list&lt;system&gt;{});
+<span class="lineNum">     253 </span>            :           }
+<span class="lineNum">     254 </span>            :         },
+<span class="lineNum">     255 </span>            :         make_not_null(&amp;box), db::get&lt;Tags::Time&gt;(box).value(),
+<span class="lineNum">     256 </span>            :         get&lt;typename Metavariables::boundary_condition_tag&gt;(cache),
+<span class="lineNum">     257 </span>            :         db::get&lt;Tags::Interface&lt;Tags::BoundaryDirectionsExterior&lt;VolumeDim&gt;,
+<span class="lineNum">     258 </span>            :                                 Tags::Coordinates&lt;VolumeDim, Frame::Inertial&gt;&gt;&gt;(
+<span class="lineNum">     259 </span>            :             box));
+<span class="lineNum">     260 </span>            : 
+<span class="lineNum">     261 </span>            :     contribute_data_to_mortar(make_not_null(&amp;box), cache);
+<span class="lineNum">     262 </span>            :     return std::forward_as_tuple(std::move(box));
+<span class="lineNum">     263 </span>            :   }
+<span class="lineNum">     264 </span>            : };
+<span class="lineNum">     265 </span>            : }  // namespace Actions
+<span class="lineNum">     266 </span>            : }  // namespace dg
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

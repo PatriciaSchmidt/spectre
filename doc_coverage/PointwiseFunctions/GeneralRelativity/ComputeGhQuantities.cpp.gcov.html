@@ -1,0 +1,1023 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - PointwiseFunctions/GeneralRelativity/ComputeGhQuantities.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">PointwiseFunctions/GeneralRelativity</a> - ComputeGhQuantities.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">13</td>
+            <td class="headerCovTableEntry">26</td>
+            <td class="headerCovTableEntryLo">50.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;PointwiseFunctions/GeneralRelativity/ComputeGhQuantities.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &quot;DataStructures/DataVector.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">       7 </span>            : #include &quot;DataStructures/Tensor/EagerMath/DeterminantAndInverse.hpp&quot;
+<span class="lineNum">       8 </span>            : #include &quot;DataStructures/Tensor/Tensor.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">       9 </span>            : #include &quot;DataStructures/Variables.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;PointwiseFunctions/GeneralRelativity/IndexManipulation.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;Utilities/ConstantExpressions.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;Utilities/ContainerHelpers.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;Utilities/GenerateInstantiations.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;Utilities/MakeWithValue.hpp&quot;
+<span class="lineNum">      16 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            : // IWYU pragma: no_forward_declare Tensor
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : namespace GeneralizedHarmonic {
+<span class="lineNum">      21 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">      22 </span><span class="lineNoCov">          0 : void phi(const gsl::not_null&lt;tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;*&gt; phi,</span>
+<span class="lineNum">      23 </span>            :          const Scalar&lt;DataType&gt;&amp; lapse,
+<span class="lineNum">      24 </span>            :          const tnsr::i&lt;DataType, SpatialDim, Frame&gt;&amp; deriv_lapse,
+<span class="lineNum">      25 </span>            :          const tnsr::I&lt;DataType, SpatialDim, Frame&gt;&amp; shift,
+<span class="lineNum">      26 </span>            :          const tnsr::iJ&lt;DataType, SpatialDim, Frame&gt;&amp; deriv_shift,
+<span class="lineNum">      27 </span>            :          const tnsr::ii&lt;DataType, SpatialDim, Frame&gt;&amp; spatial_metric,
+<span class="lineNum">      28 </span>            :          const tnsr::ijj&lt;DataType, SpatialDim, Frame&gt;&amp;
+<span class="lineNum">      29 </span>            :              deriv_spatial_metric) noexcept {
+<span class="lineNum">      30 </span>            :   if (UNLIKELY(get_size(get&lt;0, 0, 0&gt;(*phi)) != get_size(get(lapse)))) {
+<span class="lineNum">      31 </span>            :     *phi = tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;(get_size(get(lapse)));
+<span class="lineNum">      32 </span>            :   }
+<span class="lineNum">      33 </span>            :   for (size_t k = 0; k &lt; SpatialDim; ++k) {
+<span class="lineNum">      34 </span>            :     phi-&gt;get(k, 0, 0) = -2. * get(lapse) * deriv_lapse.get(k);
+<span class="lineNum">      35 </span>            :     for (size_t m = 0; m &lt; SpatialDim; ++m) {
+<span class="lineNum">      36 </span>            :       for (size_t n = 0; n &lt; SpatialDim; ++n) {
+<span class="lineNum">      37 </span>            :         phi-&gt;get(k, 0, 0) +=
+<span class="lineNum">      38 </span>            :             deriv_spatial_metric.get(k, m, n) * shift.get(m) * shift.get(n) +
+<span class="lineNum">      39 </span>            :             2. * spatial_metric.get(m, n) * shift.get(m) *
+<span class="lineNum">      40 </span>            :                 deriv_shift.get(k, n);
+<span class="lineNum">      41 </span>            :       }
+<span class="lineNum">      42 </span>            :     }
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span>            :     for (size_t i = 0; i &lt; SpatialDim; ++i) {
+<span class="lineNum">      45 </span>            :       phi-&gt;get(k, 0, i + 1) = 0.;
+<span class="lineNum">      46 </span>            :       for (size_t m = 0; m &lt; SpatialDim; ++m) {
+<span class="lineNum">      47 </span>            :         phi-&gt;get(k, 0, i + 1) +=
+<span class="lineNum">      48 </span>            :             deriv_spatial_metric.get(k, m, i) * shift.get(m) +
+<span class="lineNum">      49 </span>            :             spatial_metric.get(m, i) * deriv_shift.get(k, m);
+<span class="lineNum">      50 </span>            :       }
+<span class="lineNum">      51 </span>            :       for (size_t j = i; j &lt; SpatialDim; ++j) {
+<span class="lineNum">      52 </span>            :         phi-&gt;get(k, i + 1, j + 1) = deriv_spatial_metric.get(k, i, j);
+<span class="lineNum">      53 </span>            :       }
+<span class="lineNum">      54 </span>            :     }
+<span class="lineNum">      55 </span>            :   }
+<span class="lineNum">      56 </span>            : }
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">      59 </span><span class="lineCov">          1 : tnsr::iaa&lt;DataType, SpatialDim, Frame&gt; phi(</span>
+<span class="lineNum">      60 </span>            :     const Scalar&lt;DataType&gt;&amp; lapse,
+<span class="lineNum">      61 </span>            :     const tnsr::i&lt;DataType, SpatialDim, Frame&gt;&amp; deriv_lapse,
+<span class="lineNum">      62 </span>            :     const tnsr::I&lt;DataType, SpatialDim, Frame&gt;&amp; shift,
+<span class="lineNum">      63 </span>            :     const tnsr::iJ&lt;DataType, SpatialDim, Frame&gt;&amp; deriv_shift,
+<span class="lineNum">      64 </span>            :     const tnsr::ii&lt;DataType, SpatialDim, Frame&gt;&amp; spatial_metric,
+<span class="lineNum">      65 </span>            :     const tnsr::ijj&lt;DataType, SpatialDim, Frame&gt;&amp;
+<span class="lineNum">      66 </span>            :         deriv_spatial_metric) noexcept {
+<span class="lineNum">      67 </span>            :   tnsr::iaa&lt;DataType, SpatialDim, Frame&gt; var_phi{};
+<span class="lineNum">      68 </span>            :   GeneralizedHarmonic::phi&lt;SpatialDim, Frame, DataType&gt;(
+<span class="lineNum">      69 </span>            :       make_not_null(&amp;var_phi), lapse, deriv_lapse, shift, deriv_shift,
+<span class="lineNum">      70 </span>            :       spatial_metric, deriv_spatial_metric);
+<span class="lineNum">      71 </span>            :   return var_phi;
+<span class="lineNum">      72 </span>            : }
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">      75 </span><span class="lineNoCov">          0 : void pi(const gsl::not_null&lt;tnsr::aa&lt;DataType, SpatialDim, Frame&gt;*&gt; pi,</span>
+<span class="lineNum">      76 </span>            :         const Scalar&lt;DataType&gt;&amp; lapse, const Scalar&lt;DataType&gt;&amp; dt_lapse,
+<span class="lineNum">      77 </span>            :         const tnsr::I&lt;DataType, SpatialDim, Frame&gt;&amp; shift,
+<span class="lineNum">      78 </span>            :         const tnsr::I&lt;DataType, SpatialDim, Frame&gt;&amp; dt_shift,
+<span class="lineNum">      79 </span>            :         const tnsr::ii&lt;DataType, SpatialDim, Frame&gt;&amp; spatial_metric,
+<span class="lineNum">      80 </span>            :         const tnsr::ii&lt;DataType, SpatialDim, Frame&gt;&amp; dt_spatial_metric,
+<span class="lineNum">      81 </span>            :         const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; phi) noexcept {
+<span class="lineNum">      82 </span>            :   if (UNLIKELY(get_size(get&lt;0, 0&gt;(*pi)) != get_size(get(lapse)))) {
+<span class="lineNum">      83 </span>            :     *pi = tnsr::aa&lt;DataType, SpatialDim, Frame&gt;(get_size(get(lapse)));
+<span class="lineNum">      84 </span>            :   }
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span>            :   get&lt;0, 0&gt;(*pi) = -2. * get(lapse) * get(dt_lapse);
+<span class="lineNum">      87 </span>            : 
+<span class="lineNum">      88 </span>            :   for (size_t m = 0; m &lt; SpatialDim; ++m) {
+<span class="lineNum">      89 </span>            :     for (size_t n = 0; n &lt; SpatialDim; ++n) {
+<span class="lineNum">      90 </span>            :       get&lt;0, 0&gt;(*pi) +=
+<span class="lineNum">      91 </span>            :           dt_spatial_metric.get(m, n) * shift.get(m) * shift.get(n) +
+<span class="lineNum">      92 </span>            :           2. * spatial_metric.get(m, n) * shift.get(m) * dt_shift.get(n);
+<span class="lineNum">      93 </span>            :     }
+<span class="lineNum">      94 </span>            :   }
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span>            :   for (size_t i = 0; i &lt; SpatialDim; ++i) {
+<span class="lineNum">      97 </span>            :     pi-&gt;get(0, i + 1) = 0.;
+<span class="lineNum">      98 </span>            :     for (size_t m = 0; m &lt; SpatialDim; ++m) {
+<span class="lineNum">      99 </span>            :       pi-&gt;get(0, i + 1) += dt_spatial_metric.get(m, i) * shift.get(m) +
+<span class="lineNum">     100 </span>            :                            spatial_metric.get(m, i) * dt_shift.get(m);
+<span class="lineNum">     101 </span>            :     }
+<span class="lineNum">     102 </span>            :     for (size_t j = i; j &lt; SpatialDim; ++j) {
+<span class="lineNum">     103 </span>            :       pi-&gt;get(i + 1, j + 1) = dt_spatial_metric.get(i, j);
+<span class="lineNum">     104 </span>            :     }
+<span class="lineNum">     105 </span>            :   }
+<span class="lineNum">     106 </span>            :   for (size_t mu = 0; mu &lt; SpatialDim + 1; ++mu) {
+<span class="lineNum">     107 </span>            :     for (size_t nu = mu; nu &lt; SpatialDim + 1; ++nu) {
+<span class="lineNum">     108 </span>            :       for (size_t i = 0; i &lt; SpatialDim; ++i) {
+<span class="lineNum">     109 </span>            :         pi-&gt;get(mu, nu) -= shift.get(i) * phi.get(i, mu, nu);
+<span class="lineNum">     110 </span>            :       }
+<span class="lineNum">     111 </span>            :       // Division by `lapse` here is somewhat more efficient (in Release mode)
+<span class="lineNum">     112 </span>            :       // than pre-computing `one_over_lapse` outside the loop for DataVectors
+<span class="lineNum">     113 </span>            :       // of `size` up to `50`. This is why we the next line is as it is.
+<span class="lineNum">     114 </span>            :       pi-&gt;get(mu, nu) /= -get(lapse);
+<span class="lineNum">     115 </span>            :     }
+<span class="lineNum">     116 </span>            :   }
+<span class="lineNum">     117 </span>            : }
+<span class="lineNum">     118 </span>            : 
+<span class="lineNum">     119 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     120 </span><span class="lineCov">          1 : tnsr::aa&lt;DataType, SpatialDim, Frame&gt; pi(</span>
+<span class="lineNum">     121 </span>            :     const Scalar&lt;DataType&gt;&amp; lapse, const Scalar&lt;DataType&gt;&amp; dt_lapse,
+<span class="lineNum">     122 </span>            :     const tnsr::I&lt;DataType, SpatialDim, Frame&gt;&amp; shift,
+<span class="lineNum">     123 </span>            :     const tnsr::I&lt;DataType, SpatialDim, Frame&gt;&amp; dt_shift,
+<span class="lineNum">     124 </span>            :     const tnsr::ii&lt;DataType, SpatialDim, Frame&gt;&amp; spatial_metric,
+<span class="lineNum">     125 </span>            :     const tnsr::ii&lt;DataType, SpatialDim, Frame&gt;&amp; dt_spatial_metric,
+<span class="lineNum">     126 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; phi) noexcept {
+<span class="lineNum">     127 </span>            :   tnsr::aa&lt;DataType, SpatialDim, Frame&gt; pi{};
+<span class="lineNum">     128 </span>            :   GeneralizedHarmonic::pi&lt;SpatialDim, Frame, DataType&gt;(
+<span class="lineNum">     129 </span>            :       make_not_null(&amp;pi), lapse, dt_lapse, shift, dt_shift, spatial_metric,
+<span class="lineNum">     130 </span>            :       dt_spatial_metric, phi);
+<span class="lineNum">     131 </span>            :   return pi;
+<span class="lineNum">     132 </span>            : }
+<span class="lineNum">     133 </span>            : 
+<span class="lineNum">     134 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     135 </span><span class="lineCov">          1 : tnsr::a&lt;DataType, SpatialDim, Frame&gt; gauge_source(</span>
+<span class="lineNum">     136 </span>            :     const Scalar&lt;DataType&gt;&amp; lapse, const Scalar&lt;DataType&gt;&amp; dt_lapse,
+<span class="lineNum">     137 </span>            :     const tnsr::i&lt;DataType, SpatialDim, Frame&gt;&amp; deriv_lapse,
+<span class="lineNum">     138 </span>            :     const tnsr::I&lt;DataType, SpatialDim, Frame&gt;&amp; shift,
+<span class="lineNum">     139 </span>            :     const tnsr::I&lt;DataType, SpatialDim, Frame&gt;&amp; dt_shift,
+<span class="lineNum">     140 </span>            :     const tnsr::iJ&lt;DataType, SpatialDim, Frame&gt;&amp; deriv_shift,
+<span class="lineNum">     141 </span>            :     const tnsr::ii&lt;DataType, SpatialDim, Frame&gt;&amp; spatial_metric,
+<span class="lineNum">     142 </span>            :     const Scalar&lt;DataType&gt;&amp; trace_extrinsic_curvature,
+<span class="lineNum">     143 </span>            :     const tnsr::i&lt;DataType, SpatialDim, Frame&gt;&amp;
+<span class="lineNum">     144 </span>            :         trace_christoffel_last_indices) noexcept {
+<span class="lineNum">     145 </span>            :   DataType one_over_lapse = 1. / get(lapse);
+<span class="lineNum">     146 </span>            :   auto gauge_source_h =
+<span class="lineNum">     147 </span>            :       make_with_value&lt;tnsr::a&lt;DataType, SpatialDim, Frame&gt;&gt;(lapse, 0.);
+<span class="lineNum">     148 </span>            : 
+<span class="lineNum">     149 </span>            :   // Temporary to avoid more nested loops.
+<span class="lineNum">     150 </span>            :   auto temp = dt_shift;
+<span class="lineNum">     151 </span>            :   for (size_t i = 0; i &lt; SpatialDim; ++i) {
+<span class="lineNum">     152 </span>            :     for (size_t k = 0; k &lt; SpatialDim; ++k) {
+<span class="lineNum">     153 </span>            :       temp.get(i) -= shift.get(k) * deriv_shift.get(k, i);
+<span class="lineNum">     154 </span>            :     }
+<span class="lineNum">     155 </span>            :   }
+<span class="lineNum">     156 </span>            : 
+<span class="lineNum">     157 </span>            :   for (size_t i = 0; i &lt; SpatialDim; ++i) {
+<span class="lineNum">     158 </span>            :     for (size_t k = 0; k &lt; SpatialDim; ++k) {
+<span class="lineNum">     159 </span>            :       gauge_source_h.get(i + 1) += spatial_metric.get(i, k) * temp.get(k);
+<span class="lineNum">     160 </span>            :     }
+<span class="lineNum">     161 </span>            :     gauge_source_h.get(i + 1) *= square(one_over_lapse);
+<span class="lineNum">     162 </span>            :   }
+<span class="lineNum">     163 </span>            : 
+<span class="lineNum">     164 </span>            :   for (size_t i = 0; i &lt; SpatialDim; ++i) {
+<span class="lineNum">     165 </span>            :     gauge_source_h.get(i + 1) += one_over_lapse * deriv_lapse.get(i) -
+<span class="lineNum">     166 </span>            :                                  trace_christoffel_last_indices.get(i);
+<span class="lineNum">     167 </span>            :   }
+<span class="lineNum">     168 </span>            : 
+<span class="lineNum">     169 </span>            :   for (size_t i = 0; i &lt; SpatialDim; ++i) {
+<span class="lineNum">     170 </span>            :     get&lt;0&gt;(gauge_source_h) +=
+<span class="lineNum">     171 </span>            :         shift.get(i) *
+<span class="lineNum">     172 </span>            :         (gauge_source_h.get(i + 1) + deriv_lapse.get(i) * one_over_lapse);
+<span class="lineNum">     173 </span>            :   }
+<span class="lineNum">     174 </span>            :   get&lt;0&gt;(gauge_source_h) -= one_over_lapse * get(dt_lapse) +
+<span class="lineNum">     175 </span>            :                             get(lapse) * get(trace_extrinsic_curvature);
+<span class="lineNum">     176 </span>            : 
+<span class="lineNum">     177 </span>            :   return gauge_source_h;
+<span class="lineNum">     178 </span>            : }
+<span class="lineNum">     179 </span>            : 
+<span class="lineNum">     180 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     181 </span><span class="lineCov">          1 : tnsr::ii&lt;DataType, SpatialDim, Frame&gt; extrinsic_curvature(</span>
+<span class="lineNum">     182 </span>            :     const tnsr::A&lt;DataType, SpatialDim, Frame&gt;&amp; spacetime_normal_vector,
+<span class="lineNum">     183 </span>            :     const tnsr::aa&lt;DataType, SpatialDim, Frame&gt;&amp; pi,
+<span class="lineNum">     184 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; phi) noexcept {
+<span class="lineNum">     185 </span>            :   auto ex_curv = make_with_value&lt;tnsr::ii&lt;DataType, SpatialDim, Frame&gt;&gt;(pi, 0.);
+<span class="lineNum">     186 </span>            :   for (size_t i = 0; i &lt; SpatialDim; ++i) {
+<span class="lineNum">     187 </span>            :     for (size_t j = i; j &lt; SpatialDim; ++j) {
+<span class="lineNum">     188 </span>            :       for (size_t a = 0; a &lt;= SpatialDim; ++a) {
+<span class="lineNum">     189 </span>            :         ex_curv.get(i, j) += 0.5 *
+<span class="lineNum">     190 </span>            :                              (phi.get(i, j + 1, a) + phi.get(j, i + 1, a)) *
+<span class="lineNum">     191 </span>            :                              spacetime_normal_vector.get(a);
+<span class="lineNum">     192 </span>            :       }
+<span class="lineNum">     193 </span>            :       ex_curv.get(i, j) += 0.5 * pi.get(i + 1, j + 1);
+<span class="lineNum">     194 </span>            :     }
+<span class="lineNum">     195 </span>            :   }
+<span class="lineNum">     196 </span>            :   return ex_curv;
+<span class="lineNum">     197 </span>            : }
+<span class="lineNum">     198 </span>            : 
+<span class="lineNum">     199 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     200 </span><span class="lineNoCov">          0 : void deriv_spatial_metric(</span>
+<span class="lineNum">     201 </span>            :     const gsl::not_null&lt;tnsr::ijj&lt;DataType, SpatialDim, Frame&gt;*&gt;
+<span class="lineNum">     202 </span>            :         d_spatial_metric,
+<span class="lineNum">     203 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; phi) noexcept {
+<span class="lineNum">     204 </span>            :   if (UNLIKELY(get_size(get&lt;0, 0, 0&gt;(*d_spatial_metric)) !=
+<span class="lineNum">     205 </span>            :                get_size(get&lt;0, 0, 0&gt;(phi)))) {
+<span class="lineNum">     206 </span>            :     *d_spatial_metric =
+<span class="lineNum">     207 </span>            :         tnsr::ijj&lt;DataType, SpatialDim, Frame&gt;(get_size(get&lt;0, 0, 0&gt;(phi)));
+<span class="lineNum">     208 </span>            :   }
+<span class="lineNum">     209 </span>            :   for (size_t k = 0; k &lt; SpatialDim; ++k) {
+<span class="lineNum">     210 </span>            :     for (size_t i = 0; i &lt; SpatialDim; ++i) {
+<span class="lineNum">     211 </span>            :       for (size_t j = i; j &lt; SpatialDim; ++j) {
+<span class="lineNum">     212 </span>            :         d_spatial_metric-&gt;get(k, i, j) = phi.get(k, i + 1, j + 1);
+<span class="lineNum">     213 </span>            :       }
+<span class="lineNum">     214 </span>            :     }
+<span class="lineNum">     215 </span>            :   }
+<span class="lineNum">     216 </span>            : }
+<span class="lineNum">     217 </span>            : 
+<span class="lineNum">     218 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     219 </span><span class="lineCov">          1 : tnsr::ijj&lt;DataType, SpatialDim, Frame&gt; deriv_spatial_metric(</span>
+<span class="lineNum">     220 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; phi) noexcept {
+<span class="lineNum">     221 </span>            :   tnsr::ijj&lt;DataType, SpatialDim, Frame&gt; d_spatial_metric{};
+<span class="lineNum">     222 </span>            :   GeneralizedHarmonic::deriv_spatial_metric&lt;SpatialDim, Frame, DataType&gt;(
+<span class="lineNum">     223 </span>            :       make_not_null(&amp;d_spatial_metric), phi);
+<span class="lineNum">     224 </span>            :   return d_spatial_metric;
+<span class="lineNum">     225 </span>            : }
+<span class="lineNum">     226 </span>            : 
+<span class="lineNum">     227 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     228 </span><span class="lineNoCov">          0 : void spatial_deriv_of_lapse(</span>
+<span class="lineNum">     229 </span>            :     const gsl::not_null&lt;tnsr::i&lt;DataType, SpatialDim, Frame&gt;*&gt; deriv_lapse,
+<span class="lineNum">     230 </span>            :     const Scalar&lt;DataType&gt;&amp; lapse,
+<span class="lineNum">     231 </span>            :     const tnsr::A&lt;DataType, SpatialDim, Frame&gt;&amp; spacetime_unit_normal,
+<span class="lineNum">     232 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; phi) noexcept {
+<span class="lineNum">     233 </span>            :   if (UNLIKELY(get_size(get&lt;0&gt;(*deriv_lapse)) != get_size(get(lapse)))) {
+<span class="lineNum">     234 </span>            :     *deriv_lapse = tnsr::i&lt;DataType, SpatialDim, Frame&gt;(get_size(get(lapse)));
+<span class="lineNum">     235 </span>            :   }
+<span class="lineNum">     236 </span>            :   for (size_t i = 0; i &lt; SpatialDim; ++i) {
+<span class="lineNum">     237 </span>            :     deriv_lapse-&gt;get(i) =
+<span class="lineNum">     238 </span>            :         phi.get(i, 0, 0) * square(get&lt;0&gt;(spacetime_unit_normal));
+<span class="lineNum">     239 </span>            :     for (size_t a = 0; a &lt; SpatialDim + 1; ++a) {
+<span class="lineNum">     240 </span>            :       for (size_t b = 0; b &lt; SpatialDim + 1; ++b) {
+<span class="lineNum">     241 </span>            :         if (LIKELY(a != 0 or b != 0)) {
+<span class="lineNum">     242 </span>            :           deriv_lapse-&gt;get(i) += phi.get(i, a, b) *
+<span class="lineNum">     243 </span>            :                                  spacetime_unit_normal.get(a) *
+<span class="lineNum">     244 </span>            :                                  spacetime_unit_normal.get(b);
+<span class="lineNum">     245 </span>            :         }
+<span class="lineNum">     246 </span>            :       }
+<span class="lineNum">     247 </span>            :     }
+<span class="lineNum">     248 </span>            :     deriv_lapse-&gt;get(i) *= -0.5 * get(lapse);
+<span class="lineNum">     249 </span>            :   }
+<span class="lineNum">     250 </span>            : }
+<span class="lineNum">     251 </span>            : 
+<span class="lineNum">     252 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     253 </span><span class="lineCov">          1 : tnsr::i&lt;DataType, SpatialDim, Frame&gt; spatial_deriv_of_lapse(</span>
+<span class="lineNum">     254 </span>            :     const Scalar&lt;DataType&gt;&amp; lapse,
+<span class="lineNum">     255 </span>            :     const tnsr::A&lt;DataType, SpatialDim, Frame&gt;&amp; spacetime_unit_normal,
+<span class="lineNum">     256 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; phi) noexcept {
+<span class="lineNum">     257 </span>            :   tnsr::i&lt;DataType, SpatialDim, Frame&gt; deriv_lapse{};
+<span class="lineNum">     258 </span>            :   GeneralizedHarmonic::spatial_deriv_of_lapse&lt;SpatialDim, Frame, DataType&gt;(
+<span class="lineNum">     259 </span>            :       make_not_null(&amp;deriv_lapse), lapse, spacetime_unit_normal, phi);
+<span class="lineNum">     260 </span>            :   return deriv_lapse;
+<span class="lineNum">     261 </span>            : }
+<span class="lineNum">     262 </span>            : 
+<span class="lineNum">     263 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     264 </span><span class="lineNoCov">          0 : void time_deriv_of_lapse(</span>
+<span class="lineNum">     265 </span>            :     const gsl::not_null&lt;Scalar&lt;DataType&gt;*&gt; dt_lapse,
+<span class="lineNum">     266 </span>            :     const Scalar&lt;DataType&gt;&amp; lapse,
+<span class="lineNum">     267 </span>            :     const tnsr::I&lt;DataType, SpatialDim, Frame&gt;&amp; shift,
+<span class="lineNum">     268 </span>            :     const tnsr::A&lt;DataType, SpatialDim, Frame&gt;&amp; spacetime_unit_normal,
+<span class="lineNum">     269 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; phi,
+<span class="lineNum">     270 </span>            :     const tnsr::aa&lt;DataType, SpatialDim, Frame&gt;&amp; pi) noexcept {
+<span class="lineNum">     271 </span>            :   if (UNLIKELY(get_size(get(*dt_lapse)) != get_size(get(lapse)))) {
+<span class="lineNum">     272 </span>            :     *dt_lapse = Scalar&lt;DataType&gt;(get_size(get(lapse)));
+<span class="lineNum">     273 </span>            :   }
+<span class="lineNum">     274 </span>            :   get(*dt_lapse) =
+<span class="lineNum">     275 </span>            :       get(lapse) * get&lt;0, 0&gt;(pi) * square(get&lt;0&gt;(spacetime_unit_normal));
+<span class="lineNum">     276 </span>            :   for (size_t a = 0; a &lt; SpatialDim + 1; ++a) {
+<span class="lineNum">     277 </span>            :     for (size_t b = 0; b &lt; SpatialDim + 1; ++b) {
+<span class="lineNum">     278 </span>            :       // first term
+<span class="lineNum">     279 </span>            :       if (LIKELY(a != 0 or b != 0)) {
+<span class="lineNum">     280 </span>            :         get(*dt_lapse) += get(lapse) * pi.get(a, b) *
+<span class="lineNum">     281 </span>            :                           spacetime_unit_normal.get(a) *
+<span class="lineNum">     282 </span>            :                           spacetime_unit_normal.get(b);
+<span class="lineNum">     283 </span>            :       }
+<span class="lineNum">     284 </span>            :       // second term
+<span class="lineNum">     285 </span>            :       for (size_t i = 0; i &lt; SpatialDim; ++i) {
+<span class="lineNum">     286 </span>            :         get(*dt_lapse) -= shift.get(i) * phi.get(i, a, b) *
+<span class="lineNum">     287 </span>            :                           spacetime_unit_normal.get(a) *
+<span class="lineNum">     288 </span>            :                           spacetime_unit_normal.get(b);
+<span class="lineNum">     289 </span>            :       }
+<span class="lineNum">     290 </span>            :     }
+<span class="lineNum">     291 </span>            :   }
+<span class="lineNum">     292 </span>            :   get(*dt_lapse) *= 0.5 * get(lapse);
+<span class="lineNum">     293 </span>            : }
+<span class="lineNum">     294 </span>            : 
+<span class="lineNum">     295 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     296 </span><span class="lineCov">          1 : Scalar&lt;DataType&gt; time_deriv_of_lapse(</span>
+<span class="lineNum">     297 </span>            :     const Scalar&lt;DataType&gt;&amp; lapse,
+<span class="lineNum">     298 </span>            :     const tnsr::I&lt;DataType, SpatialDim, Frame&gt;&amp; shift,
+<span class="lineNum">     299 </span>            :     const tnsr::A&lt;DataType, SpatialDim, Frame&gt;&amp; spacetime_unit_normal,
+<span class="lineNum">     300 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; phi,
+<span class="lineNum">     301 </span>            :     const tnsr::aa&lt;DataType, SpatialDim, Frame&gt;&amp; pi) noexcept {
+<span class="lineNum">     302 </span>            :   Scalar&lt;DataType&gt; dt_lapse{};
+<span class="lineNum">     303 </span>            :   GeneralizedHarmonic::time_deriv_of_lapse&lt;SpatialDim, Frame, DataType&gt;(
+<span class="lineNum">     304 </span>            :       make_not_null(&amp;dt_lapse), lapse, shift, spacetime_unit_normal, phi, pi);
+<span class="lineNum">     305 </span>            :   return dt_lapse;
+<span class="lineNum">     306 </span>            : }
+<span class="lineNum">     307 </span>            : 
+<span class="lineNum">     308 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     309 </span><span class="lineNoCov">          0 : void time_deriv_of_spatial_metric(</span>
+<span class="lineNum">     310 </span>            :     const gsl::not_null&lt;tnsr::ii&lt;DataType, SpatialDim, Frame&gt;*&gt;
+<span class="lineNum">     311 </span>            :         dt_spatial_metric,
+<span class="lineNum">     312 </span>            :     const Scalar&lt;DataType&gt;&amp; lapse,
+<span class="lineNum">     313 </span>            :     const tnsr::I&lt;DataType, SpatialDim, Frame&gt;&amp; shift,
+<span class="lineNum">     314 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; phi,
+<span class="lineNum">     315 </span>            :     const tnsr::aa&lt;DataType, SpatialDim, Frame&gt;&amp; pi) noexcept {
+<span class="lineNum">     316 </span>            :   if (UNLIKELY(get_size(get&lt;0, 0&gt;(*dt_spatial_metric)) !=
+<span class="lineNum">     317 </span>            :                get_size(get(lapse)))) {
+<span class="lineNum">     318 </span>            :     *dt_spatial_metric =
+<span class="lineNum">     319 </span>            :         tnsr::ii&lt;DataType, SpatialDim, Frame&gt;(get_size(get(lapse)));
+<span class="lineNum">     320 </span>            :   }
+<span class="lineNum">     321 </span>            :   for (size_t i = 0; i &lt; SpatialDim; ++i) {
+<span class="lineNum">     322 </span>            :     for (size_t j = i; j &lt; SpatialDim; ++j) {
+<span class="lineNum">     323 </span>            :       dt_spatial_metric-&gt;get(i, j) = -get(lapse) * pi.get(i + 1, j + 1);
+<span class="lineNum">     324 </span>            :       for (size_t k = 0; k &lt; SpatialDim; ++k) {
+<span class="lineNum">     325 </span>            :         dt_spatial_metric-&gt;get(i, j) += shift.get(k) * phi.get(k, i + 1, j + 1);
+<span class="lineNum">     326 </span>            :       }
+<span class="lineNum">     327 </span>            :     }
+<span class="lineNum">     328 </span>            :   }
+<span class="lineNum">     329 </span>            : }
+<span class="lineNum">     330 </span>            : 
+<span class="lineNum">     331 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     332 </span><span class="lineCov">          1 : tnsr::ii&lt;DataType, SpatialDim, Frame&gt; time_deriv_of_spatial_metric(</span>
+<span class="lineNum">     333 </span>            :     const Scalar&lt;DataType&gt;&amp; lapse,
+<span class="lineNum">     334 </span>            :     const tnsr::I&lt;DataType, SpatialDim, Frame&gt;&amp; shift,
+<span class="lineNum">     335 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; phi,
+<span class="lineNum">     336 </span>            :     const tnsr::aa&lt;DataType, SpatialDim, Frame&gt;&amp; pi) noexcept {
+<span class="lineNum">     337 </span>            :   tnsr::ii&lt;DataType, SpatialDim, Frame&gt; dt_spatial_metric{};
+<span class="lineNum">     338 </span>            :   GeneralizedHarmonic::time_deriv_of_spatial_metric&lt;SpatialDim, Frame,
+<span class="lineNum">     339 </span>            :                                                     DataType&gt;(
+<span class="lineNum">     340 </span>            :       make_not_null(&amp;dt_spatial_metric), lapse, shift, phi, pi);
+<span class="lineNum">     341 </span>            :   return dt_spatial_metric;
+<span class="lineNum">     342 </span>            : }
+<span class="lineNum">     343 </span>            : 
+<span class="lineNum">     344 </span><span class="lineNoCov">          0 : namespace {</span>
+<span class="lineNum">     345 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     346 </span>            : struct D4gBuffer;
+<span class="lineNum">     347 </span>            : 
+<span class="lineNum">     348 </span>            : template &lt;size_t SpatialDim, typename Frame&gt;
+<span class="lineNum">     349 </span>            : struct D4gBuffer&lt;SpatialDim, Frame, double&gt; {
+<span class="lineNum">     350 </span>            :   explicit D4gBuffer(const size_t /*size*/) noexcept {}
+<span class="lineNum">     351 </span>            : 
+<span class="lineNum">     352 </span>            :   tnsr::ijj&lt;double, SpatialDim, Frame&gt; deriv_of_g{};
+<span class="lineNum">     353 </span>            :   Scalar&lt;double&gt; det_spatial_metric{};
+<span class="lineNum">     354 </span>            : };
+<span class="lineNum">     355 </span>            : 
+<span class="lineNum">     356 </span>            : template &lt;size_t SpatialDim, typename Frame&gt;
+<span class="lineNum">     357 </span>            : struct D4gBuffer&lt;SpatialDim, Frame, DataVector&gt; {
+<span class="lineNum">     358 </span>            :  private:
+<span class="lineNum">     359 </span>            :   // We make one giant allocation so that we don't thrash the heap.
+<span class="lineNum">     360 </span>            :   Variables&lt;tmpl::list&lt;::Tags::Tempijj&lt;0, SpatialDim, Frame, DataVector&gt;,
+<span class="lineNum">     361 </span>            :                        ::Tags::TempScalar&lt;1, DataVector&gt;&gt;&gt;
+<span class="lineNum">     362 </span>            :       buffer_;
+<span class="lineNum">     363 </span>            : 
+<span class="lineNum">     364 </span>            :  public:
+<span class="lineNum">     365 </span>            :   explicit D4gBuffer(const size_t size) noexcept
+<span class="lineNum">     366 </span>            :       : buffer_(size),
+<span class="lineNum">     367 </span>            :         deriv_of_g(
+<span class="lineNum">     368 </span>            :             get&lt;::Tags::Tempijj&lt;0, SpatialDim, Frame, DataVector&gt;&gt;(buffer_)),
+<span class="lineNum">     369 </span>            :         det_spatial_metric(get&lt;::Tags::TempScalar&lt;1, DataVector&gt;&gt;(buffer_)) {}
+<span class="lineNum">     370 </span>            : 
+<span class="lineNum">     371 </span>            :   tnsr::ijj&lt;DataVector, SpatialDim, Frame&gt;&amp; deriv_of_g;
+<span class="lineNum">     372 </span>            :   Scalar&lt;DataVector&gt;&amp; det_spatial_metric;
+<span class="lineNum">     373 </span>            : };
+<span class="lineNum">     374 </span>            : }  // namespace
+<span class="lineNum">     375 </span>            : 
+<span class="lineNum">     376 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     377 </span><span class="lineNoCov">          0 : void spacetime_deriv_of_det_spatial_metric(</span>
+<span class="lineNum">     378 </span>            :     const gsl::not_null&lt;tnsr::a&lt;DataType, SpatialDim, Frame&gt;*&gt;
+<span class="lineNum">     379 </span>            :         d4_det_spatial_metric,
+<span class="lineNum">     380 </span>            :     const Scalar&lt;DataType&gt;&amp; sqrt_det_spatial_metric,
+<span class="lineNum">     381 </span>            :     const tnsr::II&lt;DataType, SpatialDim, Frame&gt;&amp; inverse_spatial_metric,
+<span class="lineNum">     382 </span>            :     const tnsr::ii&lt;DataType, SpatialDim, Frame&gt;&amp; dt_spatial_metric,
+<span class="lineNum">     383 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; phi) noexcept {
+<span class="lineNum">     384 </span>            :   if (UNLIKELY(get_size(get&lt;0&gt;(*d4_det_spatial_metric)) !=
+<span class="lineNum">     385 </span>            :                get_size(get(sqrt_det_spatial_metric)))) {
+<span class="lineNum">     386 </span>            :     *d4_det_spatial_metric = tnsr::a&lt;DataType, SpatialDim, Frame&gt;(
+<span class="lineNum">     387 </span>            :         get_size(get(sqrt_det_spatial_metric)));
+<span class="lineNum">     388 </span>            :   }
+<span class="lineNum">     389 </span>            :   auto&amp; d4_g = *d4_det_spatial_metric;
+<span class="lineNum">     390 </span>            :   // Use a Variables to reduce total number of allocations. This is especially
+<span class="lineNum">     391 </span>            :   // important in a multithreaded environment.
+<span class="lineNum">     392 </span>            :   D4gBuffer&lt;SpatialDim, Frame, DataType&gt; buffer(
+<span class="lineNum">     393 </span>            :       get_size(get(sqrt_det_spatial_metric)));
+<span class="lineNum">     394 </span>            :   deriv_spatial_metric&lt;SpatialDim, Frame, DataType&gt;(
+<span class="lineNum">     395 </span>            :       make_not_null(&amp;buffer.deriv_of_g), phi);
+<span class="lineNum">     396 </span>            :   get(buffer.det_spatial_metric) = square(get(sqrt_det_spatial_metric));
+<span class="lineNum">     397 </span>            :   // \f$ \partial_0 g = g g^{jk} \partial_0 g_{jk}\f$
+<span class="lineNum">     398 </span>            :   get&lt;0&gt;(d4_g) = inverse_spatial_metric.get(0, 0) * dt_spatial_metric.get(0, 0);
+<span class="lineNum">     399 </span>            :   for (size_t j = 0; j &lt; SpatialDim; ++j) {
+<span class="lineNum">     400 </span>            :     for (size_t k = 0; k &lt; SpatialDim; ++k) {
+<span class="lineNum">     401 </span>            :       if (LIKELY(j != 0 or k != 0)) {
+<span class="lineNum">     402 </span>            :         get&lt;0&gt;(d4_g) +=
+<span class="lineNum">     403 </span>            :             inverse_spatial_metric.get(j, k) * dt_spatial_metric.get(j, k);
+<span class="lineNum">     404 </span>            :       }
+<span class="lineNum">     405 </span>            :     }
+<span class="lineNum">     406 </span>            :   }
+<span class="lineNum">     407 </span>            :   get&lt;0&gt;(d4_g) *= get(buffer.det_spatial_metric);
+<span class="lineNum">     408 </span>            :   // \f$ \partial_i g = g g^{jk} \partial_i g_{jk}\f$
+<span class="lineNum">     409 </span>            :   for (size_t i = 0; i &lt; SpatialDim; ++i) {
+<span class="lineNum">     410 </span>            :     d4_g.get(i + 1) =
+<span class="lineNum">     411 </span>            :         inverse_spatial_metric.get(0, 0) * buffer.deriv_of_g.get(i, 0, 0);
+<span class="lineNum">     412 </span>            :     for (size_t j = 0; j &lt; SpatialDim; ++j) {
+<span class="lineNum">     413 </span>            :       for (size_t k = 0; k &lt; SpatialDim; ++k) {
+<span class="lineNum">     414 </span>            :         if (LIKELY(j != 0 or k != 0)) {
+<span class="lineNum">     415 </span>            :           d4_g.get(i + 1) +=
+<span class="lineNum">     416 </span>            :               inverse_spatial_metric.get(j, k) * buffer.deriv_of_g.get(i, j, k);
+<span class="lineNum">     417 </span>            :         }
+<span class="lineNum">     418 </span>            :       }
+<span class="lineNum">     419 </span>            :     }
+<span class="lineNum">     420 </span>            :     d4_g.get(i + 1) *= get(buffer.det_spatial_metric);
+<span class="lineNum">     421 </span>            :   }
+<span class="lineNum">     422 </span>            : }
+<span class="lineNum">     423 </span>            : 
+<span class="lineNum">     424 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     425 </span><span class="lineCov">          1 : tnsr::a&lt;DataType, SpatialDim, Frame&gt; spacetime_deriv_of_det_spatial_metric(</span>
+<span class="lineNum">     426 </span>            :     const Scalar&lt;DataType&gt;&amp; sqrt_det_spatial_metric,
+<span class="lineNum">     427 </span>            :     const tnsr::II&lt;DataType, SpatialDim, Frame&gt;&amp; inverse_spatial_metric,
+<span class="lineNum">     428 </span>            :     const tnsr::ii&lt;DataType, SpatialDim, Frame&gt;&amp; dt_spatial_metric,
+<span class="lineNum">     429 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; phi) noexcept {
+<span class="lineNum">     430 </span>            :   tnsr::a&lt;DataType, SpatialDim, Frame&gt; d4_det_spatial_metric{};
+<span class="lineNum">     431 </span>            :   GeneralizedHarmonic::spacetime_deriv_of_det_spatial_metric&lt;SpatialDim, Frame,
+<span class="lineNum">     432 </span>            :                                                              DataType&gt;(
+<span class="lineNum">     433 </span>            :       make_not_null(&amp;d4_det_spatial_metric), sqrt_det_spatial_metric,
+<span class="lineNum">     434 </span>            :       inverse_spatial_metric, dt_spatial_metric, phi);
+<span class="lineNum">     435 </span>            :   return d4_det_spatial_metric;
+<span class="lineNum">     436 </span>            : }
+<span class="lineNum">     437 </span>            : 
+<span class="lineNum">     438 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     439 </span><span class="lineNoCov">          0 : void spatial_deriv_of_shift(</span>
+<span class="lineNum">     440 </span>            :     const gsl::not_null&lt;tnsr::iJ&lt;DataType, SpatialDim, Frame&gt;*&gt; deriv_shift,
+<span class="lineNum">     441 </span>            :     const Scalar&lt;DataType&gt;&amp; lapse,
+<span class="lineNum">     442 </span>            :     const tnsr::AA&lt;DataType, SpatialDim, Frame&gt;&amp; inverse_spacetime_metric,
+<span class="lineNum">     443 </span>            :     const tnsr::A&lt;DataType, SpatialDim, Frame&gt;&amp; spacetime_unit_normal,
+<span class="lineNum">     444 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; phi) noexcept {
+<span class="lineNum">     445 </span>            :   if (UNLIKELY(get_size(get&lt;0, 0&gt;(*deriv_shift)) != get_size(get(lapse)))) {
+<span class="lineNum">     446 </span>            :     *deriv_shift = tnsr::iJ&lt;DataType, SpatialDim, Frame&gt;(get_size(get(lapse)));
+<span class="lineNum">     447 </span>            :   }
+<span class="lineNum">     448 </span>            :   for (size_t i = 0; i &lt; SpatialDim; ++i) {
+<span class="lineNum">     449 </span>            :     for (size_t j = 0; j &lt; SpatialDim; ++j) {
+<span class="lineNum">     450 </span>            :       deriv_shift-&gt;get(i, j) =
+<span class="lineNum">     451 </span>            :           (inverse_spacetime_metric.get(j + 1, 0) +
+<span class="lineNum">     452 </span>            :            spacetime_unit_normal.get(j + 1) * spacetime_unit_normal.get(0)) *
+<span class="lineNum">     453 </span>            :           spacetime_unit_normal.get(0) * phi.get(i, 0, 0);
+<span class="lineNum">     454 </span>            :       for (size_t a = 0; a &lt; SpatialDim + 1; ++a) {
+<span class="lineNum">     455 </span>            :         for (size_t b = 0; b &lt; SpatialDim + 1; ++b) {
+<span class="lineNum">     456 </span>            :           if (a != 0 or b != 0) {
+<span class="lineNum">     457 </span>            :             deriv_shift-&gt;get(i, j) += (inverse_spacetime_metric.get(j + 1, a) +
+<span class="lineNum">     458 </span>            :                                        spacetime_unit_normal.get(j + 1) *
+<span class="lineNum">     459 </span>            :                                            spacetime_unit_normal.get(a)) *
+<span class="lineNum">     460 </span>            :                                       spacetime_unit_normal.get(b) *
+<span class="lineNum">     461 </span>            :                                       phi.get(i, a, b);
+<span class="lineNum">     462 </span>            :           }
+<span class="lineNum">     463 </span>            :         }
+<span class="lineNum">     464 </span>            :       }
+<span class="lineNum">     465 </span>            :       deriv_shift-&gt;get(i, j) *= get(lapse);
+<span class="lineNum">     466 </span>            :     }
+<span class="lineNum">     467 </span>            :   }
+<span class="lineNum">     468 </span>            : }
+<span class="lineNum">     469 </span>            : 
+<span class="lineNum">     470 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     471 </span><span class="lineCov">          1 : tnsr::iJ&lt;DataType, SpatialDim, Frame&gt; spatial_deriv_of_shift(</span>
+<span class="lineNum">     472 </span>            :     const Scalar&lt;DataType&gt;&amp; lapse,
+<span class="lineNum">     473 </span>            :     const tnsr::AA&lt;DataType, SpatialDim, Frame&gt;&amp; inverse_spacetime_metric,
+<span class="lineNum">     474 </span>            :     const tnsr::A&lt;DataType, SpatialDim, Frame&gt;&amp; spacetime_unit_normal,
+<span class="lineNum">     475 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; phi) noexcept {
+<span class="lineNum">     476 </span>            :   tnsr::iJ&lt;DataType, SpatialDim, Frame&gt; deriv_shift{};
+<span class="lineNum">     477 </span>            :   GeneralizedHarmonic::spatial_deriv_of_shift&lt;SpatialDim, Frame, DataType&gt;(
+<span class="lineNum">     478 </span>            :       make_not_null(&amp;deriv_shift), lapse, inverse_spacetime_metric,
+<span class="lineNum">     479 </span>            :       spacetime_unit_normal, phi);
+<span class="lineNum">     480 </span>            :   return deriv_shift;
+<span class="lineNum">     481 </span>            : }
+<span class="lineNum">     482 </span>            : 
+<span class="lineNum">     483 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     484 </span><span class="lineNoCov">          0 : void time_deriv_of_shift(</span>
+<span class="lineNum">     485 </span>            :     const gsl::not_null&lt;tnsr::I&lt;DataType, SpatialDim, Frame&gt;*&gt; dt_shift,
+<span class="lineNum">     486 </span>            :     const Scalar&lt;DataType&gt;&amp; lapse,
+<span class="lineNum">     487 </span>            :     const tnsr::I&lt;DataType, SpatialDim, Frame&gt;&amp; shift,
+<span class="lineNum">     488 </span>            :     const tnsr::II&lt;DataType, SpatialDim, Frame&gt;&amp; inverse_spatial_metric,
+<span class="lineNum">     489 </span>            :     const tnsr::A&lt;DataType, SpatialDim, Frame&gt;&amp; spacetime_unit_normal,
+<span class="lineNum">     490 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; phi,
+<span class="lineNum">     491 </span>            :     const tnsr::aa&lt;DataType, SpatialDim, Frame&gt;&amp; pi) noexcept {
+<span class="lineNum">     492 </span>            :   if (UNLIKELY(get_size(get&lt;0&gt;(*dt_shift)) != get_size(get(lapse)))) {
+<span class="lineNum">     493 </span>            :     *dt_shift = tnsr::I&lt;DataType, SpatialDim, Frame&gt;(get_size(get(lapse)));
+<span class="lineNum">     494 </span>            :   }
+<span class="lineNum">     495 </span>            :   for (size_t i = 0; i &lt; SpatialDim; ++i) {
+<span class="lineNum">     496 </span>            :     dt_shift-&gt;get(i) = -get(lapse) * pi.get(1, 0) *
+<span class="lineNum">     497 </span>            :                        spacetime_unit_normal.get(0) *
+<span class="lineNum">     498 </span>            :                        inverse_spatial_metric.get(i, 0);
+<span class="lineNum">     499 </span>            :     for (size_t j = 0; j &lt; SpatialDim; ++j) {
+<span class="lineNum">     500 </span>            :       for (size_t a = 0; a &lt; SpatialDim + 1; ++a) {
+<span class="lineNum">     501 </span>            :         if (a != 0 or j != 0) {
+<span class="lineNum">     502 </span>            :           dt_shift-&gt;get(i) -= get(lapse) * pi.get(j + 1, a) *
+<span class="lineNum">     503 </span>            :                               spacetime_unit_normal.get(a) *
+<span class="lineNum">     504 </span>            :                               inverse_spatial_metric.get(i, j);
+<span class="lineNum">     505 </span>            :         }
+<span class="lineNum">     506 </span>            :         for (size_t k = 0; k &lt; SpatialDim; ++k) {
+<span class="lineNum">     507 </span>            :           dt_shift-&gt;get(i) += shift.get(j) * spacetime_unit_normal.get(a) *
+<span class="lineNum">     508 </span>            :                               phi.get(j, k + 1, a) *
+<span class="lineNum">     509 </span>            :                               inverse_spatial_metric.get(i, k);
+<span class="lineNum">     510 </span>            :         }
+<span class="lineNum">     511 </span>            :       }
+<span class="lineNum">     512 </span>            :     }
+<span class="lineNum">     513 </span>            :     dt_shift-&gt;get(i) *= get(lapse);
+<span class="lineNum">     514 </span>            :   }
+<span class="lineNum">     515 </span>            : }
+<span class="lineNum">     516 </span>            : 
+<span class="lineNum">     517 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     518 </span><span class="lineCov">          1 : tnsr::I&lt;DataType, SpatialDim, Frame&gt; time_deriv_of_shift(</span>
+<span class="lineNum">     519 </span>            :     const Scalar&lt;DataType&gt;&amp; lapse,
+<span class="lineNum">     520 </span>            :     const tnsr::I&lt;DataType, SpatialDim, Frame&gt;&amp; shift,
+<span class="lineNum">     521 </span>            :     const tnsr::II&lt;DataType, SpatialDim, Frame&gt;&amp; inverse_spatial_metric,
+<span class="lineNum">     522 </span>            :     const tnsr::A&lt;DataType, SpatialDim, Frame&gt;&amp; spacetime_unit_normal,
+<span class="lineNum">     523 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; phi,
+<span class="lineNum">     524 </span>            :     const tnsr::aa&lt;DataType, SpatialDim, Frame&gt;&amp; pi) noexcept {
+<span class="lineNum">     525 </span>            :   tnsr::I&lt;DataType, SpatialDim, Frame&gt; dt_shift{};
+<span class="lineNum">     526 </span>            :   GeneralizedHarmonic::time_deriv_of_shift&lt;SpatialDim, Frame, DataType&gt;(
+<span class="lineNum">     527 </span>            :       make_not_null(&amp;dt_shift), lapse, shift, inverse_spatial_metric,
+<span class="lineNum">     528 </span>            :       spacetime_unit_normal, phi, pi);
+<span class="lineNum">     529 </span>            :   return dt_shift;
+<span class="lineNum">     530 </span>            : }
+<span class="lineNum">     531 </span>            : 
+<span class="lineNum">     532 </span>            : namespace {
+<span class="lineNum">     533 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     534 </span>            : struct D0LowerShiftBuffer;
+<span class="lineNum">     535 </span>            : 
+<span class="lineNum">     536 </span>            : template &lt;size_t SpatialDim, typename Frame&gt;
+<span class="lineNum">     537 </span>            : struct D0LowerShiftBuffer&lt;SpatialDim, Frame, double&gt; {
+<span class="lineNum">     538 </span>            :   explicit D0LowerShiftBuffer(const size_t /*size*/) noexcept {}
+<span class="lineNum">     539 </span>            : 
+<span class="lineNum">     540 </span>            :   tnsr::I&lt;double, SpatialDim, Frame&gt; dt_shift{};
+<span class="lineNum">     541 </span>            :   tnsr::ii&lt;double, SpatialDim, Frame&gt; dt_spatial_metric{};
+<span class="lineNum">     542 </span>            : };
+<span class="lineNum">     543 </span>            : 
+<span class="lineNum">     544 </span>            : template &lt;size_t SpatialDim, typename Frame&gt;
+<span class="lineNum">     545 </span>            : struct D0LowerShiftBuffer&lt;SpatialDim, Frame, DataVector&gt; {
+<span class="lineNum">     546 </span>            :  private:
+<span class="lineNum">     547 </span>            :   // We make one giant allocation so that we don't thrash the heap.
+<span class="lineNum">     548 </span>            :   Variables&lt;tmpl::list&lt;::Tags::TempI&lt;0, SpatialDim, Frame, DataVector&gt;,
+<span class="lineNum">     549 </span>            :                        ::Tags::Tempii&lt;1, SpatialDim, Frame, DataVector&gt;&gt;&gt;
+<span class="lineNum">     550 </span>            :       buffer_;
+<span class="lineNum">     551 </span>            : 
+<span class="lineNum">     552 </span>            :  public:
+<span class="lineNum">     553 </span>            :   explicit D0LowerShiftBuffer(const size_t size) noexcept
+<span class="lineNum">     554 </span>            :       : buffer_(size),
+<span class="lineNum">     555 </span>            :         dt_shift(get&lt;::Tags::TempI&lt;0, SpatialDim, Frame, DataVector&gt;&gt;(buffer_)),
+<span class="lineNum">     556 </span>            :         dt_spatial_metric(
+<span class="lineNum">     557 </span>            :             get&lt;::Tags::Tempii&lt;1, SpatialDim, Frame, DataVector&gt;&gt;(buffer_)) {}
+<span class="lineNum">     558 </span>            : 
+<span class="lineNum">     559 </span>            :   tnsr::I&lt;DataVector, SpatialDim, Frame&gt;&amp; dt_shift;
+<span class="lineNum">     560 </span>            :   tnsr::ii&lt;DataVector, SpatialDim, Frame&gt;&amp; dt_spatial_metric;
+<span class="lineNum">     561 </span>            : };
+<span class="lineNum">     562 </span>            : }  // namespace
+<span class="lineNum">     563 </span>            : 
+<span class="lineNum">     564 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     565 </span><span class="lineNoCov">          0 : void time_deriv_of_lower_shift(</span>
+<span class="lineNum">     566 </span>            :     const gsl::not_null&lt;tnsr::i&lt;DataType, SpatialDim, Frame&gt;*&gt; dt_lower_shift,
+<span class="lineNum">     567 </span>            :     const Scalar&lt;DataType&gt;&amp; lapse,
+<span class="lineNum">     568 </span>            :     const tnsr::I&lt;DataType, SpatialDim, Frame&gt;&amp; shift,
+<span class="lineNum">     569 </span>            :     const tnsr::ii&lt;DataType, SpatialDim, Frame&gt;&amp; spatial_metric,
+<span class="lineNum">     570 </span>            :     const tnsr::A&lt;DataType, SpatialDim, Frame&gt;&amp; spacetime_unit_normal,
+<span class="lineNum">     571 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; phi,
+<span class="lineNum">     572 </span>            :     const tnsr::aa&lt;DataType, SpatialDim, Frame&gt;&amp; pi) noexcept {
+<span class="lineNum">     573 </span>            :   if (UNLIKELY(get_size(get&lt;0&gt;(*dt_lower_shift)) != get_size(get(lapse)))) {
+<span class="lineNum">     574 </span>            :     *dt_lower_shift =
+<span class="lineNum">     575 </span>            :         tnsr::i&lt;DataType, SpatialDim, Frame&gt;(get_size(get(lapse)));
+<span class="lineNum">     576 </span>            :   }
+<span class="lineNum">     577 </span>            :   // Use a Variables to reduce total number of allocations. This is especially
+<span class="lineNum">     578 </span>            :   // important in a multithreaded environment.
+<span class="lineNum">     579 </span>            :   D0LowerShiftBuffer&lt;SpatialDim, Frame, DataType&gt; buffer(get_size(get(lapse)));
+<span class="lineNum">     580 </span>            :   // get \partial_0 N^j
+<span class="lineNum">     581 </span>            :   const auto inverse_spatial_metric =
+<span class="lineNum">     582 </span>            :       determinant_and_inverse(spatial_metric).second;
+<span class="lineNum">     583 </span>            :   GeneralizedHarmonic::time_deriv_of_shift&lt;SpatialDim, Frame, DataType&gt;(
+<span class="lineNum">     584 </span>            :       make_not_null(&amp;buffer.dt_shift), lapse, shift, inverse_spatial_metric,
+<span class="lineNum">     585 </span>            :       spacetime_unit_normal, phi, pi);
+<span class="lineNum">     586 </span>            :   GeneralizedHarmonic::time_deriv_of_spatial_metric&lt;SpatialDim, Frame,
+<span class="lineNum">     587 </span>            :                                                     DataType&gt;(
+<span class="lineNum">     588 </span>            :       make_not_null(&amp;buffer.dt_spatial_metric), lapse, shift, phi, pi);
+<span class="lineNum">     589 </span>            :   for (size_t i = 0; i &lt; SpatialDim; ++i) {
+<span class="lineNum">     590 </span>            :     dt_lower_shift-&gt;get(i) = spatial_metric.get(i, 0) * buffer.dt_shift.get(0) +
+<span class="lineNum">     591 </span>            :                              shift.get(0) * buffer.dt_spatial_metric.get(i, 0);
+<span class="lineNum">     592 </span>            :     for (size_t j = 0; j &lt; SpatialDim; ++j) {
+<span class="lineNum">     593 </span>            :       if (j != 0) {
+<span class="lineNum">     594 </span>            :         dt_lower_shift-&gt;get(i) +=
+<span class="lineNum">     595 </span>            :             spatial_metric.get(i, j) * buffer.dt_shift.get(j) +
+<span class="lineNum">     596 </span>            :             shift.get(j) * buffer.dt_spatial_metric.get(i, j);
+<span class="lineNum">     597 </span>            :       }
+<span class="lineNum">     598 </span>            :     }
+<span class="lineNum">     599 </span>            :   }
+<span class="lineNum">     600 </span>            : }
+<span class="lineNum">     601 </span>            : 
+<span class="lineNum">     602 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     603 </span><span class="lineCov">          1 : tnsr::i&lt;DataType, SpatialDim, Frame&gt; time_deriv_of_lower_shift(</span>
+<span class="lineNum">     604 </span>            :     const Scalar&lt;DataType&gt;&amp; lapse,
+<span class="lineNum">     605 </span>            :     const tnsr::I&lt;DataType, SpatialDim, Frame&gt;&amp; shift,
+<span class="lineNum">     606 </span>            :     const tnsr::ii&lt;DataType, SpatialDim, Frame&gt;&amp; spatial_metric,
+<span class="lineNum">     607 </span>            :     const tnsr::A&lt;DataType, SpatialDim, Frame&gt;&amp; spacetime_unit_normal,
+<span class="lineNum">     608 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; phi,
+<span class="lineNum">     609 </span>            :     const tnsr::aa&lt;DataType, SpatialDim, Frame&gt;&amp; pi) noexcept {
+<span class="lineNum">     610 </span>            :   tnsr::i&lt;DataType, SpatialDim, Frame&gt; dt_lower_shift{};
+<span class="lineNum">     611 </span>            :   GeneralizedHarmonic::time_deriv_of_lower_shift&lt;SpatialDim, Frame, DataType&gt;(
+<span class="lineNum">     612 </span>            :       make_not_null(&amp;dt_lower_shift), lapse, shift, spatial_metric,
+<span class="lineNum">     613 </span>            :       spacetime_unit_normal, phi, pi);
+<span class="lineNum">     614 </span>            :   return dt_lower_shift;
+<span class="lineNum">     615 </span>            : }
+<span class="lineNum">     616 </span>            : 
+<span class="lineNum">     617 </span>            : namespace {
+<span class="lineNum">     618 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     619 </span>            : struct D4NormOfShiftBuffer;
+<span class="lineNum">     620 </span>            : 
+<span class="lineNum">     621 </span>            : template &lt;size_t SpatialDim, typename Frame&gt;
+<span class="lineNum">     622 </span>            : struct D4NormOfShiftBuffer&lt;SpatialDim, Frame, double&gt; {
+<span class="lineNum">     623 </span>            :   explicit D4NormOfShiftBuffer(const size_t /*size*/) noexcept {}
+<span class="lineNum">     624 </span>            : 
+<span class="lineNum">     625 </span>            :   tnsr::i&lt;double, SpatialDim, Frame&gt; lower_shift{};
+<span class="lineNum">     626 </span>            :   tnsr::iJ&lt;double, SpatialDim, Frame&gt; deriv_shift{};
+<span class="lineNum">     627 </span>            :   tnsr::i&lt;double, SpatialDim, Frame&gt; dt_lower_shift{};
+<span class="lineNum">     628 </span>            :   tnsr::I&lt;double, SpatialDim, Frame&gt; dt_shift{};
+<span class="lineNum">     629 </span>            : };
+<span class="lineNum">     630 </span>            : 
+<span class="lineNum">     631 </span>            : template &lt;size_t SpatialDim, typename Frame&gt;
+<span class="lineNum">     632 </span>            : struct D4NormOfShiftBuffer&lt;SpatialDim, Frame, DataVector&gt; {
+<span class="lineNum">     633 </span>            :  private:
+<span class="lineNum">     634 </span>            :   // We make one giant allocation so that we don't thrash the heap.
+<span class="lineNum">     635 </span>            :   Variables&lt;tmpl::list&lt;::Tags::Tempi&lt;0, SpatialDim, Frame, DataVector&gt;,
+<span class="lineNum">     636 </span>            :                        ::Tags::TempiJ&lt;1, SpatialDim, Frame, DataVector&gt;,
+<span class="lineNum">     637 </span>            :                        ::Tags::Tempi&lt;2, SpatialDim, Frame, DataVector&gt;,
+<span class="lineNum">     638 </span>            :                        ::Tags::TempI&lt;3, SpatialDim, Frame, DataVector&gt;&gt;&gt;
+<span class="lineNum">     639 </span>            :       buffer_;
+<span class="lineNum">     640 </span>            : 
+<span class="lineNum">     641 </span>            :  public:
+<span class="lineNum">     642 </span>            :   explicit D4NormOfShiftBuffer(const size_t size) noexcept
+<span class="lineNum">     643 </span>            :       : buffer_(size),
+<span class="lineNum">     644 </span>            :         lower_shift(
+<span class="lineNum">     645 </span>            :             get&lt;::Tags::Tempi&lt;0, SpatialDim, Frame, DataVector&gt;&gt;(buffer_)),
+<span class="lineNum">     646 </span>            :         deriv_shift(
+<span class="lineNum">     647 </span>            :             get&lt;::Tags::TempiJ&lt;1, SpatialDim, Frame, DataVector&gt;&gt;(buffer_)),
+<span class="lineNum">     648 </span>            :         dt_lower_shift(
+<span class="lineNum">     649 </span>            :             get&lt;::Tags::Tempi&lt;2, SpatialDim, Frame, DataVector&gt;&gt;(buffer_)),
+<span class="lineNum">     650 </span>            :         dt_shift(
+<span class="lineNum">     651 </span>            :             get&lt;::Tags::TempI&lt;3, SpatialDim, Frame, DataVector&gt;&gt;(buffer_)) {}
+<span class="lineNum">     652 </span>            : 
+<span class="lineNum">     653 </span>            :   tnsr::i&lt;DataVector, SpatialDim, Frame&gt;&amp; lower_shift;
+<span class="lineNum">     654 </span>            :   tnsr::iJ&lt;DataVector, SpatialDim, Frame&gt;&amp; deriv_shift;
+<span class="lineNum">     655 </span>            :   tnsr::i&lt;DataVector, SpatialDim, Frame&gt;&amp; dt_lower_shift;
+<span class="lineNum">     656 </span>            :   tnsr::I&lt;DataVector, SpatialDim, Frame&gt;&amp; dt_shift;
+<span class="lineNum">     657 </span>            : };
+<span class="lineNum">     658 </span>            : }  // namespace
+<span class="lineNum">     659 </span>            : 
+<span class="lineNum">     660 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     661 </span><span class="lineNoCov">          0 : void spacetime_deriv_of_norm_of_shift(</span>
+<span class="lineNum">     662 </span>            :     const gsl::not_null&lt;tnsr::a&lt;DataType, SpatialDim, Frame&gt;*&gt; d4_norm_of_shift,
+<span class="lineNum">     663 </span>            :     const Scalar&lt;DataType&gt;&amp; lapse,
+<span class="lineNum">     664 </span>            :     const tnsr::I&lt;DataType, SpatialDim, Frame&gt;&amp; shift,
+<span class="lineNum">     665 </span>            :     const tnsr::ii&lt;DataType, SpatialDim, Frame&gt;&amp; spatial_metric,
+<span class="lineNum">     666 </span>            :     const tnsr::II&lt;DataType, SpatialDim, Frame&gt;&amp; inverse_spatial_metric,
+<span class="lineNum">     667 </span>            :     const tnsr::AA&lt;DataType, SpatialDim, Frame&gt;&amp; inverse_spacetime_metric,
+<span class="lineNum">     668 </span>            :     const tnsr::A&lt;DataType, SpatialDim, Frame&gt;&amp; spacetime_unit_normal,
+<span class="lineNum">     669 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; phi,
+<span class="lineNum">     670 </span>            :     const tnsr::aa&lt;DataType, SpatialDim, Frame&gt;&amp; pi) noexcept {
+<span class="lineNum">     671 </span>            :   if (UNLIKELY(get_size(get&lt;0&gt;(*d4_norm_of_shift)) != get_size(get(lapse)))) {
+<span class="lineNum">     672 </span>            :     *d4_norm_of_shift =
+<span class="lineNum">     673 </span>            :         tnsr::a&lt;DataType, SpatialDim, Frame&gt;(get_size(get(lapse)));
+<span class="lineNum">     674 </span>            :   }
+<span class="lineNum">     675 </span>            :   // Use a Variables to reduce total number of allocations. This is especially
+<span class="lineNum">     676 </span>            :   // important in a multithreaded environment.
+<span class="lineNum">     677 </span>            :   D4NormOfShiftBuffer&lt;SpatialDim, Frame, DataType&gt; buffer(get_size(get(lapse)));
+<span class="lineNum">     678 </span>            : 
+<span class="lineNum">     679 </span>            :   raise_or_lower_index(make_not_null(&amp;buffer.lower_shift), shift,
+<span class="lineNum">     680 </span>            :                        spatial_metric);
+<span class="lineNum">     681 </span>            :   spatial_deriv_of_shift(make_not_null(&amp;buffer.deriv_shift), lapse,
+<span class="lineNum">     682 </span>            :                          inverse_spacetime_metric, spacetime_unit_normal, phi);
+<span class="lineNum">     683 </span>            :   time_deriv_of_lower_shift(make_not_null(&amp;buffer.dt_lower_shift), lapse, shift,
+<span class="lineNum">     684 </span>            :                             spatial_metric, spacetime_unit_normal, phi, pi);
+<span class="lineNum">     685 </span>            :   time_deriv_of_shift(make_not_null(&amp;buffer.dt_shift), lapse, shift,
+<span class="lineNum">     686 </span>            :                       inverse_spatial_metric, spacetime_unit_normal, phi, pi);
+<span class="lineNum">     687 </span>            :   // first term for component 0
+<span class="lineNum">     688 </span>            :   get&lt;0&gt;(*d4_norm_of_shift) =
+<span class="lineNum">     689 </span>            :       shift.get(0) * buffer.dt_lower_shift.get(0) +
+<span class="lineNum">     690 </span>            :       buffer.lower_shift.get(0) * buffer.dt_shift.get(0);
+<span class="lineNum">     691 </span>            :   for (size_t i = 1; i &lt; SpatialDim; ++i) {
+<span class="lineNum">     692 </span>            :     get&lt;0&gt;(*d4_norm_of_shift) +=
+<span class="lineNum">     693 </span>            :         shift.get(i) * buffer.dt_lower_shift.get(i) +
+<span class="lineNum">     694 </span>            :         buffer.lower_shift.get(i) * buffer.dt_shift.get(i);
+<span class="lineNum">     695 </span>            :   }
+<span class="lineNum">     696 </span>            :   // second term for components 1,2,3
+<span class="lineNum">     697 </span>            :   for (size_t j = 0; j &lt; SpatialDim; ++j) {
+<span class="lineNum">     698 </span>            :     d4_norm_of_shift-&gt;get(1 + j) =
+<span class="lineNum">     699 </span>            :         shift.get(0) * phi.get(j, 0, 1) +
+<span class="lineNum">     700 </span>            :         buffer.lower_shift.get(0) * buffer.deriv_shift.get(j, 0);
+<span class="lineNum">     701 </span>            :     for (size_t i = 1; i &lt; SpatialDim; ++i) {
+<span class="lineNum">     702 </span>            :       d4_norm_of_shift-&gt;get(1 + j) +=
+<span class="lineNum">     703 </span>            :           shift.get(i) * phi.get(j, 0, i + 1) +
+<span class="lineNum">     704 </span>            :           buffer.lower_shift.get(i) * buffer.deriv_shift.get(j, i);
+<span class="lineNum">     705 </span>            :     }
+<span class="lineNum">     706 </span>            :   }
+<span class="lineNum">     707 </span>            : }
+<span class="lineNum">     708 </span>            : 
+<span class="lineNum">     709 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     710 </span><span class="lineCov">          1 : tnsr::a&lt;DataType, SpatialDim, Frame&gt; spacetime_deriv_of_norm_of_shift(</span>
+<span class="lineNum">     711 </span>            :     const Scalar&lt;DataType&gt;&amp; lapse,
+<span class="lineNum">     712 </span>            :     const tnsr::I&lt;DataType, SpatialDim, Frame&gt;&amp; shift,
+<span class="lineNum">     713 </span>            :     const tnsr::ii&lt;DataType, SpatialDim, Frame&gt;&amp; spatial_metric,
+<span class="lineNum">     714 </span>            :     const tnsr::II&lt;DataType, SpatialDim, Frame&gt;&amp; inverse_spatial_metric,
+<span class="lineNum">     715 </span>            :     const tnsr::AA&lt;DataType, SpatialDim, Frame&gt;&amp; inverse_spacetime_metric,
+<span class="lineNum">     716 </span>            :     const tnsr::A&lt;DataType, SpatialDim, Frame&gt;&amp; spacetime_unit_normal,
+<span class="lineNum">     717 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; phi,
+<span class="lineNum">     718 </span>            :     const tnsr::aa&lt;DataType, SpatialDim, Frame&gt;&amp; pi) noexcept {
+<span class="lineNum">     719 </span>            :   tnsr::a&lt;DataType, SpatialDim, Frame&gt; d4_norm_of_shift{};
+<span class="lineNum">     720 </span>            :   GeneralizedHarmonic::spacetime_deriv_of_norm_of_shift&lt;SpatialDim, Frame,
+<span class="lineNum">     721 </span>            :                                                         DataType&gt;(
+<span class="lineNum">     722 </span>            :       make_not_null(&amp;d4_norm_of_shift), lapse, shift, spatial_metric,
+<span class="lineNum">     723 </span>            :       inverse_spatial_metric, inverse_spacetime_metric, spacetime_unit_normal,
+<span class="lineNum">     724 </span>            :       phi, pi);
+<span class="lineNum">     725 </span>            :   return d4_norm_of_shift;
+<span class="lineNum">     726 </span>            : }
+<span class="lineNum">     727 </span>            : }  // namespace GeneralizedHarmonic
+<span class="lineNum">     728 </span>            : 
+<span class="lineNum">     729 </span>            : /// \cond
+<span class="lineNum">     730 </span>            : #define DIM(data) BOOST_PP_TUPLE_ELEM(0, data)
+<span class="lineNum">     731 </span>            : #define DTYPE(data) BOOST_PP_TUPLE_ELEM(1, data)
+<span class="lineNum">     732 </span>            : #define FRAME(data) BOOST_PP_TUPLE_ELEM(2, data)
+<span class="lineNum">     733 </span>            : 
+<span class="lineNum">     734 </span>            : #define INSTANTIATE(_, data)                                                  \
+<span class="lineNum">     735 </span>            :   template void GeneralizedHarmonic::phi(                                     \
+<span class="lineNum">     736 </span>            :       const gsl::not_null&lt;tnsr::iaa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;*&gt;    \
+<span class="lineNum">     737 </span>            :           var_phi,                                                            \
+<span class="lineNum">     738 </span>            :       const Scalar&lt;DTYPE(data)&gt;&amp; lapse,                                       \
+<span class="lineNum">     739 </span>            :       const tnsr::i&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; deriv_lapse,        \
+<span class="lineNum">     740 </span>            :       const tnsr::I&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; shift,              \
+<span class="lineNum">     741 </span>            :       const tnsr::iJ&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; deriv_shift,       \
+<span class="lineNum">     742 </span>            :       const tnsr::ii&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; spatial_metric,    \
+<span class="lineNum">     743 </span>            :       const tnsr::ijj&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                   \
+<span class="lineNum">     744 </span>            :           deriv_spatial_metric) noexcept;                                     \
+<span class="lineNum">     745 </span>            :   template tnsr::iaa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;                     \
+<span class="lineNum">     746 </span>            :   GeneralizedHarmonic::phi(                                                   \
+<span class="lineNum">     747 </span>            :       const Scalar&lt;DTYPE(data)&gt;&amp; lapse,                                       \
+<span class="lineNum">     748 </span>            :       const tnsr::i&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; deriv_lapse,        \
+<span class="lineNum">     749 </span>            :       const tnsr::I&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; shift,              \
+<span class="lineNum">     750 </span>            :       const tnsr::iJ&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; deriv_shift,       \
+<span class="lineNum">     751 </span>            :       const tnsr::ii&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; spatial_metric,    \
+<span class="lineNum">     752 </span>            :       const tnsr::ijj&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                   \
+<span class="lineNum">     753 </span>            :           deriv_spatial_metric) noexcept;                                     \
+<span class="lineNum">     754 </span>            :   template void GeneralizedHarmonic::pi(                                      \
+<span class="lineNum">     755 </span>            :       const gsl::not_null&lt;tnsr::aa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;*&gt;     \
+<span class="lineNum">     756 </span>            :           var_pi,                                                             \
+<span class="lineNum">     757 </span>            :       const Scalar&lt;DTYPE(data)&gt;&amp; lapse, const Scalar&lt;DTYPE(data)&gt;&amp; dt_lapse,  \
+<span class="lineNum">     758 </span>            :       const tnsr::I&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; shift,              \
+<span class="lineNum">     759 </span>            :       const tnsr::I&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; dt_shift,           \
+<span class="lineNum">     760 </span>            :       const tnsr::ii&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; spatial_metric,    \
+<span class="lineNum">     761 </span>            :       const tnsr::ii&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; dt_spatial_metric, \
+<span class="lineNum">     762 </span>            :       const tnsr::iaa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; phi) noexcept;    \
+<span class="lineNum">     763 </span>            :   template tnsr::aa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;                      \
+<span class="lineNum">     764 </span>            :   GeneralizedHarmonic::pi(                                                    \
+<span class="lineNum">     765 </span>            :       const Scalar&lt;DTYPE(data)&gt;&amp; lapse, const Scalar&lt;DTYPE(data)&gt;&amp; dt_lapse,  \
+<span class="lineNum">     766 </span>            :       const tnsr::I&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; shift,              \
+<span class="lineNum">     767 </span>            :       const tnsr::I&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; dt_shift,           \
+<span class="lineNum">     768 </span>            :       const tnsr::ii&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; spatial_metric,    \
+<span class="lineNum">     769 </span>            :       const tnsr::ii&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; dt_spatial_metric, \
+<span class="lineNum">     770 </span>            :       const tnsr::iaa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; phi) noexcept;    \
+<span class="lineNum">     771 </span>            :   template tnsr::ii&lt;DTYPE(data), DIM(data), FRAME(data)&gt;                      \
+<span class="lineNum">     772 </span>            :   GeneralizedHarmonic::extrinsic_curvature(                                   \
+<span class="lineNum">     773 </span>            :       const tnsr::A&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                     \
+<span class="lineNum">     774 </span>            :           spacetime_normal_vector,                                            \
+<span class="lineNum">     775 </span>            :       const tnsr::aa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; pi,                \
+<span class="lineNum">     776 </span>            :       const tnsr::iaa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; phi) noexcept;    \
+<span class="lineNum">     777 </span>            :   template void GeneralizedHarmonic::deriv_spatial_metric(                    \
+<span class="lineNum">     778 </span>            :       const gsl::not_null&lt;tnsr::ijj&lt;DTYPE(data), DIM(data), FRAME(data)&gt;*&gt;    \
+<span class="lineNum">     779 </span>            :           d_spatial_metric,                                                   \
+<span class="lineNum">     780 </span>            :       const tnsr::iaa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; phi) noexcept;    \
+<span class="lineNum">     781 </span>            :   template tnsr::ijj&lt;DTYPE(data), DIM(data), FRAME(data)&gt;                     \
+<span class="lineNum">     782 </span>            :   GeneralizedHarmonic::deriv_spatial_metric(                                  \
+<span class="lineNum">     783 </span>            :       const tnsr::iaa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; phi) noexcept;    \
+<span class="lineNum">     784 </span>            :   template void GeneralizedHarmonic::time_deriv_of_spatial_metric(            \
+<span class="lineNum">     785 </span>            :       const gsl::not_null&lt;tnsr::ii&lt;DTYPE(data), DIM(data), FRAME(data)&gt;*&gt;     \
+<span class="lineNum">     786 </span>            :           dt_spatial_metric,                                                  \
+<span class="lineNum">     787 </span>            :       const Scalar&lt;DTYPE(data)&gt;&amp; lapse,                                       \
+<span class="lineNum">     788 </span>            :       const tnsr::I&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; shift,              \
+<span class="lineNum">     789 </span>            :       const tnsr::iaa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; phi,              \
+<span class="lineNum">     790 </span>            :       const tnsr::aa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; pi) noexcept;      \
+<span class="lineNum">     791 </span>            :   template tnsr::ii&lt;DTYPE(data), DIM(data), FRAME(data)&gt;                      \
+<span class="lineNum">     792 </span>            :   GeneralizedHarmonic::time_deriv_of_spatial_metric(                          \
+<span class="lineNum">     793 </span>            :       const Scalar&lt;DTYPE(data)&gt;&amp; lapse,                                       \
+<span class="lineNum">     794 </span>            :       const tnsr::I&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; shift,              \
+<span class="lineNum">     795 </span>            :       const tnsr::iaa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; phi,              \
+<span class="lineNum">     796 </span>            :       const tnsr::aa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; pi) noexcept;      \
+<span class="lineNum">     797 </span>            :   template void GeneralizedHarmonic::spacetime_deriv_of_det_spatial_metric(   \
+<span class="lineNum">     798 </span>            :       const gsl::not_null&lt;tnsr::a&lt;DTYPE(data), DIM(data), FRAME(data)&gt;*&gt;      \
+<span class="lineNum">     799 </span>            :           d4_det_spatial_metric,                                              \
+<span class="lineNum">     800 </span>            :       const Scalar&lt;DTYPE(data)&gt;&amp; det_spatial_metric,                          \
+<span class="lineNum">     801 </span>            :       const tnsr::II&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                    \
+<span class="lineNum">     802 </span>            :           inverse_spatial_metric,                                             \
+<span class="lineNum">     803 </span>            :       const tnsr::ii&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; dt_spatial_metric, \
+<span class="lineNum">     804 </span>            :       const tnsr::iaa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; phi) noexcept;    \
+<span class="lineNum">     805 </span>            :   template tnsr::a&lt;DTYPE(data), DIM(data), FRAME(data)&gt;                       \
+<span class="lineNum">     806 </span>            :   GeneralizedHarmonic::spacetime_deriv_of_det_spatial_metric(                 \
+<span class="lineNum">     807 </span>            :       const Scalar&lt;DTYPE(data)&gt;&amp; det_spatial_metric,                          \
+<span class="lineNum">     808 </span>            :       const tnsr::II&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                    \
+<span class="lineNum">     809 </span>            :           inverse_spatial_metric,                                             \
+<span class="lineNum">     810 </span>            :       const tnsr::ii&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; dt_spatial_metric, \
+<span class="lineNum">     811 </span>            :       const tnsr::iaa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; phi) noexcept;    \
+<span class="lineNum">     812 </span>            :   template void GeneralizedHarmonic::spatial_deriv_of_lapse(                  \
+<span class="lineNum">     813 </span>            :       const gsl::not_null&lt;tnsr::i&lt;DTYPE(data), DIM(data), FRAME(data)&gt;*&gt;      \
+<span class="lineNum">     814 </span>            :           deriv_lapse,                                                        \
+<span class="lineNum">     815 </span>            :       const Scalar&lt;DTYPE(data)&gt;&amp; lapse,                                       \
+<span class="lineNum">     816 </span>            :       const tnsr::A&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                     \
+<span class="lineNum">     817 </span>            :           spacetime_unit_normal,                                              \
+<span class="lineNum">     818 </span>            :       const tnsr::iaa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; phi) noexcept;    \
+<span class="lineNum">     819 </span>            :   template tnsr::i&lt;DTYPE(data), DIM(data), FRAME(data)&gt;                       \
+<span class="lineNum">     820 </span>            :   GeneralizedHarmonic::spatial_deriv_of_lapse(                                \
+<span class="lineNum">     821 </span>            :       const Scalar&lt;DTYPE(data)&gt;&amp; lapse,                                       \
+<span class="lineNum">     822 </span>            :       const tnsr::A&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                     \
+<span class="lineNum">     823 </span>            :           spacetime_unit_normal,                                              \
+<span class="lineNum">     824 </span>            :       const tnsr::iaa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; phi) noexcept;    \
+<span class="lineNum">     825 </span>            :   template void GeneralizedHarmonic::time_deriv_of_lapse(                     \
+<span class="lineNum">     826 </span>            :       const gsl::not_null&lt;Scalar&lt;DTYPE(data)&gt;*&gt; dt_lapse,                     \
+<span class="lineNum">     827 </span>            :       const Scalar&lt;DTYPE(data)&gt;&amp; lapse,                                       \
+<span class="lineNum">     828 </span>            :       const tnsr::I&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; shift,              \
+<span class="lineNum">     829 </span>            :       const tnsr::A&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                     \
+<span class="lineNum">     830 </span>            :           spacetime_unit_normal,                                              \
+<span class="lineNum">     831 </span>            :       const tnsr::iaa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; phi,              \
+<span class="lineNum">     832 </span>            :       const tnsr::aa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; pi) noexcept;      \
+<span class="lineNum">     833 </span>            :   template Scalar&lt;DTYPE(data)&gt; GeneralizedHarmonic::time_deriv_of_lapse(      \
+<span class="lineNum">     834 </span>            :       const Scalar&lt;DTYPE(data)&gt;&amp; lapse,                                       \
+<span class="lineNum">     835 </span>            :       const tnsr::I&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; shift,              \
+<span class="lineNum">     836 </span>            :       const tnsr::A&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                     \
+<span class="lineNum">     837 </span>            :           spacetime_unit_normal,                                              \
+<span class="lineNum">     838 </span>            :       const tnsr::iaa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; phi,              \
+<span class="lineNum">     839 </span>            :       const tnsr::aa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; pi) noexcept;      \
+<span class="lineNum">     840 </span>            :   template void GeneralizedHarmonic::spatial_deriv_of_shift(                  \
+<span class="lineNum">     841 </span>            :       const gsl::not_null&lt;tnsr::iJ&lt;DTYPE(data), DIM(data), FRAME(data)&gt;*&gt;     \
+<span class="lineNum">     842 </span>            :           deriv_shift,                                                        \
+<span class="lineNum">     843 </span>            :       const Scalar&lt;DTYPE(data)&gt;&amp; lapse,                                       \
+<span class="lineNum">     844 </span>            :       const tnsr::AA&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                    \
+<span class="lineNum">     845 </span>            :           inverse_spacetime_metric,                                           \
+<span class="lineNum">     846 </span>            :       const tnsr::A&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                     \
+<span class="lineNum">     847 </span>            :           spacetime_unit_normal,                                              \
+<span class="lineNum">     848 </span>            :       const tnsr::iaa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; phi) noexcept;    \
+<span class="lineNum">     849 </span>            :   template tnsr::iJ&lt;DTYPE(data), DIM(data), FRAME(data)&gt;                      \
+<span class="lineNum">     850 </span>            :   GeneralizedHarmonic::spatial_deriv_of_shift(                                \
+<span class="lineNum">     851 </span>            :       const Scalar&lt;DTYPE(data)&gt;&amp; lapse,                                       \
+<span class="lineNum">     852 </span>            :       const tnsr::AA&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                    \
+<span class="lineNum">     853 </span>            :           inverse_spacetime_metric,                                           \
+<span class="lineNum">     854 </span>            :       const tnsr::A&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                     \
+<span class="lineNum">     855 </span>            :           spacetime_unit_normal,                                              \
+<span class="lineNum">     856 </span>            :       const tnsr::iaa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; phi) noexcept;    \
+<span class="lineNum">     857 </span>            :   template void GeneralizedHarmonic::time_deriv_of_shift(                     \
+<span class="lineNum">     858 </span>            :       const gsl::not_null&lt;tnsr::I&lt;DTYPE(data), DIM(data), FRAME(data)&gt;*&gt;      \
+<span class="lineNum">     859 </span>            :           dt_shift,                                                           \
+<span class="lineNum">     860 </span>            :       const Scalar&lt;DTYPE(data)&gt;&amp; lapse,                                       \
+<span class="lineNum">     861 </span>            :       const tnsr::I&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; shift,              \
+<span class="lineNum">     862 </span>            :       const tnsr::II&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                    \
+<span class="lineNum">     863 </span>            :           inverse_spatial_metric,                                             \
+<span class="lineNum">     864 </span>            :       const tnsr::A&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                     \
+<span class="lineNum">     865 </span>            :           spacetime_unit_normal,                                              \
+<span class="lineNum">     866 </span>            :       const tnsr::iaa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; phi,              \
+<span class="lineNum">     867 </span>            :       const tnsr::aa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; pi) noexcept;      \
+<span class="lineNum">     868 </span>            :   template tnsr::I&lt;DTYPE(data), DIM(data), FRAME(data)&gt;                       \
+<span class="lineNum">     869 </span>            :   GeneralizedHarmonic::time_deriv_of_shift(                                   \
+<span class="lineNum">     870 </span>            :       const Scalar&lt;DTYPE(data)&gt;&amp; lapse,                                       \
+<span class="lineNum">     871 </span>            :       const tnsr::I&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; shift,              \
+<span class="lineNum">     872 </span>            :       const tnsr::II&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                    \
+<span class="lineNum">     873 </span>            :           inverse_spatial_metric,                                             \
+<span class="lineNum">     874 </span>            :       const tnsr::A&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                     \
+<span class="lineNum">     875 </span>            :           spacetime_unit_normal,                                              \
+<span class="lineNum">     876 </span>            :       const tnsr::iaa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; phi,              \
+<span class="lineNum">     877 </span>            :       const tnsr::aa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; pi) noexcept;      \
+<span class="lineNum">     878 </span>            :   template void GeneralizedHarmonic::time_deriv_of_lower_shift(               \
+<span class="lineNum">     879 </span>            :       const gsl::not_null&lt;tnsr::i&lt;DTYPE(data), DIM(data), FRAME(data)&gt;*&gt;      \
+<span class="lineNum">     880 </span>            :           dt_lower_shift,                                                     \
+<span class="lineNum">     881 </span>            :       const Scalar&lt;DTYPE(data)&gt;&amp; lapse,                                       \
+<span class="lineNum">     882 </span>            :       const tnsr::I&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; shift,              \
+<span class="lineNum">     883 </span>            :       const tnsr::ii&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; spatial_metric,    \
+<span class="lineNum">     884 </span>            :       const tnsr::A&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                     \
+<span class="lineNum">     885 </span>            :           spacetime_unit_normal,                                              \
+<span class="lineNum">     886 </span>            :       const tnsr::iaa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; phi,              \
+<span class="lineNum">     887 </span>            :       const tnsr::aa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; pi) noexcept;      \
+<span class="lineNum">     888 </span>            :   template tnsr::i&lt;DTYPE(data), DIM(data), FRAME(data)&gt;                       \
+<span class="lineNum">     889 </span>            :   GeneralizedHarmonic::time_deriv_of_lower_shift(                             \
+<span class="lineNum">     890 </span>            :       const Scalar&lt;DTYPE(data)&gt;&amp; lapse,                                       \
+<span class="lineNum">     891 </span>            :       const tnsr::I&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; shift,              \
+<span class="lineNum">     892 </span>            :       const tnsr::ii&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; spatial_metric,    \
+<span class="lineNum">     893 </span>            :       const tnsr::A&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                     \
+<span class="lineNum">     894 </span>            :           spacetime_unit_normal,                                              \
+<span class="lineNum">     895 </span>            :       const tnsr::iaa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; phi,              \
+<span class="lineNum">     896 </span>            :       const tnsr::aa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; pi) noexcept;      \
+<span class="lineNum">     897 </span>            :   template void GeneralizedHarmonic::spacetime_deriv_of_norm_of_shift(        \
+<span class="lineNum">     898 </span>            :       const gsl::not_null&lt;tnsr::a&lt;DTYPE(data), DIM(data), FRAME(data)&gt;*&gt;      \
+<span class="lineNum">     899 </span>            :           d4_norm_of_shift,                                                   \
+<span class="lineNum">     900 </span>            :       const Scalar&lt;DTYPE(data)&gt;&amp; lapse,                                       \
+<span class="lineNum">     901 </span>            :       const tnsr::I&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; shift,              \
+<span class="lineNum">     902 </span>            :       const tnsr::ii&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; spatial_metric,    \
+<span class="lineNum">     903 </span>            :       const tnsr::II&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                    \
+<span class="lineNum">     904 </span>            :           inverse_spatial_metric,                                             \
+<span class="lineNum">     905 </span>            :       const tnsr::AA&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                    \
+<span class="lineNum">     906 </span>            :           inverse_spacetime_metric,                                           \
+<span class="lineNum">     907 </span>            :       const tnsr::A&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                     \
+<span class="lineNum">     908 </span>            :           spacetime_unit_normal,                                              \
+<span class="lineNum">     909 </span>            :       const tnsr::iaa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; phi,              \
+<span class="lineNum">     910 </span>            :       const tnsr::aa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; pi) noexcept;      \
+<span class="lineNum">     911 </span>            :   template tnsr::a&lt;DTYPE(data), DIM(data), FRAME(data)&gt;                       \
+<span class="lineNum">     912 </span>            :   GeneralizedHarmonic::spacetime_deriv_of_norm_of_shift(                      \
+<span class="lineNum">     913 </span>            :       const Scalar&lt;DTYPE(data)&gt;&amp; lapse,                                       \
+<span class="lineNum">     914 </span>            :       const tnsr::I&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; shift,              \
+<span class="lineNum">     915 </span>            :       const tnsr::ii&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; spatial_metric,    \
+<span class="lineNum">     916 </span>            :       const tnsr::II&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                    \
+<span class="lineNum">     917 </span>            :           inverse_spatial_metric,                                             \
+<span class="lineNum">     918 </span>            :       const tnsr::AA&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                    \
+<span class="lineNum">     919 </span>            :           inverse_spacetime_metric,                                           \
+<span class="lineNum">     920 </span>            :       const tnsr::A&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                     \
+<span class="lineNum">     921 </span>            :           spacetime_unit_normal,                                              \
+<span class="lineNum">     922 </span>            :       const tnsr::iaa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; phi,              \
+<span class="lineNum">     923 </span>            :       const tnsr::aa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; pi) noexcept;      \
+<span class="lineNum">     924 </span>            :   template tnsr::a&lt;DTYPE(data), DIM(data), FRAME(data)&gt;                       \
+<span class="lineNum">     925 </span>            :   GeneralizedHarmonic::gauge_source(                                          \
+<span class="lineNum">     926 </span>            :       const Scalar&lt;DTYPE(data)&gt;&amp; lapse, const Scalar&lt;DTYPE(data)&gt;&amp; dt_lapse,  \
+<span class="lineNum">     927 </span>            :       const tnsr::i&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; deriv_lapse,        \
+<span class="lineNum">     928 </span>            :       const tnsr::I&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; shift,              \
+<span class="lineNum">     929 </span>            :       const tnsr::I&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; dt_shift,           \
+<span class="lineNum">     930 </span>            :       const tnsr::iJ&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; deriv_shift,       \
+<span class="lineNum">     931 </span>            :       const tnsr::ii&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; spatial_metric,    \
+<span class="lineNum">     932 </span>            :       const Scalar&lt;DTYPE(data)&gt;&amp; trace_extrinsic_curvature,                   \
+<span class="lineNum">     933 </span>            :       const tnsr::i&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                     \
+<span class="lineNum">     934 </span>            :           trace_christoffel_last_indices) noexcept;
+<span class="lineNum">     935 </span>            : 
+<span class="lineNum">     936 </span>            : GENERATE_INSTANTIATIONS(INSTANTIATE, (1, 2, 3), (double, DataVector),
+<span class="lineNum">     937 </span>            :                         (Frame::Grid, Frame::Inertial))
+<span class="lineNum">     938 </span>            : 
+<span class="lineNum">     939 </span>            : #undef DIM
+<span class="lineNum">     940 </span>            : #undef DTYPE
+<span class="lineNum">     941 </span>            : #undef FRAME
+<span class="lineNum">     942 </span>            : #undef INSTANTIATE
+<span class="lineNum">     943 </span>            : /// \endcond
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

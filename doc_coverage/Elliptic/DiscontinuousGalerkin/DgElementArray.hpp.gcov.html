@@ -1,0 +1,232 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Elliptic/DiscontinuousGalerkin/DgElementArray.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">Elliptic/DiscontinuousGalerkin</a> - DgElementArray.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">14</td>
+            <td class="headerCovTableEntryLo">7.1 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &quot;AlgorithmArray.hpp&quot;
+<span class="lineNum">       7 </span>            : #include &quot;Domain/ElementIndex.hpp&quot;
+<span class="lineNum">       8 </span>            : #include &quot;Domain/InitialElementIds.hpp&quot;
+<span class="lineNum">       9 </span>            : #include &quot;Domain/Tags.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;Elliptic/DiscontinuousGalerkin/InitializeElement.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;IO/Observer/ObservationId.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;IO/Observer/TypeOfObservation.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;Parallel/ConstGlobalCache.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;Parallel/Info.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;Parallel/Invoke.hpp&quot;
+<span class="lineNum">      16 </span>            : #include &quot;Parallel/ParallelComponentHelpers.hpp&quot;
+<span class="lineNum">      17 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : /// \cond
+<span class="lineNum">      20 </span>            : namespace observers {
+<span class="lineNum">      21 </span>            : namespace Actions {
+<span class="lineNum">      22 </span>            : template &lt;observers::TypeOfObservation TypeOfObservation&gt;
+<span class="lineNum">      23 </span>            : struct RegisterWithObservers;
+<span class="lineNum">      24 </span>            : }  // namespace Actions
+<span class="lineNum">      25 </span>            : }  // namespace observers
+<span class="lineNum">      26 </span>            : /// \endcond
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            : namespace Elliptic {
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span>            : /*!
+<span class="lineNum">      31 </span>            :  * \brief The parallel component responsible for managing the DG elements that
+<span class="lineNum">      32 </span>            :  * compose the computational domain
+<span class="lineNum">      33 </span>            :  *
+<span class="lineNum">      34 </span>            :  * This parallel component will perform the following phases:
+<span class="lineNum">      35 </span>            :  *
+<span class="lineNum">      36 </span>            :  * - `Phase::Initialize`: Create the domain and execute
+<span class="lineNum">      37 </span>            :  * `Elliptic::dg::Actions::InitializeElement` on all elements.
+<span class="lineNum">      38 </span>            :  * - `Phase::RegisterWithObservers` (optional)
+<span class="lineNum">      39 </span>            :  * - `Phase::Solve`: Execute the actions in `ActionList` on all elements. Repeat
+<span class="lineNum">      40 </span>            :  * until an action terminates the algorithm.
+<span class="lineNum">      41 </span>            :  *
+<span class="lineNum">      42 </span>            :  * \note This parallel component is nearly identical to
+<span class="lineNum">      43 </span>            :  * `Evolution/DiscontinuousGalerkin/DgElementArray.hpp` right now, but will
+<span class="lineNum">      44 </span>            :  * likely diverge in the future, for instance to support a multigrid domain.
+<span class="lineNum">      45 </span>            :  *
+<span class="lineNum">      46 </span>            :  * Uses:
+<span class="lineNum">      47 </span>            :  * - Metavariables:
+<span class="lineNum">      48 </span>            :  *   - `domain_creator_tag`
+<span class="lineNum">      49 </span>            :  * - System:
+<span class="lineNum">      50 </span>            :  *   - `volume_dim`
+<span class="lineNum">      51 </span>            :  * - ConstGlobalCache:
+<span class="lineNum">      52 </span>            :  *   - All items required by the actions in `ActionList`
+<span class="lineNum">      53 </span>            :  */
+<span class="lineNum">      54 </span>            : template &lt;class Metavariables, class ActionList&gt;
+<span class="lineNum">      55 </span><span class="lineCov">          1 : struct DgElementArray {</span>
+<span class="lineNum">      56 </span><span class="lineNoCov">          0 :   static constexpr size_t volume_dim = Metavariables::system::volume_dim;</span>
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span><span class="lineNoCov">          0 :   using chare_type = Parallel::Algorithms::Array;</span>
+<span class="lineNum">      59 </span><span class="lineNoCov">          0 :   using metavariables = Metavariables;</span>
+<span class="lineNum">      60 </span><span class="lineNoCov">          0 :   using action_list = ActionList;</span>
+<span class="lineNum">      61 </span><span class="lineNoCov">          0 :   using array_index = ElementIndex&lt;volume_dim&gt;;</span>
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span><span class="lineNoCov">          0 :   using const_global_cache_tag_list =</span>
+<span class="lineNum">      64 </span>            :       Parallel::get_const_global_cache_tags&lt;action_list&gt;;
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span><span class="lineNoCov">          0 :   using initial_databox = db::compute_databox_type&lt;</span>
+<span class="lineNum">      67 </span>            :       typename Elliptic::dg::Actions::InitializeElement&lt;
+<span class="lineNum">      68 </span>            :           volume_dim&gt;::template return_tag_list&lt;Metavariables&gt;&gt;;
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span><span class="lineNoCov">          0 :   using options = tmpl::list&lt;typename Metavariables::domain_creator_tag&gt;;</span>
+<span class="lineNum">      71 </span>            : 
+<span class="lineNum">      72 </span><span class="lineNoCov">          0 :   static void initialize(</span>
+<span class="lineNum">      73 </span>            :       Parallel::CProxy_ConstGlobalCache&lt;Metavariables&gt;&amp; global_cache,
+<span class="lineNum">      74 </span>            :       std::unique_ptr&lt;DomainCreator&lt;volume_dim, Frame::Inertial&gt;&gt;
+<span class="lineNum">      75 </span>            :           domain_creator) noexcept;
+<span class="lineNum">      76 </span>            : 
+<span class="lineNum">      77 </span><span class="lineNoCov">          0 :   static void execute_next_phase(</span>
+<span class="lineNum">      78 </span>            :       const typename Metavariables::Phase next_phase,
+<span class="lineNum">      79 </span>            :       Parallel::CProxy_ConstGlobalCache&lt;Metavariables&gt;&amp; global_cache) {
+<span class="lineNum">      80 </span>            :     auto&amp; local_cache = *(global_cache.ckLocalBranch());
+<span class="lineNum">      81 </span>            :     auto&amp; dg_element_array =
+<span class="lineNum">      82 </span>            :         Parallel::get_parallel_component&lt;DgElementArray&gt;(local_cache);
+<span class="lineNum">      83 </span>            :     switch (next_phase) {
+<span class="lineNum">      84 </span>            :       case Metavariables::Phase::Solve:
+<span class="lineNum">      85 </span>            :         dg_element_array.perform_algorithm();
+<span class="lineNum">      86 </span>            :         break;
+<span class="lineNum">      87 </span>            :       default:
+<span class="lineNum">      88 </span>            :         try_register_with_observers(next_phase, global_cache);
+<span class="lineNum">      89 </span>            :         break;
+<span class="lineNum">      90 </span>            :     }
+<span class="lineNum">      91 </span>            :   }
+<span class="lineNum">      92 </span>            : 
+<span class="lineNum">      93 </span>            :  private:
+<span class="lineNum">      94 </span>            :   template &lt;typename PhaseType,
+<span class="lineNum">      95 </span>            :             Requires&lt;not observers::has_register_with_observer_v&lt;PhaseType&gt;&gt; =
+<span class="lineNum">      96 </span>            :                 nullptr&gt;
+<span class="lineNum">      97 </span><span class="lineNoCov">          0 :   static void try_register_with_observers(</span>
+<span class="lineNum">      98 </span>            :       const PhaseType /*next_phase*/,
+<span class="lineNum">      99 </span>            :       Parallel::CProxy_ConstGlobalCache&lt;
+<span class="lineNum">     100 </span>            :           Metavariables&gt;&amp; /*global_cache*/) noexcept {}
+<span class="lineNum">     101 </span>            : 
+<span class="lineNum">     102 </span>            :   template &lt;
+<span class="lineNum">     103 </span>            :       typename PhaseType,
+<span class="lineNum">     104 </span>            :       Requires&lt;observers::has_register_with_observer_v&lt;PhaseType&gt;&gt; = nullptr&gt;
+<span class="lineNum">     105 </span><span class="lineNoCov">          0 :   static void try_register_with_observers(</span>
+<span class="lineNum">     106 </span>            :       const PhaseType next_phase,
+<span class="lineNum">     107 </span>            :       Parallel::CProxy_ConstGlobalCache&lt;Metavariables&gt;&amp; global_cache) noexcept {
+<span class="lineNum">     108 </span>            :     if (next_phase == Metavariables::Phase::RegisterWithObserver) {
+<span class="lineNum">     109 </span>            :       auto&amp; local_cache = *(global_cache.ckLocalBranch());
+<span class="lineNum">     110 </span>            :       // We currently use an observation_id with a fake time when registering
+<span class="lineNum">     111 </span>            :       // observers but in the future when we start doing load balancing and
+<span class="lineNum">     112 </span>            :       // elements migrate around the system they will need to register and
+<span class="lineNum">     113 </span>            :       // unregister themselves at specific times.
+<span class="lineNum">     114 </span>            :       const observers::ObservationId observation_id_with_fake_time(
+<span class="lineNum">     115 </span>            :           0., typename Metavariables::element_observation_type{});
+<span class="lineNum">     116 </span>            :       Parallel::simple_action&lt;observers::Actions::RegisterWithObservers&lt;
+<span class="lineNum">     117 </span>            :           observers::TypeOfObservation::ReductionAndVolume&gt;&gt;(
+<span class="lineNum">     118 </span>            :           Parallel::get_parallel_component&lt;DgElementArray&gt;(local_cache),
+<span class="lineNum">     119 </span>            :           observation_id_with_fake_time);
+<span class="lineNum">     120 </span>            :     }
+<span class="lineNum">     121 </span>            :   }
+<span class="lineNum">     122 </span>            : };
+<span class="lineNum">     123 </span>            : 
+<span class="lineNum">     124 </span>            : template &lt;class Metavariables, class ActionList&gt;
+<span class="lineNum">     125 </span>            : void DgElementArray&lt;Metavariables, ActionList&gt;::initialize(
+<span class="lineNum">     126 </span>            :     Parallel::CProxy_ConstGlobalCache&lt;Metavariables&gt;&amp; global_cache,
+<span class="lineNum">     127 </span>            :     const std::unique_ptr&lt;DomainCreator&lt;volume_dim, Frame::Inertial&gt;&gt;
+<span class="lineNum">     128 </span>            :         domain_creator) noexcept {
+<span class="lineNum">     129 </span>            :   auto&amp; dg_element_array = Parallel::get_parallel_component&lt;DgElementArray&gt;(
+<span class="lineNum">     130 </span>            :       *(global_cache.ckLocalBranch()));
+<span class="lineNum">     131 </span>            : 
+<span class="lineNum">     132 </span>            :   auto domain = domain_creator-&gt;create_domain();
+<span class="lineNum">     133 </span>            :   for (const auto&amp; block : domain.blocks()) {
+<span class="lineNum">     134 </span>            :     const auto initial_ref_levs =
+<span class="lineNum">     135 </span>            :         domain_creator-&gt;initial_refinement_levels()[block.id()];
+<span class="lineNum">     136 </span>            :     const std::vector&lt;ElementId&lt;volume_dim&gt;&gt; element_ids =
+<span class="lineNum">     137 </span>            :         initial_element_ids(block.id(), initial_ref_levs);
+<span class="lineNum">     138 </span>            :     int which_proc = 0;
+<span class="lineNum">     139 </span>            :     const int number_of_procs = Parallel::number_of_procs();
+<span class="lineNum">     140 </span>            :     for (size_t i = 0; i &lt; element_ids.size(); ++i) {
+<span class="lineNum">     141 </span>            :       dg_element_array(ElementIndex&lt;volume_dim&gt;(element_ids[i]))
+<span class="lineNum">     142 </span>            :           .insert(global_cache, which_proc);
+<span class="lineNum">     143 </span>            :       which_proc = which_proc + 1 == number_of_procs ? 0 : which_proc + 1;
+<span class="lineNum">     144 </span>            :     }
+<span class="lineNum">     145 </span>            :   }
+<span class="lineNum">     146 </span>            :   dg_element_array.doneInserting();
+<span class="lineNum">     147 </span>            : 
+<span class="lineNum">     148 </span>            :   dg_element_array.template simple_action&lt;
+<span class="lineNum">     149 </span>            :       Elliptic::dg::Actions::InitializeElement&lt;volume_dim&gt;&gt;(
+<span class="lineNum">     150 </span>            :       std::make_tuple(domain_creator-&gt;initial_extents(), std::move(domain)));
+<span class="lineNum">     151 </span>            : }
+<span class="lineNum">     152 </span>            : }  // namespace Elliptic
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

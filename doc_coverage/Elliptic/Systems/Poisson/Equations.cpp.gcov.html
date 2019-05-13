@@ -1,0 +1,264 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Elliptic/Systems/Poisson/Equations.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">Elliptic/Systems/Poisson</a> - Equations.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;Elliptic/Systems/Poisson/Equations.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;array&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : #include &quot;DataStructures/DataVector.hpp&quot;
+<span class="lineNum">       9 </span>            : #include &quot;DataStructures/Tensor/Tensor.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;DataStructures/Variables.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      11 </span>            : #include &quot;Elliptic/Systems/Poisson/FirstOrderSystem.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;Elliptic/Systems/Poisson/Tags.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      13 </span>            : #include &quot;NumericalAlgorithms/LinearOperators/Divergence.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      14 </span>            : #include &quot;NumericalAlgorithms/LinearOperators/PartialDerivatives.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      15 </span>            : #include &quot;Utilities/GenerateInstantiations.hpp&quot;
+<span class="lineNum">      16 </span>            : #include &quot;Utilities/MakeWithValue.hpp&quot;
+<span class="lineNum">      17 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">      18 </span>            : // IWYU pragma: no_forward_declare Tags::deriv
+<span class="lineNum">      19 </span>            : // IWYU pragma: no_forward_declare Tags::div
+<span class="lineNum">      20 </span>            : // IWYU pragma: no_forward_declare Variables
+<span class="lineNum">      21 </span>            : // IWYU pragma: no_forward_declare Tensor
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : namespace Poisson {
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      26 </span>            : void ComputeFirstOrderOperatorAction&lt;Dim&gt;::apply(
+<span class="lineNum">      27 </span>            :     const gsl::not_null&lt;Scalar&lt;DataVector&gt;*&gt; operator_for_field_source,
+<span class="lineNum">      28 </span>            :     const gsl::not_null&lt;tnsr::I&lt;DataVector, Dim, Frame::Inertial&gt;*&gt;
+<span class="lineNum">      29 </span>            :         operator_for_auxiliary_field_source,
+<span class="lineNum">      30 </span>            :     const tnsr::i&lt;DataVector, Dim, Frame::Inertial&gt;&amp; grad_field,
+<span class="lineNum">      31 </span>            :     const tnsr::I&lt;DataVector, Dim, Frame::Inertial&gt;&amp; auxiliary_field,
+<span class="lineNum">      32 </span>            :     const Mesh&lt;Dim&gt;&amp; mesh,
+<span class="lineNum">      33 </span>            :     const InverseJacobian&lt;DataVector, Dim, Frame::Logical, Frame::Inertial&gt;&amp;
+<span class="lineNum">      34 </span>            :         inverse_jacobian) noexcept {
+<span class="lineNum">      35 </span>            :   auto div_vars = make_with_value&lt;Variables&lt;tmpl::list&lt;AuxiliaryField&lt;Dim&gt;&gt;&gt;&gt;(
+<span class="lineNum">      36 </span>            :       auxiliary_field, 0.);
+<span class="lineNum">      37 </span>            :   get&lt;AuxiliaryField&lt;Dim&gt;&gt;(div_vars) = auxiliary_field;
+<span class="lineNum">      38 </span>            :   // Tensors don't support math operations yet, so we have to `get` the
+<span class="lineNum">      39 </span>            :   // DataVector for the sign flip
+<span class="lineNum">      40 </span>            :   get(*operator_for_field_source) =
+<span class="lineNum">      41 </span>            :       -1. * get(get&lt;Tags::div&lt;AuxiliaryField&lt;Dim&gt;&gt;&gt;(
+<span class="lineNum">      42 </span>            :                 divergence(div_vars, mesh, inverse_jacobian)));
+<span class="lineNum">      43 </span>            :   for (size_t d = 0; d &lt; Dim; d++) {
+<span class="lineNum">      44 </span>            :     operator_for_auxiliary_field_source-&gt;get(d) =
+<span class="lineNum">      45 </span>            :         grad_field.get(d) - auxiliary_field.get(d);
+<span class="lineNum">      46 </span>            :   }
+<span class="lineNum">      47 </span>            : }
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      50 </span>            : void ComputeFirstOrderNormalDotFluxes&lt;Dim&gt;::apply(
+<span class="lineNum">      51 </span>            :     const gsl::not_null&lt;Scalar&lt;DataVector&gt;*&gt; normal_dot_flux_for_field,
+<span class="lineNum">      52 </span>            :     const gsl::not_null&lt;tnsr::I&lt;DataVector, Dim, Frame::Inertial&gt;*&gt;
+<span class="lineNum">      53 </span>            :         normal_dot_flux_for_auxiliary_field,
+<span class="lineNum">      54 </span>            :     const Scalar&lt;DataVector&gt;&amp; field,
+<span class="lineNum">      55 </span>            :     const tnsr::I&lt;DataVector, Dim, Frame::Inertial&gt;&amp; auxiliary_field,
+<span class="lineNum">      56 </span>            :     const tnsr::i&lt;DataVector, Dim, Frame::Inertial&gt;&amp;
+<span class="lineNum">      57 </span>            :         interface_unit_normal) noexcept {
+<span class="lineNum">      58 </span>            :   // The minus sign in the equation is canceled by the one in `lift_flux`
+<span class="lineNum">      59 </span>            :   get(*normal_dot_flux_for_field) =
+<span class="lineNum">      60 </span>            :       get&lt;0&gt;(interface_unit_normal) * get&lt;0&gt;(auxiliary_field);
+<span class="lineNum">      61 </span>            :   for (size_t d = 1; d &lt; Dim; d++) {
+<span class="lineNum">      62 </span>            :     get(*normal_dot_flux_for_field) +=
+<span class="lineNum">      63 </span>            :         interface_unit_normal.get(d) * auxiliary_field.get(d);
+<span class="lineNum">      64 </span>            :   }
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span>            :   // The minus sign is to cancel the one in `lift_flux`
+<span class="lineNum">      67 </span>            :   for (size_t d = 0; d &lt; Dim; d++) {
+<span class="lineNum">      68 </span>            :     normal_dot_flux_for_auxiliary_field-&gt;get(d) =
+<span class="lineNum">      69 </span>            :         -interface_unit_normal.get(d) * get(field);
+<span class="lineNum">      70 </span>            :   }
+<span class="lineNum">      71 </span>            : }
+<span class="lineNum">      72 </span>            : 
+<span class="lineNum">      73 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      74 </span>            : void FirstOrderInternalPenaltyFlux&lt;Dim&gt;::package_data(
+<span class="lineNum">      75 </span>            :     const gsl::not_null&lt;Variables&lt;package_tags&gt;*&gt; packaged_data,
+<span class="lineNum">      76 </span>            :     const Scalar&lt;DataVector&gt;&amp; field,
+<span class="lineNum">      77 </span>            :     const tnsr::i&lt;DataVector, Dim, Frame::Inertial&gt;&amp; grad_field,
+<span class="lineNum">      78 </span>            :     const tnsr::i&lt;DataVector, Dim, Frame::Inertial&gt;&amp; interface_unit_normal)
+<span class="lineNum">      79 </span>            :     const noexcept {
+<span class="lineNum">      80 </span>            :   get&lt;LinearSolver::Tags::Operand&lt;Field&gt;&gt;(*packaged_data) = field;
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span>            :   for (size_t d = 0; d &lt; Dim; d++) {
+<span class="lineNum">      83 </span>            :     get&lt;NormalTimesFieldFlux&gt;(*packaged_data).get(d) =
+<span class="lineNum">      84 </span>            :         interface_unit_normal.get(d) * get(field);
+<span class="lineNum">      85 </span>            :   }
+<span class="lineNum">      86 </span>            : 
+<span class="lineNum">      87 </span>            :   get&lt;NormalDotGradFieldFlux&gt;(*packaged_data).get() =
+<span class="lineNum">      88 </span>            :       get&lt;0&gt;(interface_unit_normal) * get&lt;0&gt;(grad_field);
+<span class="lineNum">      89 </span>            :   for (size_t d = 1; d &lt; Dim; d++) {
+<span class="lineNum">      90 </span>            :     get&lt;NormalDotGradFieldFlux&gt;(*packaged_data).get() +=
+<span class="lineNum">      91 </span>            :         interface_unit_normal.get(d) * grad_field.get(d);
+<span class="lineNum">      92 </span>            :   }
+<span class="lineNum">      93 </span>            : }
+<span class="lineNum">      94 </span>            : 
+<span class="lineNum">      95 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      96 </span>            : void FirstOrderInternalPenaltyFlux&lt;Dim&gt;::operator()(
+<span class="lineNum">      97 </span>            :     const gsl::not_null&lt;Scalar&lt;DataVector&gt;*&gt; numerical_flux_for_field,
+<span class="lineNum">      98 </span>            :     const gsl::not_null&lt;tnsr::I&lt;DataVector, Dim, Frame::Inertial&gt;*&gt;
+<span class="lineNum">      99 </span>            :         numerical_flux_for_auxiliary_field,
+<span class="lineNum">     100 </span>            :     const Scalar&lt;DataVector&gt;&amp; field_interior,
+<span class="lineNum">     101 </span>            :     const tnsr::i&lt;DataVector, Dim, Frame::Inertial&gt;&amp;
+<span class="lineNum">     102 </span>            :         normal_times_field_interior,
+<span class="lineNum">     103 </span>            :     const Scalar&lt;DataVector&gt;&amp; normal_dot_grad_field_interior,
+<span class="lineNum">     104 </span>            :     const Scalar&lt;DataVector&gt;&amp; field_exterior,
+<span class="lineNum">     105 </span>            :     const tnsr::i&lt;DataVector, Dim, Frame::Inertial&gt;&amp;
+<span class="lineNum">     106 </span>            :         minus_normal_times_field_exterior,
+<span class="lineNum">     107 </span>            :     const Scalar&lt;DataVector&gt;&amp; minus_normal_dot_grad_field_exterior) const
+<span class="lineNum">     108 </span>            :     noexcept {
+<span class="lineNum">     109 </span>            :   // Need polynomial degress and element size to compute this dynamically
+<span class="lineNum">     110 </span>            :   const double penalty = penalty_parameter_;
+<span class="lineNum">     111 </span>            : 
+<span class="lineNum">     112 </span>            :   // The minus sign is to cancel the one in `lift_flux`
+<span class="lineNum">     113 </span>            :   for (size_t d = 0; d &lt; Dim; d++) {
+<span class="lineNum">     114 </span>            :     numerical_flux_for_auxiliary_field-&gt;get(d) =
+<span class="lineNum">     115 </span>            :         -0.5 * (normal_times_field_interior.get(d) -
+<span class="lineNum">     116 </span>            :                 minus_normal_times_field_exterior.get(d));
+<span class="lineNum">     117 </span>            :   }
+<span class="lineNum">     118 </span>            : 
+<span class="lineNum">     119 </span>            :   // The minus sign in the equation is canceled by the one in `lift_flux`
+<span class="lineNum">     120 </span>            :   numerical_flux_for_field-&gt;get() =
+<span class="lineNum">     121 </span>            :       0.5 * (get(normal_dot_grad_field_interior) -
+<span class="lineNum">     122 </span>            :              get(minus_normal_dot_grad_field_exterior)) -
+<span class="lineNum">     123 </span>            :       penalty * (get(field_interior) - get(field_exterior));
+<span class="lineNum">     124 </span>            : }
+<span class="lineNum">     125 </span>            : 
+<span class="lineNum">     126 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">     127 </span>            : void FirstOrderInternalPenaltyFlux&lt;Dim&gt;::compute_dirichlet_boundary(
+<span class="lineNum">     128 </span>            :     const gsl::not_null&lt;Scalar&lt;DataVector&gt;*&gt; numerical_flux_for_field,
+<span class="lineNum">     129 </span>            :     const gsl::not_null&lt;tnsr::I&lt;DataVector, Dim, Frame::Inertial&gt;*&gt;
+<span class="lineNum">     130 </span>            :         numerical_flux_for_auxiliary_field,
+<span class="lineNum">     131 </span>            :     const Scalar&lt;DataVector&gt;&amp; dirichlet_field,
+<span class="lineNum">     132 </span>            :     const tnsr::i&lt;DataVector, Dim, Frame::Inertial&gt;&amp; interface_unit_normal)
+<span class="lineNum">     133 </span>            :     const noexcept {
+<span class="lineNum">     134 </span>            :   // Need polynomial degress and element size to compute this dynamically
+<span class="lineNum">     135 </span>            :   const double penalty = penalty_parameter_;
+<span class="lineNum">     136 </span>            : 
+<span class="lineNum">     137 </span>            :   // The minus sign is to cancel the one in `lift_flux`
+<span class="lineNum">     138 </span>            :   for (size_t d = 0; d &lt; Dim; d++) {
+<span class="lineNum">     139 </span>            :     numerical_flux_for_auxiliary_field-&gt;get(d) =
+<span class="lineNum">     140 </span>            :         -interface_unit_normal.get(d) * get(dirichlet_field);
+<span class="lineNum">     141 </span>            :   }
+<span class="lineNum">     142 </span>            : 
+<span class="lineNum">     143 </span>            :   // The minus sign in the equation is canceled by the one in `lift_flux`
+<span class="lineNum">     144 </span>            :   numerical_flux_for_field-&gt;get() = 2. * penalty * get(dirichlet_field);
+<span class="lineNum">     145 </span>            : }
+<span class="lineNum">     146 </span>            : 
+<span class="lineNum">     147 </span>            : }  // namespace Poisson
+<span class="lineNum">     148 </span>            : 
+<span class="lineNum">     149 </span>            : // Instantiate needed gradient and divergence templates
+<span class="lineNum">     150 </span>            : #include &quot;NumericalAlgorithms/LinearOperators/Divergence.tpp&quot;  // IWYU pragma: keep
+<span class="lineNum">     151 </span>            : #include &quot;NumericalAlgorithms/LinearOperators/PartialDerivatives.tpp&quot;  // IWYU pragma: keep
+<span class="lineNum">     152 </span>            : 
+<span class="lineNum">     153 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">     154 </span><span class="lineNoCov">          0 : using variables_tags =</span>
+<span class="lineNum">     155 </span>            :     typename Poisson::FirstOrderSystem&lt;Dim&gt;::variables_tag::type::tags_list;
+<span class="lineNum">     156 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">     157 </span><span class="lineNoCov">          0 : using grad_tags = typename Poisson::FirstOrderSystem&lt;Dim&gt;::gradient_tags;</span>
+<span class="lineNum">     158 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">     159 </span><span class="lineNoCov">          0 : using div_tags = typename Poisson::FirstOrderSystem&lt;Dim&gt;::divergence_tags;</span>
+<span class="lineNum">     160 </span>            : 
+<span class="lineNum">     161 </span><span class="lineNoCov">          0 : #define DIM(data) BOOST_PP_TUPLE_ELEM(0, data)</span>
+<span class="lineNum">     162 </span>            : 
+<span class="lineNum">     163 </span><span class="lineNoCov">          0 : #define INSTANTIATION(_, data)                                             \</span>
+<span class="lineNum">     164 </span>            :   template class Poisson::ComputeFirstOrderOperatorAction&lt;DIM(data)&gt;;      \
+<span class="lineNum">     165 </span>            :   template class Poisson::ComputeFirstOrderNormalDotFluxes&lt;DIM(data)&gt;;     \
+<span class="lineNum">     166 </span>            :   template class Poisson::FirstOrderInternalPenaltyFlux&lt;DIM(data)&gt;;        \
+<span class="lineNum">     167 </span>            :   template Variables&lt;                                                      \
+<span class="lineNum">     168 </span>            :       db::wrap_tags_in&lt;Tags::deriv, grad_tags&lt;DIM(data)&gt;,                  \
+<span class="lineNum">     169 </span>            :                        tmpl::size_t&lt;DIM(data)&gt;, Frame::Inertial&gt;&gt;          \
+<span class="lineNum">     170 </span>            :   partial_derivatives&lt;grad_tags&lt;DIM(data)&gt;, variables_tags&lt;DIM(data)&gt;,     \
+<span class="lineNum">     171 </span>            :                       DIM(data), Frame::Inertial&gt;(                         \
+<span class="lineNum">     172 </span>            :       const Variables&lt;variables_tags&lt;DIM(data)&gt;&gt;&amp;, const Mesh&lt;DIM(data)&gt;&amp;, \
+<span class="lineNum">     173 </span>            :       const InverseJacobian&lt;DataVector, DIM(data), Frame::Logical,         \
+<span class="lineNum">     174 </span>            :                             Frame::Inertial&gt;&amp;) noexcept;                   \
+<span class="lineNum">     175 </span>            :   template Variables&lt;db::wrap_tags_in&lt;Tags::div, div_tags&lt;DIM(data)&gt;&gt;&gt;     \
+<span class="lineNum">     176 </span>            :   divergence&lt;div_tags&lt;DIM(data)&gt;, DIM(data), Frame::Inertial&gt;(             \
+<span class="lineNum">     177 </span>            :       const Variables&lt;div_tags&lt;DIM(data)&gt;&gt;&amp;, const Mesh&lt;DIM(data)&gt;&amp;,       \
+<span class="lineNum">     178 </span>            :       const InverseJacobian&lt;DataVector, DIM(data), Frame::Logical,         \
+<span class="lineNum">     179 </span>            :                             Frame::Inertial&gt;&amp;) noexcept;
+<span class="lineNum">     180 </span>            : 
+<span class="lineNum">     181 </span>            : GENERATE_INSTANTIATIONS(INSTANTIATION, (1, 2, 3))
+<span class="lineNum">     182 </span>            : 
+<span class="lineNum">     183 </span>            : #undef INSTANTIATION
+<span class="lineNum">     184 </span>            : #undef DIM
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,995 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Evolution/Systems/GeneralizedHarmonic/GaugeSourceFunctions/DampedHarmonic.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">Evolution/Systems/GeneralizedHarmonic/GaugeSourceFunctions</a> - DampedHarmonic.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;Evolution/Systems/GeneralizedHarmonic/GaugeSourceFunctions/DampedHarmonic.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;array&gt;
+<span class="lineNum">       7 </span>            : #include &lt;cmath&gt;
+<span class="lineNum">       8 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : #include &quot;DataStructures/DataVector.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;DataStructures/TempBuffer.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;DataStructures/Tensor/EagerMath/DotProduct.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;DataStructures/Tensor/Tensor.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;DataStructures/Variables.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;PointwiseFunctions/GeneralRelativity/ComputeGhQuantities.hpp&quot;
+<span class="lineNum">      16 </span>            : #include &quot;PointwiseFunctions/GeneralRelativity/ComputeSpacetimeQuantities.hpp&quot;
+<span class="lineNum">      17 </span>            : #include &quot;Time/Time.hpp&quot;
+<span class="lineNum">      18 </span>            : #include &quot;Utilities/ConstantExpressions.hpp&quot;
+<span class="lineNum">      19 </span>            : #include &quot;Utilities/ContainerHelpers.hpp&quot;
+<span class="lineNum">      20 </span>            : #include &quot;Utilities/GenerateInstantiations.hpp&quot;
+<span class="lineNum">      21 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      22 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : // IWYU pragma: no_forward_declare Tensor
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            : namespace GeneralizedHarmonic {
+<span class="lineNum">      27 </span>            : namespace DampedHarmonicGauge_detail {
+<span class="lineNum">      28 </span>            : // Spatial weight function used in the damped harmonic gauge source
+<span class="lineNum">      29 </span>            : // function.
+<span class="lineNum">      30 </span>            : //
+<span class="lineNum">      31 </span>            : // The spatial weight function is: \f[ W(x^i) = \exp(- (r / \sigma_r)^2) \f]
+<span class="lineNum">      32 </span>            : // This function can be written with an extra factor inside the exponent in
+<span class="lineNum">      33 </span>            : // literature, e.g. \cite Deppe2018uye. We absorb that in \f$\sigma_r\f$.
+<span class="lineNum">      34 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">      35 </span>            : void weight_function(const gsl::not_null&lt;Scalar&lt;DataType&gt;*&gt; weight,
+<span class="lineNum">      36 </span>            :                      const tnsr::I&lt;DataType, SpatialDim, Frame&gt;&amp; coords,
+<span class="lineNum">      37 </span>            :                      const double sigma_r) noexcept {
+<span class="lineNum">      38 </span>            :   if (UNLIKELY(get_size(get(*weight)) != get_size(get&lt;0&gt;(coords)))) {
+<span class="lineNum">      39 </span>            :     *weight = Scalar&lt;DataType&gt;(get_size(get&lt;0&gt;(coords)));
+<span class="lineNum">      40 </span>            :   }
+<span class="lineNum">      41 </span>            :   const auto&amp; r_squared = dot_product(coords, coords);
+<span class="lineNum">      42 </span>            :   get(*weight) = exp(-get(r_squared) / pow&lt;2&gt;(sigma_r));
+<span class="lineNum">      43 </span>            : }
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">      46 </span>            : Scalar&lt;DataType&gt; weight_function(
+<span class="lineNum">      47 </span>            :     const tnsr::I&lt;DataType, SpatialDim, Frame&gt;&amp; coords,
+<span class="lineNum">      48 </span>            :     const double sigma_r) noexcept {
+<span class="lineNum">      49 </span>            :   Scalar&lt;DataType&gt; weight{};
+<span class="lineNum">      50 </span>            :   GeneralizedHarmonic::DampedHarmonicGauge_detail::weight_function(
+<span class="lineNum">      51 </span>            :       make_not_null(&amp;weight), coords, sigma_r);
+<span class="lineNum">      52 </span>            :   return weight;
+<span class="lineNum">      53 </span>            : }
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span>            : // Spacetime derivatives of the spatial weight function that enters the
+<span class="lineNum">      56 </span>            : // damped harmonic gauge source function.
+<span class="lineNum">      57 </span>            : //
+<span class="lineNum">      58 </span>            : // Compute the derivatives :
+<span class="lineNum">      59 </span>            : // \partial_a W(x^i)= \partial_a \exp(- (r/\sigma_r)^2)
+<span class="lineNum">      60 </span>            : //                  = (-2 * x^i / \sigma_r^2) * exp(-(r/\sigma_r)^2)
+<span class="lineNum">      61 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">      62 </span>            : void spacetime_deriv_of_weight_function(
+<span class="lineNum">      63 </span>            :     const gsl::not_null&lt;tnsr::a&lt;DataType, SpatialDim, Frame&gt;*&gt; d4_weight,
+<span class="lineNum">      64 </span>            :     const tnsr::I&lt;DataType, SpatialDim, Frame&gt;&amp; coords,
+<span class="lineNum">      65 </span>            :     const double sigma_r) noexcept {
+<span class="lineNum">      66 </span>            :   if (UNLIKELY(get_size(get&lt;0&gt;(*d4_weight)) != get_size(get&lt;0&gt;(coords)))) {
+<span class="lineNum">      67 </span>            :     *d4_weight = tnsr::a&lt;DataType, SpatialDim, Frame&gt;(get_size(get&lt;0&gt;(coords)));
+<span class="lineNum">      68 </span>            :   }
+<span class="lineNum">      69 </span>            :   const DataType pre_factor =
+<span class="lineNum">      70 </span>            :       get(weight_function(coords, sigma_r)) * (-2. / pow&lt;2&gt;(sigma_r));
+<span class="lineNum">      71 </span>            :   // time derivative of weight function is zero
+<span class="lineNum">      72 </span>            :   get&lt;0&gt;(*d4_weight) = 0.;
+<span class="lineNum">      73 </span>            :   for (size_t i = 0; i &lt; SpatialDim; ++i) {
+<span class="lineNum">      74 </span>            :     d4_weight-&gt;get(1 + i) = pre_factor * coords.get(i);
+<span class="lineNum">      75 </span>            :   }
+<span class="lineNum">      76 </span>            : }
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">      79 </span>            : tnsr::a&lt;DataType, SpatialDim, Frame&gt; spacetime_deriv_of_weight_function(
+<span class="lineNum">      80 </span>            :     const tnsr::I&lt;DataType, SpatialDim, Frame&gt;&amp; coords,
+<span class="lineNum">      81 </span>            :     const double sigma_r) noexcept {
+<span class="lineNum">      82 </span>            :   tnsr::a&lt;DataType, SpatialDim, Frame&gt; d4_weight{};
+<span class="lineNum">      83 </span>            :   GeneralizedHarmonic::DampedHarmonicGauge_detail::
+<span class="lineNum">      84 </span>            :       spacetime_deriv_of_weight_function(make_not_null(&amp;d4_weight), coords,
+<span class="lineNum">      85 </span>            :                                          sigma_r);
+<span class="lineNum">      86 </span>            :   return d4_weight;
+<span class="lineNum">      87 </span>            : }
+<span class="lineNum">      88 </span>            : 
+<span class="lineNum">      89 </span>            : // Roll-on function for the damped harmonic gauge.
+<span class="lineNum">      90 </span>            : //
+<span class="lineNum">      91 </span>            : // For times after \f$t_0\f$, compute the roll-on function
+<span class="lineNum">      92 </span>            : // \f$ R(t) = 1 - \exp(-((t - t_0)/\sigma_t)^4]) \f$,
+<span class="lineNum">      93 </span>            : // and return \f$ R(t) = 0\f$ at times before.
+<span class="lineNum">      94 </span>            : double roll_on_function(const double time, const double t_start,
+<span class="lineNum">      95 </span>            :                         const double sigma_t) noexcept {
+<span class="lineNum">      96 </span>            :   if (time &lt; t_start) {
+<span class="lineNum">      97 </span>            :     return 0.;
+<span class="lineNum">      98 </span>            :   }
+<span class="lineNum">      99 </span>            :   return 1. - exp(-pow&lt;4&gt;((time - t_start) / sigma_t));
+<span class="lineNum">     100 </span>            : }
+<span class="lineNum">     101 </span>            : 
+<span class="lineNum">     102 </span>            : // Time derivative of the damped harmonic gauge roll-on function.
+<span class="lineNum">     103 </span>            : //
+<span class="lineNum">     104 </span>            : // \details Compute the time derivative:
+<span class="lineNum">     105 </span>            : // \f{align*}
+<span class="lineNum">     106 </span>            : // \partial_0 R(t) = 4 exp[-((t - t0)/\sigma_t)^4] (t - t0)^3 / sigma_t^4
+<span class="lineNum">     107 </span>            : double time_deriv_of_roll_on_function(const double time, const double t_start,
+<span class="lineNum">     108 </span>            :                                       const double sigma_t) noexcept {
+<span class="lineNum">     109 </span>            :   if (time &lt; t_start) {
+<span class="lineNum">     110 </span>            :     return 0.;
+<span class="lineNum">     111 </span>            :   }
+<span class="lineNum">     112 </span>            :   const double time_since_start_over_sigma = (time - t_start) / sigma_t;
+<span class="lineNum">     113 </span>            :   return exp(-pow&lt;4&gt;(time_since_start_over_sigma)) * 4. *
+<span class="lineNum">     114 </span>            :          pow&lt;3&gt;(time_since_start_over_sigma) / sigma_t;
+<span class="lineNum">     115 </span>            : }
+<span class="lineNum">     116 </span>            : 
+<span class="lineNum">     117 </span>            : // The log factor that appears in damped harmonic gauge source function.
+<span class="lineNum">     118 </span>            : //
+<span class="lineNum">     119 </span>            : // Calculates:  \f$ logF = \mathrm{log}(g^p/N) \f$.
+<span class="lineNum">     120 </span>            : template &lt;typename DataType&gt;
+<span class="lineNum">     121 </span>            : void log_factor_metric_lapse(const gsl::not_null&lt;Scalar&lt;DataType&gt;*&gt; logfac,
+<span class="lineNum">     122 </span>            :                              const Scalar&lt;DataType&gt;&amp; lapse,
+<span class="lineNum">     123 </span>            :                              const Scalar&lt;DataType&gt;&amp; sqrt_det_spatial_metric,
+<span class="lineNum">     124 </span>            :                              const double exponent) noexcept {
+<span class="lineNum">     125 </span>            :   if (UNLIKELY(get_size(get(*logfac)) != get_size(get(lapse)))) {
+<span class="lineNum">     126 </span>            :     *logfac = Scalar&lt;DataType&gt;(get_size(get(lapse)));
+<span class="lineNum">     127 </span>            :   }
+<span class="lineNum">     128 </span>            :   // branching below is to avoid using pow for performance reasons
+<span class="lineNum">     129 </span>            :   if (exponent == 0.) {
+<span class="lineNum">     130 </span>            :     get(*logfac) = -log(get(lapse));
+<span class="lineNum">     131 </span>            :   } else if (exponent == 0.5) {
+<span class="lineNum">     132 </span>            :     get(*logfac) = log(get(sqrt_det_spatial_metric) / get(lapse));
+<span class="lineNum">     133 </span>            :   } else {
+<span class="lineNum">     134 </span>            :     get(*logfac) =
+<span class="lineNum">     135 </span>            :         2. * exponent * log(get(sqrt_det_spatial_metric)) - log(get(lapse));
+<span class="lineNum">     136 </span>            :   }
+<span class="lineNum">     137 </span>            : }
+<span class="lineNum">     138 </span>            : 
+<span class="lineNum">     139 </span>            : template &lt;typename DataType&gt;
+<span class="lineNum">     140 </span>            : Scalar&lt;DataType&gt; log_factor_metric_lapse(
+<span class="lineNum">     141 </span>            :     const Scalar&lt;DataType&gt;&amp; lapse,
+<span class="lineNum">     142 </span>            :     const Scalar&lt;DataType&gt;&amp; sqrt_det_spatial_metric,
+<span class="lineNum">     143 </span>            :     const double exponent) noexcept {
+<span class="lineNum">     144 </span>            :   Scalar&lt;DataType&gt; logfac{};
+<span class="lineNum">     145 </span>            :   GeneralizedHarmonic::DampedHarmonicGauge_detail::log_factor_metric_lapse(
+<span class="lineNum">     146 </span>            :       make_not_null(&amp;logfac), lapse, sqrt_det_spatial_metric, exponent);
+<span class="lineNum">     147 </span>            :   return logfac;
+<span class="lineNum">     148 </span>            : }
+<span class="lineNum">     149 </span>            : 
+<span class="lineNum">     150 </span>            : // Spacetime derivatives of the log factor that appears in the
+<span class="lineNum">     151 </span>            : // damped harmonic gauge source function.
+<span class="lineNum">     152 </span>            : //
+<span class="lineNum">     153 </span>            : // Computes the spacetime derivatives:
+<span class="lineNum">     154 </span>            : //  \partial_a logF = (p/g)\partial_a g - (1/N)\partial_a N
+<span class="lineNum">     155 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     156 </span>            : void spacetime_deriv_of_log_factor_metric_lapse(
+<span class="lineNum">     157 </span>            :     const gsl::not_null&lt;tnsr::a&lt;DataType, SpatialDim, Frame&gt;*&gt; d4_logfac,
+<span class="lineNum">     158 </span>            :     const Scalar&lt;DataType&gt;&amp; lapse,
+<span class="lineNum">     159 </span>            :     const tnsr::I&lt;DataType, SpatialDim, Frame&gt;&amp; shift,
+<span class="lineNum">     160 </span>            :     const tnsr::A&lt;DataType, SpatialDim, Frame&gt;&amp; spacetime_unit_normal,
+<span class="lineNum">     161 </span>            :     const tnsr::II&lt;DataType, SpatialDim, Frame&gt;&amp; inverse_spatial_metric,
+<span class="lineNum">     162 </span>            :     const Scalar&lt;DataType&gt;&amp; sqrt_det_spatial_metric,
+<span class="lineNum">     163 </span>            :     const tnsr::ii&lt;DataType, SpatialDim, Frame&gt;&amp; dt_spatial_metric,
+<span class="lineNum">     164 </span>            :     const tnsr::aa&lt;DataType, SpatialDim, Frame&gt;&amp; pi,
+<span class="lineNum">     165 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; phi,
+<span class="lineNum">     166 </span>            :     const double exponent) noexcept {
+<span class="lineNum">     167 </span>            :   if (UNLIKELY(get_size(get&lt;0&gt;(*d4_logfac)) != get_size(get(lapse)))) {
+<span class="lineNum">     168 </span>            :     *d4_logfac = tnsr::a&lt;DataType, SpatialDim, Frame&gt;(get_size(get(lapse)));
+<span class="lineNum">     169 </span>            :   }
+<span class="lineNum">     170 </span>            :   // Use a TempBuffer to reduce total number of allocations. This is especially
+<span class="lineNum">     171 </span>            :   // important in a multithreaded environment.
+<span class="lineNum">     172 </span>            :   TempBuffer&lt;tmpl::list&lt;::Tags::Tempa&lt;0, SpatialDim, Frame, DataType&gt;,
+<span class="lineNum">     173 </span>            :                         ::Tags::Tempi&lt;1, SpatialDim, Frame, DataType&gt;,
+<span class="lineNum">     174 </span>            :                         ::Tags::Tempa&lt;2, SpatialDim, Frame, DataType&gt;,
+<span class="lineNum">     175 </span>            :                         ::Tags::TempScalar&lt;3, DataType&gt;,
+<span class="lineNum">     176 </span>            :                         ::Tags::TempScalar&lt;4, DataType&gt;&gt;&gt;
+<span class="lineNum">     177 </span>            :       buffer(get_size(get(lapse)));
+<span class="lineNum">     178 </span>            :   auto&amp; d_g = get&lt;::Tags::Tempa&lt;0, SpatialDim, Frame, DataType&gt;&gt;(buffer);
+<span class="lineNum">     179 </span>            :   auto&amp; d3_lapse = get&lt;::Tags::Tempi&lt;1, SpatialDim, Frame, DataType&gt;&gt;(buffer);
+<span class="lineNum">     180 </span>            :   auto&amp; d_lapse = get&lt;::Tags::Tempa&lt;2, SpatialDim, Frame, DataType&gt;&gt;(buffer);
+<span class="lineNum">     181 </span>            :   auto&amp; dt_lapse = get&lt;::Tags::TempScalar&lt;3, DataType&gt;&gt;(buffer);
+<span class="lineNum">     182 </span>            :   auto&amp; one_over_lapse = get&lt;::Tags::TempScalar&lt;4, DataType&gt;&gt;(buffer);
+<span class="lineNum">     183 </span>            : 
+<span class="lineNum">     184 </span>            :   // Get \f$ \partial_a g\f$
+<span class="lineNum">     185 </span>            :   spacetime_deriv_of_det_spatial_metric&lt;SpatialDim, Frame, DataType&gt;(
+<span class="lineNum">     186 </span>            :       make_not_null(&amp;d_g), sqrt_det_spatial_metric, inverse_spatial_metric,
+<span class="lineNum">     187 </span>            :       dt_spatial_metric, phi);
+<span class="lineNum">     188 </span>            :   // Get \f$ \partial_a N\f$
+<span class="lineNum">     189 </span>            :   time_deriv_of_lapse&lt;SpatialDim, Frame, DataType&gt;(
+<span class="lineNum">     190 </span>            :       make_not_null(&amp;dt_lapse), lapse, shift, spacetime_unit_normal, phi, pi);
+<span class="lineNum">     191 </span>            :   spatial_deriv_of_lapse&lt;SpatialDim, Frame, DataType&gt;(
+<span class="lineNum">     192 </span>            :       make_not_null(&amp;d3_lapse), lapse, spacetime_unit_normal, phi);
+<span class="lineNum">     193 </span>            :   get&lt;0&gt;(d_lapse) = get(dt_lapse);
+<span class="lineNum">     194 </span>            :   for (size_t i = 0; i &lt; SpatialDim; ++i) {
+<span class="lineNum">     195 </span>            :     d_lapse.get(1 + i) = d3_lapse.get(i);
+<span class="lineNum">     196 </span>            :   }
+<span class="lineNum">     197 </span>            :   // Compute
+<span class="lineNum">     198 </span>            :   get(one_over_lapse) = 1. / get(lapse);
+<span class="lineNum">     199 </span>            :   if (exponent == 0.) {
+<span class="lineNum">     200 </span>            :     for (size_t a = 0; a &lt; SpatialDim + 1; ++a) {
+<span class="lineNum">     201 </span>            :       d4_logfac-&gt;get(a) = -get(one_over_lapse) * d_lapse.get(a);
+<span class="lineNum">     202 </span>            :     }
+<span class="lineNum">     203 </span>            :   } else {
+<span class="lineNum">     204 </span>            :     const auto p_over_g = exponent / square(get(sqrt_det_spatial_metric));
+<span class="lineNum">     205 </span>            :     for (size_t a = 0; a &lt; SpatialDim + 1; ++a) {
+<span class="lineNum">     206 </span>            :       d4_logfac-&gt;get(a) =
+<span class="lineNum">     207 </span>            :           p_over_g * d_g.get(a) - get(one_over_lapse) * d_lapse.get(a);
+<span class="lineNum">     208 </span>            :     }
+<span class="lineNum">     209 </span>            :   }
+<span class="lineNum">     210 </span>            : }
+<span class="lineNum">     211 </span>            : 
+<span class="lineNum">     212 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     213 </span>            : tnsr::a&lt;DataType, SpatialDim, Frame&gt; spacetime_deriv_of_log_factor_metric_lapse(
+<span class="lineNum">     214 </span>            :     const Scalar&lt;DataType&gt;&amp; lapse,
+<span class="lineNum">     215 </span>            :     const tnsr::I&lt;DataType, SpatialDim, Frame&gt;&amp; shift,
+<span class="lineNum">     216 </span>            :     const tnsr::A&lt;DataType, SpatialDim, Frame&gt;&amp; spacetime_unit_normal,
+<span class="lineNum">     217 </span>            :     const tnsr::II&lt;DataType, SpatialDim, Frame&gt;&amp; inverse_spatial_metric,
+<span class="lineNum">     218 </span>            :     const Scalar&lt;DataType&gt;&amp; sqrt_det_spatial_metric,
+<span class="lineNum">     219 </span>            :     const tnsr::ii&lt;DataType, SpatialDim, Frame&gt;&amp; dt_spatial_metric,
+<span class="lineNum">     220 </span>            :     const tnsr::aa&lt;DataType, SpatialDim, Frame&gt;&amp; pi,
+<span class="lineNum">     221 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; phi,
+<span class="lineNum">     222 </span>            :     const double exponent) noexcept {
+<span class="lineNum">     223 </span>            :   tnsr::a&lt;DataType, SpatialDim, Frame&gt; d4_logfac{};
+<span class="lineNum">     224 </span>            :   GeneralizedHarmonic::DampedHarmonicGauge_detail::
+<span class="lineNum">     225 </span>            :       spacetime_deriv_of_log_factor_metric_lapse(
+<span class="lineNum">     226 </span>            :           make_not_null(&amp;d4_logfac), lapse, shift, spacetime_unit_normal,
+<span class="lineNum">     227 </span>            :           inverse_spatial_metric, sqrt_det_spatial_metric, dt_spatial_metric,
+<span class="lineNum">     228 </span>            :           pi, phi, exponent);
+<span class="lineNum">     229 </span>            :   return d4_logfac;
+<span class="lineNum">     230 </span>            : }
+<span class="lineNum">     231 </span>            : 
+<span class="lineNum">     232 </span>            : // Spacetime derivatives of the log factor (that appears in
+<span class="lineNum">     233 </span>            : // damped harmonic gauge source function), raised to an exponent.
+<span class="lineNum">     234 </span>            : //
+<span class="lineNum">     235 </span>            : // Computes the spacetime derivatives:
+<span class="lineNum">     236 </span>            : //  \partial_a (logF)^q = q (logF)^{q-1} \partial_a (logF)
+<span class="lineNum">     237 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     238 </span>            : void spacetime_deriv_of_power_log_factor_metric_lapse(
+<span class="lineNum">     239 </span>            :     const gsl::not_null&lt;tnsr::a&lt;DataType, SpatialDim, Frame&gt;*&gt; d4_powlogfac,
+<span class="lineNum">     240 </span>            :     const Scalar&lt;DataType&gt;&amp; lapse,
+<span class="lineNum">     241 </span>            :     const tnsr::I&lt;DataType, SpatialDim, Frame&gt;&amp; shift,
+<span class="lineNum">     242 </span>            :     const tnsr::A&lt;DataType, SpatialDim, Frame&gt;&amp; spacetime_unit_normal,
+<span class="lineNum">     243 </span>            :     const tnsr::II&lt;DataType, SpatialDim, Frame&gt;&amp; inverse_spatial_metric,
+<span class="lineNum">     244 </span>            :     const Scalar&lt;DataType&gt;&amp; sqrt_det_spatial_metric,
+<span class="lineNum">     245 </span>            :     const tnsr::ii&lt;DataType, SpatialDim, Frame&gt;&amp; dt_spatial_metric,
+<span class="lineNum">     246 </span>            :     const tnsr::aa&lt;DataType, SpatialDim, Frame&gt;&amp; pi,
+<span class="lineNum">     247 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; phi, const double g_exponent,
+<span class="lineNum">     248 </span>            :     const int exponent) noexcept {
+<span class="lineNum">     249 </span>            :   if (UNLIKELY(get_size(get&lt;0&gt;(*d4_powlogfac)) != get_size(get(lapse)))) {
+<span class="lineNum">     250 </span>            :     *d4_powlogfac = tnsr::a&lt;DataType, SpatialDim, Frame&gt;(get_size(get(lapse)));
+<span class="lineNum">     251 </span>            :   }
+<span class="lineNum">     252 </span>            :   // Use a TempBuffer to reduce total number of allocations. This is especially
+<span class="lineNum">     253 </span>            :   // important in a multithreaded environment.
+<span class="lineNum">     254 </span>            :   TempBuffer&lt;tmpl::list&lt;::Tags::Tempa&lt;0, SpatialDim, Frame, DataType&gt;,
+<span class="lineNum">     255 </span>            :                         ::Tags::TempScalar&lt;1, DataType&gt;,
+<span class="lineNum">     256 </span>            :                         ::Tags::TempScalar&lt;2, DataType&gt;&gt;&gt;
+<span class="lineNum">     257 </span>            :       buffer(get_size(get(lapse)));
+<span class="lineNum">     258 </span>            :   auto&amp; dlogfac = get&lt;::Tags::Tempa&lt;0, SpatialDim, Frame, DataType&gt;&gt;(buffer);
+<span class="lineNum">     259 </span>            :   auto&amp; logfac = get&lt;::Tags::TempScalar&lt;1, DataType&gt;&gt;(buffer);
+<span class="lineNum">     260 </span>            :   auto&amp; prefac = get&lt;::Tags::TempScalar&lt;2, DataType&gt;&gt;(buffer);
+<span class="lineNum">     261 </span>            : 
+<span class="lineNum">     262 </span>            :   // Compute derivative
+<span class="lineNum">     263 </span>            :   spacetime_deriv_of_log_factor_metric_lapse&lt;SpatialDim, Frame, DataType&gt;(
+<span class="lineNum">     264 </span>            :       make_not_null(&amp;dlogfac), lapse, shift, spacetime_unit_normal,
+<span class="lineNum">     265 </span>            :       inverse_spatial_metric, sqrt_det_spatial_metric, dt_spatial_metric, pi,
+<span class="lineNum">     266 </span>            :       phi, g_exponent);
+<span class="lineNum">     267 </span>            :   // Apply pre-factor
+<span class="lineNum">     268 </span>            :   if (UNLIKELY(exponent == 0)) {
+<span class="lineNum">     269 </span>            :     for (size_t a = 0; a &lt; SpatialDim + 1; ++a) {
+<span class="lineNum">     270 </span>            :       d4_powlogfac-&gt;get(a) = 0.;
+<span class="lineNum">     271 </span>            :     }
+<span class="lineNum">     272 </span>            :   } else if (UNLIKELY(exponent == 1)) {
+<span class="lineNum">     273 </span>            :     for (size_t a = 0; a &lt; SpatialDim + 1; ++a) {
+<span class="lineNum">     274 </span>            :       d4_powlogfac-&gt;get(a) = dlogfac.get(a);
+<span class="lineNum">     275 </span>            :     }
+<span class="lineNum">     276 </span>            :   } else {
+<span class="lineNum">     277 </span>            :     log_factor_metric_lapse&lt;DataType&gt;(make_not_null(&amp;logfac), lapse,
+<span class="lineNum">     278 </span>            :                                       sqrt_det_spatial_metric, g_exponent);
+<span class="lineNum">     279 </span>            :     get(prefac) =
+<span class="lineNum">     280 </span>            :         static_cast&lt;double&gt;(exponent) * pow(get(logfac), exponent - 1);
+<span class="lineNum">     281 </span>            :     for (size_t a = 0; a &lt; SpatialDim + 1; ++a) {
+<span class="lineNum">     282 </span>            :       d4_powlogfac-&gt;get(a) = get(prefac) * dlogfac.get(a);
+<span class="lineNum">     283 </span>            :     }
+<span class="lineNum">     284 </span>            :   }
+<span class="lineNum">     285 </span>            : }
+<span class="lineNum">     286 </span>            : 
+<span class="lineNum">     287 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     288 </span>            : tnsr::a&lt;DataType, SpatialDim, Frame&gt;
+<span class="lineNum">     289 </span>            : spacetime_deriv_of_power_log_factor_metric_lapse(
+<span class="lineNum">     290 </span>            :     const Scalar&lt;DataType&gt;&amp; lapse,
+<span class="lineNum">     291 </span>            :     const tnsr::I&lt;DataType, SpatialDim, Frame&gt;&amp; shift,
+<span class="lineNum">     292 </span>            :     const tnsr::A&lt;DataType, SpatialDim, Frame&gt;&amp; spacetime_unit_normal,
+<span class="lineNum">     293 </span>            :     const tnsr::II&lt;DataType, SpatialDim, Frame&gt;&amp; inverse_spatial_metric,
+<span class="lineNum">     294 </span>            :     const Scalar&lt;DataType&gt;&amp; sqrt_det_spatial_metric,
+<span class="lineNum">     295 </span>            :     const tnsr::ii&lt;DataType, SpatialDim, Frame&gt;&amp; dt_spatial_metric,
+<span class="lineNum">     296 </span>            :     const tnsr::aa&lt;DataType, SpatialDim, Frame&gt;&amp; pi,
+<span class="lineNum">     297 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; phi, const double g_exponent,
+<span class="lineNum">     298 </span>            :     const int exponent) noexcept {
+<span class="lineNum">     299 </span>            :   tnsr::a&lt;DataType, SpatialDim, Frame&gt; d4_powlogfac{};
+<span class="lineNum">     300 </span>            :   GeneralizedHarmonic::DampedHarmonicGauge_detail::
+<span class="lineNum">     301 </span>            :       spacetime_deriv_of_power_log_factor_metric_lapse(
+<span class="lineNum">     302 </span>            :           make_not_null(&amp;d4_powlogfac), lapse, shift, spacetime_unit_normal,
+<span class="lineNum">     303 </span>            :           inverse_spatial_metric, sqrt_det_spatial_metric, dt_spatial_metric,
+<span class="lineNum">     304 </span>            :           pi, phi, g_exponent, exponent);
+<span class="lineNum">     305 </span>            :   return d4_powlogfac;
+<span class="lineNum">     306 </span>            : }
+<span class="lineNum">     307 </span>            : }  // namespace DampedHarmonicGauge_detail
+<span class="lineNum">     308 </span>            : 
+<span class="lineNum">     309 </span>            : // Assemble the gauge source function.
+<span class="lineNum">     310 </span>            : //
+<span class="lineNum">     311 </span>            : // Recall that its covariant form is:
+<span class="lineNum">     312 </span>            : // H_a := [1 - R_{H_\mathrm{init}}(t)] H_a^\mathrm{init} +
+<span class="lineNum">     313 </span>            : //  [\mu_{L1} log(\sqrt{g}/N) + \mu_{L2} log(1/N)] t_a - \mu_S g_{ai} N^i / N
+<span class="lineNum">     314 </span>            : //
+<span class="lineNum">     315 </span>            : // where \f$N, N^k\f$ are the lapse and shift, and \f$n_k\f$ is the unit
+<span class="lineNum">     316 </span>            : // normal one-form to the spatial slice, as above. The pre-factors:
+<span class="lineNum">     317 </span>            : //
+<span class="lineNum">     318 </span>            : //  \mu_{L1} = A_{L1} R_{L1}(t) W(x^i) log(\sqrt{g}/N)^{e_{L1}},
+<span class="lineNum">     319 </span>            : //  \mu_{L2} = A_{L2} R_{L2}(t) W(x^i) log(1/N)^{e_{L2}},
+<span class="lineNum">     320 </span>            : //  \mu_{S} = A_{S} R_{S}(t) W(x^i) log(\sqrt{g}/N)^{e_{S}},
+<span class="lineNum">     321 </span>            : //
+<span class="lineNum">     322 </span>            : // contain the temporal and spatial roll-on functions.
+<span class="lineNum">     323 </span>            : template &lt;size_t SpatialDim, typename Frame&gt;
+<span class="lineNum">     324 </span><span class="lineNoCov">          0 : void damped_harmonic_h(</span>
+<span class="lineNum">     325 </span>            :     const gsl::not_null&lt;
+<span class="lineNum">     326 </span>            :         typename db::item_type&lt;Tags::GaugeH&lt;SpatialDim, Frame&gt;&gt;*&gt;
+<span class="lineNum">     327 </span>            :         gauge_h,
+<span class="lineNum">     328 </span>            :     const typename db::item_type&lt;Tags::InitialGaugeH&lt;SpatialDim, Frame&gt;&gt;&amp;
+<span class="lineNum">     329 </span>            :         gauge_h_init,
+<span class="lineNum">     330 </span>            :     const Scalar&lt;DataVector&gt;&amp; lapse,
+<span class="lineNum">     331 </span>            :     const tnsr::I&lt;DataVector, SpatialDim, Frame&gt;&amp; shift,
+<span class="lineNum">     332 </span>            :     const Scalar&lt;DataVector&gt;&amp; sqrt_det_spatial_metric,
+<span class="lineNum">     333 </span>            :     const tnsr::aa&lt;DataVector, SpatialDim, Frame&gt;&amp; spacetime_metric,
+<span class="lineNum">     334 </span>            :     const double time, const tnsr::I&lt;DataVector, SpatialDim, Frame&gt;&amp; coords,
+<span class="lineNum">     335 </span>            :     const double amp_coef_L1, const double amp_coef_L2, const double amp_coef_S,
+<span class="lineNum">     336 </span>            :     const int exp_L1, const int exp_L2, const int exp_S,
+<span class="lineNum">     337 </span>            :     const double t_start_h_init, const double sigma_t_h_init,
+<span class="lineNum">     338 </span>            :     const double t_start_L1, const double sigma_t_L1, const double t_start_L2,
+<span class="lineNum">     339 </span>            :     const double sigma_t_L2, const double t_start_S, const double sigma_t_S,
+<span class="lineNum">     340 </span>            :     const double sigma_r) noexcept {
+<span class="lineNum">     341 </span>            :   if (UNLIKELY(get_size(get&lt;0&gt;(*gauge_h)) != get_size(get(lapse)))) {
+<span class="lineNum">     342 </span>            :     *gauge_h = typename db::item_type&lt;Tags::GaugeH&lt;SpatialDim, Frame&gt;&gt;(
+<span class="lineNum">     343 </span>            :         get_size(get(lapse)));
+<span class="lineNum">     344 </span>            :   }
+<span class="lineNum">     345 </span>            :   // Use a TempBuffer to reduce total number of allocations. This is especially
+<span class="lineNum">     346 </span>            :   // important in a multithreaded environment.
+<span class="lineNum">     347 </span>            :   TempBuffer&lt;tmpl::list&lt;::Tags::Tempa&lt;0, SpatialDim, Frame&gt;,
+<span class="lineNum">     348 </span>            :                         ::Tags::TempScalar&lt;1&gt;, ::Tags::TempScalar&lt;2&gt;,
+<span class="lineNum">     349 </span>            :                         ::Tags::TempScalar&lt;3&gt;, ::Tags::TempScalar&lt;4&gt;,
+<span class="lineNum">     350 </span>            :                         ::Tags::TempScalar&lt;5&gt;, ::Tags::TempScalar&lt;6&gt;,
+<span class="lineNum">     351 </span>            :                         ::Tags::TempScalar&lt;7&gt;, ::Tags::TempScalar&lt;8&gt;&gt;&gt;
+<span class="lineNum">     352 </span>            :       buffer(get_size(get(lapse)));
+<span class="lineNum">     353 </span>            :   auto&amp; spacetime_unit_normal_one_form =
+<span class="lineNum">     354 </span>            :       get&lt;::Tags::Tempa&lt;0, SpatialDim, Frame&gt;&gt;(buffer);
+<span class="lineNum">     355 </span>            :   auto&amp; log_fac_1 = get&lt;::Tags::TempScalar&lt;1&gt;&gt;(buffer);
+<span class="lineNum">     356 </span>            :   auto&amp; log_fac_2 = get&lt;::Tags::TempScalar&lt;2&gt;&gt;(buffer);
+<span class="lineNum">     357 </span>            :   auto&amp; weight = get&lt;::Tags::TempScalar&lt;3&gt;&gt;(buffer);
+<span class="lineNum">     358 </span>            :   auto&amp; mu_L1 = get&lt;::Tags::TempScalar&lt;4&gt;&gt;(buffer);
+<span class="lineNum">     359 </span>            :   auto&amp; mu_S = get&lt;::Tags::TempScalar&lt;5&gt;&gt;(buffer);
+<span class="lineNum">     360 </span>            :   auto&amp; mu_L2 = get&lt;::Tags::TempScalar&lt;6&gt;&gt;(buffer);
+<span class="lineNum">     361 </span>            :   auto&amp; h_prefac1 = get&lt;::Tags::TempScalar&lt;7&gt;&gt;(buffer);
+<span class="lineNum">     362 </span>            :   auto&amp; h_prefac2 = get&lt;::Tags::TempScalar&lt;8&gt;&gt;(buffer);
+<span class="lineNum">     363 </span>            : 
+<span class="lineNum">     364 </span>            :   spacetime_unit_normal_one_form =
+<span class="lineNum">     365 </span>            :       gr::spacetime_normal_one_form&lt;SpatialDim, Frame, DataVector&gt;(lapse);
+<span class="lineNum">     366 </span>            : 
+<span class="lineNum">     367 </span>            :   constexpr double exp_fac_1 = 0.5;
+<span class="lineNum">     368 </span>            :   constexpr double exp_fac_2 = 0.;
+<span class="lineNum">     369 </span>            :   DampedHarmonicGauge_detail::log_factor_metric_lapse&lt;DataVector&gt;(
+<span class="lineNum">     370 </span>            :       make_not_null(&amp;log_fac_1), lapse, sqrt_det_spatial_metric, exp_fac_1);
+<span class="lineNum">     371 </span>            :   DampedHarmonicGauge_detail::log_factor_metric_lapse&lt;DataVector&gt;(
+<span class="lineNum">     372 </span>            :       make_not_null(&amp;log_fac_2), lapse, sqrt_det_spatial_metric, exp_fac_2);
+<span class="lineNum">     373 </span>            : 
+<span class="lineNum">     374 </span>            :   const double roll_on_L1 = DampedHarmonicGauge_detail::roll_on_function(
+<span class="lineNum">     375 </span>            :       time, t_start_L1, sigma_t_L1);
+<span class="lineNum">     376 </span>            :   const double roll_on_L2 = DampedHarmonicGauge_detail::roll_on_function(
+<span class="lineNum">     377 </span>            :       time, t_start_L2, sigma_t_L2);
+<span class="lineNum">     378 </span>            :   const double roll_on_S =
+<span class="lineNum">     379 </span>            :       DampedHarmonicGauge_detail::roll_on_function(time, t_start_S, sigma_t_S);
+<span class="lineNum">     380 </span>            :   DampedHarmonicGauge_detail::weight_function&lt;SpatialDim, Frame, DataVector&gt;(
+<span class="lineNum">     381 </span>            :       make_not_null(&amp;weight), coords, sigma_r);
+<span class="lineNum">     382 </span>            : 
+<span class="lineNum">     383 </span>            :   get(mu_L1) =
+<span class="lineNum">     384 </span>            :       amp_coef_L1 * roll_on_L1 * get(weight) * pow(get(log_fac_1), exp_L1);
+<span class="lineNum">     385 </span>            :   get(mu_S) = amp_coef_S * roll_on_S * get(weight) * pow(get(log_fac_1), exp_S);
+<span class="lineNum">     386 </span>            :   get(mu_L2) =
+<span class="lineNum">     387 </span>            :       amp_coef_L2 * roll_on_L2 * get(weight) * pow(get(log_fac_2), exp_L2);
+<span class="lineNum">     388 </span>            :   get(h_prefac1) = get(mu_L1) * get(log_fac_1) + get(mu_L2) * get(log_fac_2);
+<span class="lineNum">     389 </span>            :   get(h_prefac2) = -get(mu_S) / get(lapse);
+<span class="lineNum">     390 </span>            : 
+<span class="lineNum">     391 </span>            :   const double roll_on_h_init = DampedHarmonicGauge_detail::roll_on_function(
+<span class="lineNum">     392 </span>            :       time, t_start_h_init, sigma_t_h_init);
+<span class="lineNum">     393 </span>            : 
+<span class="lineNum">     394 </span>            :   // Calculate H_a
+<span class="lineNum">     395 </span>            :   for (size_t a = 0; a &lt; SpatialDim + 1; ++a) {
+<span class="lineNum">     396 </span>            :     gauge_h-&gt;get(a) = (1. - roll_on_h_init) * gauge_h_init.get(a) +
+<span class="lineNum">     397 </span>            :                       get(h_prefac1) * spacetime_unit_normal_one_form.get(a);
+<span class="lineNum">     398 </span>            :     for (size_t i = 0; i &lt; SpatialDim; ++i) {
+<span class="lineNum">     399 </span>            :       gauge_h-&gt;get(a) +=
+<span class="lineNum">     400 </span>            :           get(h_prefac2) * spacetime_metric.get(a, i + 1) * shift.get(i);
+<span class="lineNum">     401 </span>            :     }
+<span class="lineNum">     402 </span>            :   }
+<span class="lineNum">     403 </span>            : }
+<span class="lineNum">     404 </span>            : 
+<span class="lineNum">     405 </span>            : template &lt;size_t SpatialDim, typename Frame&gt;
+<span class="lineNum">     406 </span>            : typename db::item_type&lt;Tags::GaugeH&lt;SpatialDim, Frame&gt;&gt;
+<span class="lineNum">     407 </span>            : DampedHarmonicHCompute&lt;SpatialDim, Frame&gt;::function(
+<span class="lineNum">     408 </span>            :     const typename db::item_type&lt;Tags::InitialGaugeH&lt;SpatialDim, Frame&gt;&gt;&amp;
+<span class="lineNum">     409 </span>            :         gauge_h_init,
+<span class="lineNum">     410 </span>            :     const Scalar&lt;DataVector&gt;&amp; lapse,
+<span class="lineNum">     411 </span>            :     const tnsr::I&lt;DataVector, SpatialDim, Frame&gt;&amp; shift,
+<span class="lineNum">     412 </span>            :     const Scalar&lt;DataVector&gt;&amp; sqrt_det_spatial_metric,
+<span class="lineNum">     413 </span>            :     const tnsr::aa&lt;DataVector, SpatialDim, Frame&gt;&amp; spacetime_metric,
+<span class="lineNum">     414 </span>            :     const Time&amp; time, const double&amp; t_start, const double&amp; sigma_t,
+<span class="lineNum">     415 </span>            :     const tnsr::I&lt;DataVector, SpatialDim, Frame&gt;&amp; coords,
+<span class="lineNum">     416 </span>            :     const double&amp; sigma_r) noexcept {
+<span class="lineNum">     417 </span>            :   typename db::item_type&lt;Tags::GaugeH&lt;SpatialDim, Frame&gt;&gt; gauge_h{
+<span class="lineNum">     418 </span>            :       get_size(get(lapse))};
+<span class="lineNum">     419 </span>            :   GeneralizedHarmonic::damped_harmonic_h&lt;SpatialDim, Frame&gt;(
+<span class="lineNum">     420 </span>            :       make_not_null(&amp;gauge_h), gauge_h_init, lapse, shift,
+<span class="lineNum">     421 </span>            :       sqrt_det_spatial_metric, spacetime_metric, time.value(), coords, 1., 1.,
+<span class="lineNum">     422 </span>            :       1.,                // amp_coef_{L1, L2, S}
+<span class="lineNum">     423 </span>            :       4, 4, 4,           // exp_{L1, L2, S}
+<span class="lineNum">     424 </span>            :       t_start, sigma_t,  // _h_init
+<span class="lineNum">     425 </span>            :       t_start, sigma_t,  // _L1
+<span class="lineNum">     426 </span>            :       t_start, sigma_t,  // _L2
+<span class="lineNum">     427 </span>            :       t_start, sigma_t,  // _S
+<span class="lineNum">     428 </span>            :       sigma_r);
+<span class="lineNum">     429 </span>            :   return gauge_h;
+<span class="lineNum">     430 </span>            : }
+<span class="lineNum">     431 </span>            : 
+<span class="lineNum">     432 </span>            : // Spacetime derivatives of the damped harmonic gauge source function.
+<span class="lineNum">     433 </span>            : //
+<span class="lineNum">     434 </span>            : // The following functions and struct compute spacetime derivatives, i.e.
+<span class="lineNum">     435 </span>            : // \f$\partial_a H_b\f$, of the damped hamornic source function H. From above:
+<span class="lineNum">     436 </span>            : //
+<span class="lineNum">     437 </span>            : // \partial_a H_b = \partial_a T_1 + \partial_a T_2 + \partial_a T_3
+<span class="lineNum">     438 </span>            : // H_a = T_1 + T_2 + T_3,
+<span class="lineNum">     439 </span>            : //
+<span class="lineNum">     440 </span>            : // where:
+<span class="lineNum">     441 </span>            : //
+<span class="lineNum">     442 </span>            : // T_1 = [1 - R_{H_\mathrm{init}}(t)] H_a^\mathrm{init},
+<span class="lineNum">     443 </span>            : // T_2 = [\mu_{L1} log(\sqrt{g}/N) + \mu_{L2} log(1/N)] t_a,
+<span class="lineNum">     444 </span>            : // T_3 = - \mu_S g_{ai} N^i / N.
+<span class="lineNum">     445 </span>            : //
+<span class="lineNum">     446 </span>            : // See the header file for \f$\partial_a T1,2,3 \f$.
+<span class="lineNum">     447 </span>            : template &lt;size_t SpatialDim, typename Frame&gt;
+<span class="lineNum">     448 </span><span class="lineNoCov">          0 : void spacetime_deriv_damped_harmonic_h(</span>
+<span class="lineNum">     449 </span>            :     const gsl::not_null&lt;
+<span class="lineNum">     450 </span>            :         typename db::item_type&lt;Tags::SpacetimeDerivGaugeH&lt;SpatialDim, Frame&gt;&gt;*&gt;
+<span class="lineNum">     451 </span>            :         d4_gauge_h,
+<span class="lineNum">     452 </span>            :     const typename db::item_type&lt;Tags::InitialGaugeH&lt;SpatialDim, Frame&gt;&gt;&amp;
+<span class="lineNum">     453 </span>            :         gauge_h_init,
+<span class="lineNum">     454 </span>            :     const typename db::item_type&lt;
+<span class="lineNum">     455 </span>            :         Tags::SpacetimeDerivInitialGaugeH&lt;SpatialDim, Frame&gt;&gt;&amp; dgauge_h_init,
+<span class="lineNum">     456 </span>            :     const Scalar&lt;DataVector&gt;&amp; lapse,
+<span class="lineNum">     457 </span>            :     const tnsr::I&lt;DataVector, SpatialDim, Frame&gt;&amp; shift,
+<span class="lineNum">     458 </span>            :     const tnsr::a&lt;DataVector, SpatialDim, Frame&gt;&amp;
+<span class="lineNum">     459 </span>            :         spacetime_unit_normal_one_form,
+<span class="lineNum">     460 </span>            :     const Scalar&lt;DataVector&gt;&amp; sqrt_det_spatial_metric,
+<span class="lineNum">     461 </span>            :     const tnsr::II&lt;DataVector, SpatialDim, Frame&gt;&amp; inverse_spatial_metric,
+<span class="lineNum">     462 </span>            :     const tnsr::aa&lt;DataVector, SpatialDim, Frame&gt;&amp; spacetime_metric,
+<span class="lineNum">     463 </span>            :     const tnsr::aa&lt;DataVector, SpatialDim, Frame&gt;&amp; pi,
+<span class="lineNum">     464 </span>            :     const tnsr::iaa&lt;DataVector, SpatialDim, Frame&gt;&amp; phi, const double time,
+<span class="lineNum">     465 </span>            :     const tnsr::I&lt;DataVector, SpatialDim, Frame&gt;&amp; coords,
+<span class="lineNum">     466 </span>            :     const double amp_coef_L1, const double amp_coef_L2, const double amp_coef_S,
+<span class="lineNum">     467 </span>            :     const int exp_L1, const int exp_L2, const int exp_S,
+<span class="lineNum">     468 </span>            :     const double t_start_h_init, const double sigma_t_h_init,
+<span class="lineNum">     469 </span>            :     const double t_start_L1, const double sigma_t_L1, const double t_start_L2,
+<span class="lineNum">     470 </span>            :     const double sigma_t_L2, const double t_start_S, const double sigma_t_S,
+<span class="lineNum">     471 </span>            :     const double sigma_r) noexcept {
+<span class="lineNum">     472 </span>            :   if (UNLIKELY(get_size(get&lt;0, 0&gt;(*d4_gauge_h)) != get_size(get(lapse)))) {
+<span class="lineNum">     473 </span>            :     *d4_gauge_h =
+<span class="lineNum">     474 </span>            :         typename db::item_type&lt;Tags::SpacetimeDerivGaugeH&lt;SpatialDim, Frame&gt;&gt;(
+<span class="lineNum">     475 </span>            :             get(lapse));
+<span class="lineNum">     476 </span>            :   }
+<span class="lineNum">     477 </span>            :   // Use a TempBuffer to reduce total number of allocations. This is especially
+<span class="lineNum">     478 </span>            :   // important in a multithreaded environment.
+<span class="lineNum">     479 </span>            :   TempBuffer&lt;tmpl::list&lt;
+<span class="lineNum">     480 </span>            :       ::Tags::TempA&lt;0, SpatialDim, Frame&gt;, ::Tags::Tempii&lt;1, SpatialDim, Frame&gt;,
+<span class="lineNum">     481 </span>            :       ::Tags::TempAA&lt;2, SpatialDim, Frame&gt;,
+<span class="lineNum">     482 </span>            :       ::Tags::Tempii&lt;3, SpatialDim, Frame&gt;,
+<span class="lineNum">     483 </span>            :       ::Tags::Tempijj&lt;4, SpatialDim, Frame&gt;, ::Tags::TempScalar&lt;5&gt;,
+<span class="lineNum">     484 </span>            :       ::Tags::TempScalar&lt;6&gt;, ::Tags::TempScalar&lt;7&gt;, ::Tags::TempScalar&lt;8&gt;,
+<span class="lineNum">     485 </span>            :       ::Tags::TempScalar&lt;9&gt;, ::Tags::TempScalar&lt;10&gt;, ::Tags::TempScalar&lt;11&gt;,
+<span class="lineNum">     486 </span>            :       ::Tags::TempScalar&lt;12&gt;, ::Tags::TempScalar&lt;13&gt;, ::Tags::TempScalar&lt;14&gt;,
+<span class="lineNum">     487 </span>            :       ::Tags::Tempa&lt;15, SpatialDim, Frame&gt;,
+<span class="lineNum">     488 </span>            :       ::Tags::Tempa&lt;16, SpatialDim, Frame&gt;,
+<span class="lineNum">     489 </span>            :       ::Tags::Tempa&lt;17, SpatialDim, Frame&gt;,
+<span class="lineNum">     490 </span>            :       ::Tags::Tempa&lt;18, SpatialDim, Frame&gt;,
+<span class="lineNum">     491 </span>            :       ::Tags::Tempa&lt;19, SpatialDim, Frame&gt;,
+<span class="lineNum">     492 </span>            :       ::Tags::Tempa&lt;20, SpatialDim, Frame&gt;,
+<span class="lineNum">     493 </span>            :       ::Tags::Tempa&lt;21, SpatialDim, Frame&gt;,
+<span class="lineNum">     494 </span>            :       ::Tags::Tempa&lt;22, SpatialDim, Frame&gt;,
+<span class="lineNum">     495 </span>            :       ::Tags::Tempa&lt;23, SpatialDim, Frame&gt;,
+<span class="lineNum">     496 </span>            :       ::Tags::Tempa&lt;24, SpatialDim, Frame&gt;, ::Tags::TempScalar&lt;25&gt;,
+<span class="lineNum">     497 </span>            :       ::Tags::Tempi&lt;26, SpatialDim, Frame&gt;,
+<span class="lineNum">     498 </span>            :       ::Tags::Tempa&lt;27, SpatialDim, Frame&gt;,
+<span class="lineNum">     499 </span>            :       ::Tags::TempI&lt;28, SpatialDim, Frame&gt;,
+<span class="lineNum">     500 </span>            :       ::Tags::TempiJ&lt;29, SpatialDim, Frame&gt;,
+<span class="lineNum">     501 </span>            :       ::Tags::TempaB&lt;30, SpatialDim, Frame&gt;,
+<span class="lineNum">     502 </span>            :       ::Tags::Tempab&lt;31, SpatialDim, Frame&gt;, ::Tags::TempScalar&lt;32&gt;,
+<span class="lineNum">     503 </span>            :       ::Tags::Tempa&lt;33, SpatialDim, Frame&gt;,
+<span class="lineNum">     504 </span>            :       ::Tags::Tempabb&lt;34, SpatialDim, Frame&gt;,
+<span class="lineNum">     505 </span>            :       ::Tags::Tempab&lt;35, SpatialDim, Frame&gt;,
+<span class="lineNum">     506 </span>            :       ::Tags::Tempab&lt;36, SpatialDim, Frame&gt;,
+<span class="lineNum">     507 </span>            :       ::Tags::Tempab&lt;37, SpatialDim, Frame&gt;&gt;&gt;
+<span class="lineNum">     508 </span>            :       buffer(get_size(get(lapse)));
+<span class="lineNum">     509 </span>            :   auto&amp; spacetime_unit_normal =
+<span class="lineNum">     510 </span>            :       get&lt;::Tags::TempA&lt;0, SpatialDim, Frame&gt;&gt;(buffer);
+<span class="lineNum">     511 </span>            :   auto&amp; spatial_metric = get&lt;::Tags::Tempii&lt;1, SpatialDim, Frame&gt;&gt;(buffer);
+<span class="lineNum">     512 </span>            :   auto&amp; inverse_spacetime_metric =
+<span class="lineNum">     513 </span>            :       get&lt;::Tags::TempAA&lt;2, SpatialDim, Frame&gt;&gt;(buffer);
+<span class="lineNum">     514 </span>            :   auto&amp; d0_spatial_metric = get&lt;::Tags::Tempii&lt;3, SpatialDim, Frame&gt;&gt;(buffer);
+<span class="lineNum">     515 </span>            :   auto&amp; d3_spatial_metric = get&lt;::Tags::Tempijj&lt;4, SpatialDim, Frame&gt;&gt;(buffer);
+<span class="lineNum">     516 </span>            :   auto&amp; one_over_lapse = get&lt;::Tags::TempScalar&lt;5&gt;&gt;(buffer);
+<span class="lineNum">     517 </span>            :   auto&amp; log_fac_1 = get&lt;::Tags::TempScalar&lt;6&gt;&gt;(buffer);
+<span class="lineNum">     518 </span>            :   auto&amp; log_fac_2 = get&lt;::Tags::TempScalar&lt;7&gt;&gt;(buffer);
+<span class="lineNum">     519 </span>            :   auto&amp; weight = get&lt;::Tags::TempScalar&lt;8&gt;&gt;(buffer);
+<span class="lineNum">     520 </span>            :   auto&amp; mu_L1 = get&lt;::Tags::TempScalar&lt;9&gt;&gt;(buffer);
+<span class="lineNum">     521 </span>            :   auto&amp; mu_S = get&lt;::Tags::TempScalar&lt;10&gt;&gt;(buffer);
+<span class="lineNum">     522 </span>            :   auto&amp; mu_L2 = get&lt;::Tags::TempScalar&lt;11&gt;&gt;(buffer);
+<span class="lineNum">     523 </span>            :   auto&amp; mu_S_over_lapse = get&lt;::Tags::TempScalar&lt;12&gt;&gt;(buffer);
+<span class="lineNum">     524 </span>            :   auto&amp; mu1 = get&lt;::Tags::TempScalar&lt;13&gt;&gt;(buffer);
+<span class="lineNum">     525 </span>            :   auto&amp; mu2 = get&lt;::Tags::TempScalar&lt;14&gt;&gt;(buffer);
+<span class="lineNum">     526 </span>            :   auto&amp; d4_weight = get&lt;::Tags::Tempa&lt;15, SpatialDim, Frame&gt;&gt;(buffer);
+<span class="lineNum">     527 </span>            :   auto&amp; d4_RW_L1 = get&lt;::Tags::Tempa&lt;16, SpatialDim, Frame&gt;&gt;(buffer);
+<span class="lineNum">     528 </span>            :   auto&amp; d4_RW_S = get&lt;::Tags::Tempa&lt;17, SpatialDim, Frame&gt;&gt;(buffer);
+<span class="lineNum">     529 </span>            :   auto&amp; d4_RW_L2 = get&lt;::Tags::Tempa&lt;18, SpatialDim, Frame&gt;&gt;(buffer);
+<span class="lineNum">     530 </span>            :   auto&amp; d4_mu_S = get&lt;::Tags::Tempa&lt;19, SpatialDim, Frame&gt;&gt;(buffer);
+<span class="lineNum">     531 </span>            :   auto&amp; d4_mu1 = get&lt;::Tags::Tempa&lt;20, SpatialDim, Frame&gt;&gt;(buffer);
+<span class="lineNum">     532 </span>            :   auto&amp; d4_mu2 = get&lt;::Tags::Tempa&lt;21, SpatialDim, Frame&gt;&gt;(buffer);
+<span class="lineNum">     533 </span>            :   auto&amp; d4_log_fac_mu1 = get&lt;::Tags::Tempa&lt;22, SpatialDim, Frame&gt;&gt;(buffer);
+<span class="lineNum">     534 </span>            :   auto&amp; d4_log_fac_muS = get&lt;::Tags::Tempa&lt;23, SpatialDim, Frame&gt;&gt;(buffer);
+<span class="lineNum">     535 </span>            :   auto&amp; d4_log_fac_mu2 = get&lt;::Tags::Tempa&lt;24, SpatialDim, Frame&gt;&gt;(buffer);
+<span class="lineNum">     536 </span>            :   auto&amp; dt_lapse = get&lt;::Tags::TempScalar&lt;25&gt;&gt;(buffer);
+<span class="lineNum">     537 </span>            :   auto&amp; d3_lapse = get&lt;::Tags::Tempi&lt;26, SpatialDim, Frame&gt;&gt;(buffer);
+<span class="lineNum">     538 </span>            :   auto&amp; d4_lapse = get&lt;::Tags::Tempa&lt;27, SpatialDim, Frame&gt;&gt;(buffer);
+<span class="lineNum">     539 </span>            :   auto&amp; d0_shift = get&lt;::Tags::TempI&lt;28, SpatialDim, Frame&gt;&gt;(buffer);
+<span class="lineNum">     540 </span>            :   auto&amp; d3_shift = get&lt;::Tags::TempiJ&lt;29, SpatialDim, Frame&gt;&gt;(buffer);
+<span class="lineNum">     541 </span>            :   auto&amp; d4_shift = get&lt;::Tags::TempaB&lt;30, SpatialDim, Frame&gt;&gt;(buffer);
+<span class="lineNum">     542 </span>            :   auto&amp; d4_normal_one_form = get&lt;::Tags::Tempab&lt;31, SpatialDim, Frame&gt;&gt;(buffer);
+<span class="lineNum">     543 </span>            :   auto&amp; prefac = get&lt;::Tags::TempScalar&lt;32&gt;&gt;(buffer);
+<span class="lineNum">     544 </span>            :   auto&amp; d4_muS_over_lapse = get&lt;::Tags::Tempa&lt;33, SpatialDim, Frame&gt;&gt;(buffer);
+<span class="lineNum">     545 </span>            :   auto&amp; d4_psi = get&lt;::Tags::Tempabb&lt;34, SpatialDim, Frame&gt;&gt;(buffer);
+<span class="lineNum">     546 </span>            :   auto&amp; dT1 = get&lt;::Tags::Tempab&lt;35, SpatialDim, Frame&gt;&gt;(buffer);
+<span class="lineNum">     547 </span>            :   auto&amp; dT2 = get&lt;::Tags::Tempab&lt;36, SpatialDim, Frame&gt;&gt;(buffer);
+<span class="lineNum">     548 </span>            :   auto&amp; dT3 = get&lt;::Tags::Tempab&lt;37, SpatialDim, Frame&gt;&gt;(buffer);
+<span class="lineNum">     549 </span>            : 
+<span class="lineNum">     550 </span>            :   // 3+1 quantities
+<span class="lineNum">     551 </span>            :   spacetime_unit_normal =
+<span class="lineNum">     552 </span>            :       gr::spacetime_normal_vector&lt;SpatialDim, Frame, DataVector&gt;(lapse, shift);
+<span class="lineNum">     553 </span>            :   spatial_metric =
+<span class="lineNum">     554 </span>            :       gr::spatial_metric&lt;SpatialDim, Frame, DataVector&gt;(spacetime_metric);
+<span class="lineNum">     555 </span>            :   inverse_spacetime_metric =
+<span class="lineNum">     556 </span>            :       gr::inverse_spacetime_metric&lt;SpatialDim, Frame, DataVector&gt;(
+<span class="lineNum">     557 </span>            :           lapse, shift, inverse_spatial_metric);
+<span class="lineNum">     558 </span>            :   time_deriv_of_spatial_metric&lt;SpatialDim, Frame, DataVector&gt;(
+<span class="lineNum">     559 </span>            :       make_not_null(&amp;d0_spatial_metric), lapse, shift, phi, pi);
+<span class="lineNum">     560 </span>            :   deriv_spatial_metric&lt;SpatialDim, Frame, DataVector&gt;(
+<span class="lineNum">     561 </span>            :       make_not_null(&amp;d3_spatial_metric), phi);
+<span class="lineNum">     562 </span>            : 
+<span class="lineNum">     563 </span>            :   // commonly used terms
+<span class="lineNum">     564 </span>            :   constexpr auto exp_fac_1 = 0.5;
+<span class="lineNum">     565 </span>            :   constexpr auto exp_fac_2 = 0.;
+<span class="lineNum">     566 </span>            :   get(one_over_lapse) = 1. / get(lapse);
+<span class="lineNum">     567 </span>            :   DampedHarmonicGauge_detail::log_factor_metric_lapse&lt;DataVector&gt;(
+<span class="lineNum">     568 </span>            :       make_not_null(&amp;log_fac_1), lapse, sqrt_det_spatial_metric, exp_fac_1);
+<span class="lineNum">     569 </span>            :   DampedHarmonicGauge_detail::log_factor_metric_lapse&lt;DataVector&gt;(
+<span class="lineNum">     570 </span>            :       make_not_null(&amp;log_fac_2), lapse, sqrt_det_spatial_metric, exp_fac_2);
+<span class="lineNum">     571 </span>            : 
+<span class="lineNum">     572 </span>            :   // Tempering functions
+<span class="lineNum">     573 </span>            :   const auto roll_on_h_init = DampedHarmonicGauge_detail::roll_on_function(
+<span class="lineNum">     574 </span>            :       time, t_start_h_init, sigma_t_h_init);
+<span class="lineNum">     575 </span>            :   const auto roll_on_L1 = DampedHarmonicGauge_detail::roll_on_function(
+<span class="lineNum">     576 </span>            :       time, t_start_L1, sigma_t_L1);
+<span class="lineNum">     577 </span>            :   const auto roll_on_L2 = DampedHarmonicGauge_detail::roll_on_function(
+<span class="lineNum">     578 </span>            :       time, t_start_L2, sigma_t_L2);
+<span class="lineNum">     579 </span>            :   const auto roll_on_S =
+<span class="lineNum">     580 </span>            :       DampedHarmonicGauge_detail::roll_on_function(time, t_start_S, sigma_t_S);
+<span class="lineNum">     581 </span>            :   DampedHarmonicGauge_detail::weight_function&lt;SpatialDim, Frame, DataVector&gt;(
+<span class="lineNum">     582 </span>            :       make_not_null(&amp;weight), coords, sigma_r);
+<span class="lineNum">     583 </span>            : 
+<span class="lineNum">     584 </span>            :   // coeffs that enter gauge source function
+<span class="lineNum">     585 </span>            :   get(mu_L1) =
+<span class="lineNum">     586 </span>            :       amp_coef_L1 * roll_on_L1 * get(weight) * pow(get(log_fac_1), exp_L1);
+<span class="lineNum">     587 </span>            :   get(mu_S) = amp_coef_S * roll_on_S * get(weight) * pow(get(log_fac_1), exp_S);
+<span class="lineNum">     588 </span>            :   get(mu_L2) =
+<span class="lineNum">     589 </span>            :       amp_coef_L2 * roll_on_L2 * get(weight) * pow(get(log_fac_2), exp_L2);
+<span class="lineNum">     590 </span>            :   get(mu_S_over_lapse) = get(mu_S) * get(one_over_lapse);
+<span class="lineNum">     591 </span>            : 
+<span class="lineNum">     592 </span>            :   // Calc \f$ \mu_1 = \mu_{L1} log(rootg/N) = R W log(rootg/N)^5\f$
+<span class="lineNum">     593 </span>            :   get(mu1) = get(mu_L1) * get(log_fac_1);
+<span class="lineNum">     594 </span>            : 
+<span class="lineNum">     595 </span>            :   // Calc \f$ \mu_2 = \mu_{L2} log(1/N) = R W log(1/N)^5\f$
+<span class="lineNum">     596 </span>            :   get(mu2) = get(mu_L2) * get(log_fac_2);
+<span class="lineNum">     597 </span>            : 
+<span class="lineNum">     598 </span>            :   const auto d0_roll_on_h_init =
+<span class="lineNum">     599 </span>            :       DampedHarmonicGauge_detail::time_deriv_of_roll_on_function(
+<span class="lineNum">     600 </span>            :           time, t_start_h_init, sigma_t_h_init);
+<span class="lineNum">     601 </span>            :   const auto d0_roll_on_L1 =
+<span class="lineNum">     602 </span>            :       DampedHarmonicGauge_detail::time_deriv_of_roll_on_function(
+<span class="lineNum">     603 </span>            :           time, t_start_L1, sigma_t_L1);
+<span class="lineNum">     604 </span>            :   const auto d0_roll_on_S =
+<span class="lineNum">     605 </span>            :       DampedHarmonicGauge_detail::time_deriv_of_roll_on_function(
+<span class="lineNum">     606 </span>            :           time, t_start_S, sigma_t_S);
+<span class="lineNum">     607 </span>            :   const auto d0_roll_on_L2 =
+<span class="lineNum">     608 </span>            :       DampedHarmonicGauge_detail::time_deriv_of_roll_on_function(
+<span class="lineNum">     609 </span>            :           time, t_start_L2, sigma_t_L2);
+<span class="lineNum">     610 </span>            : 
+<span class="lineNum">     611 </span>            :   // Calc \f$ \partial_a [R W] \f$
+<span class="lineNum">     612 </span>            :   DampedHarmonicGauge_detail::spacetime_deriv_of_weight_function&lt;
+<span class="lineNum">     613 </span>            :       SpatialDim, Frame, DataVector&gt;(make_not_null(&amp;d4_weight), coords,
+<span class="lineNum">     614 </span>            :                                      sigma_r);
+<span class="lineNum">     615 </span>            :   d4_RW_L1 = d4_weight;
+<span class="lineNum">     616 </span>            :   d4_RW_S = d4_weight;
+<span class="lineNum">     617 </span>            :   d4_RW_L2 = d4_weight;
+<span class="lineNum">     618 </span>            :   for (size_t a = 0; a &lt; SpatialDim + 1; ++a) {
+<span class="lineNum">     619 </span>            :     d4_RW_L1.get(a) *= roll_on_L1;
+<span class="lineNum">     620 </span>            :     d4_RW_S.get(a) *= roll_on_S;
+<span class="lineNum">     621 </span>            :     d4_RW_L2.get(a) *= roll_on_L2;
+<span class="lineNum">     622 </span>            :   }
+<span class="lineNum">     623 </span>            :   get&lt;0&gt;(d4_RW_L1) += get(weight) * d0_roll_on_L1;
+<span class="lineNum">     624 </span>            :   get&lt;0&gt;(d4_RW_S) += get(weight) * d0_roll_on_S;
+<span class="lineNum">     625 </span>            :   get&lt;0&gt;(d4_RW_L2) += get(weight) * d0_roll_on_L2;
+<span class="lineNum">     626 </span>            : 
+<span class="lineNum">     627 </span>            :   // \partial_a \mu_{S} = \partial_a(A_S R_S W
+<span class="lineNum">     628 </span>            :   //                               \log(\sqrt{g}/N)^{c_{S}})
+<span class="lineNum">     629 </span>            :   // \partial_a \mu_1 = \partial_a(A_L1 R_L1 W
+<span class="lineNum">     630 </span>            :   //                               \log(\sqrt{g}/N)^{1+c_{L1}})
+<span class="lineNum">     631 </span>            :   // \partial_a \mu_2 = \partial_a(A_L2 R_L2 W
+<span class="lineNum">     632 </span>            :   //                               \log(1/N)^{1+c_{L2}})
+<span class="lineNum">     633 </span>            :   DampedHarmonicGauge_detail::spacetime_deriv_of_power_log_factor_metric_lapse&lt;
+<span class="lineNum">     634 </span>            :       SpatialDim, Frame, DataVector&gt;(
+<span class="lineNum">     635 </span>            :       make_not_null(&amp;d4_log_fac_mu1), lapse, shift, spacetime_unit_normal,
+<span class="lineNum">     636 </span>            :       inverse_spatial_metric, sqrt_det_spatial_metric, d0_spatial_metric, pi,
+<span class="lineNum">     637 </span>            :       phi, exp_fac_1, exp_L1 + 1);
+<span class="lineNum">     638 </span>            :   DampedHarmonicGauge_detail::spacetime_deriv_of_power_log_factor_metric_lapse&lt;
+<span class="lineNum">     639 </span>            :       SpatialDim, Frame, DataVector&gt;(
+<span class="lineNum">     640 </span>            :       make_not_null(&amp;d4_log_fac_muS), lapse, shift, spacetime_unit_normal,
+<span class="lineNum">     641 </span>            :       inverse_spatial_metric, sqrt_det_spatial_metric, d0_spatial_metric, pi,
+<span class="lineNum">     642 </span>            :       phi, exp_fac_1, exp_S);
+<span class="lineNum">     643 </span>            :   DampedHarmonicGauge_detail::spacetime_deriv_of_power_log_factor_metric_lapse&lt;
+<span class="lineNum">     644 </span>            :       SpatialDim, Frame, DataVector&gt;(
+<span class="lineNum">     645 </span>            :       make_not_null(&amp;d4_log_fac_mu2), lapse, shift, spacetime_unit_normal,
+<span class="lineNum">     646 </span>            :       inverse_spatial_metric, sqrt_det_spatial_metric, d0_spatial_metric, pi,
+<span class="lineNum">     647 </span>            :       phi, exp_fac_2, exp_L2 + 1);
+<span class="lineNum">     648 </span>            :   for (size_t a = 0; a &lt; SpatialDim + 1; ++a) {
+<span class="lineNum">     649 </span>            :     // \f$ \partial_a \mu_1 \f$
+<span class="lineNum">     650 </span>            :     d4_mu1.get(a) =
+<span class="lineNum">     651 </span>            :         amp_coef_L1 * pow(get(log_fac_1), exp_L1 + 1) * d4_RW_L1.get(a) +
+<span class="lineNum">     652 </span>            :         amp_coef_L1 * roll_on_L1 * get(weight) * d4_log_fac_mu1.get(a);
+<span class="lineNum">     653 </span>            :     // \f$ \partial_a \mu_{S} \f$
+<span class="lineNum">     654 </span>            :     d4_mu_S.get(a) =
+<span class="lineNum">     655 </span>            :         amp_coef_S * d4_RW_S.get(a) * pow(get(log_fac_1), exp_S) +
+<span class="lineNum">     656 </span>            :         amp_coef_S * roll_on_S * get(weight) * d4_log_fac_muS.get(a);
+<span class="lineNum">     657 </span>            :     // \f$ \partial_a \mu_2 \f$
+<span class="lineNum">     658 </span>            :     d4_mu2.get(a) =
+<span class="lineNum">     659 </span>            :         amp_coef_L2 * pow(get(log_fac_2), exp_L2 + 1) * d4_RW_L2.get(a) +
+<span class="lineNum">     660 </span>            :         amp_coef_L2 * roll_on_L2 * get(weight) * d4_log_fac_mu2.get(a);
+<span class="lineNum">     661 </span>            :   }
+<span class="lineNum">     662 </span>            : 
+<span class="lineNum">     663 </span>            :   // Calc \f$ \partial_a N = {\partial_0 N, \partial_i N} \f$
+<span class="lineNum">     664 </span>            :   time_deriv_of_lapse&lt;SpatialDim, Frame, DataVector&gt;(
+<span class="lineNum">     665 </span>            :       make_not_null(&amp;dt_lapse), lapse, shift, spacetime_unit_normal, phi, pi);
+<span class="lineNum">     666 </span>            :   spatial_deriv_of_lapse&lt;SpatialDim, Frame, DataVector&gt;(
+<span class="lineNum">     667 </span>            :       make_not_null(&amp;d3_lapse), lapse, spacetime_unit_normal, phi);
+<span class="lineNum">     668 </span>            :   get&lt;0&gt;(d4_lapse) = get(dt_lapse);
+<span class="lineNum">     669 </span>            :   for (size_t i = 0; i &lt; SpatialDim; ++i) {
+<span class="lineNum">     670 </span>            :     d4_lapse.get(1 + i) = d3_lapse.get(i);
+<span class="lineNum">     671 </span>            :   }
+<span class="lineNum">     672 </span>            : 
+<span class="lineNum">     673 </span>            :   // Calc \f$ \partial_a N^i = {\partial_0 N^i, \partial_j N^i} \f$
+<span class="lineNum">     674 </span>            :   d0_shift = time_deriv_of_shift&lt;SpatialDim, Frame, DataVector&gt;(
+<span class="lineNum">     675 </span>            :       lapse, shift, inverse_spatial_metric, spacetime_unit_normal, phi, pi);
+<span class="lineNum">     676 </span>            :   d3_shift = spatial_deriv_of_shift&lt;SpatialDim, Frame, DataVector&gt;(
+<span class="lineNum">     677 </span>            :       lapse, inverse_spacetime_metric, spacetime_unit_normal, phi);
+<span class="lineNum">     678 </span>            :   for (size_t i = 0; i &lt; SpatialDim; ++i) {
+<span class="lineNum">     679 </span>            :     d4_shift.get(0, 1 + i) = d0_shift.get(i);
+<span class="lineNum">     680 </span>            :     for (size_t j = 0; j &lt; SpatialDim; ++j) {
+<span class="lineNum">     681 </span>            :       d4_shift.get(1 + j, 1 + i) = d3_shift.get(j, i);
+<span class="lineNum">     682 </span>            :     }
+<span class="lineNum">     683 </span>            :   }
+<span class="lineNum">     684 </span>            : 
+<span class="lineNum">     685 </span>            :   // Calc \f$ \partial_a n_b = {-\partial_a N, 0, 0, 0} \f$
+<span class="lineNum">     686 </span>            :   for (size_t a = 0; a &lt; SpatialDim + 1; ++a) {
+<span class="lineNum">     687 </span>            :     d4_normal_one_form.get(a, 0) = -d4_lapse.get(a);
+<span class="lineNum">     688 </span>            :     for (size_t b = 1; b &lt; SpatialDim + 1; ++b) {
+<span class="lineNum">     689 </span>            :       d4_normal_one_form.get(a, b) = 0.;
+<span class="lineNum">     690 </span>            :     }
+<span class="lineNum">     691 </span>            :   }
+<span class="lineNum">     692 </span>            : 
+<span class="lineNum">     693 </span>            :   // \f[ \partial_a (\mu_S/N) = (1/N) \partial_a \mu_{S}
+<span class="lineNum">     694 </span>            :   //         - (\mu_{S}/N^2) \partial_a N
+<span class="lineNum">     695 </span>            :   // \f]
+<span class="lineNum">     696 </span>            :   get(prefac) = -get(mu_S) * square(get(one_over_lapse));
+<span class="lineNum">     697 </span>            :   for (size_t a = 0; a &lt; SpatialDim + 1; ++a) {
+<span class="lineNum">     698 </span>            :     d4_muS_over_lapse.get(a) =
+<span class="lineNum">     699 </span>            :         get(one_over_lapse) * d4_mu_S.get(a) + get(prefac) * d4_lapse.get(a);
+<span class="lineNum">     700 </span>            :   }
+<span class="lineNum">     701 </span>            : 
+<span class="lineNum">     702 </span>            :   // We need \f$ \partial_a g_{bi} = \partial_a \psi_{bi} \f$. Here we
+<span class="lineNum">     703 </span>            :   // use `derivatives_of_spacetime_metric` to get \f$ \partial_a g_{bc}\f$
+<span class="lineNum">     704 </span>            :   // instead, and use only the derivatives of \f$ g_{bi}\f$.
+<span class="lineNum">     705 </span>            :   d4_psi = gr::derivatives_of_spacetime_metric&lt;SpatialDim, Frame, DataVector&gt;(
+<span class="lineNum">     706 </span>            :       lapse, dt_lapse, d3_lapse, shift, d0_shift, d3_shift, spatial_metric,
+<span class="lineNum">     707 </span>            :       d0_spatial_metric, d3_spatial_metric);
+<span class="lineNum">     708 </span>            : 
+<span class="lineNum">     709 </span>            :   // Calc \f$ \partial_a T1 \f$
+<span class="lineNum">     710 </span>            :   for (size_t b = 0; b &lt; SpatialDim + 1; ++b) {
+<span class="lineNum">     711 </span>            :     dT1.get(0, b) = -gauge_h_init.get(b) * d0_roll_on_h_init;
+<span class="lineNum">     712 </span>            :     for (size_t a = 0; a &lt; SpatialDim + 1; ++a) {
+<span class="lineNum">     713 </span>            :       if (a != 0) {
+<span class="lineNum">     714 </span>            :         dT1.get(a, b) = (1. - roll_on_h_init) * dgauge_h_init.get(a, b);
+<span class="lineNum">     715 </span>            :       } else {
+<span class="lineNum">     716 </span>            :         dT1.get(a, b) += (1. - roll_on_h_init) * dgauge_h_init.get(a, b);
+<span class="lineNum">     717 </span>            :       }
+<span class="lineNum">     718 </span>            :     }
+<span class="lineNum">     719 </span>            :   }
+<span class="lineNum">     720 </span>            : 
+<span class="lineNum">     721 </span>            :   // Calc \f$ \partial_a T2 \f$
+<span class="lineNum">     722 </span>            :   for (size_t a = 0; a &lt; SpatialDim + 1; ++a) {
+<span class="lineNum">     723 </span>            :     for (size_t b = 0; b &lt; SpatialDim + 1; ++b) {
+<span class="lineNum">     724 </span>            :       dT2.get(a, b) = (get(mu1) + get(mu2)) * d4_normal_one_form.get(a, b) +
+<span class="lineNum">     725 </span>            :                       (d4_mu1.get(a) + d4_mu2.get(a)) *
+<span class="lineNum">     726 </span>            :                           spacetime_unit_normal_one_form.get(b);
+<span class="lineNum">     727 </span>            :     }
+<span class="lineNum">     728 </span>            :   }
+<span class="lineNum">     729 </span>            : 
+<span class="lineNum">     730 </span>            :   // Calc \f$ \partial_a T3 \f$ (note minus sign)
+<span class="lineNum">     731 </span>            :   for (size_t a = 0; a &lt; SpatialDim + 1; ++a) {
+<span class="lineNum">     732 </span>            :     for (size_t b = 0; b &lt; SpatialDim + 1; ++b) {
+<span class="lineNum">     733 </span>            :       dT3.get(a, b) = -d4_muS_over_lapse.get(a) * get&lt;0&gt;(shift) *
+<span class="lineNum">     734 </span>            :                       spacetime_metric.get(b, 1);
+<span class="lineNum">     735 </span>            :       for (size_t i = 0; i &lt; SpatialDim; ++i) {
+<span class="lineNum">     736 </span>            :         if (i != 0) {
+<span class="lineNum">     737 </span>            :           dT3.get(a, b) -= d4_muS_over_lapse.get(a) * shift.get(i) *
+<span class="lineNum">     738 </span>            :                            spacetime_metric.get(b, i + 1);
+<span class="lineNum">     739 </span>            :         }
+<span class="lineNum">     740 </span>            :         dT3.get(a, b) -=
+<span class="lineNum">     741 </span>            :             get(mu_S_over_lapse) * shift.get(i) * d4_psi.get(a, b, i + 1);
+<span class="lineNum">     742 </span>            :         dT3.get(a, b) -= get(mu_S_over_lapse) * spacetime_metric.get(b, i + 1) *
+<span class="lineNum">     743 </span>            :                          d4_shift.get(a, i + 1);
+<span class="lineNum">     744 </span>            :       }
+<span class="lineNum">     745 </span>            :     }
+<span class="lineNum">     746 </span>            :   }
+<span class="lineNum">     747 </span>            : 
+<span class="lineNum">     748 </span>            :   // Calc \f$ \partial_a H_b = dT1_{ab} + dT2_{ab} + dT3_{ab} \f$
+<span class="lineNum">     749 </span>            :   for (size_t a = 0; a &lt; SpatialDim + 1; ++a) {
+<span class="lineNum">     750 </span>            :     for (size_t b = 0; b &lt; SpatialDim + 1; ++b) {
+<span class="lineNum">     751 </span>            :       d4_gauge_h-&gt;get(a, b) = dT1.get(a, b) + dT2.get(a, b) + dT3.get(a, b);
+<span class="lineNum">     752 </span>            :     }
+<span class="lineNum">     753 </span>            :   }
+<span class="lineNum">     754 </span>            : }
+<span class="lineNum">     755 </span>            : 
+<span class="lineNum">     756 </span>            : template &lt;size_t SpatialDim, typename Frame&gt;
+<span class="lineNum">     757 </span>            : typename db::item_type&lt;Tags::SpacetimeDerivGaugeH&lt;SpatialDim, Frame&gt;&gt;
+<span class="lineNum">     758 </span>            : SpacetimeDerivDampedHarmonicHCompute&lt;SpatialDim, Frame&gt;::function(
+<span class="lineNum">     759 </span>            :     const typename db::item_type&lt;Tags::InitialGaugeH&lt;SpatialDim, Frame&gt;&gt;&amp;
+<span class="lineNum">     760 </span>            :         gauge_h_init,
+<span class="lineNum">     761 </span>            :     const typename db::item_type&lt;
+<span class="lineNum">     762 </span>            :         Tags::SpacetimeDerivInitialGaugeH&lt;SpatialDim, Frame&gt;&gt;&amp; dgauge_h_init,
+<span class="lineNum">     763 </span>            :     const Scalar&lt;DataVector&gt;&amp; lapse,
+<span class="lineNum">     764 </span>            :     const tnsr::I&lt;DataVector, SpatialDim, Frame&gt;&amp; shift,
+<span class="lineNum">     765 </span>            :     const tnsr::a&lt;DataVector, SpatialDim, Frame&gt;&amp;
+<span class="lineNum">     766 </span>            :         spacetime_unit_normal_one_form,
+<span class="lineNum">     767 </span>            :     const Scalar&lt;DataVector&gt;&amp; sqrt_det_spatial_metric,
+<span class="lineNum">     768 </span>            :     const tnsr::II&lt;DataVector, SpatialDim, Frame&gt;&amp; inverse_spatial_metric,
+<span class="lineNum">     769 </span>            :     const tnsr::aa&lt;DataVector, SpatialDim, Frame&gt;&amp; spacetime_metric,
+<span class="lineNum">     770 </span>            :     const tnsr::aa&lt;DataVector, SpatialDim, Frame&gt;&amp; pi,
+<span class="lineNum">     771 </span>            :     const tnsr::iaa&lt;DataVector, SpatialDim, Frame&gt;&amp; phi, const Time&amp; time,
+<span class="lineNum">     772 </span>            :     const double&amp; t_start, const double&amp; sigma_t,
+<span class="lineNum">     773 </span>            :     const tnsr::I&lt;DataVector, SpatialDim, Frame&gt;&amp; coords,
+<span class="lineNum">     774 </span>            :     const double&amp; sigma_r) noexcept {
+<span class="lineNum">     775 </span>            :   typename db::item_type&lt;Tags::SpacetimeDerivGaugeH&lt;SpatialDim, Frame&gt;&gt;
+<span class="lineNum">     776 </span>            :       d4_gauge_h{get_size(get(lapse))};
+<span class="lineNum">     777 </span>            :   GeneralizedHarmonic::spacetime_deriv_damped_harmonic_h(
+<span class="lineNum">     778 </span>            :       make_not_null(&amp;d4_gauge_h), gauge_h_init, dgauge_h_init, lapse, shift,
+<span class="lineNum">     779 </span>            :       spacetime_unit_normal_one_form, sqrt_det_spatial_metric,
+<span class="lineNum">     780 </span>            :       inverse_spatial_metric, spacetime_metric, pi, phi, time.value(), coords,
+<span class="lineNum">     781 </span>            :       1., 1., 1.,        // amp_coef_{L1, L2, S}
+<span class="lineNum">     782 </span>            :       4, 4, 4,           // exp_{L1, L2, S}
+<span class="lineNum">     783 </span>            :       t_start, sigma_t,  // _h_init
+<span class="lineNum">     784 </span>            :       t_start, sigma_t,  // _L1
+<span class="lineNum">     785 </span>            :       t_start, sigma_t,  // _L2
+<span class="lineNum">     786 </span>            :       t_start, sigma_t,  // _S
+<span class="lineNum">     787 </span>            :       sigma_r);
+<span class="lineNum">     788 </span>            :   return d4_gauge_h;
+<span class="lineNum">     789 </span>            : }
+<span class="lineNum">     790 </span>            : }  // namespace GeneralizedHarmonic
+<span class="lineNum">     791 </span>            : 
+<span class="lineNum">     792 </span>            : // Explicit Instantiations
+<span class="lineNum">     793 </span>            : /// \cond
+<span class="lineNum">     794 </span>            : #define DIM(data) BOOST_PP_TUPLE_ELEM(0, data)
+<span class="lineNum">     795 </span>            : #define DTYPE(data) BOOST_PP_TUPLE_ELEM(1, data)
+<span class="lineNum">     796 </span>            : #define FRAME(data) BOOST_PP_TUPLE_ELEM(2, data)
+<span class="lineNum">     797 </span>            : #define DTYPE_SCAL(data) BOOST_PP_TUPLE_ELEM(0, data)
+<span class="lineNum">     798 </span>            : 
+<span class="lineNum">     799 </span>            : #define INSTANTIATE(_, data)                                                  \
+<span class="lineNum">     800 </span>            :   template void                                                               \
+<span class="lineNum">     801 </span>            :   GeneralizedHarmonic::DampedHarmonicGauge_detail::weight_function(           \
+<span class="lineNum">     802 </span>            :       const gsl::not_null&lt;Scalar&lt;DTYPE(data)&gt;*&gt; weight,                       \
+<span class="lineNum">     803 </span>            :       const tnsr::I&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; coords,             \
+<span class="lineNum">     804 </span>            :       const double sigma_r) noexcept;                                         \
+<span class="lineNum">     805 </span>            :   template Scalar&lt;DTYPE(data)&gt;                                                \
+<span class="lineNum">     806 </span>            :   GeneralizedHarmonic::DampedHarmonicGauge_detail::weight_function(           \
+<span class="lineNum">     807 </span>            :       const tnsr::I&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; coords,             \
+<span class="lineNum">     808 </span>            :       const double sigma_r) noexcept;                                         \
+<span class="lineNum">     809 </span>            :   template void GeneralizedHarmonic::DampedHarmonicGauge_detail::             \
+<span class="lineNum">     810 </span>            :       spacetime_deriv_of_weight_function(                                     \
+<span class="lineNum">     811 </span>            :           const gsl::not_null&lt;tnsr::a&lt;DTYPE(data), DIM(data), FRAME(data)&gt;*&gt;  \
+<span class="lineNum">     812 </span>            :               d4_weight,                                                      \
+<span class="lineNum">     813 </span>            :           const tnsr::I&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; coords,         \
+<span class="lineNum">     814 </span>            :           const double sigma_r) noexcept;                                     \
+<span class="lineNum">     815 </span>            :   template tnsr::a&lt;DTYPE(data), DIM(data), FRAME(data)&gt; GeneralizedHarmonic:: \
+<span class="lineNum">     816 </span>            :       DampedHarmonicGauge_detail::spacetime_deriv_of_weight_function(         \
+<span class="lineNum">     817 </span>            :           const tnsr::I&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; coords,         \
+<span class="lineNum">     818 </span>            :           const double sigma_r) noexcept;                                     \
+<span class="lineNum">     819 </span>            :   template void GeneralizedHarmonic::DampedHarmonicGauge_detail::             \
+<span class="lineNum">     820 </span>            :       spacetime_deriv_of_log_factor_metric_lapse(                             \
+<span class="lineNum">     821 </span>            :           const gsl::not_null&lt;tnsr::a&lt;DTYPE(data), DIM(data), FRAME(data)&gt;*&gt;  \
+<span class="lineNum">     822 </span>            :               d4_logfac,                                                      \
+<span class="lineNum">     823 </span>            :           const Scalar&lt;DTYPE(data)&gt;&amp; lapse,                                   \
+<span class="lineNum">     824 </span>            :           const tnsr::I&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; shift,          \
+<span class="lineNum">     825 </span>            :           const tnsr::A&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                 \
+<span class="lineNum">     826 </span>            :               spacetime_unit_normal,                                          \
+<span class="lineNum">     827 </span>            :           const tnsr::II&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                \
+<span class="lineNum">     828 </span>            :               inverse_spatial_metric,                                         \
+<span class="lineNum">     829 </span>            :           const Scalar&lt;DTYPE(data)&gt;&amp; sqrt_det_spatial_metric,                 \
+<span class="lineNum">     830 </span>            :           const tnsr::ii&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                \
+<span class="lineNum">     831 </span>            :               dt_spatial_metric,                                              \
+<span class="lineNum">     832 </span>            :           const tnsr::aa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; pi,            \
+<span class="lineNum">     833 </span>            :           const tnsr::iaa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; phi,          \
+<span class="lineNum">     834 </span>            :           const double exponent) noexcept;                                    \
+<span class="lineNum">     835 </span>            :   template tnsr::a&lt;DTYPE(data), DIM(data), FRAME(data)&gt; GeneralizedHarmonic:: \
+<span class="lineNum">     836 </span>            :       DampedHarmonicGauge_detail::spacetime_deriv_of_log_factor_metric_lapse( \
+<span class="lineNum">     837 </span>            :           const Scalar&lt;DTYPE(data)&gt;&amp; lapse,                                   \
+<span class="lineNum">     838 </span>            :           const tnsr::I&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; shift,          \
+<span class="lineNum">     839 </span>            :           const tnsr::A&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                 \
+<span class="lineNum">     840 </span>            :               spacetime_unit_normal,                                          \
+<span class="lineNum">     841 </span>            :           const tnsr::II&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                \
+<span class="lineNum">     842 </span>            :               inverse_spatial_metric,                                         \
+<span class="lineNum">     843 </span>            :           const Scalar&lt;DTYPE(data)&gt;&amp; sqrt_det_spatial_metric,                 \
+<span class="lineNum">     844 </span>            :           const tnsr::ii&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                \
+<span class="lineNum">     845 </span>            :               dt_spatial_metric,                                              \
+<span class="lineNum">     846 </span>            :           const tnsr::aa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; pi,            \
+<span class="lineNum">     847 </span>            :           const tnsr::iaa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; phi,          \
+<span class="lineNum">     848 </span>            :           const double exponent) noexcept;                                    \
+<span class="lineNum">     849 </span>            :   template void GeneralizedHarmonic::DampedHarmonicGauge_detail::             \
+<span class="lineNum">     850 </span>            :       spacetime_deriv_of_power_log_factor_metric_lapse(                       \
+<span class="lineNum">     851 </span>            :           const gsl::not_null&lt;tnsr::a&lt;DTYPE(data), DIM(data), FRAME(data)&gt;*&gt;  \
+<span class="lineNum">     852 </span>            :               d4_powlogfac,                                                   \
+<span class="lineNum">     853 </span>            :           const Scalar&lt;DTYPE(data)&gt;&amp; lapse,                                   \
+<span class="lineNum">     854 </span>            :           const tnsr::I&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; shift,          \
+<span class="lineNum">     855 </span>            :           const tnsr::A&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                 \
+<span class="lineNum">     856 </span>            :               spacetime_unit_normal,                                          \
+<span class="lineNum">     857 </span>            :           const tnsr::II&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                \
+<span class="lineNum">     858 </span>            :               inverse_spatial_metric,                                         \
+<span class="lineNum">     859 </span>            :           const Scalar&lt;DTYPE(data)&gt;&amp; sqrt_det_spatial_metric,                 \
+<span class="lineNum">     860 </span>            :           const tnsr::ii&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                \
+<span class="lineNum">     861 </span>            :               dt_spatial_metric,                                              \
+<span class="lineNum">     862 </span>            :           const tnsr::aa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; pi,            \
+<span class="lineNum">     863 </span>            :           const tnsr::iaa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; phi,          \
+<span class="lineNum">     864 </span>            :           const double g_exponent, const int exponent) noexcept;              \
+<span class="lineNum">     865 </span>            :   template tnsr::a&lt;DTYPE(data), DIM(data), FRAME(data)&gt;                       \
+<span class="lineNum">     866 </span>            :   GeneralizedHarmonic::DampedHarmonicGauge_detail::                           \
+<span class="lineNum">     867 </span>            :       spacetime_deriv_of_power_log_factor_metric_lapse(                       \
+<span class="lineNum">     868 </span>            :           const Scalar&lt;DTYPE(data)&gt;&amp; lapse,                                   \
+<span class="lineNum">     869 </span>            :           const tnsr::I&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; shift,          \
+<span class="lineNum">     870 </span>            :           const tnsr::A&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                 \
+<span class="lineNum">     871 </span>            :               spacetime_unit_normal,                                          \
+<span class="lineNum">     872 </span>            :           const tnsr::II&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                \
+<span class="lineNum">     873 </span>            :               inverse_spatial_metric,                                         \
+<span class="lineNum">     874 </span>            :           const Scalar&lt;DTYPE(data)&gt;&amp; sqrt_det_spatial_metric,                 \
+<span class="lineNum">     875 </span>            :           const tnsr::ii&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                \
+<span class="lineNum">     876 </span>            :               dt_spatial_metric,                                              \
+<span class="lineNum">     877 </span>            :           const tnsr::aa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; pi,            \
+<span class="lineNum">     878 </span>            :           const tnsr::iaa&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; phi,          \
+<span class="lineNum">     879 </span>            :           const double g_exponent, const int exponent) noexcept;
+<span class="lineNum">     880 </span>            : 
+<span class="lineNum">     881 </span>            : #define INSTANTIATE_SCALAR_FUNC(_, data)                                    \
+<span class="lineNum">     882 </span>            :   template void                                                             \
+<span class="lineNum">     883 </span>            :   GeneralizedHarmonic::DampedHarmonicGauge_detail::log_factor_metric_lapse( \
+<span class="lineNum">     884 </span>            :       const gsl::not_null&lt;Scalar&lt;DTYPE_SCAL(data)&gt;*&gt; logfac,                \
+<span class="lineNum">     885 </span>            :       const Scalar&lt;DTYPE_SCAL(data)&gt;&amp; lapse,                                \
+<span class="lineNum">     886 </span>            :       const Scalar&lt;DTYPE_SCAL(data)&gt;&amp; sqrt_det_spatial_metric,              \
+<span class="lineNum">     887 </span>            :       const double exponent) noexcept;                                      \
+<span class="lineNum">     888 </span>            :   template Scalar&lt;DTYPE_SCAL(data)&gt;                                         \
+<span class="lineNum">     889 </span>            :   GeneralizedHarmonic::DampedHarmonicGauge_detail::log_factor_metric_lapse( \
+<span class="lineNum">     890 </span>            :       const Scalar&lt;DTYPE_SCAL(data)&gt;&amp; lapse,                                \
+<span class="lineNum">     891 </span>            :       const Scalar&lt;DTYPE_SCAL(data)&gt;&amp; sqrt_det_spatial_metric,              \
+<span class="lineNum">     892 </span>            :       const double exponent) noexcept;
+<span class="lineNum">     893 </span>            : 
+<span class="lineNum">     894 </span>            : #define INSTANTIATE_COMPUTE_ITEM(_, data)                                    \
+<span class="lineNum">     895 </span>            :   template struct GeneralizedHarmonic::DampedHarmonicHCompute&lt;DIM(data),     \
+<span class="lineNum">     896 </span>            :                                                               FRAME(data)&gt;;  \
+<span class="lineNum">     897 </span>            :   template struct GeneralizedHarmonic::SpacetimeDerivDampedHarmonicHCompute&lt; \
+<span class="lineNum">     898 </span>            :       DIM(data), FRAME(data)&gt;;
+<span class="lineNum">     899 </span>            : 
+<span class="lineNum">     900 </span>            : GENERATE_INSTANTIATIONS(INSTANTIATE, (1, 2, 3), (double, DataVector),
+<span class="lineNum">     901 </span>            :                         (Frame::Inertial))
+<span class="lineNum">     902 </span>            : 
+<span class="lineNum">     903 </span>            : GENERATE_INSTANTIATIONS(INSTANTIATE_SCALAR_FUNC, (double, DataVector))
+<span class="lineNum">     904 </span>            : 
+<span class="lineNum">     905 </span>            : GENERATE_INSTANTIATIONS(INSTANTIATE_COMPUTE_ITEM, (1, 2, 3), (DataVector),
+<span class="lineNum">     906 </span>            :                         (Frame::Inertial))
+<span class="lineNum">     907 </span>            : 
+<span class="lineNum">     908 </span>            : #undef DIM
+<span class="lineNum">     909 </span>            : #undef DTYPE
+<span class="lineNum">     910 </span>            : #undef FRAME
+<span class="lineNum">     911 </span>            : #undef DTYPE_SCAL
+<span class="lineNum">     912 </span>            : #undef INSTANTIATE
+<span class="lineNum">     913 </span>            : #undef INSTANTIATE_SCALAR_FUNC
+<span class="lineNum">     914 </span>            : #undef INSTANTIATE_COMPUTE_ITEM
+<span class="lineNum">     915 </span>            : /// \endcond
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,724 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - DataStructures/VectorImpl.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">DataStructures</a> - VectorImpl.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">22</td>
+            <td class="headerCovTableEntry">51</td>
+            <td class="headerCovTableEntryLo">43.1 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;algorithm&gt;  // IWYU pragma: keep  // for std::fill
+<span class="lineNum">       7 </span>            : #include &lt;array&gt;
+<span class="lineNum">       8 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       9 </span>            : #include &lt;cstdlib&gt;
+<span class="lineNum">      10 </span>            : #include &lt;cstring&gt;
+<span class="lineNum">      11 </span>            : #include &lt;functional&gt;  // IWYU pragma: keep  // for std::plus, etc.
+<span class="lineNum">      12 </span>            : #include &lt;initializer_list&gt;
+<span class="lineNum">      13 </span>            : #include &lt;limits&gt;
+<span class="lineNum">      14 </span>            : #include &lt;memory&gt;
+<span class="lineNum">      15 </span>            : #include &lt;ostream&gt;
+<span class="lineNum">      16 </span>            : #include &lt;pup.h&gt;
+<span class="lineNum">      17 </span>            : #include &lt;type_traits&gt;
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : #include &quot;ErrorHandling/Assert.hpp&quot;
+<span class="lineNum">      20 </span>            : #include &quot;Utilities/ForceInline.hpp&quot;
+<span class="lineNum">      21 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      22 </span>            : #include &quot;Utilities/MakeWithValue.hpp&quot; // IWYU pragma: keep
+<span class="lineNum">      23 </span>            : #include &quot;Utilities/PointerVector.hpp&quot; // IWYU pragma: keep
+<span class="lineNum">      24 </span>            : #include &quot;Utilities/PrintHelpers.hpp&quot;
+<span class="lineNum">      25 </span>            : #include &quot;Utilities/Requires.hpp&quot;
+<span class="lineNum">      26 </span>            : #include &quot;Utilities/StdArrayHelpers.hpp&quot;
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            : // IWYU doesn't like that we want PointerVector.hpp to expose Blaze and also
+<span class="lineNum">      29 </span>            : // have VectorImpl.hpp to expose PointerVector.hpp without including Blaze
+<span class="lineNum">      30 </span>            : // directly in VectorImpl.hpp
+<span class="lineNum">      31 </span>            : //
+<span class="lineNum">      32 </span>            : // IWYU pragma: no_include &lt;blaze/math/AlignmentFlag.h&gt;
+<span class="lineNum">      33 </span>            : // IWYU pragma: no_include &lt;blaze/math/PaddingFlag.h&gt;
+<span class="lineNum">      34 </span>            : // IWYU pragma: no_include &lt;blaze/math/dense/DenseVector.h&gt;
+<span class="lineNum">      35 </span>            : // IWYU pragma: no_include &lt;blaze/math/expressions/DVecDVecAddExpr.h&gt;
+<span class="lineNum">      36 </span>            : // IWYU pragma: no_include &lt;blaze/math/expressions/DVecDVecDivExpr.h&gt;
+<span class="lineNum">      37 </span>            : // IWYU pragma: no_include &lt;blaze/math/expressions/DVecDVecMultExpr.h&gt;
+<span class="lineNum">      38 </span>            : // IWYU pragma: no_include &lt;blaze/math/expressions/DVecDVecSubExpr.h&gt;
+<span class="lineNum">      39 </span>            : // IWYU pragma: no_include &lt;blaze/math/expressions/DVecMapExpr.h&gt;
+<span class="lineNum">      40 </span>            : // IWYU pragma: no_include &lt;blaze/math/expressions/DVecScalarDivExpr.h&gt;
+<span class="lineNum">      41 </span>            : // IWYU pragma: no_include &lt;blaze/math/expressions/DVecScalarMultExpr.h&gt;
+<span class="lineNum">      42 </span>            : // IWYU pragma: no_include &lt;blaze/math/expressions/DenseVector.h&gt;
+<span class="lineNum">      43 </span>            : // IWYU pragma: no_include &lt;blaze/math/expressions/Forward.h&gt;
+<span class="lineNum">      44 </span>            : // IWYU pragma: no_include &lt;blaze/math/expressions/Vector.h&gt;
+<span class="lineNum">      45 </span>            : // IWYU pragma: no_include &lt;blaze/math/traits/AddTrait.h&gt;
+<span class="lineNum">      46 </span>            : // IWYU pragma: no_include &lt;blaze/math/traits/DivTrait.h&gt;
+<span class="lineNum">      47 </span>            : // IWYU pragma: no_include &lt;blaze/math/traits/MultTrait.h&gt;
+<span class="lineNum">      48 </span>            : // IWYU pragma: no_include &lt;blaze/math/traits/SubTrait.h&gt;
+<span class="lineNum">      49 </span>            : // IWYU pragma: no_include &lt;blaze/math/typetraits/IsVector.h&gt;
+<span class="lineNum">      50 </span>            : // IWYU pragma: no_include &lt;blaze/system/TransposeFlag.h&gt;
+<span class="lineNum">      51 </span>            : #if ((BLAZE_MAJOR_VERSION == 3) &amp;&amp; (BLAZE_MINOR_VERSION &lt;= 3))
+<span class="lineNum">      52 </span>            : // IWYU pragma: no_include &lt;blaze/math/traits/BinaryMapTrait.h&gt;
+<span class="lineNum">      53 </span>            : // IWYU pragma: no_include &lt;blaze/math/traits/UnaryMapTrait.h&gt;
+<span class="lineNum">      54 </span>            : #else
+<span class="lineNum">      55 </span>            : // IWYU pragma: no_include &lt;blaze/math/traits/MapTrait.h&gt;
+<span class="lineNum">      56 </span>            : #endif  // ((BLAZE_MAJOR_VERSION == 3) &amp;&amp; (BLAZE_MINOR_VERSION &lt;= 3))
+<span class="lineNum">      57 </span>            : // IWYU pragma: no_include &lt;blaze/math/typetraits/TransposeFlag.h&gt;
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span>            : // IWYU pragma: no_forward_declare blaze::DenseVector
+<span class="lineNum">      60 </span>            : #if ((BLAZE_MAJOR_VERSION == 3) &amp;&amp; (BLAZE_MINOR_VERSION &lt;= 3))
+<span class="lineNum">      61 </span>            : // IWYU pragma: no_forward_declare blaze::UnaryMapTrait
+<span class="lineNum">      62 </span>            : // IWYU pragma: no_forward_declare blaze::BinaryMapTrait
+<span class="lineNum">      63 </span>            : #else
+<span class="lineNum">      64 </span>            : // IWYU pragma: no_forward_declare blaze::MapTrait
+<span class="lineNum">      65 </span>            : #endif  // ((BLAZE_MAJOR_VERSION == 3) &amp;&amp; (BLAZE_MINOR_VERSION &lt;= 3))
+<span class="lineNum">      66 </span>            : // IWYU pragma: no_forward_declare blaze::IsVector
+<span class="lineNum">      67 </span>            : // IWYU pragma: no_forward_declare blaze::TransposeFlag
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span>            : // IWYU pragma: no_include &quot;DataStructures/DataVector.hpp&quot;
+<span class="lineNum">      70 </span>            : 
+<span class="lineNum">      71 </span>            : /*!
+<span class="lineNum">      72 </span>            :  * \ingroup DataStructuresGroup
+<span class="lineNum">      73 </span>            :  * \brief Base class template for various DataVector and related types
+<span class="lineNum">      74 </span>            :  *
+<span class="lineNum">      75 </span>            :  * \details The `VectorImpl` class is the generic parent class for vectors
+<span class="lineNum">      76 </span>            :  * representing collections of related function values, such as `DataVector`s
+<span class="lineNum">      77 </span>            :  * for contiguous data over a computational domain.
+<span class="lineNum">      78 </span>            :  *
+<span class="lineNum">      79 </span>            :  * The `VectorImpl` does not itself define any particular mathematical
+<span class="lineNum">      80 </span>            :  * operations on the contained values. The `VectorImpl` template class and the
+<span class="lineNum">      81 </span>            :  * macros defined in `VectorImpl.hpp` assist in the construction of various
+<span class="lineNum">      82 </span>            :  * derived classes supporting a chosen set of mathematical operations.
+<span class="lineNum">      83 </span>            :  *
+<span class="lineNum">      84 </span>            :  * In addition, the equivalence operator `==` is inherited from the underlying
+<span class="lineNum">      85 </span>            :  * `PointerVector` type, and returns true if and only if the size and contents
+<span class="lineNum">      86 </span>            :  * of the two compared vectors are equivalent.
+<span class="lineNum">      87 </span>            :  *
+<span class="lineNum">      88 </span>            :  * Template parameters:
+<span class="lineNum">      89 </span>            :  * - `T` is the underlying stored type, e.g. `double`, `std::complex&lt;double&gt;`,
+<span class="lineNum">      90 </span>            :  *   `float`, etc.
+<span class="lineNum">      91 </span>            :  * - `VectorType` is the type that should be associated with the VectorImpl
+<span class="lineNum">      92 </span>            :  *    during mathematical computations. In most cases, inherited types should
+<span class="lineNum">      93 </span>            :  *    have themselves as the second template argument, e.g.
+<span class="lineNum">      94 </span>            :  *  ```
+<span class="lineNum">      95 </span>            :  *  class DataVector : VectorImpl&lt;double, DataVector&gt; {
+<span class="lineNum">      96 </span>            :  *  ```
+<span class="lineNum">      97 </span>            :  *  The second template parameter communicates arithmetic type restrictions to
+<span class="lineNum">      98 </span>            :  *  the underlying Blaze framework. For example, if `VectorType` is
+<span class="lineNum">      99 </span>            :  *  `DataVector`, then the underlying architecture will prevent addition with a
+<span class="lineNum">     100 </span>            :  *  vector type whose `ResultType` (which is aliased to its `VectorType`) is
+<span class="lineNum">     101 </span>            :  *  `ModalVector`.  Since `DataVector`s and `ModalVector`s represent data in
+<span class="lineNum">     102 </span>            :  *  different spaces, we wish to forbid several operations between them. This
+<span class="lineNum">     103 </span>            :  *  vector-type-tracking through an expression prevents accidental mixing of
+<span class="lineNum">     104 </span>            :  *  vector types in math expressions.
+<span class="lineNum">     105 </span>            :  *
+<span class="lineNum">     106 </span>            :  * \note
+<span class="lineNum">     107 </span>            :  * - If created with size 0, then  `data()` will return `nullptr`
+<span class="lineNum">     108 </span>            :  * - If either `SPECTRE_DEBUG` or `SPECTRE_NAN_INIT` are defined, then the
+<span class="lineNum">     109 </span>            :  *   `VectorImpl` is default initialized to `signaling_NaN()`. Otherwise, the
+<span class="lineNum">     110 </span>            :  *   vector is filled with uninitialized memory for performance.
+<span class="lineNum">     111 </span>            :  */
+<span class="lineNum">     112 </span>            : template &lt;typename T, typename VectorType&gt;
+<span class="lineNum">     113 </span>            : class VectorImpl
+<span class="lineNum">     114 </span>            :     : public PointerVector&lt;T, blaze::unaligned, blaze::unpadded,
+<span class="lineNum">     115 </span><span class="lineCov">          1 :                            blaze::defaultTransposeFlag, VectorType&gt; {</span>
+<span class="lineNum">     116 </span>            :  public:
+<span class="lineNum">     117 </span><span class="lineNoCov">          0 :   using value_type = T;</span>
+<span class="lineNum">     118 </span><span class="lineNoCov">          0 :   using size_type = size_t;</span>
+<span class="lineNum">     119 </span><span class="lineNoCov">          0 :   using difference_type = std::ptrdiff_t;</span>
+<span class="lineNum">     120 </span><span class="lineNoCov">          0 :   using BaseType = PointerVector&lt;T, blaze::unaligned, blaze::unpadded,</span>
+<span class="lineNum">     121 </span>            :                                  blaze::defaultTransposeFlag, VectorType&gt;;
+<span class="lineNum">     122 </span><span class="lineNoCov">          0 :   static constexpr bool transpose_flag = blaze::defaultTransposeFlag;</span>
+<span class="lineNum">     123 </span>            : 
+<span class="lineNum">     124 </span><span class="lineNoCov">          0 :   using ElementType = T;</span>
+<span class="lineNum">     125 </span><span class="lineNoCov">          0 :   using TransposeType = VectorImpl&lt;T, VectorType&gt;;</span>
+<span class="lineNum">     126 </span><span class="lineNoCov">          0 :   using CompositeType = const VectorImpl&lt;T, VectorType&gt;&amp;;</span>
+<span class="lineNum">     127 </span><span class="lineNoCov">          0 :   using iterator = typename BaseType::Iterator;</span>
+<span class="lineNum">     128 </span><span class="lineNoCov">          0 :   using const_iterator = typename BaseType::ConstIterator;</span>
+<span class="lineNum">     129 </span>            : 
+<span class="lineNum">     130 </span>            :   using BaseType::operator[];
+<span class="lineNum">     131 </span>            :   using BaseType::begin;
+<span class="lineNum">     132 </span>            :   using BaseType::cbegin;
+<span class="lineNum">     133 </span>            :   using BaseType::cend;
+<span class="lineNum">     134 </span>            :   using BaseType::data;
+<span class="lineNum">     135 </span>            :   using BaseType::end;
+<span class="lineNum">     136 </span>            :   using BaseType::size;
+<span class="lineNum">     137 </span>            : 
+<span class="lineNum">     138 </span>            :   // @{
+<span class="lineNum">     139 </span>            :   /// Upcast to `BaseType`
+<span class="lineNum">     140 </span>            :   /// \attention
+<span class="lineNum">     141 </span>            :   /// upcast should only be used when implementing a derived vector type, not in
+<span class="lineNum">     142 </span>            :   /// calling code
+<span class="lineNum">     143 </span><span class="lineCov">          1 :   const BaseType&amp; operator~() const noexcept {</span>
+<span class="lineNum">     144 </span>            :     return static_cast&lt;const BaseType&amp;&gt;(*this);
+<span class="lineNum">     145 </span>            :   }
+<span class="lineNum">     146 </span><span class="lineCov">          1 :   BaseType&amp; operator~() noexcept { return static_cast&lt;BaseType&amp;&gt;(*this); }</span>
+<span class="lineNum">     147 </span>            :   // @}
+<span class="lineNum">     148 </span>            : 
+<span class="lineNum">     149 </span>            :   /// Create with the given size. In debug mode, the vector is initialized to
+<span class="lineNum">     150 </span>            :   /// 'NaN' by default. If not initialized to 'NaN', the memory is allocated but
+<span class="lineNum">     151 </span>            :   /// not initialized.
+<span class="lineNum">     152 </span>            :   ///
+<span class="lineNum">     153 </span>            :   /// - `set_size` number of values
+<span class="lineNum">     154 </span><span class="lineCov">          1 :   explicit VectorImpl(size_t set_size) noexcept</span>
+<span class="lineNum">     155 </span>            :       : owned_data_(set_size &gt; 0 ? static_cast&lt;value_type*&gt;(
+<span class="lineNum">     156 </span>            :                                        malloc(set_size * sizeof(value_type)))
+<span class="lineNum">     157 </span>            :                                  : nullptr,
+<span class="lineNum">     158 </span>            :                     &amp;free) {
+<span class="lineNum">     159 </span>            : #if defined(SPECTRE_DEBUG) || defined(SPECTRE_NAN_INIT)
+<span class="lineNum">     160 </span>            :     std::fill(owned_data_.get(), owned_data_.get() + set_size,
+<span class="lineNum">     161 </span>            :               std::numeric_limits&lt;value_type&gt;::signaling_NaN());
+<span class="lineNum">     162 </span>            : #endif  // SPECTRE_DEBUG
+<span class="lineNum">     163 </span>            :     reset_pointer_vector(set_size);
+<span class="lineNum">     164 </span>            :   }
+<span class="lineNum">     165 </span>            : 
+<span class="lineNum">     166 </span>            :   /// Create with the given size and value.
+<span class="lineNum">     167 </span>            :   ///
+<span class="lineNum">     168 </span>            :   /// - `set_size` number of values
+<span class="lineNum">     169 </span>            :   /// - `value` the value to initialize each element
+<span class="lineNum">     170 </span><span class="lineCov">          1 :   VectorImpl(size_t set_size, T value) noexcept</span>
+<span class="lineNum">     171 </span>            :       : owned_data_(set_size &gt; 0 ? static_cast&lt;value_type*&gt;(
+<span class="lineNum">     172 </span>            :                                        malloc(set_size * sizeof(value_type)))
+<span class="lineNum">     173 </span>            :                                  : nullptr,
+<span class="lineNum">     174 </span>            :                     &amp;free) {
+<span class="lineNum">     175 </span>            :     std::fill(owned_data_.get(), owned_data_.get() + set_size, value);
+<span class="lineNum">     176 </span>            :     reset_pointer_vector(set_size);
+<span class="lineNum">     177 </span>            :   }
+<span class="lineNum">     178 </span>            : 
+<span class="lineNum">     179 </span>            :   /// Create a non-owning VectorImpl that points to `start`
+<span class="lineNum">     180 </span><span class="lineCov">          1 :   VectorImpl(T* start, size_t set_size) noexcept</span>
+<span class="lineNum">     181 </span>            :       : BaseType(start, set_size), owning_(false) {}
+<span class="lineNum">     182 </span>            : 
+<span class="lineNum">     183 </span>            :   /// Create from an initializer list of `T`.
+<span class="lineNum">     184 </span>            :   template &lt;class U, Requires&lt;cpp17::is_same_v&lt;U, T&gt;&gt; = nullptr&gt;
+<span class="lineNum">     185 </span><span class="lineCov">          1 :   VectorImpl(std::initializer_list&lt;U&gt; list) noexcept</span>
+<span class="lineNum">     186 </span>            :       : owned_data_(list.size() &gt; 0 ? static_cast&lt;value_type*&gt;(malloc(
+<span class="lineNum">     187 </span>            :                                           list.size() * sizeof(value_type)))
+<span class="lineNum">     188 </span>            :                                     : nullptr,
+<span class="lineNum">     189 </span>            :                     &amp;free) {
+<span class="lineNum">     190 </span>            :     // Note: can't use memcpy with an initializer list.
+<span class="lineNum">     191 </span>            :     std::copy(list.begin(), list.end(), owned_data_.get());
+<span class="lineNum">     192 </span>            :     reset_pointer_vector(list.size());
+<span class="lineNum">     193 </span>            :   }
+<span class="lineNum">     194 </span>            : 
+<span class="lineNum">     195 </span>            :   /// Empty VectorImpl
+<span class="lineNum">     196 </span><span class="lineCov">          1 :   VectorImpl() = default;</span>
+<span class="lineNum">     197 </span>            :   /// \cond HIDDEN_SYMBOLS
+<span class="lineNum">     198 </span>            :   ~VectorImpl() = default;
+<span class="lineNum">     199 </span>            : 
+<span class="lineNum">     200 </span>            :   VectorImpl(const VectorImpl&lt;T, VectorType&gt;&amp; rhs) noexcept;
+<span class="lineNum">     201 </span>            :   VectorImpl&amp; operator=(const VectorImpl&lt;T, VectorType&gt;&amp; rhs) noexcept;
+<span class="lineNum">     202 </span>            :   VectorImpl(VectorImpl&lt;T, VectorType&gt;&amp;&amp; rhs) noexcept;
+<span class="lineNum">     203 </span>            :   VectorImpl&amp; operator=(VectorImpl&lt;T, VectorType&gt;&amp;&amp; rhs) noexcept;
+<span class="lineNum">     204 </span>            : 
+<span class="lineNum">     205 </span>            :   // This is a converting constructor. clang-tidy complains that it's not
+<span class="lineNum">     206 </span>            :   // explicit, but we want it to allow conversion.
+<span class="lineNum">     207 </span>            :   // clang-tidy: mark as explicit (we want conversion to VectorImpl type)
+<span class="lineNum">     208 </span>            :   template &lt;
+<span class="lineNum">     209 </span>            :       typename VT, bool VF,
+<span class="lineNum">     210 </span>            :       Requires&lt;cpp17::is_same_v&lt;typename VT::ResultType, VectorType&gt;&gt; = nullptr&gt;
+<span class="lineNum">     211 </span>            :   VectorImpl(const blaze::DenseVector&lt;VT, VF&gt;&amp; expression) noexcept;  // NOLINT
+<span class="lineNum">     212 </span>            : 
+<span class="lineNum">     213 </span>            :   template &lt;typename VT, bool VF&gt;
+<span class="lineNum">     214 </span>            :   VectorImpl&amp; operator=(const blaze::DenseVector&lt;VT, VF&gt;&amp; expression) noexcept;
+<span class="lineNum">     215 </span>            :   /// \endcond
+<span class="lineNum">     216 </span>            : 
+<span class="lineNum">     217 </span><span class="lineNoCov">          0 :   VectorImpl&amp; operator=(const T&amp; rhs) noexcept;</span>
+<span class="lineNum">     218 </span>            : 
+<span class="lineNum">     219 </span>            :   // @{
+<span class="lineNum">     220 </span>            :   /// Set the VectorImpl to be a reference to another VectorImpl object
+<span class="lineNum">     221 </span><span class="lineCov">          1 :   void set_data_ref(gsl::not_null&lt;VectorType*&gt; rhs) noexcept {</span>
+<span class="lineNum">     222 </span>            :     set_data_ref(rhs-&gt;data(), rhs-&gt;size());
+<span class="lineNum">     223 </span>            :   }
+<span class="lineNum">     224 </span>            : 
+<span class="lineNum">     225 </span><span class="lineCov">          1 :   void set_data_ref(T* const start, const size_t set_size) noexcept {</span>
+<span class="lineNum">     226 </span>            :     owned_data_.reset();
+<span class="lineNum">     227 </span>            :     (~*this).reset(start, set_size);
+<span class="lineNum">     228 </span>            :     owning_ = false;
+<span class="lineNum">     229 </span>            :   }
+<span class="lineNum">     230 </span>            :   // @}
+<span class="lineNum">     231 </span>            : 
+<span class="lineNum">     232 </span>            :   /// Returns true if the class owns the data
+<span class="lineNum">     233 </span><span class="lineCov">          1 :   bool is_owning() const noexcept { return owning_; }</span>
+<span class="lineNum">     234 </span>            : 
+<span class="lineNum">     235 </span>            :   /// Serialization for Charm++
+<span class="lineNum">     236 </span>            :   // clang-tidy: google-runtime-references
+<span class="lineNum">     237 </span><span class="lineCov">          1 :   void pup(PUP::er&amp; p) noexcept;  // NOLINT</span>
+<span class="lineNum">     238 </span>            : 
+<span class="lineNum">     239 </span>            :  protected:
+<span class="lineNum">     240 </span><span class="lineNoCov">          0 :   std::unique_ptr&lt;value_type[], decltype(&amp;free)&gt; owned_data_{nullptr, &amp;free};</span>
+<span class="lineNum">     241 </span><span class="lineNoCov">          0 :   bool owning_{true};</span>
+<span class="lineNum">     242 </span>            : 
+<span class="lineNum">     243 </span><span class="lineNoCov">          0 :   SPECTRE_ALWAYS_INLINE void reset_pointer_vector(</span>
+<span class="lineNum">     244 </span>            :       const size_t set_size) noexcept {
+<span class="lineNum">     245 </span>            :     this-&gt;reset(owned_data_.get(), set_size);
+<span class="lineNum">     246 </span>            :   }
+<span class="lineNum">     247 </span>            : };
+<span class="lineNum">     248 </span>            : 
+<span class="lineNum">     249 </span>            : template &lt;typename T, typename VectorType&gt;
+<span class="lineNum">     250 </span><span class="lineNoCov">          0 : VectorImpl&lt;T, VectorType&gt;::VectorImpl(</span>
+<span class="lineNum">     251 </span>            :     const VectorImpl&lt;T, VectorType&gt;&amp; rhs) noexcept
+<span class="lineNum">     252 </span>            :     : BaseType{rhs},
+<span class="lineNum">     253 </span>            :       owned_data_(rhs.size() &gt; 0 ? static_cast&lt;value_type*&gt;(
+<span class="lineNum">     254 </span>            :                                        malloc(rhs.size() * sizeof(value_type)))
+<span class="lineNum">     255 </span>            :                                  : nullptr,
+<span class="lineNum">     256 </span>            :                   &amp;free) {
+<span class="lineNum">     257 </span>            :   reset_pointer_vector(rhs.size());
+<span class="lineNum">     258 </span>            :   std::memcpy(data(), rhs.data(), size() * sizeof(value_type));
+<span class="lineNum">     259 </span>            : }
+<span class="lineNum">     260 </span>            : 
+<span class="lineNum">     261 </span>            : template &lt;typename T, typename VectorType&gt;
+<span class="lineNum">     262 </span>            : VectorImpl&lt;T, VectorType&gt;&amp; VectorImpl&lt;T, VectorType&gt;::operator=(
+<span class="lineNum">     263 </span>            :     const VectorImpl&lt;T, VectorType&gt;&amp; rhs) noexcept {
+<span class="lineNum">     264 </span>            :   if (this != &amp;rhs) {
+<span class="lineNum">     265 </span>            :     if (owning_) {
+<span class="lineNum">     266 </span>            :       if (size() != rhs.size()) {
+<span class="lineNum">     267 </span>            :         owned_data_.reset(rhs.size() &gt; 0 ? static_cast&lt;value_type*&gt;(malloc(
+<span class="lineNum">     268 </span>            :                                                rhs.size() * sizeof(value_type)))
+<span class="lineNum">     269 </span>            :                                          : nullptr);
+<span class="lineNum">     270 </span>            :       }
+<span class="lineNum">     271 </span>            :       reset_pointer_vector(rhs.size());
+<span class="lineNum">     272 </span>            :     } else {
+<span class="lineNum">     273 </span>            :       ASSERT(rhs.size() == size(), &quot;Must copy into same size, not &quot;
+<span class="lineNum">     274 </span>            :                                        &lt;&lt; rhs.size() &lt;&lt; &quot; into &quot; &lt;&lt; size());
+<span class="lineNum">     275 </span>            :     }
+<span class="lineNum">     276 </span>            :     std::memcpy(data(), rhs.data(), size() * sizeof(value_type));
+<span class="lineNum">     277 </span>            :   }
+<span class="lineNum">     278 </span>            :   return *this;
+<span class="lineNum">     279 </span>            : }
+<span class="lineNum">     280 </span>            : 
+<span class="lineNum">     281 </span>            : template &lt;typename T, typename VectorType&gt;
+<span class="lineNum">     282 </span><span class="lineNoCov">          0 : VectorImpl&lt;T, VectorType&gt;::VectorImpl(</span>
+<span class="lineNum">     283 </span>            :     VectorImpl&lt;T, VectorType&gt;&amp;&amp; rhs) noexcept {
+<span class="lineNum">     284 </span>            :   owned_data_ = std::move(rhs.owned_data_);
+<span class="lineNum">     285 </span>            :   ~*this = ~rhs;  // PointerVector is trivially copyable
+<span class="lineNum">     286 </span>            :   owning_ = rhs.owning_;
+<span class="lineNum">     287 </span>            :   rhs.owning_ = true;
+<span class="lineNum">     288 </span>            :   rhs.reset();
+<span class="lineNum">     289 </span>            : }
+<span class="lineNum">     290 </span>            : 
+<span class="lineNum">     291 </span>            : template &lt;typename T, typename VectorType&gt;
+<span class="lineNum">     292 </span>            : VectorImpl&lt;T, VectorType&gt;&amp; VectorImpl&lt;T, VectorType&gt;::operator=(
+<span class="lineNum">     293 </span>            :     VectorImpl&lt;T, VectorType&gt;&amp;&amp; rhs) noexcept {
+<span class="lineNum">     294 </span>            :   if (this != &amp;rhs) {
+<span class="lineNum">     295 </span>            :     if (owning_) {
+<span class="lineNum">     296 </span>            :       owned_data_ = std::move(rhs.owned_data_);
+<span class="lineNum">     297 </span>            :       ~*this = ~rhs; /* PointerVector is trivially copyable */
+<span class="lineNum">     298 </span>            :       owning_ = rhs.owning_;
+<span class="lineNum">     299 </span>            :     } else {
+<span class="lineNum">     300 </span>            :       ASSERT(rhs.size() == size(), &quot;Must copy into same size, not &quot;
+<span class="lineNum">     301 </span>            :                                        &lt;&lt; rhs.size() &lt;&lt; &quot; into &quot; &lt;&lt; size());
+<span class="lineNum">     302 </span>            :       std::memcpy(data(), rhs.data(), size() * sizeof(value_type));
+<span class="lineNum">     303 </span>            :     }
+<span class="lineNum">     304 </span>            :     rhs.owning_ = true;
+<span class="lineNum">     305 </span>            :     rhs.reset();
+<span class="lineNum">     306 </span>            :   }
+<span class="lineNum">     307 </span>            :   return *this;
+<span class="lineNum">     308 </span>            : }
+<span class="lineNum">     309 </span>            : 
+<span class="lineNum">     310 </span>            : /// \cond HIDDEN_SYMBOLS
+<span class="lineNum">     311 </span>            : // This is a converting constructor. clang-tidy complains that it's not
+<span class="lineNum">     312 </span>            : // explicit, but we want it to allow conversion.
+<span class="lineNum">     313 </span>            : // clang-tidy: mark as explicit (we want conversion to VectorImpl)
+<span class="lineNum">     314 </span>            : template &lt;typename T, typename VectorType&gt;
+<span class="lineNum">     315 </span>            : template &lt;typename VT, bool VF,
+<span class="lineNum">     316 </span>            :           Requires&lt;cpp17::is_same_v&lt;typename VT::ResultType, VectorType&gt;&gt;&gt;
+<span class="lineNum">     317 </span>            : VectorImpl&lt;T, VectorType&gt;::VectorImpl(
+<span class="lineNum">     318 </span>            :     const blaze::DenseVector&lt;VT, VF&gt;&amp; expression)  // NOLINT
+<span class="lineNum">     319 </span>            :     noexcept
+<span class="lineNum">     320 </span>            :     : owned_data_(static_cast&lt;value_type*&gt;(
+<span class="lineNum">     321 </span>            :                       malloc((~expression).size() * sizeof(value_type))),
+<span class="lineNum">     322 </span>            :                   &amp;free) {
+<span class="lineNum">     323 </span>            :   static_assert(cpp17::is_same_v&lt;typename VT::ResultType, VectorType&gt;,
+<span class="lineNum">     324 </span>            :                 &quot;You are attempting to assign the result of an expression &quot;
+<span class="lineNum">     325 </span>            :                 &quot;that is not consistent with the VectorImpl type you are &quot;
+<span class="lineNum">     326 </span>            :                 &quot;assigning to.&quot;);
+<span class="lineNum">     327 </span>            :   reset_pointer_vector((~expression).size());
+<span class="lineNum">     328 </span>            :   ~*this = expression;
+<span class="lineNum">     329 </span>            : }
+<span class="lineNum">     330 </span>            : 
+<span class="lineNum">     331 </span>            : template &lt;typename T, typename VectorType&gt;
+<span class="lineNum">     332 </span>            : template &lt;typename VT, bool VF&gt;
+<span class="lineNum">     333 </span>            : VectorImpl&lt;T, VectorType&gt;&amp; VectorImpl&lt;T, VectorType&gt;::operator=(
+<span class="lineNum">     334 </span>            :     const blaze::DenseVector&lt;VT, VF&gt;&amp; expression) noexcept {
+<span class="lineNum">     335 </span>            :   static_assert(cpp17::is_same_v&lt;typename VT::ResultType, VectorType&gt;,
+<span class="lineNum">     336 </span>            :                 &quot;You are attempting to assign the result of an expression &quot;
+<span class="lineNum">     337 </span>            :                 &quot;that is not consistent with the VectorImpl type you are &quot;
+<span class="lineNum">     338 </span>            :                 &quot;assigning to.&quot;);
+<span class="lineNum">     339 </span>            :   if (owning_ and (~expression).size() != size()) {
+<span class="lineNum">     340 </span>            :     owned_data_.reset(static_cast&lt;value_type*&gt;(
+<span class="lineNum">     341 </span>            :         malloc((~expression).size() * sizeof(value_type))));
+<span class="lineNum">     342 </span>            :     reset_pointer_vector((~expression).size());
+<span class="lineNum">     343 </span>            :   } else if (not owning_) {
+<span class="lineNum">     344 </span>            :     ASSERT((~expression).size() == size(), &quot;Must copy into same size, not &quot;
+<span class="lineNum">     345 </span>            :                                                &lt;&lt; (~expression).size()
+<span class="lineNum">     346 </span>            :                                                &lt;&lt; &quot; into &quot; &lt;&lt; size());
+<span class="lineNum">     347 </span>            :   }
+<span class="lineNum">     348 </span>            :   ~*this = expression;
+<span class="lineNum">     349 </span>            :   return *this;
+<span class="lineNum">     350 </span>            : }
+<span class="lineNum">     351 </span>            : /// \endcond
+<span class="lineNum">     352 </span>            : 
+<span class="lineNum">     353 </span>            : // The case of assigning a type apart from the same VectorImpl or a
+<span class="lineNum">     354 </span>            : // `blaze::DenseVector` forwards the assignment to the `PointerVector` base
+<span class="lineNum">     355 </span>            : // type. In the case of a single compatible value, this fills the vector with
+<span class="lineNum">     356 </span>            : // that value.
+<span class="lineNum">     357 </span>            : template &lt;typename T, typename VectorType&gt;
+<span class="lineNum">     358 </span>            : VectorImpl&lt;T, VectorType&gt;&amp; VectorImpl&lt;T, VectorType&gt;::operator=(
+<span class="lineNum">     359 </span>            :     const T&amp; rhs) noexcept {
+<span class="lineNum">     360 </span>            :   ~*this = rhs;
+<span class="lineNum">     361 </span>            :   return *this;
+<span class="lineNum">     362 </span>            : }
+<span class="lineNum">     363 </span>            : 
+<span class="lineNum">     364 </span>            : template &lt;typename T, typename VectorType&gt;
+<span class="lineNum">     365 </span>            : void VectorImpl&lt;T, VectorType&gt;::pup(PUP::er&amp; p) noexcept {  // NOLINT
+<span class="lineNum">     366 </span>            :   auto my_size = size();
+<span class="lineNum">     367 </span>            :   p | my_size;
+<span class="lineNum">     368 </span>            :   if (my_size &gt; 0) {
+<span class="lineNum">     369 </span>            :     if (p.isUnpacking()) {
+<span class="lineNum">     370 </span>            :       owning_ = true;
+<span class="lineNum">     371 </span>            :       owned_data_.reset(my_size &gt; 0 ? static_cast&lt;value_type*&gt;(
+<span class="lineNum">     372 </span>            :                                           malloc(my_size * sizeof(value_type)))
+<span class="lineNum">     373 </span>            :                                     : nullptr);
+<span class="lineNum">     374 </span>            :       reset_pointer_vector(my_size);
+<span class="lineNum">     375 </span>            :     }
+<span class="lineNum">     376 </span>            :     PUParray(p, data(), size());
+<span class="lineNum">     377 </span>            :   }
+<span class="lineNum">     378 </span>            : }
+<span class="lineNum">     379 </span>            : 
+<span class="lineNum">     380 </span>            : /// Output operator for VectorImpl
+<span class="lineNum">     381 </span>            : template &lt;typename T, typename VectorType&gt;
+<span class="lineNum">     382 </span><span class="lineCov">          1 : std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os,</span>
+<span class="lineNum">     383 </span>            :                          const VectorImpl&lt;T, VectorType&gt;&amp; d) noexcept {
+<span class="lineNum">     384 </span>            :   sequence_print_helper(os, d.begin(), d.end());
+<span class="lineNum">     385 </span>            :   return os;
+<span class="lineNum">     386 </span>            : }
+<span class="lineNum">     387 </span>            : 
+<span class="lineNum">     388 </span>            : /*!
+<span class="lineNum">     389 </span>            :  * \ingroup DataStructuresGroup
+<span class="lineNum">     390 </span>            :  * \brief Instructs Blaze to provide the appropriate vector result type after
+<span class="lineNum">     391 </span>            :  * math operations. This is accomplished by specializing Blaze's type traits
+<span class="lineNum">     392 </span>            :  * that are used for handling return type deduction and specifying the `using
+<span class="lineNum">     393 </span>            :  * Type =` nested type alias in the traits.
+<span class="lineNum">     394 </span>            :  *
+<span class="lineNum">     395 </span>            :  * \param VECTOR_TYPE The vector type, which matches the type of the operation
+<span class="lineNum">     396 </span>            :  * result (e.g. `DataVector`)
+<span class="lineNum">     397 </span>            :  *
+<span class="lineNum">     398 </span>            :  * \param BLAZE_MATH_TRAIT The blaze trait/expression for which you want to
+<span class="lineNum">     399 </span>            :  * specify the return type (e.g. `AddTrait`).
+<span class="lineNum">     400 </span>            :  */
+<span class="lineNum">     401 </span><span class="lineCov">          1 : #define BLAZE_TRAIT_SPECIALIZE_BINARY_TRAIT(VECTOR_TYPE, BLAZE_MATH_TRAIT) \</span>
+<span class="lineNum">     402 </span>            :   template &lt;&gt;                                                              \
+<span class="lineNum">     403 </span>            :   struct BLAZE_MATH_TRAIT&lt;VECTOR_TYPE, VECTOR_TYPE&gt; {                      \
+<span class="lineNum">     404 </span>            :     using Type = VECTOR_TYPE;                                              \
+<span class="lineNum">     405 </span>            :   };                                                                       \
+<span class="lineNum">     406 </span>            :   template &lt;&gt;                                                              \
+<span class="lineNum">     407 </span>            :   struct BLAZE_MATH_TRAIT&lt;VECTOR_TYPE, VECTOR_TYPE::value_type&gt; {          \
+<span class="lineNum">     408 </span>            :     using Type = VECTOR_TYPE;                                              \
+<span class="lineNum">     409 </span>            :   };                                                                       \
+<span class="lineNum">     410 </span>            :   template &lt;&gt;                                                              \
+<span class="lineNum">     411 </span>            :   struct BLAZE_MATH_TRAIT&lt;VECTOR_TYPE::value_type, VECTOR_TYPE&gt; {          \
+<span class="lineNum">     412 </span>            :     using Type = VECTOR_TYPE;                                              \
+<span class="lineNum">     413 </span>            :   }
+<span class="lineNum">     414 </span>            : 
+<span class="lineNum">     415 </span>            : /*!
+<span class="lineNum">     416 </span>            :  * \ingroup DataStructuresGroup
+<span class="lineNum">     417 </span>            :  * \brief Instructs Blaze to provide the appropriate vector result type of an
+<span class="lineNum">     418 </span>            :  * operator between `VECTOR_TYPE` and `COMPATIBLE`, where the operation is
+<span class="lineNum">     419 </span>            :  * represented by `BLAZE_MATH_TRAIT`
+<span class="lineNum">     420 </span>            :  *
+<span class="lineNum">     421 </span>            :  * \param VECTOR_TYPE The vector type, which matches the type of the operation
+<span class="lineNum">     422 </span>            :  * result (e.g. `ComplexDataVector`)
+<span class="lineNum">     423 </span>            :  *
+<span class="lineNum">     424 </span>            :  * \param COMPATIBLE the type for which you want math operations to work with
+<span class="lineNum">     425 </span>            :  * `VECTOR_TYPE` smoothly (e.g. `DataVector`)
+<span class="lineNum">     426 </span>            :  *
+<span class="lineNum">     427 </span>            :  * \param BLAZE_MATH_TRAIT The blaze trait for which you want declare the Type
+<span class="lineNum">     428 </span>            :  * field (e.g. `AddTrait`)
+<span class="lineNum">     429 </span>            :  */
+<span class="lineNum">     430 </span>            : #define BLAZE_TRAIT_SPECIALIZE_COMPATIBLE_BINARY_TRAIT( \
+<span class="lineNum">     431 </span><span class="lineCov">          1 :     VECTOR_TYPE, COMPATIBLE, BLAZE_MATH_TRAIT)          \</span>
+<span class="lineNum">     432 </span>            :   template &lt;&gt;                                           \
+<span class="lineNum">     433 </span>            :   struct BLAZE_MATH_TRAIT&lt;VECTOR_TYPE, COMPATIBLE&gt; {    \
+<span class="lineNum">     434 </span>            :     using Type = VECTOR_TYPE;                           \
+<span class="lineNum">     435 </span>            :   };                                                    \
+<span class="lineNum">     436 </span>            :   template &lt;&gt;                                           \
+<span class="lineNum">     437 </span>            :   struct BLAZE_MATH_TRAIT&lt;COMPATIBLE, VECTOR_TYPE&gt; {    \
+<span class="lineNum">     438 </span>            :     using Type = VECTOR_TYPE;                           \
+<span class="lineNum">     439 </span>            :   }
+<span class="lineNum">     440 </span>            : 
+<span class="lineNum">     441 </span>            : /*!
+<span class="lineNum">     442 </span>            :  * \ingroup DataStructuresGroup
+<span class="lineNum">     443 </span>            :  * \brief Instructs Blaze to provide the appropriate vector result type of
+<span class="lineNum">     444 </span>            :  * arithmetic operations for `VECTOR_TYPE`. This is accomplished by specializing
+<span class="lineNum">     445 </span>            :  * Blaze's type traits that are used for handling return type deduction.
+<span class="lineNum">     446 </span>            :  *
+<span class="lineNum">     447 </span>            :  * \details Type definitions here are suitable for contiguous data
+<span class="lineNum">     448 </span>            :  * (e.g. `DataVector`), but this macro might need to be tweaked for other types
+<span class="lineNum">     449 </span>            :  * of data, for instance Fourier coefficients.
+<span class="lineNum">     450 </span>            :  *
+<span class="lineNum">     451 </span>            :  * \param VECTOR_TYPE The vector type, which for the arithmetic operations is
+<span class="lineNum">     452 </span>            :  * the type of the operation result (e.g. `DataVector`)
+<span class="lineNum">     453 </span>            :  */
+<span class="lineNum">     454 </span><span class="lineCov">          1 : #define VECTOR_BLAZE_TRAIT_SPECIALIZE_ARITHMETIC_TRAITS(VECTOR_TYPE) \</span>
+<span class="lineNum">     455 </span>            :   template &lt;&gt;                                                        \
+<span class="lineNum">     456 </span>            :   struct IsVector&lt;VECTOR_TYPE&gt; : std::true_type {};                  \
+<span class="lineNum">     457 </span>            :   template &lt;&gt;                                                        \
+<span class="lineNum">     458 </span>            :   struct TransposeFlag&lt;VECTOR_TYPE&gt;                                  \
+<span class="lineNum">     459 </span>            :       : BoolConstant&lt;VECTOR_TYPE::transpose_flag&gt; {};                \
+<span class="lineNum">     460 </span>            :   BLAZE_TRAIT_SPECIALIZE_BINARY_TRAIT(VECTOR_TYPE, AddTrait);        \
+<span class="lineNum">     461 </span>            :   BLAZE_TRAIT_SPECIALIZE_BINARY_TRAIT(VECTOR_TYPE, SubTrait);        \
+<span class="lineNum">     462 </span>            :   BLAZE_TRAIT_SPECIALIZE_BINARY_TRAIT(VECTOR_TYPE, MultTrait);       \
+<span class="lineNum">     463 </span>            :   BLAZE_TRAIT_SPECIALIZE_BINARY_TRAIT(VECTOR_TYPE, DivTrait)
+<span class="lineNum">     464 </span>            : 
+<span class="lineNum">     465 </span>            : /*!
+<span class="lineNum">     466 </span>            :  * \ingroup DataStructuresGroup
+<span class="lineNum">     467 </span>            :  * \brief Instructs Blaze to provide the appropriate vector result type of `Map`
+<span class="lineNum">     468 </span>            :  * operations (unary and binary) acting on `VECTOR_TYPE`. This is accomplished
+<span class="lineNum">     469 </span>            :  * by specializing Blaze's type traits that are used for handling return type
+<span class="lineNum">     470 </span>            :  * deduction.
+<span class="lineNum">     471 </span>            :  *
+<span class="lineNum">     472 </span>            :  * \details Type declarations here are suitable for contiguous data (e.g.
+<span class="lineNum">     473 </span>            :  * `DataVector`), but this macro might need to be tweaked for other types of
+<span class="lineNum">     474 </span>            :  * data, for instance Fourier coefficients.
+<span class="lineNum">     475 </span>            :  *
+<span class="lineNum">     476 </span>            :  * \param VECTOR_TYPE The vector type, which for the `Map` operations is
+<span class="lineNum">     477 </span>            :  * the type of the operation result (e.g. `DataVector`)
+<span class="lineNum">     478 </span>            :  */
+<span class="lineNum">     479 </span>            : #if ((BLAZE_MAJOR_VERSION == 3) &amp;&amp; (BLAZE_MINOR_VERSION &lt;= 3))
+<span class="lineNum">     480 </span>            : #define VECTOR_BLAZE_TRAIT_SPECIALIZE_ALL_MAP_TRAITS(VECTOR_TYPE) \
+<span class="lineNum">     481 </span>            :   template &lt;typename Operator&gt;                                    \
+<span class="lineNum">     482 </span>            :   struct UnaryMapTrait&lt;VECTOR_TYPE, Operator&gt; {                   \
+<span class="lineNum">     483 </span>            :     using Type = VECTOR_TYPE;                                     \
+<span class="lineNum">     484 </span>            :   };                                                              \
+<span class="lineNum">     485 </span>            :   template &lt;typename Operator&gt;                                    \
+<span class="lineNum">     486 </span>            :   struct BinaryMapTrait&lt;VECTOR_TYPE, VECTOR_TYPE, Operator&gt; {     \
+<span class="lineNum">     487 </span>            :     using Type = VECTOR_TYPE;                                     \
+<span class="lineNum">     488 </span>            :   }
+<span class="lineNum">     489 </span>            : #else
+<span class="lineNum">     490 </span><span class="lineCov">          1 : #define VECTOR_BLAZE_TRAIT_SPECIALIZE_ALL_MAP_TRAITS(VECTOR_TYPE) \</span>
+<span class="lineNum">     491 </span>            :   template &lt;typename Operator&gt;                                    \
+<span class="lineNum">     492 </span>            :   struct MapTrait&lt;VECTOR_TYPE, Operator&gt; {                        \
+<span class="lineNum">     493 </span>            :     using Type = VECTOR_TYPE;                                     \
+<span class="lineNum">     494 </span>            :   };                                                              \
+<span class="lineNum">     495 </span>            :   template &lt;typename Operator&gt;                                    \
+<span class="lineNum">     496 </span>            :   struct MapTrait&lt;VECTOR_TYPE, VECTOR_TYPE, Operator&gt; {           \
+<span class="lineNum">     497 </span>            :     using Type = VECTOR_TYPE;                                     \
+<span class="lineNum">     498 </span>            :   }
+<span class="lineNum">     499 </span>            : #endif  // ((BLAZE_MAJOR_VERSION == 3) &amp;&amp; (BLAZE_MINOR_VERSION &lt;= 3))
+<span class="lineNum">     500 </span>            : 
+<span class="lineNum">     501 </span>            : /*!
+<span class="lineNum">     502 </span>            :  * \ingroup DataStructuresGroup
+<span class="lineNum">     503 </span>            :  * \brief Defines the set of binary operations often supported for
+<span class="lineNum">     504 </span>            :  * `std::array&lt;VECTOR_TYPE, size&gt;`, for arbitrary `size`.
+<span class="lineNum">     505 </span>            :  *
+<span class="lineNum">     506 </span>            :  *  \param VECTOR_TYPE The vector type (e.g. `DataVector`)
+<span class="lineNum">     507 </span>            :  */
+<span class="lineNum">     508 </span><span class="lineCov">          1 : #define MAKE_STD_ARRAY_VECTOR_BINOPS(VECTOR_TYPE)                            \</span>
+<span class="lineNum">     509 </span>            :   DEFINE_STD_ARRAY_BINOP(VECTOR_TYPE, VECTOR_TYPE::value_type,               \
+<span class="lineNum">     510 </span>            :                          VECTOR_TYPE, operator+, std::plus&lt;&gt;())              \
+<span class="lineNum">     511 </span>            :   DEFINE_STD_ARRAY_BINOP(VECTOR_TYPE, VECTOR_TYPE,                           \
+<span class="lineNum">     512 </span>            :                          VECTOR_TYPE::value_type, operator+, std::plus&lt;&gt;())  \
+<span class="lineNum">     513 </span>            :   DEFINE_STD_ARRAY_BINOP(VECTOR_TYPE, VECTOR_TYPE, VECTOR_TYPE, operator+,   \
+<span class="lineNum">     514 </span>            :                          std::plus&lt;&gt;())                                      \
+<span class="lineNum">     515 </span>            :                                                                              \
+<span class="lineNum">     516 </span>            :   DEFINE_STD_ARRAY_BINOP(VECTOR_TYPE, VECTOR_TYPE::value_type,               \
+<span class="lineNum">     517 </span>            :                          VECTOR_TYPE, operator-, std::minus&lt;&gt;())             \
+<span class="lineNum">     518 </span>            :   DEFINE_STD_ARRAY_BINOP(VECTOR_TYPE, VECTOR_TYPE,                           \
+<span class="lineNum">     519 </span>            :                          VECTOR_TYPE::value_type, operator-, std::minus&lt;&gt;()) \
+<span class="lineNum">     520 </span>            :   DEFINE_STD_ARRAY_BINOP(VECTOR_TYPE, VECTOR_TYPE, VECTOR_TYPE, operator-,   \
+<span class="lineNum">     521 </span>            :                          std::minus&lt;&gt;())                                     \
+<span class="lineNum">     522 </span>            :                                                                              \
+<span class="lineNum">     523 </span>            :   DEFINE_STD_ARRAY_INPLACE_BINOP(VECTOR_TYPE, VECTOR_TYPE, operator-=,       \
+<span class="lineNum">     524 </span>            :                                  std::minus&lt;&gt;())                             \
+<span class="lineNum">     525 </span>            :   DEFINE_STD_ARRAY_INPLACE_BINOP(                                            \
+<span class="lineNum">     526 </span>            :       VECTOR_TYPE, VECTOR_TYPE::value_type, operator-=, std::minus&lt;&gt;())      \
+<span class="lineNum">     527 </span>            :   DEFINE_STD_ARRAY_INPLACE_BINOP(VECTOR_TYPE, VECTOR_TYPE, operator+=,       \
+<span class="lineNum">     528 </span>            :                                  std::plus&lt;&gt;())                              \
+<span class="lineNum">     529 </span>            :   DEFINE_STD_ARRAY_INPLACE_BINOP(                                            \
+<span class="lineNum">     530 </span>            :       VECTOR_TYPE, VECTOR_TYPE::value_type, operator+=, std::plus&lt;&gt;())
+<span class="lineNum">     531 </span>            : 
+<span class="lineNum">     532 </span>            : /*!
+<span class="lineNum">     533 </span>            :  * \ingroup DataStructuresGroup
+<span class="lineNum">     534 </span>            :  * \brief Defines `MAKE_MATH_ASSIGN_EXPRESSION_POINTERVECTOR` with all
+<span class="lineNum">     535 </span>            :  * assignment arithmetic operations
+<span class="lineNum">     536 </span>            :  *
+<span class="lineNum">     537 </span>            :  * \param VECTOR_TYPE The vector type (e.g. `DataVector`)
+<span class="lineNum">     538 </span>            :  */
+<span class="lineNum">     539 </span><span class="lineCov">          1 : #define MAKE_MATH_ASSIGN_EXPRESSION_ARITHMETIC(VECTOR_TYPE)  \</span>
+<span class="lineNum">     540 </span>            :   MAKE_MATH_ASSIGN_EXPRESSION_POINTERVECTOR(+=, VECTOR_TYPE) \
+<span class="lineNum">     541 </span>            :   MAKE_MATH_ASSIGN_EXPRESSION_POINTERVECTOR(-=, VECTOR_TYPE) \
+<span class="lineNum">     542 </span>            :   MAKE_MATH_ASSIGN_EXPRESSION_POINTERVECTOR(*=, VECTOR_TYPE) \
+<span class="lineNum">     543 </span>            :   MAKE_MATH_ASSIGN_EXPRESSION_POINTERVECTOR(/=, VECTOR_TYPE)
+<span class="lineNum">     544 </span>            : 
+<span class="lineNum">     545 </span>            : /*!
+<span class="lineNum">     546 </span>            :  * \ingroup DataStructuresGroup
+<span class="lineNum">     547 </span>            :  * \brief Defines the `MakeWithValueImpl` `apply` specialization
+<span class="lineNum">     548 </span>            :  *
+<span class="lineNum">     549 </span>            :  * \details The `MakeWithValueImpl&lt;VECTOR_TYPE, VECTOR_TYPE&gt;` member
+<span class="lineNum">     550 </span>            :  * `apply(VECTOR_TYPE, VECTOR_TYPE::value_type)` specialization defined by this
+<span class="lineNum">     551 </span>            :  * macro produces an object with the same size as the `input` argument,
+<span class="lineNum">     552 </span>            :  * initialized with the `value` argument in every entry.
+<span class="lineNum">     553 </span>            :  *
+<span class="lineNum">     554 </span>            :  * \param VECTOR_TYPE The vector type (e.g. `DataVector`)
+<span class="lineNum">     555 </span>            :  */
+<span class="lineNum">     556 </span><span class="lineCov">          1 : #define MAKE_WITH_VALUE_IMPL_DEFINITION_FOR(VECTOR_TYPE)                      \</span>
+<span class="lineNum">     557 </span>            :   namespace MakeWithValueImpls {                                              \
+<span class="lineNum">     558 </span>            :   template &lt;&gt;                                                                 \
+<span class="lineNum">     559 </span>            :   struct MakeWithValueImpl&lt;VECTOR_TYPE, VECTOR_TYPE&gt; {                        \
+<span class="lineNum">     560 </span>            :     static SPECTRE_ALWAYS_INLINE VECTOR_TYPE                                  \
+<span class="lineNum">     561 </span>            :     apply(const VECTOR_TYPE&amp; input,                                           \
+<span class="lineNum">     562 </span>            :           const VECTOR_TYPE::value_type value) noexcept {                     \
+<span class="lineNum">     563 </span>            :       return VECTOR_TYPE(input.size(), value);                                \
+<span class="lineNum">     564 </span>            :     }                                                                         \
+<span class="lineNum">     565 </span>            :   };                                                                          \
+<span class="lineNum">     566 </span>            :   template &lt;&gt;                                                                 \
+<span class="lineNum">     567 </span>            :   struct MakeWithValueImpl&lt;VECTOR_TYPE, size_t&gt; {                             \
+<span class="lineNum">     568 </span>            :     static SPECTRE_ALWAYS_INLINE VECTOR_TYPE                                  \
+<span class="lineNum">     569 </span>            :     apply(const size_t&amp; size, const VECTOR_TYPE::value_type value) noexcept { \
+<span class="lineNum">     570 </span>            :       return VECTOR_TYPE(size, value);                                        \
+<span class="lineNum">     571 </span>            :     }                                                                         \
+<span class="lineNum">     572 </span>            :   };                                                                          \
+<span class="lineNum">     573 </span>            :   }  // namespace MakeWithValueImpls
+<span class="lineNum">     574 </span>            : 
+<span class="lineNum">     575 </span>            : // {@
+<span class="lineNum">     576 </span>            : /*!
+<span class="lineNum">     577 </span>            :  * \ingroup DataStructuresGroup
+<span class="lineNum">     578 </span>            :  * \ingroup TypeTraitsGroup
+<span class="lineNum">     579 </span>            :  * \brief Helper struct to determine the element type of a VectorImpl or
+<span class="lineNum">     580 </span>            :  * container of VectorImpl
+<span class="lineNum">     581 </span>            :  *
+<span class="lineNum">     582 </span>            :  * \details Extracts the element type of a `VectorImpl`, a std::array of
+<span class="lineNum">     583 </span>            :  * `VectorImpl`, or a reference or pointer to a `VectorImpl`. In any of these
+<span class="lineNum">     584 </span>            :  * cases, the `type` member is defined as the `ElementType` of the `VectorImpl`
+<span class="lineNum">     585 </span>            :  * in question. If, instead, `get_vector_element_type` is passed an arithmetic
+<span class="lineNum">     586 </span>            :  * or complex arithemetic type, the `type` member is defined as the passed type.
+<span class="lineNum">     587 </span>            :  *
+<span class="lineNum">     588 </span>            :  * \snippet DataStructures/Test_VectorImpl.cpp get_vector_element_type_example
+<span class="lineNum">     589 </span>            :  */
+<span class="lineNum">     590 </span>            : // cast to bool needed to avoid the compiler mistaking the type to be determined
+<span class="lineNum">     591 </span>            : // by T
+<span class="lineNum">     592 </span>            : template &lt;typename T,
+<span class="lineNum">     593 </span>            :           bool = static_cast&lt;bool&gt;(tt::is_complex_of_fundamental_v&lt;T&gt; or
+<span class="lineNum">     594 </span>            :                                    cpp17::is_fundamental_v&lt;T&gt;)&gt;
+<span class="lineNum">     595 </span><span class="lineCov">          1 : struct get_vector_element_type;</span>
+<span class="lineNum">     596 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     597 </span><span class="lineNoCov">          0 : struct get_vector_element_type&lt;T, true&gt; {</span>
+<span class="lineNum">     598 </span><span class="lineNoCov">          0 :   using type = T;</span>
+<span class="lineNum">     599 </span>            : };
+<span class="lineNum">     600 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     601 </span><span class="lineNoCov">          0 : struct get_vector_element_type&lt;const T, false&gt; {</span>
+<span class="lineNum">     602 </span><span class="lineNoCov">          0 :   using type = typename get_vector_element_type&lt;T&gt;::type;</span>
+<span class="lineNum">     603 </span>            : };
+<span class="lineNum">     604 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     605 </span><span class="lineNoCov">          0 : struct get_vector_element_type&lt;T, false&gt; {</span>
+<span class="lineNum">     606 </span><span class="lineNoCov">          0 :   using type = typename get_vector_element_type&lt;</span>
+<span class="lineNum">     607 </span>            :       typename T::ResultType::ElementType&gt;::type;
+<span class="lineNum">     608 </span>            : };
+<span class="lineNum">     609 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     610 </span><span class="lineNoCov">          0 : struct get_vector_element_type&lt;T*, false&gt; {</span>
+<span class="lineNum">     611 </span><span class="lineNoCov">          0 :   using type = typename get_vector_element_type&lt;T&gt;::type;</span>
+<span class="lineNum">     612 </span>            : };
+<span class="lineNum">     613 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     614 </span><span class="lineNoCov">          0 : struct get_vector_element_type&lt;T&amp;, false&gt; {</span>
+<span class="lineNum">     615 </span><span class="lineNoCov">          0 :   using type = typename get_vector_element_type&lt;T&gt;::type;</span>
+<span class="lineNum">     616 </span>            : };
+<span class="lineNum">     617 </span>            : template &lt;typename T, size_t S&gt;
+<span class="lineNum">     618 </span>            : struct get_vector_element_type&lt;std::array&lt;T, S&gt;, false&gt; {
+<span class="lineNum">     619 </span>            :   using type = typename get_vector_element_type&lt;T&gt;::type;
+<span class="lineNum">     620 </span>            : };
+<span class="lineNum">     621 </span>            : // @}
+<span class="lineNum">     622 </span>            : 
+<span class="lineNum">     623 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     624 </span><span class="lineNoCov">          0 : using get_vector_element_type_t = typename get_vector_element_type&lt;T&gt;::type;</span>
+<span class="lineNum">     625 </span>            : 
+<span class="lineNum">     626 </span>            : namespace detail {
+<span class="lineNum">     627 </span>            : template &lt;typename... VectorImplTemplateArgs&gt;
+<span class="lineNum">     628 </span>            : std::true_type is_derived_of_vector_impl_impl(
+<span class="lineNum">     629 </span>            :     const VectorImpl&lt;VectorImplTemplateArgs...&gt;*);
+<span class="lineNum">     630 </span>            : 
+<span class="lineNum">     631 </span>            : std::false_type is_derived_of_vector_impl_impl(...);
+<span class="lineNum">     632 </span>            : }  // namespace detail
+<span class="lineNum">     633 </span>            : 
+<span class="lineNum">     634 </span>            : /// \ingroup TypeTraitsGroup
+<span class="lineNum">     635 </span>            : /// This is `std::true_type` if the provided type possesses an implicit
+<span class="lineNum">     636 </span>            : /// conversion to any `VectorImpl`, which is the primary feature of SpECTRE
+<span class="lineNum">     637 </span>            : /// vectors generally. Otherwise, it is `std::false_type`.
+<span class="lineNum">     638 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     639 </span><span class="lineCov">          1 : using is_derived_of_vector_impl =</span>
+<span class="lineNum">     640 </span>            :     decltype(detail::is_derived_of_vector_impl_impl(std::declval&lt;T*&gt;()));
+<span class="lineNum">     641 </span>            : 
+<span class="lineNum">     642 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     643 </span><span class="lineNoCov">          0 : constexpr bool is_derived_of_vector_impl_v =</span>
+<span class="lineNum">     644 </span>            :     is_derived_of_vector_impl&lt;T&gt;::value;
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

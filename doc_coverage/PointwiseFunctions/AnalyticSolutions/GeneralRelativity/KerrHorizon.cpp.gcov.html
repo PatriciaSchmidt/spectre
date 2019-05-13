@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - PointwiseFunctions/AnalyticSolutions/GeneralRelativity/KerrHorizon.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">PointwiseFunctions/AnalyticSolutions/GeneralRelativity</a> - KerrHorizon.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntryLo">50.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;PointwiseFunctions/AnalyticSolutions/GeneralRelativity/KerrHorizon.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;cmath&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : #include &quot;DataStructures/DataVector.hpp&quot;                 // IWYU pragma: keep
+<span class="lineNum">       9 </span>            : #include &quot;DataStructures/Tensor/EagerMath/Magnitude.hpp&quot; // IWYU pragma: keep
+<span class="lineNum">      10 </span>            : #include &quot;Utilities/ConstantExpressions.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;Utilities/MakeWithValue.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;Utilities/StdArrayHelpers.hpp&quot;
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span><span class="lineCov">          1 : namespace gr {</span>
+<span class="lineNum">      15 </span><span class="lineCov">          1 : namespace Solutions {</span>
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            : template &lt;typename DataType&gt;
+<span class="lineNum">      18 </span><span class="lineCov">          1 : Scalar&lt;DataType&gt; kerr_horizon_radius(</span>
+<span class="lineNum">      19 </span>            :     const std::array&lt;DataType, 2&gt;&amp; theta_phi, const double&amp; mass,
+<span class="lineNum">      20 </span>            :     const std::array&lt;double, 3&gt;&amp; dimensionless_spin) noexcept {
+<span class="lineNum">      21 </span>            :   const double spin_magnitude_squared = square(magnitude(dimensionless_spin));
+<span class="lineNum">      22 </span>            :   const double mass_squared = square(mass);
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            :   const double equatorial_radius_squared =
+<span class="lineNum">      25 </span>            :       2.0 * mass_squared * (1.0 + sqrt(1.0 - spin_magnitude_squared));
+<span class="lineNum">      26 </span>            :   const double polar_radius_squared =
+<span class="lineNum">      27 </span>            :       mass_squared * square(1.0 + sqrt(1.0 - spin_magnitude_squared));
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            :   const auto&amp; theta = theta_phi[0];
+<span class="lineNum">      30 </span>            :   const auto&amp; phi = theta_phi[1];
+<span class="lineNum">      31 </span>            :   const DataType sin_theta = sin(theta);
+<span class="lineNum">      32 </span>            :   const DataType cos_theta = cos(theta);
+<span class="lineNum">      33 </span>            :   const DataType sin_phi = sin(phi);
+<span class="lineNum">      34 </span>            :   const DataType cos_phi = cos(phi);
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span>            :   auto denominator =
+<span class="lineNum">      37 </span>            :       make_with_value&lt;DataType&gt;(theta_phi[0], polar_radius_squared);
+<span class="lineNum">      38 </span>            :   denominator += mass_squared * dimensionless_spin[0] * dimensionless_spin[0] *
+<span class="lineNum">      39 </span>            :                  square(sin_theta * cos_phi);
+<span class="lineNum">      40 </span>            :   denominator += mass_squared * dimensionless_spin[1] * dimensionless_spin[1] *
+<span class="lineNum">      41 </span>            :                  square(sin_theta * sin_phi);
+<span class="lineNum">      42 </span>            :   denominator += mass_squared * dimensionless_spin[2] * dimensionless_spin[2] *
+<span class="lineNum">      43 </span>            :                  square(cos_theta);
+<span class="lineNum">      44 </span>            :   denominator += 2.0 * mass_squared * dimensionless_spin[0] *
+<span class="lineNum">      45 </span>            :                  dimensionless_spin[1] * square(sin_theta) * sin_phi * cos_phi;
+<span class="lineNum">      46 </span>            :   denominator += 2.0 * mass_squared * dimensionless_spin[0] *
+<span class="lineNum">      47 </span>            :                  dimensionless_spin[2] * sin_theta * cos_theta * cos_phi;
+<span class="lineNum">      48 </span>            :   denominator += 2.0 * mass_squared * dimensionless_spin[1] *
+<span class="lineNum">      49 </span>            :                  dimensionless_spin[2] * sin_theta * cos_theta * sin_phi;
+<span class="lineNum">      50 </span>            : 
+<span class="lineNum">      51 </span>            :   auto radius_squared =
+<span class="lineNum">      52 </span>            :       make_with_value&lt;DataType&gt;(theta_phi[0], polar_radius_squared);
+<span class="lineNum">      53 </span>            :   radius_squared *= equatorial_radius_squared;
+<span class="lineNum">      54 </span>            :   radius_squared /= denominator;
+<span class="lineNum">      55 </span>            : 
+<span class="lineNum">      56 </span>            :   return Scalar&lt;DataType&gt;{sqrt(radius_squared)};
+<span class="lineNum">      57 </span>            : }
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span><span class="lineNoCov">          0 : template Scalar&lt;DataVector&gt; kerr_horizon_radius(</span>
+<span class="lineNum">      60 </span>            :     const std::array&lt;DataVector, 2&gt;&amp; theta_phi, const double&amp; mass,
+<span class="lineNum">      61 </span>            :     const std::array&lt;double, 3&gt;&amp; dimensionless_spin) noexcept;
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span><span class="lineNoCov">          0 : template Scalar&lt;double&gt; kerr_horizon_radius(</span>
+<span class="lineNum">      64 </span>            :     const std::array&lt;double, 2&gt;&amp; theta_phi, const double&amp; mass,
+<span class="lineNum">      65 </span>            :     const std::array&lt;double, 3&gt;&amp; dimensionless_spin) noexcept;
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span>            : }  // namespace Solutions
+<span class="lineNum">      68 </span>            : }  // namespace gr
+<span class="lineNum">      69 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

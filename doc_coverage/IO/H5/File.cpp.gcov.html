@@ -1,0 +1,184 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - IO/H5/File.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">IO/H5</a> - File.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;IO/H5/File.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;algorithm&gt;
+<span class="lineNum">       7 </span>            : #include &lt;hdf5.h&gt;
+<span class="lineNum">       8 </span>            : #include &lt;string&gt;
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : #include &quot;ErrorHandling/Error.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;IO/H5/AccessType.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;IO/H5/CheckH5.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;IO/H5/Header.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      14 </span>            : #include &quot;IO/H5/Object.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;IO/H5/SourceArchive.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      16 </span>            : #include &quot;IO/H5/Wrappers.hpp&quot;
+<span class="lineNum">      17 </span>            : #include &quot;Utilities/FileSystem.hpp&quot;
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : namespace h5 {
+<span class="lineNum">      20 </span>            : template &lt;AccessType Access_t&gt;
+<span class="lineNum">      21 </span>            : H5File&lt;Access_t&gt;::H5File(std::string file_name, bool append_to_file)
+<span class="lineNum">      22 </span>            :     : file_name_(std::move(file_name)) {
+<span class="lineNum">      23 </span>            :   if (file_name_.size() - 3 != file_name_.find(&quot;.h5&quot;)) {
+<span class="lineNum">      24 </span>            :     ERROR(&quot;All HDF5 file names must end in '.h5'. The path and file name '&quot;
+<span class="lineNum">      25 </span>            :           &lt;&lt; file_name_ &lt;&lt; &quot;' does not satisfy this&quot;);
+<span class="lineNum">      26 </span>            :   }
+<span class="lineNum">      27 </span>            :   const bool file_exists = file_system::check_if_file_exists(file_name_);
+<span class="lineNum">      28 </span>            :   if (not file_exists and AccessType::ReadOnly == Access_t) {
+<span class="lineNum">      29 </span>            :     ERROR(&quot;Cannot create a file in ReadOnly mode, '&quot; &lt;&lt; file_name_ &lt;&lt; &quot;'&quot;);
+<span class="lineNum">      30 </span>            :   }
+<span class="lineNum">      31 </span>            :   if (append_to_file and AccessType::ReadOnly == Access_t) {
+<span class="lineNum">      32 </span>            :     ERROR(&quot;Cannot append to a file opened in read-only mode. File name is: &quot;
+<span class="lineNum">      33 </span>            :           &lt;&lt; file_name_);
+<span class="lineNum">      34 </span>            :   }
+<span class="lineNum">      35 </span>            :   if (file_exists and not append_to_file and
+<span class="lineNum">      36 </span>            :       h5::AccessType::ReadWrite == Access_t) {
+<span class="lineNum">      37 </span>            :     ERROR(&quot;File '&quot; &lt;&lt; file_name_
+<span class="lineNum">      38 </span>            :                    &lt;&lt; &quot;' already exists and we are not allowed to append. To &quot;
+<span class="lineNum">      39 </span>            :                       &quot;reduce the risk of accidental deletion you must &quot;
+<span class="lineNum">      40 </span>            :                       &quot;explicitly delete the file first using the file_system &quot;
+<span class="lineNum">      41 </span>            :                       &quot;library in SpECTRE or through your shell.&quot;);
+<span class="lineNum">      42 </span>            :   }
+<span class="lineNum">      43 </span>            :   file_id_ = file_exists
+<span class="lineNum">      44 </span>            :                  ? H5Fopen(file_name_.c_str(),
+<span class="lineNum">      45 </span>            :                            AccessType::ReadOnly == Access_t ? h5f_acc_rdonly()
+<span class="lineNum">      46 </span>            :                                                             : h5f_acc_rdwr(),
+<span class="lineNum">      47 </span>            :                            h5p_default())
+<span class="lineNum">      48 </span>            :                  : H5Fcreate(file_name_.c_str(), h5f_acc_trunc(), h5p_default(),
+<span class="lineNum">      49 </span>            :                              h5p_default());
+<span class="lineNum">      50 </span>            :   CHECK_H5(file_id_, &quot;Failed to open file '&quot;
+<span class="lineNum">      51 </span>            :                          &lt;&lt; file_name_ &lt;&lt; &quot;'. The file exists status is: &quot;
+<span class="lineNum">      52 </span>            :                          &lt;&lt; std::boolalpha &lt;&lt; file_exists
+<span class="lineNum">      53 </span>            :                          &lt;&lt; &quot;. Writing from directory: &quot; &lt;&lt; file_system::cwd()
+<span class="lineNum">      54 </span>            :                          &lt;&lt; &quot;. Trying to open in mode: &quot; &lt;&lt; Access_t);
+<span class="lineNum">      55 </span>            :   if (not file_exists) {
+<span class="lineNum">      56 </span>            :     insert_header();
+<span class="lineNum">      57 </span>            :     insert_source_archive();
+<span class="lineNum">      58 </span>            :   }
+<span class="lineNum">      59 </span>            : }
+<span class="lineNum">      60 </span>            : 
+<span class="lineNum">      61 </span>            : /// \cond
+<span class="lineNum">      62 </span>            : template &lt;AccessType Access_t&gt;
+<span class="lineNum">      63 </span>            : H5File&lt;Access_t&gt;::H5File(H5File&amp;&amp; rhs) noexcept {
+<span class="lineNum">      64 </span>            :   file_name_ = std::move(rhs.file_name_);
+<span class="lineNum">      65 </span>            :   file_id_ = std::move(rhs.file_id_);
+<span class="lineNum">      66 </span>            :   current_object_ = std::move(rhs.current_object_);
+<span class="lineNum">      67 </span>            :   h5_groups_ = std::move(rhs.h5_groups_);
+<span class="lineNum">      68 </span>            :   rhs.file_id_ = -1;
+<span class="lineNum">      69 </span>            : }
+<span class="lineNum">      70 </span>            : 
+<span class="lineNum">      71 </span>            : template &lt;AccessType Access_t&gt;
+<span class="lineNum">      72 </span>            : H5File&lt;Access_t&gt;&amp; H5File&lt;Access_t&gt;::operator=(H5File&amp;&amp; rhs) noexcept {
+<span class="lineNum">      73 </span>            :   if (file_id_ != -1) {
+<span class="lineNum">      74 </span>            :     CHECK_H5(H5Fclose(file_id_),
+<span class="lineNum">      75 </span>            :              &quot;Failed to close file: '&quot; &lt;&lt; file_name_ &lt;&lt; &quot;'&quot;);
+<span class="lineNum">      76 </span>            :   }
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span>            :   file_name_ = std::move(rhs.file_name_);
+<span class="lineNum">      79 </span>            :   file_id_ = std::move(rhs.file_id_);
+<span class="lineNum">      80 </span>            :   current_object_ = std::move(rhs.current_object_);
+<span class="lineNum">      81 </span>            :   h5_groups_ = std::move(rhs.h5_groups_);
+<span class="lineNum">      82 </span>            :   rhs.file_id_ = -1;
+<span class="lineNum">      83 </span>            :   return *this;
+<span class="lineNum">      84 </span>            : }
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span>            : template &lt;AccessType Access_t&gt;
+<span class="lineNum">      87 </span>            : H5File&lt;Access_t&gt;::~H5File() {
+<span class="lineNum">      88 </span>            :   if (file_id_ != -1) {
+<span class="lineNum">      89 </span>            :     CHECK_H5(H5Fclose(file_id_),
+<span class="lineNum">      90 </span>            :              &quot;Failed to close file: '&quot; &lt;&lt; file_name_ &lt;&lt; &quot;'&quot;);
+<span class="lineNum">      91 </span>            :   }
+<span class="lineNum">      92 </span>            : }
+<span class="lineNum">      93 </span>            : 
+<span class="lineNum">      94 </span>            : template &lt;&gt;
+<span class="lineNum">      95 </span>            : void H5File&lt;AccessType::ReadWrite&gt;::insert_source_archive() noexcept {
+<span class="lineNum">      96 </span>            :   insert&lt;h5::SourceArchive&gt;(&quot;/src&quot;);
+<span class="lineNum">      97 </span>            : }
+<span class="lineNum">      98 </span>            : template &lt;&gt;
+<span class="lineNum">      99 </span>            : void H5File&lt;AccessType::ReadOnly&gt;::insert_source_archive() noexcept {}
+<span class="lineNum">     100 </span>            : /// \endcond
+<span class="lineNum">     101 </span>            : }  // namespace h5
+<span class="lineNum">     102 </span>            : 
+<span class="lineNum">     103 </span>            : template class h5::H5File&lt;h5::AccessType::ReadOnly&gt;;
+<span class="lineNum">     104 </span>            : template class h5::H5File&lt;h5::AccessType::ReadWrite&gt;;
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,709 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - IO/H5/Helpers.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">IO/H5</a> - Helpers.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">18</td>
+            <td class="headerCovTableEntry">40</td>
+            <td class="headerCovTableEntryLo">45.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;IO/H5/Helpers.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;algorithm&gt;
+<span class="lineNum">       7 </span>            : #include &lt;functional&gt;
+<span class="lineNum">       8 </span>            : #include &lt;iterator&gt;
+<span class="lineNum">       9 </span>            : #include &lt;numeric&gt;
+<span class="lineNum">      10 </span>            : #include &lt;ostream&gt;
+<span class="lineNum">      11 </span>            : #include &lt;string&gt;
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            : #include &quot;DataStructures/BoostMultiArray.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      14 </span>            : #include &quot;DataStructures/DataVector.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;ErrorHandling/Error.hpp&quot;
+<span class="lineNum">      16 </span>            : #include &quot;ErrorHandling/StaticAssert.hpp&quot;
+<span class="lineNum">      17 </span>            : #include &quot;IO/H5/AccessType.hpp&quot;
+<span class="lineNum">      18 </span>            : #include &quot;IO/H5/CheckH5.hpp&quot;
+<span class="lineNum">      19 </span>            : #include &quot;IO/H5/OpenGroup.hpp&quot;
+<span class="lineNum">      20 </span>            : #include &quot;IO/H5/Type.hpp&quot;
+<span class="lineNum">      21 </span>            : #include &quot;IO/H5/Wrappers.hpp&quot;
+<span class="lineNum">      22 </span>            : #include &quot;Utilities/Algorithm.hpp&quot;
+<span class="lineNum">      23 </span>            : #include &quot;Utilities/GenerateInstantiations.hpp&quot;
+<span class="lineNum">      24 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      25 </span>            : #include &quot;Utilities/StdHelpers.hpp&quot; // IWYU pragma: keep
+<span class="lineNum">      26 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">      27 </span>            : #include &quot;Utilities/TypeTraits.hpp&quot;
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            : // IWYU pragma: no_include &lt;boost/multi_array.hpp&gt;
+<span class="lineNum">      30 </span>            : // IWYU pragma: no_include &lt;boost/multi_array/base.hpp&gt;
+<span class="lineNum">      31 </span>            : // IWYU pragma: no_include &lt;boost/multi_array/extent_gen.hpp&gt;
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span><span class="lineNoCov">          0 : namespace {</span>
+<span class="lineNum">      34 </span>            : // Converts input data (either a std::vector or DataVector) to a T. Depending
+<span class="lineNum">      35 </span>            : // on the rank of the input data, the following outputs T are allowed:
+<span class="lineNum">      36 </span>            : // rank 0: double or int
+<span class="lineNum">      37 </span>            : // rank 1: DataVector or std::vector
+<span class="lineNum">      38 </span>            : // rank 2,3: DataVector or boost::multiarray
+<span class="lineNum">      39 </span>            : template &lt;size_t Rank, typename T&gt;
+<span class="lineNum">      40 </span>            : struct VectorTo;
+<span class="lineNum">      41 </span>            : 
+<span class="lineNum">      42 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      43 </span>            : struct VectorTo&lt;0, T&gt; {
+<span class="lineNum">      44 </span>            :   static T apply(std::vector&lt;T&gt; raw_data,
+<span class="lineNum">      45 </span>            :                  const std::array&lt;hsize_t, 0&gt;&amp; /*size*/) noexcept {
+<span class="lineNum">      46 </span>            :     return raw_data[0];
+<span class="lineNum">      47 </span>            :   }
+<span class="lineNum">      48 </span>            : };
+<span class="lineNum">      49 </span>            : 
+<span class="lineNum">      50 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      51 </span>            : struct VectorTo&lt;1, T&gt; {
+<span class="lineNum">      52 </span>            :   static T apply(T raw_data, const std::array&lt;hsize_t, 1&gt;&amp; /*size*/) noexcept {
+<span class="lineNum">      53 </span>            :     return raw_data;
+<span class="lineNum">      54 </span>            :   }
+<span class="lineNum">      55 </span>            : };
+<span class="lineNum">      56 </span>            : 
+<span class="lineNum">      57 </span>            : template &lt;&gt;
+<span class="lineNum">      58 </span>            : struct VectorTo&lt;2, DataVector&gt; {
+<span class="lineNum">      59 </span>            :   static DataVector apply(DataVector raw_data,
+<span class="lineNum">      60 </span>            :                           const std::array&lt;hsize_t, 2&gt;&amp; /*size*/) noexcept {
+<span class="lineNum">      61 </span>            :     return raw_data;
+<span class="lineNum">      62 </span>            :   }
+<span class="lineNum">      63 </span>            : };
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      66 </span>            : struct VectorTo&lt;2, boost::multi_array&lt;T, 2&gt;&gt; {
+<span class="lineNum">      67 </span>            :   static boost::multi_array&lt;T, 2&gt; apply(
+<span class="lineNum">      68 </span>            :       const std::vector&lt;T&gt;&amp; raw_data,
+<span class="lineNum">      69 </span>            :       const std::array&lt;hsize_t, 2&gt;&amp; size) noexcept {
+<span class="lineNum">      70 </span>            :     DEBUG_STATIC_ASSERT(cpp17::is_fundamental_v&lt;T&gt;,
+<span class="lineNum">      71 </span>            :                         &quot;VectorTo is optimized for fundamentals. Need to &quot;
+<span class="lineNum">      72 </span>            :                         &quot;use move semantics for handling generic data types.&quot;);
+<span class="lineNum">      73 </span>            :     boost::multi_array&lt;T, 2&gt; temp(boost::extents[size[0]][size[1]]);
+<span class="lineNum">      74 </span>            :     for (size_t i = 0; i &lt; size[0]; ++i) {
+<span class="lineNum">      75 </span>            :       for (size_t j = 0; j &lt; size[1]; ++j) {
+<span class="lineNum">      76 </span>            :         temp[i][j] = raw_data[j + i * size[1]];
+<span class="lineNum">      77 </span>            :       }
+<span class="lineNum">      78 </span>            :     }
+<span class="lineNum">      79 </span>            :     return temp;
+<span class="lineNum">      80 </span>            :   }
+<span class="lineNum">      81 </span>            : };
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span>            : template &lt;&gt;
+<span class="lineNum">      84 </span>            : struct VectorTo&lt;3, DataVector&gt; {
+<span class="lineNum">      85 </span>            :   static DataVector apply(DataVector raw_data,
+<span class="lineNum">      86 </span>            :                           const std::array&lt;hsize_t, 3&gt;&amp; /*size*/) noexcept {
+<span class="lineNum">      87 </span>            :     return raw_data;
+<span class="lineNum">      88 </span>            :   }
+<span class="lineNum">      89 </span>            : };
+<span class="lineNum">      90 </span>            : 
+<span class="lineNum">      91 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      92 </span>            : struct VectorTo&lt;3, boost::multi_array&lt;T, 3&gt;&gt; {
+<span class="lineNum">      93 </span>            :   static boost::multi_array&lt;T, 3&gt; apply(
+<span class="lineNum">      94 </span>            :       const std::vector&lt;T&gt;&amp; raw_data,
+<span class="lineNum">      95 </span>            :       const std::array&lt;hsize_t, 3&gt;&amp; size) noexcept {
+<span class="lineNum">      96 </span>            :     DEBUG_STATIC_ASSERT(cpp17::is_fundamental_v&lt;T&gt;,
+<span class="lineNum">      97 </span>            :                         &quot;VectorTo is optimized for fundamentals. Need to &quot;
+<span class="lineNum">      98 </span>            :                         &quot;use move semantics for handling generic data types.&quot;);
+<span class="lineNum">      99 </span>            :     boost::multi_array&lt;T, 3&gt; temp(boost::extents[size[0]][size[1]][size[2]]);
+<span class="lineNum">     100 </span>            :     for (size_t i = 0; i &lt; size[0]; ++i) {
+<span class="lineNum">     101 </span>            :       for (size_t j = 0; j &lt; size[1]; ++j) {
+<span class="lineNum">     102 </span>            :         for (size_t k = 0; k &lt; size[2]; ++k) {
+<span class="lineNum">     103 </span>            :           temp[i][j][k] = raw_data[k + j * size[2] + i * size[2] * size[1]];
+<span class="lineNum">     104 </span>            :         }
+<span class="lineNum">     105 </span>            :       }
+<span class="lineNum">     106 </span>            :     }
+<span class="lineNum">     107 </span>            :     return temp;
+<span class="lineNum">     108 </span>            :   }
+<span class="lineNum">     109 </span>            : };
+<span class="lineNum">     110 </span>            : }  // namespace
+<span class="lineNum">     111 </span>            : 
+<span class="lineNum">     112 </span>            : namespace h5 {
+<span class="lineNum">     113 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     114 </span><span class="lineCov">          1 : void write_data(const hid_t group_id, const std::vector&lt;T&gt;&amp; data,</span>
+<span class="lineNum">     115 </span>            :                 const std::vector&lt;size_t&gt;&amp; extents,
+<span class="lineNum">     116 </span>            :                 const std::string&amp; name) noexcept {
+<span class="lineNum">     117 </span>            :   const std::vector&lt;hsize_t&gt; dims(extents.begin(), extents.end());
+<span class="lineNum">     118 </span>            :   const hid_t space_id = H5Screate_simple(dims.size(), dims.data(), nullptr);
+<span class="lineNum">     119 </span>            :   CHECK_H5(space_id, &quot;Failed to create dataspace&quot;);
+<span class="lineNum">     120 </span>            :   const hid_t contained_type = h5::h5_type&lt;tt::get_fundamental_type_t&lt;T&gt;&gt;();
+<span class="lineNum">     121 </span>            :   const hid_t dataset_id =
+<span class="lineNum">     122 </span>            :       H5Dcreate2(group_id, name.c_str(), contained_type, space_id,
+<span class="lineNum">     123 </span>            :                  h5::h5p_default(), h5::h5p_default(), h5::h5p_default());
+<span class="lineNum">     124 </span>            :   CHECK_H5(dataset_id, &quot;Failed to create dataset&quot;);
+<span class="lineNum">     125 </span>            :   CHECK_H5(H5Dwrite(dataset_id, contained_type, h5::h5s_all(), h5::h5s_all(),
+<span class="lineNum">     126 </span>            :                     h5::h5p_default(), static_cast&lt;const void*&gt;(data.data())),
+<span class="lineNum">     127 </span>            :            &quot;Failed to write data to dataset&quot;);
+<span class="lineNum">     128 </span>            :   CHECK_H5(H5Sclose(space_id), &quot;Failed to close dataspace&quot;);
+<span class="lineNum">     129 </span>            :   CHECK_H5(H5Dclose(dataset_id), &quot;Failed to close dataset&quot;);
+<span class="lineNum">     130 </span>            : }
+<span class="lineNum">     131 </span>            : 
+<span class="lineNum">     132 </span><span class="lineCov">          1 : void write_data(const hid_t group_id, const DataVector&amp; data,</span>
+<span class="lineNum">     133 </span>            :                 const std::string&amp; name) noexcept {
+<span class="lineNum">     134 </span>            :   const auto number_of_points = static_cast&lt;hsize_t&gt;(data.size());
+<span class="lineNum">     135 </span>            :   const hid_t space_id = H5Screate_simple(1, &amp;number_of_points, nullptr);
+<span class="lineNum">     136 </span>            :   CHECK_H5(space_id, &quot;Failed to create dataspace&quot;);
+<span class="lineNum">     137 </span>            :   const hid_t contained_type = h5::h5_type&lt;double&gt;();
+<span class="lineNum">     138 </span>            :   const hid_t dataset_id =
+<span class="lineNum">     139 </span>            :       H5Dcreate2(group_id, name.c_str(), contained_type, space_id,
+<span class="lineNum">     140 </span>            :                  h5::h5p_default(), h5::h5p_default(), h5::h5p_default());
+<span class="lineNum">     141 </span>            :   CHECK_H5(dataset_id, &quot;Failed to create dataset&quot;);
+<span class="lineNum">     142 </span>            :   CHECK_H5(H5Dwrite(dataset_id, contained_type, h5::h5s_all(), h5::h5s_all(),
+<span class="lineNum">     143 </span>            :                     h5::h5p_default(), static_cast&lt;const void*&gt;(data.data())),
+<span class="lineNum">     144 </span>            :            &quot;Failed to write data to dataset&quot;);
+<span class="lineNum">     145 </span>            :   CHECK_H5(H5Sclose(space_id), &quot;Failed to close dataspace&quot;);
+<span class="lineNum">     146 </span>            :   CHECK_H5(H5Dclose(dataset_id), &quot;Failed to close dataset&quot;);
+<span class="lineNum">     147 </span>            : }
+<span class="lineNum">     148 </span>            : 
+<span class="lineNum">     149 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">     150 </span><span class="lineCov">          1 : void write_extents(const hid_t group_id, const Index&lt;Dim&gt;&amp; extents,</span>
+<span class="lineNum">     151 </span>            :                    const std::string&amp; name) {
+<span class="lineNum">     152 </span>            :   // Write the current extents as an attribute to the group
+<span class="lineNum">     153 </span>            :   const hsize_t size = Dim;
+<span class="lineNum">     154 </span>            :   const hid_t space_id = H5Screate_simple(1, &amp;size, nullptr);
+<span class="lineNum">     155 </span>            :   CHECK_H5(space_id, &quot;Failed to create dataspace&quot;);
+<span class="lineNum">     156 </span>            :   const hid_t att_id = H5Acreate2(
+<span class="lineNum">     157 </span>            :       group_id, name.c_str(), h5::h5_type&lt;std::decay_t&lt;decltype(extents[0])&gt;&gt;(),
+<span class="lineNum">     158 </span>            :       space_id, h5p_default(), h5p_default());
+<span class="lineNum">     159 </span>            :   CHECK_H5(att_id, &quot;Failed to create attribute&quot;);
+<span class="lineNum">     160 </span>            :   CHECK_H5(H5Awrite(att_id, h5::h5_type&lt;std::decay_t&lt;decltype(extents[0])&gt;&gt;(),
+<span class="lineNum">     161 </span>            :                     static_cast&lt;const void*&gt;(extents.data())),
+<span class="lineNum">     162 </span>            :            &quot;Failed to write extents&quot;);
+<span class="lineNum">     163 </span>            :   CHECK_H5(H5Sclose(space_id), &quot;Failed to close dataspace&quot;);
+<span class="lineNum">     164 </span>            :   CHECK_H5(H5Aclose(att_id), &quot;Failed to close attribute&quot;);
+<span class="lineNum">     165 </span>            : }
+<span class="lineNum">     166 </span>            : 
+<span class="lineNum">     167 </span><span class="lineCov">          1 : void write_connectivity(const hid_t group_id,</span>
+<span class="lineNum">     168 </span>            :                         const std::vector&lt;int&gt;&amp; connectivity) noexcept {
+<span class="lineNum">     169 </span>            :   const hsize_t size = connectivity.size();
+<span class="lineNum">     170 </span>            :   const hid_t space_id = H5Screate_simple(1, &amp;size, nullptr);
+<span class="lineNum">     171 </span>            :   CHECK_H5(space_id, &quot;Failed to create dataspace&quot;);
+<span class="lineNum">     172 </span>            :   const hid_t dataset_id =
+<span class="lineNum">     173 </span>            :       H5Dcreate2(group_id, &quot;connectivity&quot;, h5_type&lt;int&gt;(), space_id,
+<span class="lineNum">     174 </span>            :                  h5p_default(), h5p_default(), h5p_default());
+<span class="lineNum">     175 </span>            :   CHECK_H5(dataset_id, &quot;Failed to create dataset&quot;);
+<span class="lineNum">     176 </span>            :   CHECK_H5(
+<span class="lineNum">     177 </span>            :       H5Dwrite(dataset_id, h5_type&lt;int&gt;(), h5s_all(), h5s_all(), h5p_default(),
+<span class="lineNum">     178 </span>            :                static_cast&lt;const void*&gt;(connectivity.data())),
+<span class="lineNum">     179 </span>            :       &quot;Failed to write connectivity&quot;);
+<span class="lineNum">     180 </span>            :   CHECK_H5(H5Sclose(space_id), &quot;Failed to close dataspace&quot;);
+<span class="lineNum">     181 </span>            :   CHECK_H5(H5Dclose(dataset_id), &quot;Failed to close dataset&quot;);
+<span class="lineNum">     182 </span>            : }
+<span class="lineNum">     183 </span>            : 
+<span class="lineNum">     184 </span><span class="lineCov">          1 : std::vector&lt;std::string&gt; get_group_names(</span>
+<span class="lineNum">     185 </span>            :     const hid_t file_id, const std::string&amp; group_name) noexcept {
+<span class="lineNum">     186 </span>            :   // Opens the group, loads the group info and then loops over all the groups
+<span class="lineNum">     187 </span>            :   // retrieving their names and storing them in names
+<span class="lineNum">     188 </span>            :   detail::OpenGroup my_group(file_id, group_name, AccessType::ReadOnly);
+<span class="lineNum">     189 </span>            :   const hid_t group_id = my_group.id();
+<span class="lineNum">     190 </span>            :   H5G_info_t group_info{};
+<span class="lineNum">     191 </span>            :   std::string name;
+<span class="lineNum">     192 </span>            :   std::vector&lt;std::string&gt; names;
+<span class="lineNum">     193 </span>            :   CHECK_H5(H5Gget_info(group_id, &amp;group_info), &quot;Failed to get group info&quot;);
+<span class="lineNum">     194 </span>            :   names.reserve(group_info.nlinks);
+<span class="lineNum">     195 </span>            :   for (size_t i = 0; i &lt; group_info.nlinks; ++i) {
+<span class="lineNum">     196 </span>            : #pragma GCC diagnostic push
+<span class="lineNum">     197 </span>            : #pragma GCC diagnostic ignored &quot;-Wold-style-cast&quot;
+<span class="lineNum">     198 </span>            :     const hsize_t size =
+<span class="lineNum">     199 </span>            :         static_cast&lt;hsize_t&gt;(1) + static_cast&lt;hsize_t&gt;(H5Lget_name_by_idx(
+<span class="lineNum">     200 </span>            :                                       group_id, &quot;.&quot;, H5_INDEX_NAME, H5_ITER_INC,
+<span class="lineNum">     201 </span>            :                                       i, nullptr, 0, h5p_default()));
+<span class="lineNum">     202 </span>            :     name.resize(size);
+<span class="lineNum">     203 </span>            :     H5Lget_name_by_idx(group_id, &quot;.&quot;, H5_INDEX_NAME, H5_ITER_INC, i, &amp;name[0],
+<span class="lineNum">     204 </span>            :                        size, h5p_default());
+<span class="lineNum">     205 </span>            : #pragma GCC diagnostic pop
+<span class="lineNum">     206 </span>            :     // We need to remove the bloody trailing \0...
+<span class="lineNum">     207 </span>            :     name.pop_back();
+<span class="lineNum">     208 </span>            :     names.push_back(name);
+<span class="lineNum">     209 </span>            :   }
+<span class="lineNum">     210 </span>            :   return names;
+<span class="lineNum">     211 </span>            : }
+<span class="lineNum">     212 </span>            : 
+<span class="lineNum">     213 </span><span class="lineCov">          1 : bool contains_dataset_or_group(const hid_t id, const std::string&amp; group_name,</span>
+<span class="lineNum">     214 </span>            :                                const std::string&amp; dataset_name) noexcept {
+<span class="lineNum">     215 </span>            :   return alg::found(get_group_names(id, group_name), dataset_name);
+<span class="lineNum">     216 </span>            : }
+<span class="lineNum">     217 </span>            : 
+<span class="lineNum">     218 </span>            : template &lt;typename Type&gt;
+<span class="lineNum">     219 </span><span class="lineCov">          1 : void write_to_attribute(const hid_t location_id, const std::string&amp; name,</span>
+<span class="lineNum">     220 </span>            :                         const Type&amp; value) noexcept {
+<span class="lineNum">     221 </span>            :   const hid_t space_id = H5Screate(H5S_SCALAR);
+<span class="lineNum">     222 </span>            :   CHECK_H5(space_id, &quot;Failed to create scalar&quot;);
+<span class="lineNum">     223 </span>            :   const hid_t att_id = H5Acreate2(location_id, name.c_str(), h5_type&lt;Type&gt;(),
+<span class="lineNum">     224 </span>            :                                   space_id, h5p_default(), h5p_default());
+<span class="lineNum">     225 </span>            :   CHECK_H5(att_id, &quot;Failed to create attribute '&quot; &lt;&lt; name &lt;&lt; &quot;'&quot;);
+<span class="lineNum">     226 </span>            :   CHECK_H5(H5Awrite(att_id, h5_type&lt;Type&gt;(), static_cast&lt;const void*&gt;(&amp;value)),
+<span class="lineNum">     227 </span>            :            &quot;Failed to write value: &quot; &lt;&lt; value);
+<span class="lineNum">     228 </span>            :   CHECK_H5(H5Aclose(att_id), &quot;Failed to close attribute '&quot; &lt;&lt; name &lt;&lt; &quot;'&quot;);
+<span class="lineNum">     229 </span>            :   CHECK_H5(H5Sclose(space_id), &quot;Unable to close dataspace&quot;);
+<span class="lineNum">     230 </span>            : }
+<span class="lineNum">     231 </span>            : 
+<span class="lineNum">     232 </span>            : template &lt;typename Type&gt;
+<span class="lineNum">     233 </span><span class="lineCov">          1 : Type read_value_attribute(const hid_t location_id,</span>
+<span class="lineNum">     234 </span>            :                           const std::string&amp; name) noexcept {
+<span class="lineNum">     235 </span>            :   const htri_t attribute_exists = H5Aexists(location_id, name.c_str());
+<span class="lineNum">     236 </span>            :   if (not attribute_exists) {
+<span class="lineNum">     237 </span>            :     ERROR(&quot;Could not find attribute '&quot; &lt;&lt; name &lt;&lt; &quot;'&quot;);  // LCOV_EXCL_LINE
+<span class="lineNum">     238 </span>            :   }
+<span class="lineNum">     239 </span>            :   const hid_t attribute_id = H5Aopen(location_id, name.c_str(), h5p_default());
+<span class="lineNum">     240 </span>            :   CHECK_H5(attribute_id, &quot;Failed to open attribute '&quot; &lt;&lt; name &lt;&lt; &quot;'&quot;);
+<span class="lineNum">     241 </span>            :   Type value;
+<span class="lineNum">     242 </span>            :   CHECK_H5(H5Aread(attribute_id, h5_type&lt;Type&gt;(), &amp;value),
+<span class="lineNum">     243 </span>            :            &quot;Failed to read attribute '&quot; &lt;&lt; name &lt;&lt; &quot;'&quot;);
+<span class="lineNum">     244 </span>            :   CHECK_H5(H5Aclose(attribute_id),
+<span class="lineNum">     245 </span>            :            &quot;Failed to close attribute '&quot; &lt;&lt; name &lt;&lt; &quot;'&quot;);
+<span class="lineNum">     246 </span>            :   return value;
+<span class="lineNum">     247 </span>            : }
+<span class="lineNum">     248 </span>            : 
+<span class="lineNum">     249 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     250 </span><span class="lineCov">          1 : void write_to_attribute(const hid_t group_id, const std::string&amp; name,</span>
+<span class="lineNum">     251 </span>            :                         const std::vector&lt;T&gt;&amp; data) noexcept {
+<span class="lineNum">     252 </span>            :   const hsize_t size = data.size();
+<span class="lineNum">     253 </span>            :   const hid_t space_id = H5Screate_simple(1, &amp;size, nullptr);
+<span class="lineNum">     254 </span>            :   CHECK_H5(space_id,
+<span class="lineNum">     255 </span>            :            &quot;Failed to create dataspace for attribute  '&quot; &lt;&lt; name &lt;&lt; &quot;'&quot;);
+<span class="lineNum">     256 </span>            :   const hid_t att_id = H5Acreate2(group_id, name.c_str(), h5::h5_type&lt;T&gt;(),
+<span class="lineNum">     257 </span>            :                                   space_id, h5p_default(), h5p_default());
+<span class="lineNum">     258 </span>            :   CHECK_H5(att_id, &quot;Failed to create attribute '&quot; &lt;&lt; name &lt;&lt; &quot;'&quot;);
+<span class="lineNum">     259 </span>            :   CHECK_H5(
+<span class="lineNum">     260 </span>            :       H5Awrite(att_id, h5::h5_type&lt;T&gt;(), static_cast&lt;const void*&gt;(data.data())),
+<span class="lineNum">     261 </span>            :       &quot;Failed to write extents into attribute '&quot; &lt;&lt; name &lt;&lt; &quot;'&quot;);
+<span class="lineNum">     262 </span>            :   CHECK_H5(H5Sclose(space_id),
+<span class="lineNum">     263 </span>            :            &quot;Failed to close dataspace when writing attribute '&quot; &lt;&lt; name &lt;&lt; &quot;'&quot;);
+<span class="lineNum">     264 </span>            :   CHECK_H5(H5Aclose(att_id),
+<span class="lineNum">     265 </span>            :            &quot;Failed to close attribute '&quot; &lt;&lt; name &lt;&lt; &quot;' when writing it.&quot;);
+<span class="lineNum">     266 </span>            : }
+<span class="lineNum">     267 </span>            : 
+<span class="lineNum">     268 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     269 </span><span class="lineCov">          1 : std::vector&lt;T&gt; read_rank1_attribute(const hid_t group_id,</span>
+<span class="lineNum">     270 </span>            :                                     const std::string&amp; name) noexcept {
+<span class="lineNum">     271 </span>            :   const hid_t attr_id = H5Aopen(group_id, name.c_str(), h5p_default());
+<span class="lineNum">     272 </span>            :   CHECK_H5(attr_id, &quot;Failed to open attribute&quot;);
+<span class="lineNum">     273 </span>            :   {  // Check that the datatype in the file matches what we are reading.
+<span class="lineNum">     274 </span>            :     const hid_t datatype_id = H5Aget_type(attr_id);
+<span class="lineNum">     275 </span>            :     CHECK_H5(datatype_id, &quot;Failed to get datatype from attribute &quot; &lt;&lt; name);
+<span class="lineNum">     276 </span>            :     const hid_t datatype = H5Tget_native_type(datatype_id, H5T_DIR_DESCEND);
+<span class="lineNum">     277 </span>            :     const auto size = H5Tget_size(datatype);
+<span class="lineNum">     278 </span>            :     if (UNLIKELY(sizeof(T) != size)) {
+<span class="lineNum">     279 </span>            :       ERROR(&quot;The read HDF5 type of the attribute (&quot;
+<span class="lineNum">     280 </span>            :             &lt;&lt; datatype
+<span class="lineNum">     281 </span>            :             &lt;&lt; &quot;) has a different size than the type we are reading. The &quot;
+<span class="lineNum">     282 </span>            :                &quot;stored size is &quot;
+<span class="lineNum">     283 </span>            :             &lt;&lt; size &lt;&lt; &quot; while the expected size is &quot; &lt;&lt; sizeof(T));
+<span class="lineNum">     284 </span>            :     }
+<span class="lineNum">     285 </span>            :     CHECK_H5(H5Tclose(datatype_id),
+<span class="lineNum">     286 </span>            :              &quot;Failed to close datatype while reading attribute &quot; &lt;&lt; name);
+<span class="lineNum">     287 </span>            :   }
+<span class="lineNum">     288 </span>            :   const auto size = [&amp;attr_id, &amp;name] {
+<span class="lineNum">     289 </span>            :     const hid_t dataspace_id = H5Aget_space(attr_id);
+<span class="lineNum">     290 </span>            :     const auto rank_of_space =
+<span class="lineNum">     291 </span>            :         H5Sget_simple_extent_ndims(dataspace_id);
+<span class="lineNum">     292 </span>            :     if (UNLIKELY(rank_of_space &lt; 0)) {
+<span class="lineNum">     293 </span>            :       ERROR(&quot;Failed to get the rank of the dataspace inside the attribute &quot;
+<span class="lineNum">     294 </span>            :             &lt;&lt; name);
+<span class="lineNum">     295 </span>            :     }
+<span class="lineNum">     296 </span>            :     if (UNLIKELY(rank_of_space != 1)) {
+<span class="lineNum">     297 </span>            :       ERROR(
+<span class="lineNum">     298 </span>            :           &quot;The rank of the dataspace being read by read_rank1_attribute should &quot;
+<span class="lineNum">     299 </span>            :           &quot;be 1 but is &quot;
+<span class="lineNum">     300 </span>            :           &lt;&lt; rank_of_space);
+<span class="lineNum">     301 </span>            :     }
+<span class="lineNum">     302 </span>            :     std::array&lt;hsize_t, 1&gt; dims{};
+<span class="lineNum">     303 </span>            :     if (UNLIKELY(H5Sget_simple_extent_dims(dataspace_id, dims.data(),
+<span class="lineNum">     304 </span>            :                                            nullptr) != 1)) {
+<span class="lineNum">     305 </span>            :       ERROR(
+<span class="lineNum">     306 </span>            :           &quot;The rank of the dataspace has changed after checking its rank. &quot;
+<span class="lineNum">     307 </span>            :           &quot;Checked rank was &quot;
+<span class="lineNum">     308 </span>            :           &lt;&lt; rank_of_space);
+<span class="lineNum">     309 </span>            :     }
+<span class="lineNum">     310 </span>            :     H5Sclose(dataspace_id);
+<span class="lineNum">     311 </span>            :     return dims[0];
+<span class="lineNum">     312 </span>            :   }();
+<span class="lineNum">     313 </span>            :   std::vector&lt;T&gt; data(size);
+<span class="lineNum">     314 </span>            :   CHECK_H5(H5Aread(attr_id, h5::h5_type&lt;T&gt;(), data.data()),
+<span class="lineNum">     315 </span>            :            &quot;Failed to read data from attribute &quot; &lt;&lt; name);
+<span class="lineNum">     316 </span>            :   H5Aclose(attr_id);
+<span class="lineNum">     317 </span>            :   return data;
+<span class="lineNum">     318 </span>            : }
+<span class="lineNum">     319 </span>            : 
+<span class="lineNum">     320 </span>            : template &lt;&gt;
+<span class="lineNum">     321 </span>            : void write_to_attribute&lt;std::string&gt;(
+<span class="lineNum">     322 </span>            :     const hid_t group_id, const std::string&amp; name,
+<span class="lineNum">     323 </span>            :     const std::vector&lt;std::string&gt;&amp; data) noexcept {
+<span class="lineNum">     324 </span>            :   // See the HDF5 example:
+<span class="lineNum">     325 </span>            :   // https://support.hdfgroup.org/ftp/HDF5/examples/examples-by-api/
+<span class="lineNum">     326 </span>            :   // hdf5-examples/1_8/C/H5T/h5ex_t_stringatt.c
+<span class="lineNum">     327 </span>            : 
+<span class="lineNum">     328 </span>            :   const hid_t type_id = fortran_string();
+<span class="lineNum">     329 </span>            :   // Create dataspace and attribute in dataspace where we will store the strings
+<span class="lineNum">     330 </span>            :   const hsize_t dim = data.size();
+<span class="lineNum">     331 </span>            :   const hid_t space_id = H5Screate_simple(1, &amp;dim, nullptr);
+<span class="lineNum">     332 </span>            :   CHECK_H5(space_id, &quot;Failed to create null space&quot;);
+<span class="lineNum">     333 </span>            :   const hid_t attr_id = H5Acreate2(group_id, name.c_str(), type_id, space_id,
+<span class="lineNum">     334 </span>            :                                    h5p_default(), h5p_default());
+<span class="lineNum">     335 </span>            :   CHECK_H5(attr_id, &quot;Could not create attribute &quot; &lt;&lt; name);
+<span class="lineNum">     336 </span>            : 
+<span class="lineNum">     337 </span>            :   // We are using C-style strings, which is type to be written into attribute
+<span class="lineNum">     338 </span>            :   const auto memtype_id = h5_type&lt;std::string&gt;();
+<span class="lineNum">     339 </span>            : 
+<span class="lineNum">     340 </span>            :   // In order to write strings to an attribute we must have a pointer to
+<span class="lineNum">     341 </span>            :   // pointers, so we use a vector.
+<span class="lineNum">     342 </span>            :   std::vector&lt;const char*&gt; string_pointers(data.size());
+<span class="lineNum">     343 </span>            :   std::transform(data.begin(), data.end(), string_pointers.begin(),
+<span class="lineNum">     344 </span>            :                  [](const auto&amp; t) { return t.c_str(); });
+<span class="lineNum">     345 </span>            :   CHECK_H5(H5Awrite(attr_id, memtype_id, string_pointers.data()),
+<span class="lineNum">     346 </span>            :            &quot;Failed attribute write&quot;);
+<span class="lineNum">     347 </span>            : 
+<span class="lineNum">     348 </span>            :   CHECK_H5(H5Aclose(attr_id), &quot;Failed to close attribute &quot; &lt;&lt; name);
+<span class="lineNum">     349 </span>            :   CHECK_H5(H5Sclose(space_id), &quot;Failed to close space_id&quot;);
+<span class="lineNum">     350 </span>            :   CHECK_H5(H5Tclose(memtype_id), &quot;Failed to close memtype_id&quot;);
+<span class="lineNum">     351 </span>            :   CHECK_H5(H5Tclose(type_id), &quot;Failed to close type_id&quot;);
+<span class="lineNum">     352 </span>            : }
+<span class="lineNum">     353 </span>            : 
+<span class="lineNum">     354 </span>            : template &lt;&gt;
+<span class="lineNum">     355 </span>            : std::vector&lt;std::string&gt; read_rank1_attribute&lt;std::string&gt;(
+<span class="lineNum">     356 </span>            :     const hid_t group_id, const std::string&amp; name) noexcept {
+<span class="lineNum">     357 </span>            :   const auto attribute_exists =
+<span class="lineNum">     358 </span>            :       static_cast&lt;bool&gt;(H5Aexists(group_id, name.c_str()));
+<span class="lineNum">     359 </span>            :   if (not attribute_exists) {
+<span class="lineNum">     360 </span>            :     ERROR(&quot;Could not find attribute '&quot; &lt;&lt; name &lt;&lt; &quot;'&quot;);  // LCOV_EXCL_LINE
+<span class="lineNum">     361 </span>            :   }
+<span class="lineNum">     362 </span>            : 
+<span class="lineNum">     363 </span>            :   // Open attribute that holds the strings
+<span class="lineNum">     364 </span>            :   const hid_t attribute_id = H5Aopen(group_id, name.c_str(), h5p_default());
+<span class="lineNum">     365 </span>            :   CHECK_H5(attribute_id, &quot;Failed to open attribute: '&quot; &lt;&lt; name &lt;&lt; &quot;'&quot;);
+<span class="lineNum">     366 </span>            :   const hid_t dataspace_id = H5Aget_space(attribute_id);
+<span class="lineNum">     367 </span>            :   CHECK_H5(dataspace_id,
+<span class="lineNum">     368 </span>            :            &quot;Failed to open dataspace for attribute '&quot; &lt;&lt; name &lt;&lt; &quot;'&quot;);
+<span class="lineNum">     369 </span>            :   // Get the size of the strings
+<span class="lineNum">     370 </span>            :   hsize_t legend_dims[1];
+<span class="lineNum">     371 </span>            :   CHECK_H5(H5Sget_simple_extent_dims(dataspace_id, legend_dims, nullptr),
+<span class="lineNum">     372 </span>            :            &quot;Failed to get size of strings&quot;);
+<span class="lineNum">     373 </span>            :   // Read the strings as arrays of characters
+<span class="lineNum">     374 </span>            :   std::vector&lt;char*&gt; temp(legend_dims[0]);
+<span class="lineNum">     375 </span>            :   const hid_t memtype = h5_type&lt;std::string&gt;();
+<span class="lineNum">     376 </span>            :   CHECK_H5(H5Aread(attribute_id, memtype, static_cast&lt;void*&gt;(temp.data())),
+<span class="lineNum">     377 </span>            :            &quot;Failed to read attribute&quot;);
+<span class="lineNum">     378 </span>            : 
+<span class="lineNum">     379 </span>            :   std::vector&lt;std::string&gt; result(temp.size());
+<span class="lineNum">     380 </span>            :   std::transform(temp.begin(), temp.end(), result.begin(),
+<span class="lineNum">     381 </span>            :                  [](const auto&amp; t) { return std::string(t); });
+<span class="lineNum">     382 </span>            : 
+<span class="lineNum">     383 </span>            :   // Clean up memory from variable length arrays and close everything
+<span class="lineNum">     384 </span>            :   CHECK_H5(H5Dvlen_reclaim(memtype, dataspace_id, h5p_default(), temp.data()),
+<span class="lineNum">     385 </span>            :            &quot;Failed H5Dvlen_reclaim at &quot;);
+<span class="lineNum">     386 </span>            :   CHECK_H5(H5Aclose(attribute_id), &quot;Failed to close attribute&quot;);
+<span class="lineNum">     387 </span>            :   CHECK_H5(H5Sclose(dataspace_id), &quot;Failed to close space_id&quot;);
+<span class="lineNum">     388 </span>            :   CHECK_H5(H5Tclose(memtype), &quot;Failed to close memtype&quot;);
+<span class="lineNum">     389 </span>            :   return result;
+<span class="lineNum">     390 </span>            : }
+<span class="lineNum">     391 </span>            : 
+<span class="lineNum">     392 </span><span class="lineCov">          1 : std::vector&lt;std::string&gt; get_attribute_names(const hid_t file_id,</span>
+<span class="lineNum">     393 </span>            :                                              const std::string&amp; group_name) {
+<span class="lineNum">     394 </span>            :   // Opens the group, loads the group info and then loops over all the
+<span class="lineNum">     395 </span>            :   // attributes retrieving their names and storing them in names
+<span class="lineNum">     396 </span>            :   detail::OpenGroup my_group(file_id, group_name, AccessType::ReadOnly);
+<span class="lineNum">     397 </span>            :   const hid_t group_id = my_group.id();
+<span class="lineNum">     398 </span>            :   H5O_info_t group_info{};
+<span class="lineNum">     399 </span>            :   std::string name;
+<span class="lineNum">     400 </span>            :   std::vector&lt;std::string&gt; names;
+<span class="lineNum">     401 </span>            :   CHECK_H5(H5Oget_info(group_id, &amp;group_info), &quot;Failed to get group info&quot;);
+<span class="lineNum">     402 </span>            :   names.reserve(group_info.num_attrs);
+<span class="lineNum">     403 </span>            :   for (size_t i = 0; i &lt; group_info.num_attrs; ++i) {
+<span class="lineNum">     404 </span>            : #pragma GCC diagnostic push
+<span class="lineNum">     405 </span>            : #pragma GCC diagnostic ignored &quot;-Wold-style-cast&quot;
+<span class="lineNum">     406 </span>            :     const hsize_t size =
+<span class="lineNum">     407 </span>            :         static_cast&lt;hsize_t&gt;(1) + static_cast&lt;hsize_t&gt;(H5Aget_name_by_idx(
+<span class="lineNum">     408 </span>            :                                       group_id, &quot;.&quot;, H5_INDEX_NAME, H5_ITER_INC,
+<span class="lineNum">     409 </span>            :                                       i, nullptr, 0, h5p_default()));
+<span class="lineNum">     410 </span>            :     name.resize(size);
+<span class="lineNum">     411 </span>            :     H5Aget_name_by_idx(group_id, &quot;.&quot;, H5_INDEX_NAME, H5_ITER_INC, i, &amp;name[0],
+<span class="lineNum">     412 </span>            :                        size, h5p_default());
+<span class="lineNum">     413 </span>            : #pragma GCC diagnostic pop
+<span class="lineNum">     414 </span>            :     // We need to remove the bloody trailing \0...
+<span class="lineNum">     415 </span>            :     name.pop_back();
+<span class="lineNum">     416 </span>            :     names.push_back(name);
+<span class="lineNum">     417 </span>            :   }
+<span class="lineNum">     418 </span>            :   return names;
+<span class="lineNum">     419 </span>            : }
+<span class="lineNum">     420 </span>            : 
+<span class="lineNum">     421 </span><span class="lineCov">          1 : bool contains_attribute(const hid_t file_id, const std::string&amp; group_name,</span>
+<span class="lineNum">     422 </span>            :                         const std::string&amp; attribute_name) {
+<span class="lineNum">     423 </span>            :   const std::vector&lt;std::string&gt; names(
+<span class="lineNum">     424 </span>            :       get_attribute_names(file_id, group_name));
+<span class="lineNum">     425 </span>            :   return std::find(std::begin(names), std::end(names), attribute_name) !=
+<span class="lineNum">     426 </span>            :          std::end(names);
+<span class="lineNum">     427 </span>            : }
+<span class="lineNum">     428 </span>            : 
+<span class="lineNum">     429 </span><span class="lineCov">          1 : hid_t open_dataset(const hid_t group_id,</span>
+<span class="lineNum">     430 </span>            :                    const std::string&amp; dataset_name) noexcept {
+<span class="lineNum">     431 </span>            :   const hid_t dataset_id = H5Dopen2(
+<span class="lineNum">     432 </span>            :                            group_id, dataset_name.c_str(), h5p_default());
+<span class="lineNum">     433 </span>            :   CHECK_H5(dataset_id, &quot;Failed to open dataset '&quot; &lt;&lt; dataset_name &lt;&lt; &quot;'&quot;);
+<span class="lineNum">     434 </span>            :   return dataset_id;
+<span class="lineNum">     435 </span>            : }
+<span class="lineNum">     436 </span>            : 
+<span class="lineNum">     437 </span><span class="lineCov">          1 : void close_dataset(const hid_t dataset_id) noexcept {</span>
+<span class="lineNum">     438 </span>            :   CHECK_H5(H5Dclose(dataset_id), &quot;Failed to close dataset&quot;);
+<span class="lineNum">     439 </span>            : }
+<span class="lineNum">     440 </span>            : 
+<span class="lineNum">     441 </span><span class="lineCov">          1 : hid_t open_dataspace(const hid_t dataset_id) noexcept {</span>
+<span class="lineNum">     442 </span>            :   const hid_t dataspace_id = H5Dget_space(dataset_id);
+<span class="lineNum">     443 </span>            :   CHECK_H5(dataspace_id, &quot;Failed to open dataspace&quot;);
+<span class="lineNum">     444 </span>            :   return dataspace_id;
+<span class="lineNum">     445 </span>            : }
+<span class="lineNum">     446 </span>            : 
+<span class="lineNum">     447 </span><span class="lineCov">          1 : void close_dataspace(const hid_t dataspace_id) noexcept {</span>
+<span class="lineNum">     448 </span>            :   CHECK_H5(H5Sclose(dataspace_id), &quot;Failed to close dataspace&quot;);
+<span class="lineNum">     449 </span>            : }
+<span class="lineNum">     450 </span>            : 
+<span class="lineNum">     451 </span>            : template &lt;size_t Rank, typename T&gt;
+<span class="lineNum">     452 </span><span class="lineCov">          1 : T read_data(const hid_t group_id, const std::string&amp; dataset_name) noexcept {</span>
+<span class="lineNum">     453 </span>            :   const hid_t dataset_id = open_dataset(group_id, dataset_name);
+<span class="lineNum">     454 </span>            :   const hid_t dataspace_id = open_dataspace(dataset_id);
+<span class="lineNum">     455 </span>            :   std::array&lt;hsize_t, Rank&gt; size{}, max_size{};
+<span class="lineNum">     456 </span>            :   if (static_cast&lt;int&gt;(Rank) !=
+<span class="lineNum">     457 </span>            :       H5Sget_simple_extent_dims(dataspace_id, nullptr, nullptr)) {
+<span class="lineNum">     458 </span>            :     ERROR(&quot;Incorrect rank in get_data(). Expected rank = &quot;
+<span class="lineNum">     459 </span>            :           &lt;&lt; Rank &lt;&lt; &quot; but received array with rank = &quot;
+<span class="lineNum">     460 </span>            :           &lt;&lt; H5Sget_simple_extent_dims(dataspace_id, nullptr,
+<span class="lineNum">     461 </span>            :                                        nullptr));
+<span class="lineNum">     462 </span>            :   }
+<span class="lineNum">     463 </span>            :   H5Sget_simple_extent_dims(dataspace_id, size.data(), max_size.data());
+<span class="lineNum">     464 </span>            :   close_dataspace(dataspace_id);
+<span class="lineNum">     465 </span>            : 
+<span class="lineNum">     466 </span>            :   // Load data from the H5 file by passing a pointer to 'data' to H5Dread
+<span class="lineNum">     467 </span>            :   // The type of 'data' is determined by the template parameter 'T'
+<span class="lineNum">     468 </span>            :   const size_t total_number_of_components = std::accumulate(
+<span class="lineNum">     469 </span>            :       size.begin(), size.end(), static_cast&lt;size_t&gt;(1), std::multiplies&lt;&gt;());
+<span class="lineNum">     470 </span>            :   if (UNLIKELY(total_number_of_components == 0)) {
+<span class="lineNum">     471 </span>            :     using ::operator&lt;&lt;;
+<span class="lineNum">     472 </span>            :     ERROR(&quot;At least one element in 'size' is 0. Expected data along &quot;
+<span class="lineNum">     473 </span>            :           &lt;&lt; Rank &lt;&lt; &quot; dimensions. size = &quot; &lt;&lt; size);
+<span class="lineNum">     474 </span>            :   }
+<span class="lineNum">     475 </span>            :   tmpl::conditional_t&lt;
+<span class="lineNum">     476 </span>            :       cpp17::is_same_v&lt;T, DataVector&gt;, DataVector,
+<span class="lineNum">     477 </span>            :       std::vector&lt;tt::get_fundamental_type_t&lt;T&gt;&gt;&gt;
+<span class="lineNum">     478 </span>            :       data(total_number_of_components);
+<span class="lineNum">     479 </span>            : 
+<span class="lineNum">     480 </span>            :   CHECK_H5(H5Dread(dataset_id,
+<span class="lineNum">     481 </span>            :                      h5_type&lt;tt::get_fundamental_type_t&lt;T&gt;&gt;(),
+<span class="lineNum">     482 </span>            :                      h5s_all(), h5s_all(), h5p_default(), data.data()),
+<span class="lineNum">     483 </span>            :              &quot;Failed to read dataset: '&quot; &lt;&lt; dataset_name &lt;&lt; &quot;'&quot;);
+<span class="lineNum">     484 </span>            :   close_dataset(dataset_id);
+<span class="lineNum">     485 </span>            :   return VectorTo&lt;Rank, T&gt;::apply(std::move(data), size);
+<span class="lineNum">     486 </span>            : }
+<span class="lineNum">     487 </span>            : 
+<span class="lineNum">     488 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">     489 </span><span class="lineCov">          1 : Index&lt;Dim&gt; read_extents(const hid_t group_id, const std::string&amp; extents_name) {</span>
+<span class="lineNum">     490 </span>            :   const hid_t attr_id = H5Aopen(group_id, extents_name.c_str(), h5p_default());
+<span class="lineNum">     491 </span>            :   CHECK_H5(attr_id, &quot;Failed to open attribute&quot;);
+<span class="lineNum">     492 </span>            :   Index&lt;Dim&gt; extents;
+<span class="lineNum">     493 </span>            :   CHECK_H5(H5Aread(attr_id, h5::h5_type&lt;std::decay_t&lt;decltype(extents[0])&gt;&gt;(),
+<span class="lineNum">     494 </span>            :                    extents.data()),
+<span class="lineNum">     495 </span>            :            &quot;Failed to read extents&quot;);
+<span class="lineNum">     496 </span>            :   H5Aclose(attr_id);
+<span class="lineNum">     497 </span>            :   return extents;
+<span class="lineNum">     498 </span>            : }
+<span class="lineNum">     499 </span>            : 
+<span class="lineNum">     500 </span>            : // Explicit instantiations
+<span class="lineNum">     501 </span><span class="lineNoCov">          0 : template void write_extents&lt;1&gt;(const hid_t group_id, const Index&lt;1&gt;&amp; extents,</span>
+<span class="lineNum">     502 </span>            :                                const std::string&amp; name);
+<span class="lineNum">     503 </span><span class="lineNoCov">          0 : template void write_extents&lt;2&gt;(const hid_t group_id, const Index&lt;2&gt;&amp; extents,</span>
+<span class="lineNum">     504 </span>            :                                const std::string&amp; name);
+<span class="lineNum">     505 </span><span class="lineNoCov">          0 : template void write_extents&lt;3&gt;(const hid_t group_id, const Index&lt;3&gt;&amp; extents,</span>
+<span class="lineNum">     506 </span>            :                                const std::string&amp; name);
+<span class="lineNum">     507 </span>            : 
+<span class="lineNum">     508 </span><span class="lineNoCov">          0 : template Index&lt;1&gt; read_extents&lt;1&gt;(const hid_t group_id,</span>
+<span class="lineNum">     509 </span>            :                                   const std::string&amp; extents_name);
+<span class="lineNum">     510 </span><span class="lineNoCov">          0 : template Index&lt;2&gt; read_extents&lt;2&gt;(const hid_t group_id,</span>
+<span class="lineNum">     511 </span>            :                                   const std::string&amp; extents_name);
+<span class="lineNum">     512 </span><span class="lineNoCov">          0 : template Index&lt;3&gt; read_extents&lt;3&gt;(const hid_t group_id,</span>
+<span class="lineNum">     513 </span>            :                                   const std::string&amp; extents_name);
+<span class="lineNum">     514 </span>            : 
+<span class="lineNum">     515 </span><span class="lineNoCov">          0 : #define TYPE(data) BOOST_PP_TUPLE_ELEM(0, data)</span>
+<span class="lineNum">     516 </span><span class="lineNoCov">          0 : #define RANK(data) BOOST_PP_TUPLE_ELEM(1, data)</span>
+<span class="lineNum">     517 </span>            : 
+<span class="lineNum">     518 </span><span class="lineNoCov">          0 : #define INSTANTIATE_WRITE_DATA(_, DATA)                            \</span>
+<span class="lineNum">     519 </span>            :   template void write_data&lt;TYPE(DATA)&gt;(                            \
+<span class="lineNum">     520 </span>            :       const hid_t group_id, const std::vector&lt;TYPE(DATA)&gt;&amp; data,   \
+<span class="lineNum">     521 </span>            :       const std::vector&lt;size_t&gt;&amp; extents,                          \
+<span class="lineNum">     522 </span>            :       const std::string&amp; name) noexcept;
+<span class="lineNum">     523 </span>            : 
+<span class="lineNum">     524 </span><span class="lineNoCov">          0 : GENERATE_INSTANTIATIONS(INSTANTIATE_WRITE_DATA,</span>
+<span class="lineNum">     525 </span>            :                         (double, int, unsigned int, long, unsigned long,
+<span class="lineNum">     526 </span>            :                          long long, unsigned long long, char))
+<span class="lineNum">     527 </span>            : 
+<span class="lineNum">     528 </span><span class="lineNoCov">          0 : #define INSTANTIATE_ATTRIBUTE(_, DATA)                                 \</span>
+<span class="lineNum">     529 </span>            :   template void write_to_attribute&lt;TYPE(DATA)&gt;(                        \
+<span class="lineNum">     530 </span>            :       const hid_t group_id, const std::string&amp; name,                   \
+<span class="lineNum">     531 </span>            :       const std::vector&lt;TYPE(DATA)&gt;&amp; data) noexcept;                   \
+<span class="lineNum">     532 </span>            :   template void write_to_attribute&lt;TYPE(DATA)&gt;(                        \
+<span class="lineNum">     533 </span>            :       const hid_t location_id, const std::string&amp; name,                \
+<span class="lineNum">     534 </span>            :       const TYPE(DATA) &amp; value) noexcept;                              \
+<span class="lineNum">     535 </span>            :   template TYPE(DATA) read_value_attribute&lt;TYPE(DATA)&gt;(                \
+<span class="lineNum">     536 </span>            :       const hid_t location_id, const std::string&amp; name) noexcept;      \
+<span class="lineNum">     537 </span>            :   template std::vector&lt;TYPE(DATA)&gt; read_rank1_attribute&lt;TYPE(DATA)&gt;(   \
+<span class="lineNum">     538 </span>            :       const hid_t group_id, const std::string&amp; name) noexcept;
+<span class="lineNum">     539 </span>            : 
+<span class="lineNum">     540 </span>            : GENERATE_INSTANTIATIONS(INSTANTIATE_ATTRIBUTE,
+<span class="lineNum">     541 </span><span class="lineNoCov">          0 :                         (double, unsigned int, unsigned long, int))</span>
+<span class="lineNum">     542 </span>            : 
+<span class="lineNum">     543 </span><span class="lineNoCov">          0 : #define INSTANTIATE_READ_SCALAR(_, DATA)                 \</span>
+<span class="lineNum">     544 </span>            :   template TYPE(DATA) read_data&lt;RANK(DATA), TYPE(DATA)&gt;( \
+<span class="lineNum">     545 </span>            :       const hid_t group_id, const std::string&amp; dataset_name) noexcept;
+<span class="lineNum">     546 </span>            : 
+<span class="lineNum">     547 </span><span class="lineNoCov">          0 : GENERATE_INSTANTIATIONS(INSTANTIATE_READ_SCALAR,</span>
+<span class="lineNum">     548 </span>            :                         (double, int, unsigned int, long, unsigned long,
+<span class="lineNum">     549 </span>            :                          long long, unsigned long long, char),
+<span class="lineNum">     550 </span>            :                         (0))
+<span class="lineNum">     551 </span>            : 
+<span class="lineNum">     552 </span><span class="lineNoCov">          0 : #define INSTANTIATE_READ_VECTOR(_, DATA)          \</span>
+<span class="lineNum">     553 </span>            :   template std::vector&lt;TYPE(DATA)&gt;                \
+<span class="lineNum">     554 </span>            :   read_data&lt;RANK(DATA), std::vector&lt;TYPE(DATA)&gt;&gt;( \
+<span class="lineNum">     555 </span>            :       const hid_t group_id, const std::string&amp; dataset_name) noexcept;
+<span class="lineNum">     556 </span>            : 
+<span class="lineNum">     557 </span>            : GENERATE_INSTANTIATIONS(INSTANTIATE_READ_VECTOR,
+<span class="lineNum">     558 </span>            :                         (double, int, unsigned int, long, unsigned long,
+<span class="lineNum">     559 </span><span class="lineNoCov">          0 :                          long long, unsigned long long, char),</span>
+<span class="lineNum">     560 </span>            :                         (1))
+<span class="lineNum">     561 </span>            : 
+<span class="lineNum">     562 </span><span class="lineNoCov">          0 : #define INSTANTIATE_READ_MULTIARRAY(_, DATA)                         \</span>
+<span class="lineNum">     563 </span>            :   template boost::multi_array&lt;TYPE(DATA), RANK(DATA)&gt;                \
+<span class="lineNum">     564 </span>            :   read_data&lt;RANK(DATA), boost::multi_array&lt;TYPE(DATA), RANK(DATA)&gt;&gt;( \
+<span class="lineNum">     565 </span>            :       const hid_t group_id, const std::string&amp; dataset_name) noexcept;
+<span class="lineNum">     566 </span>            : 
+<span class="lineNum">     567 </span><span class="lineNoCov">          0 : GENERATE_INSTANTIATIONS(INSTANTIATE_READ_MULTIARRAY,</span>
+<span class="lineNum">     568 </span>            :                         (double, int, unsigned int, long, unsigned long,
+<span class="lineNum">     569 </span>            :                          long long, unsigned long long, char),
+<span class="lineNum">     570 </span>            :                         (2, 3))
+<span class="lineNum">     571 </span>            : 
+<span class="lineNum">     572 </span><span class="lineNoCov">          0 : #define INSTANTIATE_READ_DATAVECTOR(_, DATA)             \</span>
+<span class="lineNum">     573 </span>            :   template TYPE(DATA) read_data&lt;RANK(DATA), TYPE(DATA)&gt;( \
+<span class="lineNum">     574 </span>            :       const hid_t group_id, const std::string&amp; dataset_name) noexcept;
+<span class="lineNum">     575 </span>            : 
+<span class="lineNum">     576 </span><span class="lineNoCov">          0 : GENERATE_INSTANTIATIONS(INSTANTIATE_READ_DATAVECTOR, (DataVector), (1, 2, 3))</span>
+<span class="lineNum">     577 </span>            : 
+<span class="lineNum">     578 </span>            : #undef INSTANTIATE_ATTRIBUTE
+<span class="lineNum">     579 </span>            : #undef INSTANTIATE_WRITE_DATA
+<span class="lineNum">     580 </span>            : #undef INSTANTIATE_READ_SCALAR
+<span class="lineNum">     581 </span>            : #undef INSTANTIATE_READ_VECTOR
+<span class="lineNum">     582 </span>            : #undef INSTANTIATE_READ_MULTIARRAY
+<span class="lineNum">     583 </span>            : #undef INSTANTIATE_READ_DATAVECTOR
+<span class="lineNum">     584 </span>            : #undef TYPE
+<span class="lineNum">     585 </span>            : #undef RANK
+<span class="lineNum">     586 </span>            : }  // namespace h5
+<span class="lineNum">     587 </span>            : 
+<span class="lineNum">     588 </span>            : namespace h5 {
+<span class="lineNum">     589 </span>            : namespace detail {
+<span class="lineNum">     590 </span>            : template &lt;size_t Dims&gt;
+<span class="lineNum">     591 </span>            : hid_t create_extensible_dataset(const hid_t group_id, const std::string&amp; name,
+<span class="lineNum">     592 </span>            :                                 const std::array&lt;hsize_t, Dims&gt;&amp; initial_size,
+<span class="lineNum">     593 </span>            :                                 const std::array&lt;hsize_t, Dims&gt;&amp; chunk_size,
+<span class="lineNum">     594 </span>            :                                 const std::array&lt;hsize_t, Dims&gt;&amp; max_size) {
+<span class="lineNum">     595 </span>            :   const hid_t dataspace_id =
+<span class="lineNum">     596 </span>            :       H5Screate_simple(Dims, initial_size.data(), max_size.data());
+<span class="lineNum">     597 </span>            :   CHECK_H5(dataspace_id, &quot;Failed to create extensible dataspace&quot;);
+<span class="lineNum">     598 </span>            : 
+<span class="lineNum">     599 </span>            :   const auto property_list = H5Pcreate(H5P_DATASET_CREATE);
+<span class="lineNum">     600 </span>            :   CHECK_H5(property_list, &quot;Failed to create property list&quot;);
+<span class="lineNum">     601 </span>            :   CHECK_H5(H5Pset_chunk(property_list, Dims, chunk_size.data()),
+<span class="lineNum">     602 </span>            :            &quot;Failed to set chunk size&quot;);
+<span class="lineNum">     603 </span>            : 
+<span class="lineNum">     604 </span>            :   const hid_t dataset_id =
+<span class="lineNum">     605 </span>            :       H5Dcreate2(group_id, name.c_str(), h5_type&lt;double&gt;(), dataspace_id,
+<span class="lineNum">     606 </span>            :                  h5p_default(), property_list, h5p_default());
+<span class="lineNum">     607 </span>            :   CHECK_H5(dataset_id, &quot;Failed to create dataset&quot;);
+<span class="lineNum">     608 </span>            :   CHECK_H5(H5Pclose(property_list), &quot;Failed to close property list&quot;);
+<span class="lineNum">     609 </span>            :   CHECK_H5(H5Sclose(dataspace_id), &quot;Failed to close dataspace&quot;);
+<span class="lineNum">     610 </span>            :   return dataset_id;
+<span class="lineNum">     611 </span>            : }
+<span class="lineNum">     612 </span>            : 
+<span class="lineNum">     613 </span>            : template hid_t create_extensible_dataset&lt;1&gt;(
+<span class="lineNum">     614 </span>            :     const hid_t group_id, const std::string&amp; name,
+<span class="lineNum">     615 </span>            :     const std::array&lt;hsize_t, 1&gt;&amp; initial_size,
+<span class="lineNum">     616 </span>            :     const std::array&lt;hsize_t, 1&gt;&amp; chunk_size,
+<span class="lineNum">     617 </span>            :     const std::array&lt;hsize_t, 1&gt;&amp; max_size);
+<span class="lineNum">     618 </span>            : template hid_t create_extensible_dataset&lt;2&gt;(
+<span class="lineNum">     619 </span>            :     const hid_t group_id, const std::string&amp; name,
+<span class="lineNum">     620 </span>            :     const std::array&lt;hsize_t, 2&gt;&amp; initial_size,
+<span class="lineNum">     621 </span>            :     const std::array&lt;hsize_t, 2&gt;&amp; chunk_size,
+<span class="lineNum">     622 </span>            :     const std::array&lt;hsize_t, 2&gt;&amp; max_size);
+<span class="lineNum">     623 </span>            : template hid_t create_extensible_dataset&lt;3&gt;(
+<span class="lineNum">     624 </span>            :     const hid_t group_id, const std::string&amp; name,
+<span class="lineNum">     625 </span>            :     const std::array&lt;hsize_t, 3&gt;&amp; initial_size,
+<span class="lineNum">     626 </span>            :     const std::array&lt;hsize_t, 3&gt;&amp; chunk_size,
+<span class="lineNum">     627 </span>            :     const std::array&lt;hsize_t, 3&gt;&amp; max_size);
+<span class="lineNum">     628 </span>            : }  // namespace detail
+<span class="lineNum">     629 </span>            : }  // namespace h5
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

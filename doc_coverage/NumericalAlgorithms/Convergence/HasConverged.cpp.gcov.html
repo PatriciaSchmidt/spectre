@@ -1,0 +1,179 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - NumericalAlgorithms/Convergence/HasConverged.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">NumericalAlgorithms/Convergence</a> - HasConverged.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntryLo">20.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;NumericalAlgorithms/Convergence/HasConverged.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;boost/optional.hpp&gt;
+<span class="lineNum">       7 </span>            : #include &lt;ostream&gt;
+<span class="lineNum">       8 </span>            : #include &lt;pup.h&gt;  // IWYU pragma: keep
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : #include &quot;ErrorHandling/Assert.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;ErrorHandling/Error.hpp&quot;
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            : namespace Convergence {
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span><span class="lineCov">          1 : boost::optional&lt;Reason&gt; criteria_match(</span>
+<span class="lineNum">      16 </span>            :     const Criteria&amp; criteria, const size_t iteration_id,
+<span class="lineNum">      17 </span>            :     const double residual_magnitude,
+<span class="lineNum">      18 </span>            :     const double initial_residual_magnitude) noexcept {
+<span class="lineNum">      19 </span>            :   if (residual_magnitude &lt;= criteria.absolute_residual) {
+<span class="lineNum">      20 </span>            :     return Reason::AbsoluteResidual;
+<span class="lineNum">      21 </span>            :   }
+<span class="lineNum">      22 </span>            :   if (residual_magnitude / initial_residual_magnitude &lt;=
+<span class="lineNum">      23 </span>            :       criteria.relative_residual) {
+<span class="lineNum">      24 </span>            :     return Reason::RelativeResidual;
+<span class="lineNum">      25 </span>            :   }
+<span class="lineNum">      26 </span>            :   if (iteration_id &gt;= criteria.max_iterations) {
+<span class="lineNum">      27 </span>            :     return Reason::MaxIterations;
+<span class="lineNum">      28 </span>            :   }
+<span class="lineNum">      29 </span>            :   return boost::none;
+<span class="lineNum">      30 </span>            : }
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span>            : HasConverged::HasConverged(const Criteria&amp; criteria, const size_t iteration_id,
+<span class="lineNum">      33 </span>            :                            const double residual_magnitude,
+<span class="lineNum">      34 </span>            :                            const double initial_residual_magnitude) noexcept
+<span class="lineNum">      35 </span>            :     : reason_(criteria_match(criteria, iteration_id, residual_magnitude,
+<span class="lineNum">      36 </span>            :                              initial_residual_magnitude)),
+<span class="lineNum">      37 </span>            :       criteria_(criteria),
+<span class="lineNum">      38 </span>            :       iteration_id_(iteration_id),
+<span class="lineNum">      39 </span>            :       residual_magnitude_(residual_magnitude),
+<span class="lineNum">      40 </span>            :       initial_residual_magnitude_(initial_residual_magnitude) {}
+<span class="lineNum">      41 </span>            : 
+<span class="lineNum">      42 </span>            : Reason HasConverged::reason() const noexcept {
+<span class="lineNum">      43 </span>            :   ASSERT(reason_,
+<span class="lineNum">      44 </span>            :          &quot;Tried to retrieve the convergence reason, but has not yet converged. &quot;
+<span class="lineNum">      45 </span>            :          &quot;Check if the instance of HasConverged evaluates to `true` first.&quot;);
+<span class="lineNum">      46 </span>            :   return *reason_;
+<span class="lineNum">      47 </span>            : }
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span><span class="lineNoCov">          0 : std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os,</span>
+<span class="lineNum">      50 </span>            :                          const HasConverged&amp; has_converged) noexcept {
+<span class="lineNum">      51 </span>            :   if (has_converged) {
+<span class="lineNum">      52 </span>            :     switch (has_converged.reason()) {
+<span class="lineNum">      53 </span>            :       case Reason::MaxIterations:
+<span class="lineNum">      54 </span>            :         return os &lt;&lt; &quot;Reached the maximum number of iterations (&quot;
+<span class="lineNum">      55 </span>            :                   &lt;&lt; has_converged.criteria_.max_iterations &lt;&lt; &quot;).\n&quot;;
+<span class="lineNum">      56 </span>            :       case Reason::AbsoluteResidual:
+<span class="lineNum">      57 </span>            :         return os
+<span class="lineNum">      58 </span>            :                &lt;&lt; &quot;AbsoluteResidual - The residual magnitude has decreased to &quot;
+<span class="lineNum">      59 </span>            :                &lt;&lt; has_converged.criteria_.absolute_residual &lt;&lt; &quot; or below (&quot;
+<span class="lineNum">      60 </span>            :                &lt;&lt; has_converged.residual_magnitude_ &lt;&lt; &quot;).\n&quot;;
+<span class="lineNum">      61 </span>            :       case Reason::RelativeResidual:
+<span class="lineNum">      62 </span>            :         return os &lt;&lt; &quot;RelativeResidual - The residual magnitude has decreased &quot;
+<span class="lineNum">      63 </span>            :                      &quot;to a fraction of &quot;
+<span class="lineNum">      64 </span>            :                   &lt;&lt; has_converged.criteria_.relative_residual
+<span class="lineNum">      65 </span>            :                   &lt;&lt; &quot; of its initial value or below (&quot;
+<span class="lineNum">      66 </span>            :                   &lt;&lt; has_converged.residual_magnitude_ /
+<span class="lineNum">      67 </span>            :                          has_converged.initial_residual_magnitude_
+<span class="lineNum">      68 </span>            :                   &lt;&lt; &quot;).\n&quot;;
+<span class="lineNum">      69 </span>            :       default:
+<span class="lineNum">      70 </span>            :         ERROR(&quot;Unknown convergence reason&quot;);
+<span class="lineNum">      71 </span>            :     };
+<span class="lineNum">      72 </span>            :   } else {
+<span class="lineNum">      73 </span>            :     return os &lt;&lt; &quot;Not yet converged.\n&quot;;
+<span class="lineNum">      74 </span>            :   }
+<span class="lineNum">      75 </span>            : }
+<span class="lineNum">      76 </span>            : 
+<span class="lineNum">      77 </span>            : void HasConverged::pup(PUP::er&amp; p) noexcept {
+<span class="lineNum">      78 </span>            :   p | criteria_;
+<span class="lineNum">      79 </span>            :   p | iteration_id_;
+<span class="lineNum">      80 </span>            :   p | residual_magnitude_;
+<span class="lineNum">      81 </span>            :   p | initial_residual_magnitude_;
+<span class="lineNum">      82 </span>            :   if (p.isUnpacking()) {
+<span class="lineNum">      83 </span>            :     reason_ = criteria_match(criteria_, iteration_id_, residual_magnitude_,
+<span class="lineNum">      84 </span>            :                              initial_residual_magnitude_);
+<span class="lineNum">      85 </span>            :   }
+<span class="lineNum">      86 </span>            : }
+<span class="lineNum">      87 </span>            : 
+<span class="lineNum">      88 </span><span class="lineNoCov">          0 : bool operator==(const HasConverged&amp; lhs, const HasConverged&amp; rhs) noexcept {</span>
+<span class="lineNum">      89 </span>            :   return lhs.criteria_ == rhs.criteria_ and
+<span class="lineNum">      90 </span>            :          lhs.iteration_id_ == rhs.iteration_id_ and
+<span class="lineNum">      91 </span>            :          lhs.residual_magnitude_ == rhs.residual_magnitude_ and
+<span class="lineNum">      92 </span>            :          lhs.initial_residual_magnitude_ == rhs.initial_residual_magnitude_;
+<span class="lineNum">      93 </span>            : }
+<span class="lineNum">      94 </span>            : 
+<span class="lineNum">      95 </span><span class="lineNoCov">          0 : bool operator!=(const HasConverged&amp; lhs, const HasConverged&amp; rhs) noexcept {</span>
+<span class="lineNum">      96 </span>            :   return not(lhs == rhs);
+<span class="lineNum">      97 </span>            : }
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span>            : }  // namespace Convergence
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

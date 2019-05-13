@@ -1,0 +1,189 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - PointwiseFunctions/AnalyticSolutions/Poisson/Moustache.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">PointwiseFunctions/AnalyticSolutions/Poisson</a> - Moustache.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;PointwiseFunctions/AnalyticSolutions/Poisson/Moustache.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;algorithm&gt;
+<span class="lineNum">       7 </span>            : #include &lt;array&gt;
+<span class="lineNum">       8 </span>            : #include &lt;pup.h&gt;  // IWYU pragma: keep
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : #include &quot;DataStructures/DataVector.hpp&quot;     // IWYU pragma: keep
+<span class="lineNum">      11 </span>            : #include &quot;DataStructures/Tensor/Tensor.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      12 </span>            : #include &quot;Utilities/ConstantExpressions.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;Utilities/MakeWithValue.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;Utilities/Math.hpp&quot;
+<span class="lineNum">      15 </span>            : // IWYU pragma: no_forward_declare Tensor
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            : namespace Poisson {
+<span class="lineNum">      18 </span>            : namespace Solutions {
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : /// \cond
+<span class="lineNum">      21 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      22 </span>            : tuples::TaggedTuple&lt;Field&gt; Moustache&lt;Dim&gt;::variables(
+<span class="lineNum">      23 </span>            :     const tnsr::I&lt;DataVector, Dim&gt;&amp; x, tmpl::list&lt;Field&gt; /*meta*/) const
+<span class="lineNum">      24 </span>            :     noexcept {
+<span class="lineNum">      25 </span>            :   auto field = make_with_value&lt;Scalar&lt;DataVector&gt;&gt;(x, 1.);
+<span class="lineNum">      26 </span>            :   for (size_t d = 0; d &lt; Dim; d++) {
+<span class="lineNum">      27 </span>            :     get(field) *= x.get(d) * (1. - x.get(d));
+<span class="lineNum">      28 </span>            :   }
+<span class="lineNum">      29 </span>            :   auto norm_square = make_with_value&lt;DataVector&gt;(get&lt;0&gt;(x), 0.);
+<span class="lineNum">      30 </span>            :   for (size_t d = 0; d &lt; Dim; d++) {
+<span class="lineNum">      31 </span>            :     norm_square += square(x.get(d) - 0.5);
+<span class="lineNum">      32 </span>            :   }
+<span class="lineNum">      33 </span>            :   get(field) *= pow(norm_square, 3. / 2.);
+<span class="lineNum">      34 </span>            :   return {std::move(field)};
+<span class="lineNum">      35 </span>            : }
+<span class="lineNum">      36 </span>            : 
+<span class="lineNum">      37 </span>            : template &lt;&gt;
+<span class="lineNum">      38 </span>            : tuples::TaggedTuple&lt;AuxiliaryField&lt;1&gt;&gt; Moustache&lt;1&gt;::variables(
+<span class="lineNum">      39 </span>            :     const tnsr::I&lt;DataVector, 1&gt;&amp; x,
+<span class="lineNum">      40 </span>            :     tmpl::list&lt;AuxiliaryField&lt;1&gt;&gt; /*meta*/) const noexcept {
+<span class="lineNum">      41 </span>            :   const auto&amp; x_d = get&lt;0&gt;(x);
+<span class="lineNum">      42 </span>            :   tnsr::I&lt;DataVector, 1&gt; auxiliary_field{
+<span class="lineNum">      43 </span>            :       abs(x_d - 0.5) * evaluate_polynomial&lt;double&gt;({0.25, -3., 7.5, -5.}, x_d)};
+<span class="lineNum">      44 </span>            :   return {std::move(auxiliary_field)};
+<span class="lineNum">      45 </span>            : }
+<span class="lineNum">      46 </span>            : 
+<span class="lineNum">      47 </span>            : template &lt;&gt;
+<span class="lineNum">      48 </span>            : tuples::TaggedTuple&lt;AuxiliaryField&lt;2&gt;&gt; Moustache&lt;2&gt;::variables(
+<span class="lineNum">      49 </span>            :     const tnsr::I&lt;DataVector, 2&gt;&amp; x,
+<span class="lineNum">      50 </span>            :     tmpl::list&lt;AuxiliaryField&lt;2&gt;&gt; /*meta*/) const noexcept {
+<span class="lineNum">      51 </span>            :   auto auxiliary_field = make_with_value&lt;tnsr::I&lt;DataVector, 2&gt;&gt;(x, 0.);
+<span class="lineNum">      52 </span>            :   auto norm_square = square(get&lt;0&gt;(x) - 0.5) + square(get&lt;1&gt;(x) - 0.5);
+<span class="lineNum">      53 </span>            :   for (size_t d = 0; d &lt; 2; d++) {
+<span class="lineNum">      54 </span>            :     const auto&amp; x_d = x.get(d);
+<span class="lineNum">      55 </span>            :     const auto&amp; x_p = x.get((d + 1) % 2);
+<span class="lineNum">      56 </span>            :     auxiliary_field.get(d) =
+<span class="lineNum">      57 </span>            :         sqrt(norm_square) * x_p * (1. - x_p) *
+<span class="lineNum">      58 </span>            :         (evaluate_polynomial&lt;double&gt;({0.25, -3.5, 7.5, -5.}, x_d) +
+<span class="lineNum">      59 </span>            :          evaluate_polynomial&lt;double&gt;({0.25, -1., 1.}, x_p) + 2. * x_d * x_p -
+<span class="lineNum">      60 </span>            :          2. * x_d * square(x_p));
+<span class="lineNum">      61 </span>            :   }
+<span class="lineNum">      62 </span>            :   return {std::move(auxiliary_field)};
+<span class="lineNum">      63 </span>            : }
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span>            : template &lt;&gt;
+<span class="lineNum">      66 </span>            : tuples::TaggedTuple&lt;::Tags::Source&lt;Field&gt;&gt; Moustache&lt;1&gt;::variables(
+<span class="lineNum">      67 </span>            :     const tnsr::I&lt;DataVector, 1&gt;&amp; x,
+<span class="lineNum">      68 </span>            :     tmpl::list&lt;::Tags::Source&lt;Field&gt;&gt; /*meta*/) const noexcept {
+<span class="lineNum">      69 </span>            :   const auto&amp; x1 = get&lt;0&gt;(x) - 0.5;
+<span class="lineNum">      70 </span>            :   // This polynomial is minus the laplacian of the 1D solution
+<span class="lineNum">      71 </span>            :   Scalar&lt;DataVector&gt; field_source(abs(x1) * (20. * square(x1) - 1.5));
+<span class="lineNum">      72 </span>            :   return {std::move(field_source)};
+<span class="lineNum">      73 </span>            : }
+<span class="lineNum">      74 </span>            : 
+<span class="lineNum">      75 </span>            : template &lt;&gt;
+<span class="lineNum">      76 </span>            : tuples::TaggedTuple&lt;::Tags::Source&lt;Field&gt;&gt; Moustache&lt;2&gt;::variables(
+<span class="lineNum">      77 </span>            :     const tnsr::I&lt;DataVector, 2&gt;&amp; x,
+<span class="lineNum">      78 </span>            :     tmpl::list&lt;::Tags::Source&lt;Field&gt;&gt; /*meta*/) const noexcept {
+<span class="lineNum">      79 </span>            :   const auto&amp; x1 = get&lt;0&gt;(x) - 0.5;
+<span class="lineNum">      80 </span>            :   const auto&amp; x2 = get&lt;1&gt;(x) - 0.5;
+<span class="lineNum">      81 </span>            :   const auto x1_square = square(x1);
+<span class="lineNum">      82 </span>            :   const auto x2_square = square(x2);
+<span class="lineNum">      83 </span>            :   const auto norm_square = x1_square + x2_square;
+<span class="lineNum">      84 </span>            :   // This polynomial is minus the laplacian of the 2D solution
+<span class="lineNum">      85 </span>            :   Scalar&lt;DataVector&gt; field_source(
+<span class="lineNum">      86 </span>            :       sqrt(norm_square) *
+<span class="lineNum">      87 </span>            :       (-0.5625 + 6.25 * norm_square - 6.125 * square(norm_square) +
+<span class="lineNum">      88 </span>            :        4.125 * square(x1_square) - 24.75 * x1_square * x2_square +
+<span class="lineNum">      89 </span>            :        4.125 * square(x2_square)));
+<span class="lineNum">      90 </span>            :   return {std::move(field_source)};
+<span class="lineNum">      91 </span>            : }
+<span class="lineNum">      92 </span>            : 
+<span class="lineNum">      93 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      94 </span>            : tuples::TaggedTuple&lt;::Tags::Source&lt;AuxiliaryField&lt;Dim&gt;&gt;&gt;
+<span class="lineNum">      95 </span>            : Moustache&lt;Dim&gt;::variables(
+<span class="lineNum">      96 </span>            :     const tnsr::I&lt;DataVector, Dim&gt;&amp; x,
+<span class="lineNum">      97 </span>            :     tmpl::list&lt;::Tags::Source&lt;AuxiliaryField&lt;Dim&gt;&gt;&gt; /*meta*/) const noexcept {
+<span class="lineNum">      98 </span>            :   return {make_with_value&lt;tnsr::I&lt;DataVector, Dim, Frame::Inertial&gt;&gt;(x, 0.)};
+<span class="lineNum">      99 </span>            : }
+<span class="lineNum">     100 </span>            : /// \endcond
+<span class="lineNum">     101 </span>            : 
+<span class="lineNum">     102 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">     103 </span>            : void Moustache&lt;Dim&gt;::pup(PUP::er&amp; /*p*/) noexcept {}
+<span class="lineNum">     104 </span>            : 
+<span class="lineNum">     105 </span>            : }  // namespace Solutions
+<span class="lineNum">     106 </span>            : }  // namespace Poisson
+<span class="lineNum">     107 </span>            : 
+<span class="lineNum">     108 </span>            : template class Poisson::Solutions::Moustache&lt;1&gt;;
+<span class="lineNum">     109 </span>            : template class Poisson::Solutions::Moustache&lt;2&gt;;
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

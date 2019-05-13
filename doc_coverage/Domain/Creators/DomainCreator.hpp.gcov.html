@@ -1,0 +1,207 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Domain/Creators/DomainCreator.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">Domain/Creators</a> - DomainCreator.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntry">12</td>
+            <td class="headerCovTableEntryLo">33.3 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineCov">          1 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : /// \file
+<span class="lineNum">       5 </span>            : /// Defines class DomainCreator.
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            : #pragma once
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : #include &lt;memory&gt;
+<span class="lineNum">      10 </span>            : #include &lt;string&gt;
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : #include &quot;DataStructures/Tensor/IndexType.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;Utilities/ConstantExpressions.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;Utilities/MakeArray.hpp&quot;
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : /// \cond
+<span class="lineNum">      17 </span>            : template &lt;size_t, typename&gt;
+<span class="lineNum">      18 </span>            : class Block;
+<span class="lineNum">      19 </span>            : namespace domain {
+<span class="lineNum">      20 </span>            : template &lt;typename, typename, size_t&gt;
+<span class="lineNum">      21 </span>            : class CoordinateMapBase;
+<span class="lineNum">      22 </span>            : }  // namespace domain
+<span class="lineNum">      23 </span>            : template &lt;size_t, typename&gt;
+<span class="lineNum">      24 </span>            : class Domain;
+<span class="lineNum">      25 </span>            : /// \endcond
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span>            : namespace domain {
+<span class="lineNum">      28 </span>            : /// Defines classes that create Domains.
+<span class="lineNum">      29 </span>            : namespace creators {
+<span class="lineNum">      30 </span>            : /// \cond
+<span class="lineNum">      31 </span>            : template &lt;size_t VolumeDim, typename TargetFrame&gt;
+<span class="lineNum">      32 </span>            : class AlignedLattice;
+<span class="lineNum">      33 </span>            : template &lt;typename TargetFrame&gt;
+<span class="lineNum">      34 </span>            : class Brick;
+<span class="lineNum">      35 </span>            : template &lt;typename TargetFrame&gt;
+<span class="lineNum">      36 </span>            : class Cylinder;
+<span class="lineNum">      37 </span>            : template &lt;typename TargetFrame&gt;
+<span class="lineNum">      38 </span>            : class Disk;
+<span class="lineNum">      39 </span>            : template &lt;typename TargetFrame&gt;
+<span class="lineNum">      40 </span>            : class Interval;
+<span class="lineNum">      41 </span>            : template &lt;typename TargetFrame&gt;
+<span class="lineNum">      42 </span>            : class Rectangle;
+<span class="lineNum">      43 </span>            : template &lt;typename TargetFrame&gt;
+<span class="lineNum">      44 </span>            : class RotatedBricks;
+<span class="lineNum">      45 </span>            : template &lt;typename TargetFrame&gt;
+<span class="lineNum">      46 </span>            : class RotatedIntervals;
+<span class="lineNum">      47 </span>            : template &lt;typename TargetFrame&gt;
+<span class="lineNum">      48 </span>            : class RotatedRectangles;
+<span class="lineNum">      49 </span>            : template &lt;typename TargetFrame&gt;
+<span class="lineNum">      50 </span>            : class Shell;
+<span class="lineNum">      51 </span>            : template &lt;typename TargetFrame&gt;
+<span class="lineNum">      52 </span>            : class Sphere;
+<span class="lineNum">      53 </span>            : template &lt;typename TargetFrame&gt;
+<span class="lineNum">      54 </span>            : class FrustalCloak;
+<span class="lineNum">      55 </span>            : /// \endcond
+<span class="lineNum">      56 </span>            : }  // namespace creators
+<span class="lineNum">      57 </span>            : }  // namespace domain
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span>            : namespace DomainCreators_detail {
+<span class="lineNum">      60 </span>            : template &lt;size_t&gt;
+<span class="lineNum">      61 </span>            : struct domain_creators;
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span>            : template &lt;&gt;
+<span class="lineNum">      64 </span>            : struct domain_creators&lt;1&gt; {
+<span class="lineNum">      65 </span>            :   template &lt;typename Frame&gt;
+<span class="lineNum">      66 </span>            :   using creators = tmpl::list&lt;domain::creators::AlignedLattice&lt;1, Frame&gt;,
+<span class="lineNum">      67 </span>            :                               domain::creators::Interval&lt;Frame&gt;,
+<span class="lineNum">      68 </span>            :                               domain::creators::RotatedIntervals&lt;Frame&gt;&gt;;
+<span class="lineNum">      69 </span>            : };
+<span class="lineNum">      70 </span>            : template &lt;&gt;
+<span class="lineNum">      71 </span>            : struct domain_creators&lt;2&gt; {
+<span class="lineNum">      72 </span>            :   template &lt;typename Frame&gt;
+<span class="lineNum">      73 </span>            :   using creators = tmpl::list&lt;domain::creators::AlignedLattice&lt;2, Frame&gt;,
+<span class="lineNum">      74 </span>            :                               domain::creators::Disk&lt;Frame&gt;,
+<span class="lineNum">      75 </span>            :                               domain::creators::Rectangle&lt;Frame&gt;,
+<span class="lineNum">      76 </span>            :                               domain::creators::RotatedRectangles&lt;Frame&gt;&gt;;
+<span class="lineNum">      77 </span>            : };
+<span class="lineNum">      78 </span>            : template &lt;&gt;
+<span class="lineNum">      79 </span>            : struct domain_creators&lt;3&gt; {
+<span class="lineNum">      80 </span>            :   template &lt;typename Frame&gt;
+<span class="lineNum">      81 </span>            :   using creators = tmpl::list&lt;
+<span class="lineNum">      82 </span>            :       domain::creators::AlignedLattice&lt;3, Frame&gt;,
+<span class="lineNum">      83 </span>            :       domain::creators::Brick&lt;Frame&gt;, domain::creators::Cylinder&lt;Frame&gt;,
+<span class="lineNum">      84 </span>            :       domain::creators::RotatedBricks&lt;Frame&gt;, domain::creators::Shell&lt;Frame&gt;,
+<span class="lineNum">      85 </span>            :       domain::creators::Sphere&lt;Frame&gt;, domain::creators::FrustalCloak&lt;Frame&gt;&gt;;
+<span class="lineNum">      86 </span>            : };
+<span class="lineNum">      87 </span>            : }  // namespace DomainCreators_detail
+<span class="lineNum">      88 </span>            : 
+<span class="lineNum">      89 </span>            : /// Base class for creating Domains from an option string.
+<span class="lineNum">      90 </span>            : template &lt;size_t VolumeDim, typename TargetFrame&gt;
+<span class="lineNum">      91 </span><span class="lineCov">          1 : class DomainCreator {</span>
+<span class="lineNum">      92 </span>            :  public:
+<span class="lineNum">      93 </span><span class="lineNoCov">          0 :   using creatable_classes = typename DomainCreators_detail::domain_creators&lt;</span>
+<span class="lineNum">      94 </span>            :       VolumeDim&gt;::template creators&lt;TargetFrame&gt;;
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span><span class="lineNoCov">          0 :   DomainCreator() = default;</span>
+<span class="lineNum">      97 </span><span class="lineNoCov">          0 :   DomainCreator(const DomainCreator&lt;VolumeDim, TargetFrame&gt;&amp;) = delete;</span>
+<span class="lineNum">      98 </span><span class="lineNoCov">          0 :   DomainCreator(DomainCreator&lt;VolumeDim, TargetFrame&gt;&amp;&amp;) noexcept = default;</span>
+<span class="lineNum">      99 </span><span class="lineNoCov">          0 :   DomainCreator&lt;VolumeDim, TargetFrame&gt;&amp; operator=(</span>
+<span class="lineNum">     100 </span>            :       const DomainCreator&lt;VolumeDim, TargetFrame&gt;&amp;) = delete;
+<span class="lineNum">     101 </span><span class="lineNoCov">          0 :   DomainCreator&lt;VolumeDim, TargetFrame&gt;&amp; operator=(</span>
+<span class="lineNum">     102 </span>            :       DomainCreator&lt;VolumeDim, TargetFrame&gt;&amp;&amp;) noexcept = default;
+<span class="lineNum">     103 </span><span class="lineNoCov">          0 :   virtual ~DomainCreator() = default;</span>
+<span class="lineNum">     104 </span>            : 
+<span class="lineNum">     105 </span><span class="lineNoCov">          0 :   virtual Domain&lt;VolumeDim, TargetFrame&gt; create_domain() const = 0;</span>
+<span class="lineNum">     106 </span>            : 
+<span class="lineNum">     107 </span>            :   /// Obtain the initial grid extents of the block with the given index.
+<span class="lineNum">     108 </span><span class="lineCov">          1 :   virtual std::vector&lt;std::array&lt;size_t, VolumeDim&gt;&gt; initial_extents() const</span>
+<span class="lineNum">     109 </span>            :       noexcept = 0;
+<span class="lineNum">     110 </span>            : 
+<span class="lineNum">     111 </span>            :   /// Obtain the initial refinement levels of the blocks.
+<span class="lineNum">     112 </span><span class="lineCov">          1 :   virtual std::vector&lt;std::array&lt;size_t, VolumeDim&gt;&gt; initial_refinement_levels()</span>
+<span class="lineNum">     113 </span>            :       const noexcept = 0;
+<span class="lineNum">     114 </span>            : };
+<span class="lineNum">     115 </span>            : 
+<span class="lineNum">     116 </span>            : #include &quot;Domain/Creators/AlignedLattice.hpp&quot;
+<span class="lineNum">     117 </span>            : #include &quot;Domain/Creators/Brick.hpp&quot;
+<span class="lineNum">     118 </span>            : #include &quot;Domain/Creators/Cylinder.hpp&quot;
+<span class="lineNum">     119 </span>            : #include &quot;Domain/Creators/Disk.hpp&quot;
+<span class="lineNum">     120 </span>            : #include &quot;Domain/Creators/FrustalCloak.hpp&quot;
+<span class="lineNum">     121 </span>            : #include &quot;Domain/Creators/Interval.hpp&quot;
+<span class="lineNum">     122 </span>            : #include &quot;Domain/Creators/Rectangle.hpp&quot;
+<span class="lineNum">     123 </span>            : #include &quot;Domain/Creators/RotatedBricks.hpp&quot;
+<span class="lineNum">     124 </span>            : #include &quot;Domain/Creators/RotatedIntervals.hpp&quot;
+<span class="lineNum">     125 </span>            : #include &quot;Domain/Creators/RotatedRectangles.hpp&quot;
+<span class="lineNum">     126 </span>            : #include &quot;Domain/Creators/Shell.hpp&quot;
+<span class="lineNum">     127 </span>            : #include &quot;Domain/Creators/Sphere.hpp&quot;
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - NumericalAlgorithms/Spectral/Filtering.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">NumericalAlgorithms/Spectral</a> - Filtering.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : /// \cond
+<span class="lineNum">       9 </span>            : class Matrix;
+<span class="lineNum">      10 </span>            : template &lt;size_t&gt;
+<span class="lineNum">      11 </span>            : class Mesh;
+<span class="lineNum">      12 </span>            : /// \endcond
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            : namespace Spectral {
+<span class="lineNum">      15 </span>            : /*!
+<span class="lineNum">      16 </span>            :  * \ingroup SpectralGroup
+<span class="lineNum">      17 </span>            :  * \brief Matrices for filtering spectral coefficients.
+<span class="lineNum">      18 </span>            :  */
+<span class="lineNum">      19 </span>            : namespace filtering {
+<span class="lineNum">      20 </span>            : /*!
+<span class="lineNum">      21 </span>            :  * \brief Returns a `Matrix` by which to multiply the nodal coefficients to
+<span class="lineNum">      22 </span>            :  * apply a stable exponential filter.
+<span class="lineNum">      23 </span>            :  *
+<span class="lineNum">      24 </span>            :  * The exponential filter rescales the modal coefficients according to:
+<span class="lineNum">      25 </span>            :  *
+<span class="lineNum">      26 </span>            :  * \f{align*}{
+<span class="lineNum">      27 </span>            :  *  c_i\to c_i \exp\left[-\alpha \left(\frac{i}{N}\right)^{2m}\right]
+<span class="lineNum">      28 </span>            :  * \f}
+<span class="lineNum">      29 </span>            :  *
+<span class="lineNum">      30 </span>            :  * where \f$c_i\f$ are the zero-indexed modal coefficients, \f$N\f$ is the basis
+<span class="lineNum">      31 </span>            :  * order, \f$\alpha\f$ determines how much the coefficients are rescaled, and
+<span class="lineNum">      32 </span>            :  * \f$m\f$ determines how aggressive/broad the filter is (lower values means
+<span class="lineNum">      33 </span>            :  * filtering more coefficients). Setting \f$\alpha=36\f$ results in setting the
+<span class="lineNum">      34 </span>            :  * highest coefficient to machine precision, effectively zeroing it out.
+<span class="lineNum">      35 </span>            :  *
+<span class="lineNum">      36 </span>            :  * \note The filter matrix is not cached by the function because it depends on a
+<span class="lineNum">      37 </span>            :  * double, an integer, and the mesh, which could make caching very memory
+<span class="lineNum">      38 </span>            :  * intensive. The caller of this function is responsible for determining whether
+<span class="lineNum">      39 </span>            :  * or not the matrix should be cached.
+<span class="lineNum">      40 </span>            :  */
+<span class="lineNum">      41 </span>            : Matrix exponential_filter(const Mesh&lt;1&gt;&amp; mesh, double alpha,
+<span class="lineNum">      42 </span>            :                           unsigned half_power) noexcept;
+<span class="lineNum">      43 </span>            : }  // namespace filtering
+<span class="lineNum">      44 </span>            : }  // namespace Spectral
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,377 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - NumericalAlgorithms/Spectral/ComplexDataView.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">NumericalAlgorithms/Spectral</a> - ComplexDataView.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryLo">50.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;NumericalAlgorithms/Spectral/ComplexDataView.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &quot;DataStructures/ComplexDataVector.hpp&quot;
+<span class="lineNum">       7 </span>            : #include &quot;DataStructures/DataVector.hpp&quot;
+<span class="lineNum">       8 </span>            : #include &quot;ErrorHandling/Assert.hpp&quot;
+<span class="lineNum">       9 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;Utilities/Math.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : namespace Spectral {
+<span class="lineNum">      13 </span><span class="lineCov">          1 : namespace Swsh {</span>
+<span class="lineNum">      14 </span>            : namespace detail {
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      17 </span>            : void sizes_assert(const T&amp; vector, const size_t size) {
+<span class="lineNum">      18 </span>            :   ASSERT(vector.size() == size,
+<span class="lineNum">      19 </span>            :          &quot;Assignment must be to the same size,&quot;
+<span class="lineNum">      20 </span>            :          &quot; not &quot;
+<span class="lineNum">      21 </span>            :              &lt;&lt; vector.size() &lt;&lt; &quot; assigned to &quot; &lt;&lt; size);
+<span class="lineNum">      22 </span>            : }
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : // The constructor of `ComplexDataView&lt;ComplexRepresentation::Interleaved&gt;`
+<span class="lineNum">      25 </span>            : // makes no copies or allocations
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span>            : // Due to the nature of this class performing manual memory management, indexing
+<span class="lineNum">      28 </span>            : // into complex data with perscribed strides, it is necessary to violate type
+<span class="lineNum">      29 </span>            : // system conventions to index into the complex data as though it is double
+<span class="lineNum">      30 </span>            : // data, thus using a `reinterpret_cast`. The C++ standard guarantees that
+<span class="lineNum">      31 </span>            : // complex numbers are represented in memory in such a way that this is correct,
+<span class="lineNum">      32 </span>            : // despite the type subversion. We also cannot take the address of the
+<span class="lineNum">      33 </span>            : // components of the complex data, as those are returned by value, not lvalue
+<span class="lineNum">      34 </span>            : // reference.
+<span class="lineNum">      35 </span>            : template &lt;&gt;
+<span class="lineNum">      36 </span>            : ComplexDataView&lt;ComplexRepresentation::Interleaved&gt;::ComplexDataView(
+<span class="lineNum">      37 </span>            :     const gsl::not_null&lt;ComplexDataVector*&gt; vector, const size_t size,
+<span class="lineNum">      38 </span>            :     const size_t offset) noexcept
+<span class="lineNum">      39 </span>            :     : size_{size},
+<span class="lineNum">      40 </span>            :       real_slices_up_to_date_{false},
+<span class="lineNum">      41 </span>            :       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+<span class="lineNum">      42 </span>            :       data_real_{reinterpret_cast&lt;double*&gt;(vector-&gt;data() + offset)},
+<span class="lineNum">      43 </span>            :       // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+<span class="lineNum">      44 </span>            :       data_imag_{data_real_ + 1} {
+<span class="lineNum">      45 </span>            :   complex_view_.set_data_ref(vector-&gt;data() + offset, size);
+<span class="lineNum">      46 </span>            : }
+<span class="lineNum">      47 </span>            : 
+<span class="lineNum">      48 </span>            : // Due to the nature of this class performing manual memory management, indexing
+<span class="lineNum">      49 </span>            : // into complex data with perscribed strides, it is necessary to violate type
+<span class="lineNum">      50 </span>            : // system conventions to index into the complex data as though it is double
+<span class="lineNum">      51 </span>            : // data, thus using a `reinterpret_cast`. The C++ standard guarantees that
+<span class="lineNum">      52 </span>            : // complex numbers are represented in memory in such a way that this is correct,
+<span class="lineNum">      53 </span>            : // despite the type subversion. We also cannot take the address of the
+<span class="lineNum">      54 </span>            : // components of the complex data, as those are returned by value, not lvalue
+<span class="lineNum">      55 </span>            : // reference.
+<span class="lineNum">      56 </span>            : template &lt;&gt;
+<span class="lineNum">      57 </span>            : ComplexDataView&lt;ComplexRepresentation::Interleaved&gt;::ComplexDataView(
+<span class="lineNum">      58 </span>            :     std::complex&lt;double&gt;* const start, const size_t size) noexcept
+<span class="lineNum">      59 </span>            :     : size_{size},
+<span class="lineNum">      60 </span>            :       real_slices_up_to_date_{false},
+<span class="lineNum">      61 </span>            :       // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
+<span class="lineNum">      62 </span>            :       data_real_{reinterpret_cast&lt;double*&gt;(start)},
+<span class="lineNum">      63 </span>            :       // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+<span class="lineNum">      64 </span>            :       data_imag_{data_real_ + 1} {
+<span class="lineNum">      65 </span>            :   complex_view_.set_data_ref(start, size);
+<span class="lineNum">      66 </span>            : }
+<span class="lineNum">      67 </span>            : 
+<span class="lineNum">      68 </span>            : // RealsThenImags constructors cause an allocation and a copy for each of the
+<span class="lineNum">      69 </span>            : // real and imaginary components of the vector. If it becomes a performance
+<span class="lineNum">      70 </span>            : // concern, the `real_slice_` and `imag_slice_` could be made as non-owning
+<span class="lineNum">      71 </span>            : // DataVectors which reference a larger block of memory allocated only once.
+<span class="lineNum">      72 </span>            : template &lt;&gt;
+<span class="lineNum">      73 </span>            : ComplexDataView&lt;ComplexRepresentation::RealsThenImags&gt;::ComplexDataView(
+<span class="lineNum">      74 </span>            :     const gsl::not_null&lt;ComplexDataVector*&gt; vector, const size_t size,
+<span class="lineNum">      75 </span>            :     const size_t offset) noexcept
+<span class="lineNum">      76 </span>            :     : size_{size}, real_slices_up_to_date_{true}, complex_view_{} {
+<span class="lineNum">      77 </span>            :   complex_view_.set_data_ref(vector-&gt;data() + offset, size_);
+<span class="lineNum">      78 </span>            :   real_slice_ = real(complex_view_);
+<span class="lineNum">      79 </span>            :   imag_slice_ = imag(complex_view_);
+<span class="lineNum">      80 </span>            :   data_real_ = real_slice_.data();
+<span class="lineNum">      81 </span>            :   data_imag_ = imag_slice_.data();
+<span class="lineNum">      82 </span>            : }
+<span class="lineNum">      83 </span>            : 
+<span class="lineNum">      84 </span>            : template &lt;&gt;
+<span class="lineNum">      85 </span>            : ComplexDataView&lt;ComplexRepresentation::RealsThenImags&gt;::ComplexDataView(
+<span class="lineNum">      86 </span>            :     std::complex&lt;double&gt;* const start, const size_t size) noexcept
+<span class="lineNum">      87 </span>            :     : size_{size}, real_slices_up_to_date_{true}, complex_view_{} {
+<span class="lineNum">      88 </span>            :   complex_view_.set_data_ref(start, size_);
+<span class="lineNum">      89 </span>            :   real_slice_ = real(complex_view_);
+<span class="lineNum">      90 </span>            :   imag_slice_ = imag(complex_view_);
+<span class="lineNum">      91 </span>            :   data_real_ = real_slice_.data();
+<span class="lineNum">      92 </span>            :   data_imag_ = imag_slice_.data();
+<span class="lineNum">      93 </span>            : }
+<span class="lineNum">      94 </span>            : 
+<span class="lineNum">      95 </span>            : // For `ComplexDataView&lt;ComplexRepresentation::Interleaved&gt;`, assigning
+<span class="lineNum">      96 </span>            : // individual components is comparatively slow, and is currently implemented as
+<span class="lineNum">      97 </span>            : // loop with the appropriate stride in the contiguous view.
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span>            : template &lt;&gt;
+<span class="lineNum">     100 </span>            : ComplexDataView&lt;ComplexRepresentation::Interleaved&gt;&amp;
+<span class="lineNum">     101 </span>            : ComplexDataView&lt;ComplexRepresentation::Interleaved&gt;::assign_real(
+<span class="lineNum">     102 </span>            :     const DataVector&amp; vector) noexcept {
+<span class="lineNum">     103 </span>            :   if (real_slice_.data() != vector.data() or not real_slices_up_to_date_) {
+<span class="lineNum">     104 </span>            :     sizes_assert(vector, size_);
+<span class="lineNum">     105 </span>            :     for (size_t i = 0; i &lt; size_; i++) {
+<span class="lineNum">     106 </span>            :       // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+<span class="lineNum">     107 </span>            :       data_real_[stride_ * i] = vector[i];
+<span class="lineNum">     108 </span>            :     }
+<span class="lineNum">     109 </span>            :     real_slices_up_to_date_ = false;
+<span class="lineNum">     110 </span>            :   }
+<span class="lineNum">     111 </span>            :   return *this;
+<span class="lineNum">     112 </span>            : }
+<span class="lineNum">     113 </span>            : 
+<span class="lineNum">     114 </span>            : template &lt;&gt;
+<span class="lineNum">     115 </span>            : ComplexDataView&lt;ComplexRepresentation::Interleaved&gt;&amp;
+<span class="lineNum">     116 </span>            : ComplexDataView&lt;ComplexRepresentation::Interleaved&gt;::assign_imag(
+<span class="lineNum">     117 </span>            :     const DataVector&amp; vector) noexcept {
+<span class="lineNum">     118 </span>            :   if (imag_slice_.data() != vector.data() or not real_slices_up_to_date_) {
+<span class="lineNum">     119 </span>            :     sizes_assert(vector, size_);
+<span class="lineNum">     120 </span>            :     for (size_t i = 0; i &lt; size_; i++) {
+<span class="lineNum">     121 </span>            :       // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+<span class="lineNum">     122 </span>            :       data_imag_[stride_ * i] = vector[i];
+<span class="lineNum">     123 </span>            :     }
+<span class="lineNum">     124 </span>            :     real_slices_up_to_date_ = false;
+<span class="lineNum">     125 </span>            :   }
+<span class="lineNum">     126 </span>            :   return *this;
+<span class="lineNum">     127 </span>            : }
+<span class="lineNum">     128 </span>            : 
+<span class="lineNum">     129 </span>            : // For `ComplexDataView&lt;ComplexRepresentation::RealsThenImags&gt;` views, the
+<span class="lineNum">     130 </span>            : // assignment to individual components assigns directly to the internal
+<span class="lineNum">     131 </span>            : // DataVectors of the separate components, which is comparatively fast.
+<span class="lineNum">     132 </span>            : template &lt;&gt;
+<span class="lineNum">     133 </span>            : ComplexDataView&lt;ComplexRepresentation::RealsThenImags&gt;&amp;
+<span class="lineNum">     134 </span>            : ComplexDataView&lt;ComplexRepresentation::RealsThenImags&gt;::assign_real(
+<span class="lineNum">     135 </span>            :     const DataVector&amp; vector) noexcept {
+<span class="lineNum">     136 </span>            :   if (real_slice_.data() != vector.data()) {
+<span class="lineNum">     137 </span>            :     sizes_assert(vector, size_);
+<span class="lineNum">     138 </span>            :     real_slice_ = vector;
+<span class="lineNum">     139 </span>            :   }
+<span class="lineNum">     140 </span>            :   return *this;
+<span class="lineNum">     141 </span>            : }
+<span class="lineNum">     142 </span>            : 
+<span class="lineNum">     143 </span>            : template &lt;&gt;
+<span class="lineNum">     144 </span>            : ComplexDataView&lt;ComplexRepresentation::RealsThenImags&gt;&amp;
+<span class="lineNum">     145 </span>            : ComplexDataView&lt;ComplexRepresentation::RealsThenImags&gt;::assign_imag(
+<span class="lineNum">     146 </span>            :     const DataVector&amp; vector) noexcept {
+<span class="lineNum">     147 </span>            :   if (imag_slice_.data() != vector.data()) {
+<span class="lineNum">     148 </span>            :     sizes_assert(vector, size_);
+<span class="lineNum">     149 </span>            :     imag_slice_ = vector;
+<span class="lineNum">     150 </span>            :   }
+<span class="lineNum">     151 </span>            :   return *this;
+<span class="lineNum">     152 </span>            : }
+<span class="lineNum">     153 </span>            : 
+<span class="lineNum">     154 </span>            : // `ComplexDataView&lt;ComplexRepresentation::Interleaved&gt;` views are simply
+<span class="lineNum">     155 </span>            : // references back to the source data, therefore the source is perpetually in
+<span class="lineNum">     156 </span>            : // sync with the view. This function is a no-op.
+<span class="lineNum">     157 </span>            : template &lt;&gt;
+<span class="lineNum">     158 </span>            : void ComplexDataView&lt;
+<span class="lineNum">     159 </span>            :     ComplexRepresentation::Interleaved&gt;::copy_back_to_source() noexcept {}
+<span class="lineNum">     160 </span>            : 
+<span class="lineNum">     161 </span>            : // `ComplexDataView&lt;ComplexRepresentation::RealsThenImags&gt;` views perform a true
+<span class="lineNum">     162 </span>            : // copy back to the source vector when this function is called
+<span class="lineNum">     163 </span>            : template &lt;&gt;
+<span class="lineNum">     164 </span>            : void ComplexDataView&lt;
+<span class="lineNum">     165 </span>            :     ComplexRepresentation::RealsThenImags&gt;::copy_back_to_source() noexcept {
+<span class="lineNum">     166 </span>            :   for (size_t i = 0; i &lt; size_; i++) {
+<span class="lineNum">     167 </span>            :     complex_view_[i] = std::complex&lt;double&gt;{real_slice_[i], imag_slice_[i]};
+<span class="lineNum">     168 </span>            :   }
+<span class="lineNum">     169 </span>            : }
+<span class="lineNum">     170 </span>            : 
+<span class="lineNum">     171 </span>            : // `ComplexDataView&lt;ComplexRepresentation::Interleaved&gt;` views perform
+<span class="lineNum">     172 </span>            : // assignments from complex vectors comparatively quickly, via the assignments
+<span class="lineNum">     173 </span>            : // using the underlying complex vector types.
+<span class="lineNum">     174 </span>            : template &lt;&gt;
+<span class="lineNum">     175 </span>            : ComplexDataView&lt;ComplexRepresentation::Interleaved&gt;&amp;
+<span class="lineNum">     176 </span>            : ComplexDataView&lt;ComplexRepresentation::Interleaved&gt;::operator=(
+<span class="lineNum">     177 </span>            :     const ComplexDataVector&amp; vector) noexcept {
+<span class="lineNum">     178 </span>            :   if (complex_view_.data() != vector.data()) {
+<span class="lineNum">     179 </span>            :     sizes_assert(vector, size_);
+<span class="lineNum">     180 </span>            :     complex_view_ = vector;
+<span class="lineNum">     181 </span>            :     real_slices_up_to_date_ = false;
+<span class="lineNum">     182 </span>            :   }
+<span class="lineNum">     183 </span>            :   return *this;
+<span class="lineNum">     184 </span>            : }
+<span class="lineNum">     185 </span>            : 
+<span class="lineNum">     186 </span>            : template &lt;&gt;
+<span class="lineNum">     187 </span>            : ComplexDataView&lt;ComplexRepresentation::Interleaved&gt;&amp;
+<span class="lineNum">     188 </span>            : ComplexDataView&lt;ComplexRepresentation::Interleaved&gt;::operator=(
+<span class="lineNum">     189 </span>            :     const ComplexDataView&lt;ComplexRepresentation::Interleaved&gt;&amp; view) noexcept {
+<span class="lineNum">     190 </span>            :   if (this != &amp;view) {
+<span class="lineNum">     191 </span>            :     sizes_assert(view, size_);
+<span class="lineNum">     192 </span>            :     complex_view_ = view.complex_view_;
+<span class="lineNum">     193 </span>            :     real_slices_up_to_date_ = false;
+<span class="lineNum">     194 </span>            :   }
+<span class="lineNum">     195 </span>            :   return *this;
+<span class="lineNum">     196 </span>            : }
+<span class="lineNum">     197 </span>            : 
+<span class="lineNum">     198 </span>            : template &lt;&gt;
+<span class="lineNum">     199 </span>            : void ComplexDataView&lt;ComplexRepresentation::Interleaved&gt;::conjugate() noexcept {
+<span class="lineNum">     200 </span>            :   complex_view_ = conj(complex_view_);
+<span class="lineNum">     201 </span>            :   real_slices_up_to_date_ = false;
+<span class="lineNum">     202 </span>            : }
+<span class="lineNum">     203 </span>            : 
+<span class="lineNum">     204 </span>            : // `ComplexDataView&lt;ComplexRepresentation::RealsThenImags&gt;` views perform
+<span class="lineNum">     205 </span>            : // assignments from complex vectors comparatively slowly. The complex data must
+<span class="lineNum">     206 </span>            : // be separately converted to the real and imaginary components in the form of
+<span class="lineNum">     207 </span>            : // DataVectors, then stored in the appropriate internal components.
+<span class="lineNum">     208 </span>            : template &lt;&gt;
+<span class="lineNum">     209 </span>            : ComplexDataView&lt;ComplexRepresentation::RealsThenImags&gt;&amp;
+<span class="lineNum">     210 </span>            : ComplexDataView&lt;ComplexRepresentation::RealsThenImags&gt;::operator=(
+<span class="lineNum">     211 </span>            :     const ComplexDataVector&amp; vector) noexcept {
+<span class="lineNum">     212 </span>            :   sizes_assert(vector, size_);
+<span class="lineNum">     213 </span>            :   real_slice_ = real(vector);
+<span class="lineNum">     214 </span>            :   imag_slice_ = imag(vector);
+<span class="lineNum">     215 </span>            :   return *this;
+<span class="lineNum">     216 </span>            : }
+<span class="lineNum">     217 </span>            : 
+<span class="lineNum">     218 </span>            : template &lt;&gt;
+<span class="lineNum">     219 </span>            : ComplexDataView&lt;ComplexRepresentation::RealsThenImags&gt;&amp;
+<span class="lineNum">     220 </span>            : ComplexDataView&lt;ComplexRepresentation::RealsThenImags&gt;::operator=(
+<span class="lineNum">     221 </span>            :     const ComplexDataView&lt;ComplexRepresentation::RealsThenImags&gt;&amp;
+<span class="lineNum">     222 </span>            :         view) noexcept {
+<span class="lineNum">     223 </span>            :   sizes_assert(view, size_);
+<span class="lineNum">     224 </span>            :   if (real_slice_.data() != view.real_slice_.data()) {
+<span class="lineNum">     225 </span>            :     real_slice_ = view.real_slice_;
+<span class="lineNum">     226 </span>            :   }
+<span class="lineNum">     227 </span>            :   if (imag_slice_.data() != view.imag_slice_.data()) {
+<span class="lineNum">     228 </span>            :     imag_slice_ = view.imag_slice_;
+<span class="lineNum">     229 </span>            :   }
+<span class="lineNum">     230 </span>            :   return *this;
+<span class="lineNum">     231 </span>            : }
+<span class="lineNum">     232 </span>            : 
+<span class="lineNum">     233 </span>            : template &lt;&gt;
+<span class="lineNum">     234 </span>            : void ComplexDataView&lt;
+<span class="lineNum">     235 </span>            :     ComplexRepresentation::RealsThenImags&gt;::conjugate() noexcept {
+<span class="lineNum">     236 </span>            :   imag_slice_ = -imag_slice_;
+<span class="lineNum">     237 </span>            : }
+<span class="lineNum">     238 </span>            : 
+<span class="lineNum">     239 </span>            : // `ComplexDataView&lt;ComplexRepresentation::Interleaved&gt;` views have the
+<span class="lineNum">     240 </span>            : // individual pointer positions only one double length apart, with a memory
+<span class="lineNum">     241 </span>            : // stride of 2, as the real and imaginary parts alternate in memory.
+<span class="lineNum">     242 </span>            : template &lt;&gt;
+<span class="lineNum">     243 </span>            : double*
+<span class="lineNum">     244 </span>            : ComplexDataView&lt;ComplexRepresentation::Interleaved&gt;::real_data() noexcept {
+<span class="lineNum">     245 </span>            :   return data_real_;
+<span class="lineNum">     246 </span>            : }
+<span class="lineNum">     247 </span>            : 
+<span class="lineNum">     248 </span>            : template &lt;&gt;
+<span class="lineNum">     249 </span>            : const double* ComplexDataView&lt;ComplexRepresentation::Interleaved&gt;::real_data()
+<span class="lineNum">     250 </span>            :     const noexcept {
+<span class="lineNum">     251 </span>            :   return data_real_;
+<span class="lineNum">     252 </span>            : }
+<span class="lineNum">     253 </span>            : 
+<span class="lineNum">     254 </span>            : template &lt;&gt;
+<span class="lineNum">     255 </span>            : double*
+<span class="lineNum">     256 </span>            : ComplexDataView&lt;ComplexRepresentation::Interleaved&gt;::imag_data() noexcept {
+<span class="lineNum">     257 </span>            :   return data_imag_;
+<span class="lineNum">     258 </span>            : }
+<span class="lineNum">     259 </span>            : 
+<span class="lineNum">     260 </span>            : template &lt;&gt;
+<span class="lineNum">     261 </span>            : const double* ComplexDataView&lt;ComplexRepresentation::Interleaved&gt;::imag_data()
+<span class="lineNum">     262 </span>            :     const noexcept {
+<span class="lineNum">     263 </span>            :   return data_imag_;
+<span class="lineNum">     264 </span>            : }
+<span class="lineNum">     265 </span>            : 
+<span class="lineNum">     266 </span>            : // `ComplexDataView&lt;ComplexRepresentation::RealsThenImags&gt;` views have
+<span class="lineNum">     267 </span>            : // potentially very different pointer positions for the start of the individual
+<span class="lineNum">     268 </span>            : // vectors, but have a memory stride of 1, as each of the two blocks is a
+<span class="lineNum">     269 </span>            : // contiguous representation.
+<span class="lineNum">     270 </span>            : template &lt;&gt;
+<span class="lineNum">     271 </span>            : double*
+<span class="lineNum">     272 </span>            : ComplexDataView&lt;ComplexRepresentation::RealsThenImags&gt;::real_data() noexcept {
+<span class="lineNum">     273 </span>            :   return real_slice_.data();
+<span class="lineNum">     274 </span>            : }
+<span class="lineNum">     275 </span>            : 
+<span class="lineNum">     276 </span>            : template &lt;&gt;
+<span class="lineNum">     277 </span>            : const double*
+<span class="lineNum">     278 </span>            : ComplexDataView&lt;ComplexRepresentation::RealsThenImags&gt;::real_data() const
+<span class="lineNum">     279 </span>            :     noexcept {
+<span class="lineNum">     280 </span>            :   return real_slice_.data();
+<span class="lineNum">     281 </span>            : }
+<span class="lineNum">     282 </span>            : 
+<span class="lineNum">     283 </span>            : template &lt;&gt;
+<span class="lineNum">     284 </span>            : double*
+<span class="lineNum">     285 </span>            : ComplexDataView&lt;ComplexRepresentation::RealsThenImags&gt;::imag_data() noexcept {
+<span class="lineNum">     286 </span>            :   return imag_slice_.data();
+<span class="lineNum">     287 </span>            : }
+<span class="lineNum">     288 </span>            : 
+<span class="lineNum">     289 </span>            : template &lt;&gt;
+<span class="lineNum">     290 </span>            : const double*
+<span class="lineNum">     291 </span>            : ComplexDataView&lt;ComplexRepresentation::RealsThenImags&gt;::imag_data() const
+<span class="lineNum">     292 </span>            :     noexcept {
+<span class="lineNum">     293 </span>            :   return imag_slice_.data();
+<span class="lineNum">     294 </span>            : }
+<span class="lineNum">     295 </span>            : }  // namespace detail
+<span class="lineNum">     296 </span>            : }  // namespace Swsh
+<span class="lineNum">     297 </span>            : }  // namespace Spectral
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

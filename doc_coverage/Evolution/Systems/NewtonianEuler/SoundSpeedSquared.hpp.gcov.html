@@ -1,0 +1,144 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Evolution/Systems/NewtonianEuler/SoundSpeedSquared.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">Evolution/Systems/NewtonianEuler</a> - SoundSpeedSquared.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntryLo">37.5 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : #include &quot;DataStructures/DataBox/DataBoxTag.hpp&quot;
+<span class="lineNum">       9 </span>            : #include &quot;DataStructures/Tensor/TypeAliases.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;Evolution/Systems/NewtonianEuler/Tags.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;PointwiseFunctions/Hydro/EquationsOfState/EquationOfState.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      12 </span>            : #include &quot;PointwiseFunctions/Hydro/Tags.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      13 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : // IWYU pragma: no_forward_declare EquationsOfState::EquationOfState
+<span class="lineNum">      16 </span>            : // IWYU pragma: no_forward_declare hydro::Tags::EquationOfState
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            : namespace NewtonianEuler {
+<span class="lineNum">      19 </span>            : /// Computes the Newtonian sound speed squared
+<span class="lineNum">      20 </span>            : /// \f$c_s^2 = \chi + p\kappa / \rho^2\f$, where
+<span class="lineNum">      21 </span>            : /// \f$p\f$ is the fluid pressure, \f$\rho\f$ is the mass density,
+<span class="lineNum">      22 </span>            : /// \f$\chi = (\partial p/\partial\rho)_\epsilon\f$ and
+<span class="lineNum">      23 </span>            : /// \f$\kappa = (\partial p/ \partial \epsilon)_\rho\f$, where
+<span class="lineNum">      24 </span>            : /// \f$\epsilon\f$ is the specific internal energy.
+<span class="lineNum">      25 </span>            : template &lt;typename DataType, size_t ThermodynamicDim&gt;
+<span class="lineNum">      26 </span><span class="lineCov">          1 : Scalar&lt;DataType&gt; sound_speed_squared(</span>
+<span class="lineNum">      27 </span>            :     const Scalar&lt;DataType&gt;&amp; mass_density,
+<span class="lineNum">      28 </span>            :     const Scalar&lt;DataType&gt;&amp; specific_internal_energy,
+<span class="lineNum">      29 </span>            :     const EquationsOfState::EquationOfState&lt;false, ThermodynamicDim&gt;&amp;
+<span class="lineNum">      30 </span>            :         equation_of_state) noexcept;
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span>            : namespace Tags {
+<span class="lineNum">      33 </span>            : /// Compute item for the sound speed squared \f$c_s^2\f$.
+<span class="lineNum">      34 </span>            : /// \see NewtonianEuler::sound_speed_squared
+<span class="lineNum">      35 </span>            : ///
+<span class="lineNum">      36 </span>            : /// Can be retrieved using `NewtonianEuler::Tags::SoundSpeedSquared`
+<span class="lineNum">      37 </span>            : template &lt;typename DataType&gt;
+<span class="lineNum">      38 </span><span class="lineCov">          1 : struct SoundSpeedSquaredCompute : SoundSpeedSquared&lt;DataType&gt;, db::ComputeTag {</span>
+<span class="lineNum">      39 </span>            :   template &lt;typename EquationOfStateType&gt;
+<span class="lineNum">      40 </span><span class="lineNoCov">          0 :   static Scalar&lt;DataType&gt; function(</span>
+<span class="lineNum">      41 </span>            :       const Scalar&lt;DataType&gt;&amp; mass_density,
+<span class="lineNum">      42 </span>            :       const Scalar&lt;DataType&gt;&amp; specific_internal_energy,
+<span class="lineNum">      43 </span>            :       const EquationOfStateType&amp; equation_of_state) noexcept {
+<span class="lineNum">      44 </span>            :     return sound_speed_squared(mass_density, specific_internal_energy,
+<span class="lineNum">      45 </span>            :                                equation_of_state);
+<span class="lineNum">      46 </span>            :   }
+<span class="lineNum">      47 </span><span class="lineNoCov">          0 :   using argument_tags =</span>
+<span class="lineNum">      48 </span>            :       tmpl::list&lt;MassDensity&lt;DataType&gt;, SpecificInternalEnergy&lt;DataType&gt;,
+<span class="lineNum">      49 </span>            :                  hydro::Tags::EquationOfStateBase&gt;;
+<span class="lineNum">      50 </span>            : };
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            : /// Compute item for the sound speed \f$c_s\f$.
+<span class="lineNum">      53 </span>            : ///
+<span class="lineNum">      54 </span>            : /// Can be retrieved using `NewtonianEuler::Tags::SoundSpeed`
+<span class="lineNum">      55 </span>            : template &lt;typename DataType&gt;
+<span class="lineNum">      56 </span><span class="lineCov">          1 : struct SoundSpeedCompute : SoundSpeed&lt;DataType&gt;, db::ComputeTag {</span>
+<span class="lineNum">      57 </span><span class="lineNoCov">          0 :   static Scalar&lt;DataType&gt; function(</span>
+<span class="lineNum">      58 </span>            :       const Scalar&lt;DataType&gt;&amp; sound_speed_squared) noexcept {
+<span class="lineNum">      59 </span>            :     return Scalar&lt;DataType&gt;{sqrt(get(sound_speed_squared))};
+<span class="lineNum">      60 </span>            :   }
+<span class="lineNum">      61 </span><span class="lineNoCov">          0 :   using argument_tags = tmpl::list&lt;SoundSpeedSquared&lt;DataType&gt;&gt;;</span>
+<span class="lineNum">      62 </span>            : };
+<span class="lineNum">      63 </span>            : }  // namespace Tags
+<span class="lineNum">      64 </span>            : }  // namespace NewtonianEuler
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

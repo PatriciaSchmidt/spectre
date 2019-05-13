@@ -1,0 +1,227 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Evolution/DiscontinuousGalerkin/SlopeLimiters/WenoHelpers.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">Evolution/DiscontinuousGalerkin/SlopeLimiters</a> - WenoHelpers.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       7 </span>            : #include &lt;unordered_map&gt;
+<span class="lineNum">       8 </span>            : #include &lt;utility&gt;
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : #include &quot;DataStructures/DataBox/DataBoxTag.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;DataStructures/Variables.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      12 </span>            : #include &quot;Domain/Direction.hpp&quot;          // IWYU pragma: keep
+<span class="lineNum">      13 </span>            : #include &quot;Domain/ElementId.hpp&quot;          // IWYU pragma: keep
+<span class="lineNum">      14 </span>            : #include &quot;NumericalAlgorithms/LinearOperators/MeanValue.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;Utilities/ConstantExpressions.hpp&quot;
+<span class="lineNum">      16 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            : // IWYU pragma: no_forward_declare Variables
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : /// \cond
+<span class="lineNum">      21 </span>            : class DataVector;
+<span class="lineNum">      22 </span>            : template &lt;size_t&gt;
+<span class="lineNum">      23 </span>            : class Mesh;
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            : namespace boost {
+<span class="lineNum">      26 </span>            : template &lt;class T&gt;
+<span class="lineNum">      27 </span>            : struct hash;
+<span class="lineNum">      28 </span>            : }  // namespace boost
+<span class="lineNum">      29 </span>            : /// \endcond
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span>            : namespace SlopeLimiters {
+<span class="lineNum">      32 </span>            : namespace Weno_detail {
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            : // Compute the WENO oscillation indicator (also called the smoothness indicator)
+<span class="lineNum">      35 </span>            : //
+<span class="lineNum">      36 </span>            : // The oscillation indicator measures the amount of variation in the input data,
+<span class="lineNum">      37 </span>            : // with larger indicator values corresponding to a larger amount of variation
+<span class="lineNum">      38 </span>            : // (either from large monotonic slopes or from oscillations).
+<span class="lineNum">      39 </span>            : //
+<span class="lineNum">      40 </span>            : // Implements an indicator similar to that of Eq. 23 of Dumbser2007, but with
+<span class="lineNum">      41 </span>            : // the necessary adaptations for use on square/cube grids. We favor this
+<span class="lineNum">      42 </span>            : // indicator because it is formulated in the reference coordinates, which we
+<span class="lineNum">      43 </span>            : // use for the WENO reconstruction, and because it lends itself to an efficient
+<span class="lineNum">      44 </span>            : // implementation.
+<span class="lineNum">      45 </span>            : //
+<span class="lineNum">      46 </span>            : // Where (this reference to be added to References.bib later, when it is cited
+<span class="lineNum">      47 </span>            : // from _rendered_ documentation):
+<span class="lineNum">      48 </span>            : // Dumbser2007:
+<span class="lineNum">      49 </span>            : //   Dumbser, M and Kaeser, M
+<span class="lineNum">      50 </span>            : //   Arbitrary high order non-oscillatory finite volume schemes on unstructured
+<span class="lineNum">      51 </span>            : //   meshes for linear hyperbolic systems
+<span class="lineNum">      52 </span>            : //   https://doi.org/10.1016/j.jcp.2006.06.043
+<span class="lineNum">      53 </span>            : template &lt;size_t VolumeDim&gt;
+<span class="lineNum">      54 </span>            : double oscillation_indicator(const DataVector&amp; data,
+<span class="lineNum">      55 </span>            :                              const Mesh&lt;VolumeDim&gt;&amp; mesh) noexcept;
+<span class="lineNum">      56 </span>            : 
+<span class="lineNum">      57 </span>            : // Compute the unnormalized nonlinear WENO weights. This is a fairly standard
+<span class="lineNum">      58 </span>            : // choice of weights; see e.g., Eq. 3.9 of Zhong2013 or Eq. 3.6 of Zhu2016.
+<span class="lineNum">      59 </span>            : //
+<span class="lineNum">      60 </span>            : // Where (these references to be added to References.bib later, when they are
+<span class="lineNum">      61 </span>            : // cited from _rendered_ documentation):
+<span class="lineNum">      62 </span>            : // Zhong2013
+<span class="lineNum">      63 </span>            : //   Zhong, X and Shu, C-W
+<span class="lineNum">      64 </span>            : //   A simple weighted essentially non-oscillatory limiter for Runge-Kutta
+<span class="lineNum">      65 </span>            : //   discontinuous Galerkin methods
+<span class="lineNum">      66 </span>            : //   https://doi.org/10.1016/j.jcp.2012.08.028
+<span class="lineNum">      67 </span>            : //
+<span class="lineNum">      68 </span>            : // Zhu20016
+<span class="lineNum">      69 </span>            : //   Zhu, J and Zhong, X and Shu, C and Qiu, J
+<span class="lineNum">      70 </span>            : //   Runge-Kutta Discontinuous Galerkin Method with a Simple and Compact Hermite
+<span class="lineNum">      71 </span>            : //   WENO Limiter
+<span class="lineNum">      72 </span>            : //   https://doi.org/10.4208/cicp.070215.200715a
+<span class="lineNum">      73 </span>            : inline double unnormalized_nonlinear_weight(
+<span class="lineNum">      74 </span>            :     const double linear_weight, const double oscillation_indicator) noexcept {
+<span class="lineNum">      75 </span>            :   return linear_weight / square(1.e-6 + oscillation_indicator);
+<span class="lineNum">      76 </span>            : }
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span>            : // Compute the WENO weighted reconstruction of several polynomials, see e.g.,
+<span class="lineNum">      79 </span>            : // Eq. 4.3 of Zhu2016. This is fairly standard, though different references can
+<span class="lineNum">      80 </span>            : // differ in their choice of oscillation/smoothness indicator.
+<span class="lineNum">      81 </span>            : template &lt;typename Tag, size_t VolumeDim, typename TagsList&gt;
+<span class="lineNum">      82 </span>            : void reconstruct_from_weighted_sum(
+<span class="lineNum">      83 </span>            :     const gsl::not_null&lt;db::item_type&lt;Tag&gt;*&gt; local_tensor,
+<span class="lineNum">      84 </span>            :     const Mesh&lt;VolumeDim&gt;&amp; mesh, const double neighbor_linear_weight,
+<span class="lineNum">      85 </span>            :     const std::unordered_map&lt;
+<span class="lineNum">      86 </span>            :         std::pair&lt;Direction&lt;VolumeDim&gt;, ElementId&lt;VolumeDim&gt;&gt;,
+<span class="lineNum">      87 </span>            :         Variables&lt;TagsList&gt;,
+<span class="lineNum">      88 </span>            :         boost::hash&lt;std::pair&lt;Direction&lt;VolumeDim&gt;, ElementId&lt;VolumeDim&gt;&gt;&gt;&gt;&amp;
+<span class="lineNum">      89 </span>            :         neighbor_vars) noexcept {
+<span class="lineNum">      90 </span>            :   for (size_t tensor_storage_index = 0;
+<span class="lineNum">      91 </span>            :        tensor_storage_index &lt; local_tensor-&gt;size(); ++tensor_storage_index) {
+<span class="lineNum">      92 </span>            :     auto&amp; local_polynomial = (*local_tensor)[tensor_storage_index];
+<span class="lineNum">      93 </span>            : 
+<span class="lineNum">      94 </span>            :     // Store linear weights in `local_weights` and `neighbor_weights`
+<span class="lineNum">      95 </span>            :     // These weights will have to be generalized for multiple neighbors per
+<span class="lineNum">      96 </span>            :     // face for use with h-refinement and AMR.
+<span class="lineNum">      97 </span>            :     double local_weight = 1.;
+<span class="lineNum">      98 </span>            :     std::unordered_map&lt;
+<span class="lineNum">      99 </span>            :         std::pair&lt;Direction&lt;VolumeDim&gt;, ElementId&lt;VolumeDim&gt;&gt;, double,
+<span class="lineNum">     100 </span>            :         boost::hash&lt;std::pair&lt;Direction&lt;VolumeDim&gt;, ElementId&lt;VolumeDim&gt;&gt;&gt;&gt;
+<span class="lineNum">     101 </span>            :         neighbor_weights;
+<span class="lineNum">     102 </span>            :     for (const auto&amp; kv : neighbor_vars) {
+<span class="lineNum">     103 </span>            :       local_weight -= neighbor_linear_weight;
+<span class="lineNum">     104 </span>            :       neighbor_weights[kv.first] = neighbor_linear_weight;
+<span class="lineNum">     105 </span>            :     }
+<span class="lineNum">     106 </span>            : 
+<span class="lineNum">     107 </span>            :     // Update `local_weights` and `neighbor_weights` to hold the unnormalized
+<span class="lineNum">     108 </span>            :     // nonlinear weights.
+<span class="lineNum">     109 </span>            :     local_weight = unnormalized_nonlinear_weight(
+<span class="lineNum">     110 </span>            :         local_weight, oscillation_indicator(local_polynomial, mesh));
+<span class="lineNum">     111 </span>            :     for (const auto&amp; kv : neighbor_vars) {
+<span class="lineNum">     112 </span>            :       const auto&amp; key = kv.first;
+<span class="lineNum">     113 </span>            :       const auto&amp; neighbor_tensor_component =
+<span class="lineNum">     114 </span>            :           get&lt;Tag&gt;(kv.second)[tensor_storage_index];
+<span class="lineNum">     115 </span>            :       neighbor_weights[key] = unnormalized_nonlinear_weight(
+<span class="lineNum">     116 </span>            :           neighbor_weights[key],
+<span class="lineNum">     117 </span>            :           oscillation_indicator(neighbor_tensor_component, mesh));
+<span class="lineNum">     118 </span>            :     }
+<span class="lineNum">     119 </span>            : 
+<span class="lineNum">     120 </span>            :     // Update `local_weights` and `neighbor_weights` to hold the normalized
+<span class="lineNum">     121 </span>            :     // weights; these are the final weights of the WENO reconstruction.
+<span class="lineNum">     122 </span>            :     double normalization = local_weight;
+<span class="lineNum">     123 </span>            :     for (const auto&amp; kv : neighbor_weights) {
+<span class="lineNum">     124 </span>            :       normalization += kv.second;
+<span class="lineNum">     125 </span>            :     }
+<span class="lineNum">     126 </span>            :     local_weight /= normalization;
+<span class="lineNum">     127 </span>            :     for (auto&amp; kv : neighbor_weights) {
+<span class="lineNum">     128 </span>            :       kv.second /= normalization;
+<span class="lineNum">     129 </span>            :     }
+<span class="lineNum">     130 </span>            : 
+<span class="lineNum">     131 </span>            :     // Perform reconstruction, by superposition of local and neighbor
+<span class="lineNum">     132 </span>            :     // polynomials.
+<span class="lineNum">     133 </span>            :     const double mean = mean_value(local_polynomial, mesh);
+<span class="lineNum">     134 </span>            :     local_polynomial = mean + local_weight * (local_polynomial - mean);
+<span class="lineNum">     135 </span>            :     for (const auto&amp; kv : neighbor_vars) {
+<span class="lineNum">     136 </span>            :       const auto&amp; key = kv.first;
+<span class="lineNum">     137 </span>            :       const auto&amp; neighbor_polynomial =
+<span class="lineNum">     138 </span>            :           get&lt;Tag&gt;(kv.second)[tensor_storage_index];
+<span class="lineNum">     139 </span>            :       const double neighbor_mean = mean_value(neighbor_polynomial, mesh);
+<span class="lineNum">     140 </span>            :       local_polynomial +=
+<span class="lineNum">     141 </span>            :           neighbor_weights.at(key) * (neighbor_polynomial - neighbor_mean);
+<span class="lineNum">     142 </span>            :     }
+<span class="lineNum">     143 </span>            :   }
+<span class="lineNum">     144 </span>            : }
+<span class="lineNum">     145 </span>            : 
+<span class="lineNum">     146 </span>            : }  // namespace Weno_detail
+<span class="lineNum">     147 </span>            : }  // namespace SlopeLimiters
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,237 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Elliptic/Systems/Poisson/Actions/Observe.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">Elliptic/Systems/Poisson/Actions</a> - Observe.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntryLo">20.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;string&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : #include &quot;DataStructures/DataBox/DataBox.hpp&quot;
+<span class="lineNum">       9 </span>            : #include &quot;Domain/Tags.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;Elliptic/Systems/Poisson/Tags.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;IO/Observer/Actions.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;IO/Observer/ArrayComponentId.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;IO/Observer/Helpers.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;IO/Observer/ObservationId.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;IO/Observer/ObserverComponent.hpp&quot;
+<span class="lineNum">      16 </span>            : #include &quot;IO/Observer/ReductionActions.hpp&quot;
+<span class="lineNum">      17 </span>            : #include &quot;IO/Observer/VolumeActions.hpp&quot;
+<span class="lineNum">      18 </span>            : #include &quot;NumericalAlgorithms/LinearSolver/Tags.hpp&quot;
+<span class="lineNum">      19 </span>            : #include &quot;Parallel/ConstGlobalCache.hpp&quot;
+<span class="lineNum">      20 </span>            : #include &quot;Parallel/Reduction.hpp&quot;
+<span class="lineNum">      21 </span>            : #include &quot;PointwiseFunctions/AnalyticSolutions/Tags.hpp&quot;
+<span class="lineNum">      22 </span>            : #include &quot;Utilities/Functional.hpp&quot;
+<span class="lineNum">      23 </span>            : #include &quot;Utilities/MakeString.hpp&quot;
+<span class="lineNum">      24 </span>            : #include &quot;Utilities/Numeric.hpp&quot;
+<span class="lineNum">      25 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">      26 </span>            : #include &quot;Utilities/TaggedTuple.hpp&quot;
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            : namespace Poisson {
+<span class="lineNum">      29 </span>            : namespace Actions {
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span>            : /*!
+<span class="lineNum">      32 </span>            :  * \brief Action to observe volume and reduction data for the Poisson system
+<span class="lineNum">      33 </span>            :  *
+<span class="lineNum">      34 </span>            :  * This action observes the following:
+<span class="lineNum">      35 </span>            :  * - Reduction data:
+<span class="lineNum">      36 </span>            :  *   - `&quot;Iteration&quot;`: The linear solver iteration
+<span class="lineNum">      37 </span>            :  *   - `&quot;NumberOfPoints&quot;`: The total number of grid points across all elements
+<span class="lineNum">      38 </span>            :  *   - `&quot;L2Error&quot;`: The standard L2 vector norm of the pointwise difference
+<span class="lineNum">      39 </span>            :  *     between the numerical and analytic solution \f$\sqrt{\sum_i \left(
+<span class="lineNum">      40 </span>            :  *     u^\mathrm{numerical}_i - u^\mathrm{analytic}_i\right)^2}\f$ over the grid
+<span class="lineNum">      41 </span>            :  *     points across all elements.
+<span class="lineNum">      42 </span>            :  * - Volume data:
+<span class="lineNum">      43 </span>            :  *   - `Poisson::Field::name()`: The numerical solution
+<span class="lineNum">      44 </span>            :  *     \f$u^\mathrm{numerical}\f$
+<span class="lineNum">      45 </span>            :  *   - `Poisson::Field::name() + &quot;Analytic&quot;`: The analytic solution
+<span class="lineNum">      46 </span>            :  *     \f$u^\mathrm{analytic}\f$
+<span class="lineNum">      47 </span>            :  *   - `Poisson::Field::name() + &quot;Error&quot;`: The pointwise error
+<span class="lineNum">      48 </span>            :  *     \f$u^\mathrm{numerical} - u^\mathrm{analytic}\f$
+<span class="lineNum">      49 </span>            :  *   - `&quot;InertialCoordinates_{x,y,z}&quot;`
+<span class="lineNum">      50 </span>            :  *
+<span class="lineNum">      51 </span>            :  * Uses:
+<span class="lineNum">      52 </span>            :  * - Metavariables:
+<span class="lineNum">      53 </span>            :  *   - `analytic_solution_tag`
+<span class="lineNum">      54 </span>            :  *   - Items required by `observers::Observer&lt;Metavariables&gt;`
+<span class="lineNum">      55 </span>            :  * - DataBox:
+<span class="lineNum">      56 </span>            :  *   - `LinearSolver::Tags::IterationId`
+<span class="lineNum">      57 </span>            :  *   - `Tags::Mesh&lt;Dim&gt;`
+<span class="lineNum">      58 </span>            :  *   - `Poisson::Field`
+<span class="lineNum">      59 </span>            :  *   - `Tags::Coordinates&lt;Dim, Frame::Inertial&gt;`
+<span class="lineNum">      60 </span>            :  *
+<span class="lineNum">      61 </span>            :  * \note This action can be adjusted before compiling an executable to observe
+<span class="lineNum">      62 </span>            :  * only the desired quantities.
+<span class="lineNum">      63 </span>            :  */
+<span class="lineNum">      64 </span><span class="lineCov">          1 : struct Observe {</span>
+<span class="lineNum">      65 </span>            :  private:
+<span class="lineNum">      66 </span><span class="lineNoCov">          0 :   using observed_reduction_data = Parallel::ReductionData&lt;</span>
+<span class="lineNum">      67 </span>            :       Parallel::ReductionDatum&lt;size_t, funcl::AssertEqual&lt;&gt;&gt;,
+<span class="lineNum">      68 </span>            :       Parallel::ReductionDatum&lt;size_t, funcl::Plus&lt;&gt;&gt;,
+<span class="lineNum">      69 </span>            :       Parallel::ReductionDatum&lt;double, funcl::Plus&lt;&gt;,
+<span class="lineNum">      70 </span>            :                                funcl::Sqrt&lt;funcl::Divides&lt;&gt;&gt;,
+<span class="lineNum">      71 </span>            :                                std::index_sequence&lt;1&gt;&gt;&gt;;
+<span class="lineNum">      72 </span>            : 
+<span class="lineNum">      73 </span>            :  public:
+<span class="lineNum">      74 </span>            :   // Compile-time interface for observers
+<span class="lineNum">      75 </span><span class="lineNoCov">          0 :   using observed_reduction_data_tags =</span>
+<span class="lineNum">      76 </span>            :       observers::make_reduction_data_tags&lt;tmpl::list&lt;observed_reduction_data&gt;&gt;;
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span>            :   template &lt;typename... DbTags, typename... InboxTags, typename Metavariables,
+<span class="lineNum">      79 </span>            :             size_t Dim, typename ActionList, typename ParallelComponent&gt;
+<span class="lineNum">      80 </span><span class="lineNoCov">          0 :   static auto apply(db::DataBox&lt;tmpl::list&lt;DbTags...&gt;&gt;&amp; box,</span>
+<span class="lineNum">      81 </span>            :                     tuples::TaggedTuple&lt;InboxTags...&gt;&amp; /*inboxes*/,
+<span class="lineNum">      82 </span>            :                     Parallel::ConstGlobalCache&lt;Metavariables&gt;&amp; cache,
+<span class="lineNum">      83 </span>            :                     const ElementIndex&lt;Dim&gt;&amp; array_index,
+<span class="lineNum">      84 </span>            :                     const ActionList /*meta*/,
+<span class="lineNum">      85 </span>            :                     const ParallelComponent* const /*meta*/) noexcept {
+<span class="lineNum">      86 </span>            :     const auto&amp; iteration_id = get&lt;LinearSolver::Tags::IterationId&gt;(box);
+<span class="lineNum">      87 </span>            :     const auto&amp; mesh = get&lt;Tags::Mesh&lt;Dim&gt;&gt;(box);
+<span class="lineNum">      88 </span>            :     const std::string element_name = MakeString{} &lt;&lt; ElementId&lt;Dim&gt;(array_index)
+<span class="lineNum">      89 </span>            :                                                   &lt;&lt; '/';
+<span class="lineNum">      90 </span>            : 
+<span class="lineNum">      91 </span>            :     // Retrieve the current numeric solution
+<span class="lineNum">      92 </span>            :     const auto&amp; field = get&lt;Poisson::Field&gt;(box);
+<span class="lineNum">      93 </span>            : 
+<span class="lineNum">      94 </span>            :     // Compute the analytic solution
+<span class="lineNum">      95 </span>            :     const auto&amp; inertial_coordinates =
+<span class="lineNum">      96 </span>            :         db::get&lt;::Tags::Coordinates&lt;Dim, Frame::Inertial&gt;&gt;(box);
+<span class="lineNum">      97 </span>            :     const auto field_analytic = get&lt;Poisson::Field&gt;(
+<span class="lineNum">      98 </span>            :         Parallel::get&lt;typename Metavariables::analytic_solution_tag&gt;(cache)
+<span class="lineNum">      99 </span>            :             .variables(inertial_coordinates, tmpl::list&lt;Poisson::Field&gt;{}));
+<span class="lineNum">     100 </span>            : 
+<span class="lineNum">     101 </span>            :     // Compute error between numeric and analytic solutions
+<span class="lineNum">     102 </span>            :     const DataVector field_error = get(field) - get(field_analytic);
+<span class="lineNum">     103 </span>            : 
+<span class="lineNum">     104 </span>            :     // Compute l2 error squared over local element
+<span class="lineNum">     105 </span>            :     const double local_l2_error_square = alg::accumulate(
+<span class="lineNum">     106 </span>            :         field_error, 0.0, funcl::Plus&lt;funcl::Identity, funcl::Square&lt;&gt;&gt;{});
+<span class="lineNum">     107 </span>            : 
+<span class="lineNum">     108 </span>            :     // Collect volume data
+<span class="lineNum">     109 </span>            :     // Remove tensor types, only storing individual components
+<span class="lineNum">     110 </span>            :     std::vector&lt;TensorComponent&gt; components;
+<span class="lineNum">     111 </span>            :     components.reserve(3 + Dim);
+<span class="lineNum">     112 </span>            :     components.emplace_back(element_name + Poisson::Field::name(), get(field));
+<span class="lineNum">     113 </span>            :     components.emplace_back(element_name + Poisson::Field::name() + &quot;Analytic&quot;,
+<span class="lineNum">     114 </span>            :                             get(field_analytic));
+<span class="lineNum">     115 </span>            :     components.emplace_back(element_name + Poisson::Field::name() + &quot;Error&quot;,
+<span class="lineNum">     116 </span>            :                             field_error);
+<span class="lineNum">     117 </span>            :     components.emplace_back(element_name + &quot;InertialCoordinates_x&quot;,
+<span class="lineNum">     118 </span>            :                             get&lt;0&gt;(inertial_coordinates));
+<span class="lineNum">     119 </span>            :     if (Dim &gt;= 2) {
+<span class="lineNum">     120 </span>            :       components.emplace_back(element_name + &quot;InertialCoordinates_y&quot;,
+<span class="lineNum">     121 </span>            :                               inertial_coordinates.get(1));
+<span class="lineNum">     122 </span>            :     }
+<span class="lineNum">     123 </span>            :     if (Dim &gt;= 3) {
+<span class="lineNum">     124 </span>            :       components.emplace_back(element_name + &quot;InertialCoordinates_z&quot;,
+<span class="lineNum">     125 </span>            :                               inertial_coordinates.get(2));
+<span class="lineNum">     126 </span>            :     }
+<span class="lineNum">     127 </span>            : 
+<span class="lineNum">     128 </span>            :     // Send data to volume observer
+<span class="lineNum">     129 </span>            :     auto&amp; local_observer =
+<span class="lineNum">     130 </span>            :         *Parallel::get_parallel_component&lt;observers::Observer&lt;Metavariables&gt;&gt;(
+<span class="lineNum">     131 </span>            :              cache)
+<span class="lineNum">     132 </span>            :              .ckLocalBranch();
+<span class="lineNum">     133 </span>            :     Parallel::simple_action&lt;observers::Actions::ContributeVolumeData&gt;(
+<span class="lineNum">     134 </span>            :         local_observer,
+<span class="lineNum">     135 </span>            :         observers::ObservationId(
+<span class="lineNum">     136 </span>            :             iteration_id, typename Metavariables::element_observation_type{}),
+<span class="lineNum">     137 </span>            :         std::string{&quot;/element_data&quot;},
+<span class="lineNum">     138 </span>            :         observers::ArrayComponentId(
+<span class="lineNum">     139 </span>            :             std::add_pointer_t&lt;ParallelComponent&gt;{nullptr},
+<span class="lineNum">     140 </span>            :             Parallel::ArrayIndex&lt;ElementIndex&lt;Dim&gt;&gt;(array_index)),
+<span class="lineNum">     141 </span>            :         std::move(components), mesh.extents());
+<span class="lineNum">     142 </span>            : 
+<span class="lineNum">     143 </span>            :     // Send data to reduction observer
+<span class="lineNum">     144 </span>            :     Parallel::simple_action&lt;observers::Actions::ContributeReductionData&gt;(
+<span class="lineNum">     145 </span>            :         local_observer,
+<span class="lineNum">     146 </span>            :         observers::ObservationId(
+<span class="lineNum">     147 </span>            :             iteration_id, typename Metavariables::element_observation_type{}),
+<span class="lineNum">     148 </span>            :         std::string{&quot;/element_data&quot;},
+<span class="lineNum">     149 </span>            :         std::vector&lt;std::string&gt;{&quot;Iteration&quot;, &quot;NumberOfPoints&quot;, &quot;L2Error&quot;},
+<span class="lineNum">     150 </span>            :         observed_reduction_data{iteration_id, mesh.number_of_grid_points(),
+<span class="lineNum">     151 </span>            :                                 local_l2_error_square});
+<span class="lineNum">     152 </span>            : 
+<span class="lineNum">     153 </span>            :     return std::forward_as_tuple(std::move(box));
+<span class="lineNum">     154 </span>            :   }
+<span class="lineNum">     155 </span>            : };
+<span class="lineNum">     156 </span>            : }  // namespace Actions
+<span class="lineNum">     157 </span>            : }  // namespace Poisson
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

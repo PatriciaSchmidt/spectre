@@ -1,0 +1,175 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - PointwiseFunctions/AnalyticSolutions/Poisson/Lorentzian.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">PointwiseFunctions/AnalyticSolutions/Poisson</a> - Lorentzian.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntry">15</td>
+            <td class="headerCovTableEntryLo">33.3 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : #include &quot;DataStructures/DataBox/Prefixes.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">       9 </span>            : #include &quot;DataStructures/Tensor/Tensor.hpp&quot;     // IWYU pragma: keep
+<span class="lineNum">      10 </span>            : #include &quot;Elliptic/Systems/Poisson/Tags.hpp&quot;    // IWYU pragma: keep
+<span class="lineNum">      11 </span>            : #include &quot;Options/Options.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;Utilities/TaggedTuple.hpp&quot;
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : /// \cond
+<span class="lineNum">      16 </span>            : class DataVector;
+<span class="lineNum">      17 </span>            : namespace PUP {
+<span class="lineNum">      18 </span>            : class er;
+<span class="lineNum">      19 </span>            : }  // namespace PUP
+<span class="lineNum">      20 </span>            : /// \endcond
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : namespace Poisson {
+<span class="lineNum">      23 </span>            : namespace Solutions {
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            : /*!
+<span class="lineNum">      26 </span>            :  * \brief A Lorentzian solution to the Poisson equation
+<span class="lineNum">      27 </span>            :  *
+<span class="lineNum">      28 </span>            :  * \details This implements the Lorentzian solution
+<span class="lineNum">      29 </span>            :  * \f$u(\boldsymbol{x})=\left(1+r^2\right)^{-\frac{1}{2}}\f$ to the
+<span class="lineNum">      30 </span>            :  * three-dimensional Poisson equation
+<span class="lineNum">      31 </span>            :  * \f$-\Delta u(\boldsymbol{x})=f(\boldsymbol{x})\f$, where
+<span class="lineNum">      32 </span>            :  * \f$r^2=x^2+y^2+z^2\f$. The corresponding source is
+<span class="lineNum">      33 </span>            :  * \f$f(\boldsymbol{x})=3\left(1+r^2\right)^{-\frac{5}{2}}\f$.
+<span class="lineNum">      34 </span>            :  *
+<span class="lineNum">      35 </span>            :  * \note Corresponding 1D and 2D solutions are not implemented yet.
+<span class="lineNum">      36 </span>            :  */
+<span class="lineNum">      37 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      38 </span><span class="lineCov">          1 : class Lorentzian {</span>
+<span class="lineNum">      39 </span>            :   static_assert(
+<span class="lineNum">      40 </span>            :       Dim == 3,
+<span class="lineNum">      41 </span>            :       &quot;This solution is currently implemented in 3 spatial dimensions only&quot;);
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span>            :  public:
+<span class="lineNum">      44 </span><span class="lineNoCov">          0 :   using options = tmpl::list&lt;&gt;;</span>
+<span class="lineNum">      45 </span><span class="lineNoCov">          0 :   static constexpr OptionString help{</span>
+<span class="lineNum">      46 </span>            :       &quot;A Lorentzian solution to the Poisson equation.&quot;};
+<span class="lineNum">      47 </span>            : 
+<span class="lineNum">      48 </span><span class="lineNoCov">          0 :   Lorentzian() = default;</span>
+<span class="lineNum">      49 </span><span class="lineNoCov">          0 :   Lorentzian(const Lorentzian&amp;) noexcept = delete;</span>
+<span class="lineNum">      50 </span><span class="lineNoCov">          0 :   Lorentzian&amp; operator=(const Lorentzian&amp;) noexcept = delete;</span>
+<span class="lineNum">      51 </span><span class="lineNoCov">          0 :   Lorentzian(Lorentzian&amp;&amp;) noexcept = default;</span>
+<span class="lineNum">      52 </span><span class="lineNoCov">          0 :   Lorentzian&amp; operator=(Lorentzian&amp;&amp;) noexcept = default;</span>
+<span class="lineNum">      53 </span><span class="lineNoCov">          0 :   ~Lorentzian() noexcept = default;</span>
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span>            :   // @{
+<span class="lineNum">      56 </span>            :   /// Retrieve variable at coordinates `x`
+<span class="lineNum">      57 </span><span class="lineCov">          1 :   static auto variables(const tnsr::I&lt;DataVector, Dim, Frame::Inertial&gt;&amp; x,</span>
+<span class="lineNum">      58 </span>            :                         tmpl::list&lt;Field&gt; /*meta*/) noexcept
+<span class="lineNum">      59 </span>            :       -&gt; tuples::TaggedTuple&lt;Field&gt;;
+<span class="lineNum">      60 </span>            : 
+<span class="lineNum">      61 </span><span class="lineCov">          1 :   static auto variables(const tnsr::I&lt;DataVector, Dim, Frame::Inertial&gt;&amp; x,</span>
+<span class="lineNum">      62 </span>            :                         tmpl::list&lt;::Tags::Source&lt;Field&gt;&gt; /*meta*/) noexcept
+<span class="lineNum">      63 </span>            :       -&gt; tuples::TaggedTuple&lt;::Tags::Source&lt;Field&gt;&gt;;
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span><span class="lineCov">          1 :   static auto variables(</span>
+<span class="lineNum">      66 </span>            :       const tnsr::I&lt;DataVector, Dim, Frame::Inertial&gt;&amp; x,
+<span class="lineNum">      67 </span>            :       tmpl::list&lt;::Tags::Source&lt;AuxiliaryField&lt;Dim&gt;&gt;&gt; /*meta*/) noexcept
+<span class="lineNum">      68 </span>            :       -&gt; tuples::TaggedTuple&lt;::Tags::Source&lt;AuxiliaryField&lt;Dim&gt;&gt;&gt;;
+<span class="lineNum">      69 </span>            :   // @}
+<span class="lineNum">      70 </span>            : 
+<span class="lineNum">      71 </span>            :   /// Retrieve a collection of variables at coordinates `x`
+<span class="lineNum">      72 </span>            :   template &lt;typename... Tags&gt;
+<span class="lineNum">      73 </span><span class="lineCov">          1 :   static tuples::TaggedTuple&lt;Tags...&gt; variables(</span>
+<span class="lineNum">      74 </span>            :       const tnsr::I&lt;DataVector, Dim, Frame::Inertial&gt;&amp; x,
+<span class="lineNum">      75 </span>            :       tmpl::list&lt;Tags...&gt; /*meta*/) noexcept {
+<span class="lineNum">      76 </span>            :     static_assert(sizeof...(Tags) &gt; 1,
+<span class="lineNum">      77 </span>            :                   &quot;The generic template will recurse infinitely if only one &quot;
+<span class="lineNum">      78 </span>            :                   &quot;tag is being retrieved.&quot;);
+<span class="lineNum">      79 </span>            :     return {tuples::get&lt;Tags&gt;(variables(x, tmpl::list&lt;Tags&gt;{}))...};
+<span class="lineNum">      80 </span>            :   }
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span>            :   // clang-tidy: no pass by reference
+<span class="lineNum">      83 </span><span class="lineNoCov">          0 :   void pup(PUP::er&amp; p) noexcept;  // NOLINT</span>
+<span class="lineNum">      84 </span>            : };
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      87 </span>            : bool operator==(const Lorentzian&lt;Dim&gt;&amp; /*lhs*/,
+<span class="lineNum">      88 </span>            :                 const Lorentzian&lt;Dim&gt;&amp; /*rhs*/) noexcept;
+<span class="lineNum">      89 </span>            : 
+<span class="lineNum">      90 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      91 </span>            : bool operator!=(const Lorentzian&lt;Dim&gt;&amp; lhs,
+<span class="lineNum">      92 </span>            :                 const Lorentzian&lt;Dim&gt;&amp; rhs) noexcept;
+<span class="lineNum">      93 </span>            : 
+<span class="lineNum">      94 </span>            : }  // namespace Solutions
+<span class="lineNum">      95 </span>            : }  // namespace Poisson
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

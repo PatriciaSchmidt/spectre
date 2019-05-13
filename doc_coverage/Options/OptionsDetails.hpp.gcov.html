@@ -1,0 +1,522 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Options/OptionsDetails.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">Options</a> - OptionsDetails.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryLo">50.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineCov">          1 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : /// \file
+<span class="lineNum">       5 </span>            : /// Defines helpers for the Options&lt;T&gt; class
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            : #pragma once
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : #include &lt;algorithm&gt;
+<span class="lineNum">      10 </span>            : #include &lt;array&gt;
+<span class="lineNum">      11 </span>            : #include &lt;iomanip&gt;
+<span class="lineNum">      12 </span>            : #include &lt;list&gt;
+<span class="lineNum">      13 </span>            : #include &lt;map&gt;
+<span class="lineNum">      14 </span>            : #include &lt;sstream&gt;
+<span class="lineNum">      15 </span>            : #include &lt;string&gt;
+<span class="lineNum">      16 </span>            : #include &lt;type_traits&gt;
+<span class="lineNum">      17 </span>            : #include &lt;unordered_set&gt;
+<span class="lineNum">      18 </span>            : #include &lt;utility&gt;
+<span class="lineNum">      19 </span>            : #include &lt;vector&gt;
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : #include &quot;ErrorHandling/Assert.hpp&quot;
+<span class="lineNum">      22 </span>            : #include &quot;Utilities/PrettyType.hpp&quot;
+<span class="lineNum">      23 </span>            : #include &quot;Utilities/Requires.hpp&quot;
+<span class="lineNum">      24 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">      25 </span>            : #include &quot;Utilities/TypeTraits.hpp&quot;
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span>            : /// Holds details of the implementation of Options
+<span class="lineNum">      28 </span>            : namespace Options_detail {
+<span class="lineNum">      29 </span>            : template &lt;typename T, typename = cpp17::void_t&lt;&gt;&gt;
+<span class="lineNum">      30 </span>            : struct name_helper {
+<span class="lineNum">      31 </span>            :   static std::string name() noexcept { return pretty_type::short_name&lt;T&gt;(); }
+<span class="lineNum">      32 </span>            : };
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      35 </span>            : struct name_helper&lt;T, cpp17::void_t&lt;decltype(T::name())&gt;&gt; {
+<span class="lineNum">      36 </span>            :   static std::string name() noexcept { return T::name(); }
+<span class="lineNum">      37 </span>            : };
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span>            : // The name in the YAML file for a struct.
+<span class="lineNum">      40 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      41 </span>            : std::string name() noexcept {
+<span class="lineNum">      42 </span>            :   return name_helper&lt;T&gt;::name();
+<span class="lineNum">      43 </span>            : }
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span>            : // Traverses the group hierarchy of `Tag`, returning the topmost group that is
+<span class="lineNum">      46 </span>            : // a subgroup of `Root`. Directly returns `Tag` if it has no group.
+<span class="lineNum">      47 </span>            : // This means that the returned type is always the direct child node of `Root`
+<span class="lineNum">      48 </span>            : // that contains `Tag` in its hierarchy.
+<span class="lineNum">      49 </span>            : // If `Root` is not in the group hierarchy of `Tag`, this function returns the
+<span class="lineNum">      50 </span>            : // topmost group of `Tag` (meaning that `Root` is treated as the root of its
+<span class="lineNum">      51 </span>            : // group hierarchy).
+<span class="lineNum">      52 </span>            : template &lt;typename Tag, typename Root, typename = cpp17::void_t&lt;&gt;&gt;
+<span class="lineNum">      53 </span>            : struct find_subgroup {
+<span class="lineNum">      54 </span>            :   using type = Tag;
+<span class="lineNum">      55 </span>            : };
+<span class="lineNum">      56 </span>            : 
+<span class="lineNum">      57 </span>            : template &lt;typename Tag&gt;
+<span class="lineNum">      58 </span>            : struct find_subgroup&lt;Tag, typename Tag::group,
+<span class="lineNum">      59 </span>            :                      cpp17::void_t&lt;typename Tag::group&gt;&gt; {
+<span class="lineNum">      60 </span>            :   using type = Tag;
+<span class="lineNum">      61 </span>            : };
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span>            : template &lt;typename Tag, typename Root&gt;
+<span class="lineNum">      64 </span>            : struct find_subgroup&lt;Tag, Root, cpp17::void_t&lt;typename Tag::group&gt;&gt; {
+<span class="lineNum">      65 </span>            :   using type = typename find_subgroup&lt;typename Tag::group, Root&gt;::type;
+<span class="lineNum">      66 </span>            : };
+<span class="lineNum">      67 </span>            : 
+<span class="lineNum">      68 </span>            : /// Checks if `Tag` is within the group hierarchy of `Group`.
+<span class="lineNum">      69 </span>            : template &lt;typename Tag, typename Group, typename = cpp17::void_t&lt;&gt;&gt;
+<span class="lineNum">      70 </span>            : struct is_in_group : std::false_type {};
+<span class="lineNum">      71 </span>            : 
+<span class="lineNum">      72 </span>            : template &lt;typename Tag&gt;
+<span class="lineNum">      73 </span>            : struct is_in_group&lt;Tag, typename Tag::group, cpp17::void_t&lt;typename Tag::group&gt;&gt;
+<span class="lineNum">      74 </span>            :     : std::true_type {};
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span>            : template &lt;typename Tag, typename Group&gt;
+<span class="lineNum">      77 </span>            : struct is_in_group&lt;Tag, Group, cpp17::void_t&lt;typename Tag::group&gt;&gt;
+<span class="lineNum">      78 </span>            :     : is_in_group&lt;typename Tag::group, Group&gt; {};
+<span class="lineNum">      79 </span>            : 
+<span class="lineNum">      80 </span>            : /// The subset of tags in `OptionList` that are in the hierarchy of `Group`
+<span class="lineNum">      81 </span>            : template &lt;typename OptionList, typename Group&gt;
+<span class="lineNum">      82 </span>            : using options_in_group = tmpl::filter&lt;OptionList, is_in_group&lt;tmpl::_1, Group&gt;&gt;;
+<span class="lineNum">      83 </span>            : 
+<span class="lineNum">      84 </span>            : // Display a type in a pseudo-YAML form, leaving out likely irrelevant
+<span class="lineNum">      85 </span>            : // information.
+<span class="lineNum">      86 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      87 </span>            : struct yaml_type {
+<span class="lineNum">      88 </span>            :   static std::string value() noexcept { return pretty_type::get_name&lt;T&gt;(); }
+<span class="lineNum">      89 </span>            : };
+<span class="lineNum">      90 </span>            : 
+<span class="lineNum">      91 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      92 </span>            : struct yaml_type&lt;std::unique_ptr&lt;T&gt;&gt; {
+<span class="lineNum">      93 </span>            :   static std::string value() noexcept { return yaml_type&lt;T&gt;::value(); }
+<span class="lineNum">      94 </span>            : };
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      97 </span>            : struct yaml_type&lt;std::vector&lt;T&gt;&gt; {
+<span class="lineNum">      98 </span>            :   static std::string value() noexcept {
+<span class="lineNum">      99 </span>            :     return &quot;[&quot; + yaml_type&lt;T&gt;::value() + &quot;, ...]&quot;;
+<span class="lineNum">     100 </span>            :   }
+<span class="lineNum">     101 </span>            : };
+<span class="lineNum">     102 </span>            : 
+<span class="lineNum">     103 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     104 </span>            : struct yaml_type&lt;std::list&lt;T&gt;&gt; {
+<span class="lineNum">     105 </span>            :   static std::string value() noexcept {
+<span class="lineNum">     106 </span>            :     return &quot;[&quot; + yaml_type&lt;T&gt;::value() + &quot;, ...]&quot;;
+<span class="lineNum">     107 </span>            :   }
+<span class="lineNum">     108 </span>            : };
+<span class="lineNum">     109 </span>            : 
+<span class="lineNum">     110 </span>            : template &lt;typename T, size_t N&gt;
+<span class="lineNum">     111 </span>            : struct yaml_type&lt;std::array&lt;T, N&gt;&gt; {
+<span class="lineNum">     112 </span>            :   static std::string value() noexcept {
+<span class="lineNum">     113 </span>            :     return &quot;[&quot; + yaml_type&lt;T&gt;::value() + &quot; x&quot; + std::to_string(N) + &quot;]&quot;;
+<span class="lineNum">     114 </span>            :   }
+<span class="lineNum">     115 </span>            : };
+<span class="lineNum">     116 </span>            : 
+<span class="lineNum">     117 </span>            : template &lt;typename K, typename V, typename C&gt;
+<span class="lineNum">     118 </span>            : struct yaml_type&lt;std::map&lt;K, V, C&gt;&gt; {
+<span class="lineNum">     119 </span>            :   static std::string value() noexcept {
+<span class="lineNum">     120 </span>            :     return &quot;{&quot; + yaml_type&lt;K&gt;::value() + &quot;: &quot; + yaml_type&lt;V&gt;::value() + &quot;}&quot;;
+<span class="lineNum">     121 </span>            :   }
+<span class="lineNum">     122 </span>            : };
+<span class="lineNum">     123 </span>            : 
+<span class="lineNum">     124 </span>            : template &lt;typename K, typename V, typename H, typename E&gt;
+<span class="lineNum">     125 </span>            : struct yaml_type&lt;std::unordered_map&lt;K, V, H, E&gt;&gt; {
+<span class="lineNum">     126 </span>            :   static std::string value() noexcept {
+<span class="lineNum">     127 </span>            :     return &quot;{&quot; + yaml_type&lt;K&gt;::value() + &quot;: &quot; + yaml_type&lt;V&gt;::value() + &quot;}&quot;;
+<span class="lineNum">     128 </span>            :   }
+<span class="lineNum">     129 </span>            : };
+<span class="lineNum">     130 </span>            : 
+<span class="lineNum">     131 </span>            : template &lt;typename T, typename U&gt;
+<span class="lineNum">     132 </span>            : struct yaml_type&lt;std::pair&lt;T, U&gt;&gt; {
+<span class="lineNum">     133 </span>            :   static std::string value() noexcept {
+<span class="lineNum">     134 </span>            :     return &quot;[&quot; + yaml_type&lt;T&gt;::value() + &quot;, &quot; + yaml_type&lt;U&gt;::value() + &quot;]&quot;;
+<span class="lineNum">     135 </span>            :   }
+<span class="lineNum">     136 </span>            : };
+<span class="lineNum">     137 </span>            : 
+<span class="lineNum">     138 </span>            : template &lt;typename S, typename = cpp17::void_t&lt;&gt;&gt;
+<span class="lineNum">     139 </span>            : struct has_default : std::false_type {};
+<span class="lineNum">     140 </span>            : template &lt;typename S&gt;
+<span class="lineNum">     141 </span>            : struct has_default&lt;S,
+<span class="lineNum">     142 </span>            :                    cpp17::void_t&lt;decltype(std::declval&lt;S&gt;().default_value())&gt;&gt;
+<span class="lineNum">     143 </span>            :     : std::true_type {};
+<span class="lineNum">     144 </span>            : 
+<span class="lineNum">     145 </span>            : template &lt;typename S, typename = cpp17::void_t&lt;&gt;&gt;
+<span class="lineNum">     146 </span>            : struct has_lower_bound : std::false_type {};
+<span class="lineNum">     147 </span>            : template &lt;typename S&gt;
+<span class="lineNum">     148 </span>            : struct has_lower_bound&lt;S,
+<span class="lineNum">     149 </span>            :                        cpp17::void_t&lt;decltype(std::declval&lt;S&gt;().lower_bound())&gt;&gt;
+<span class="lineNum">     150 </span>            :     : std::true_type {};
+<span class="lineNum">     151 </span>            : 
+<span class="lineNum">     152 </span>            : template &lt;typename S, typename = cpp17::void_t&lt;&gt;&gt;
+<span class="lineNum">     153 </span>            : struct has_upper_bound : std::false_type {};
+<span class="lineNum">     154 </span>            : template &lt;typename S&gt;
+<span class="lineNum">     155 </span>            : struct has_upper_bound&lt;S,
+<span class="lineNum">     156 </span>            :                        cpp17::void_t&lt;decltype(std::declval&lt;S&gt;().upper_bound())&gt;&gt;
+<span class="lineNum">     157 </span>            :     : std::true_type {};
+<span class="lineNum">     158 </span>            : 
+<span class="lineNum">     159 </span>            : template &lt;typename S, typename = cpp17::void_t&lt;&gt;&gt;
+<span class="lineNum">     160 </span>            : struct has_lower_bound_on_size : std::false_type {};
+<span class="lineNum">     161 </span>            : template &lt;typename S&gt;
+<span class="lineNum">     162 </span>            : struct has_lower_bound_on_size&lt;
+<span class="lineNum">     163 </span>            :     S, cpp17::void_t&lt;decltype(std::declval&lt;S&gt;().lower_bound_on_size())&gt;&gt;
+<span class="lineNum">     164 </span>            :     : std::true_type {};
+<span class="lineNum">     165 </span>            : 
+<span class="lineNum">     166 </span>            : template &lt;typename S, typename = cpp17::void_t&lt;&gt;&gt;
+<span class="lineNum">     167 </span>            : struct has_upper_bound_on_size : std::false_type {};
+<span class="lineNum">     168 </span>            : template &lt;typename S&gt;
+<span class="lineNum">     169 </span>            : struct has_upper_bound_on_size&lt;
+<span class="lineNum">     170 </span>            :     S, cpp17::void_t&lt;decltype(std::declval&lt;S&gt;().upper_bound_on_size())&gt;&gt;
+<span class="lineNum">     171 </span>            :     : std::true_type {};
+<span class="lineNum">     172 </span>            : 
+<span class="lineNum">     173 </span>            : template &lt;typename Group, typename OptionList, typename = std::nullptr_t&gt;
+<span class="lineNum">     174 </span>            : struct print_impl {
+<span class="lineNum">     175 </span>            :   static std::string apply(const int max_label_size) noexcept {
+<span class="lineNum">     176 </span>            :     std::ostringstream ss;
+<span class="lineNum">     177 </span>            :     ss &lt;&lt; &quot;  &quot; &lt;&lt; std::setw(max_label_size + 2) &lt;&lt; std::left &lt;&lt; name&lt;Group&gt;()
+<span class="lineNum">     178 </span>            :        &lt;&lt; Group::help &lt;&lt; &quot;\n\n&quot;;
+<span class="lineNum">     179 </span>            :     return ss.str();
+<span class="lineNum">     180 </span>            :   }
+<span class="lineNum">     181 </span>            : };
+<span class="lineNum">     182 </span>            : 
+<span class="lineNum">     183 </span>            : template &lt;typename Tag, typename OptionList&gt;
+<span class="lineNum">     184 </span>            : struct print_impl&lt;Tag, OptionList,
+<span class="lineNum">     185 </span>            :                   Requires&lt;tmpl::list_contains_v&lt;OptionList, Tag&gt;&gt;&gt; {
+<span class="lineNum">     186 </span>            :   template &lt;typename LocalTag, Requires&lt;has_default&lt;LocalTag&gt;::value&gt; = nullptr&gt;
+<span class="lineNum">     187 </span>            :   static std::string print_default() noexcept {
+<span class="lineNum">     188 </span>            :     std::ostringstream ss;
+<span class="lineNum">     189 </span>            :     ss &lt;&lt; &quot;default=&quot; &lt;&lt; std::boolalpha &lt;&lt; LocalTag::default_value();
+<span class="lineNum">     190 </span>            :     return ss.str();
+<span class="lineNum">     191 </span>            :   }
+<span class="lineNum">     192 </span>            :   template &lt;typename LocalTag,
+<span class="lineNum">     193 </span>            :             Requires&lt;not has_default&lt;LocalTag&gt;::value&gt; = nullptr&gt;
+<span class="lineNum">     194 </span>            :   static std::string print_default() noexcept {
+<span class="lineNum">     195 </span>            :     return &quot;&quot;;
+<span class="lineNum">     196 </span>            :   }
+<span class="lineNum">     197 </span>            :   template &lt;typename LocalTag,
+<span class="lineNum">     198 </span>            :             Requires&lt;has_lower_bound&lt;LocalTag&gt;::value&gt; = nullptr&gt;
+<span class="lineNum">     199 </span>            :   static std::string print_lower_bound() noexcept {
+<span class="lineNum">     200 </span>            :     std::ostringstream ss;
+<span class="lineNum">     201 </span>            :     ss &lt;&lt; &quot;min=&quot; &lt;&lt; LocalTag::lower_bound();
+<span class="lineNum">     202 </span>            :     return ss.str();
+<span class="lineNum">     203 </span>            :   }
+<span class="lineNum">     204 </span>            :   template &lt;typename LocalTag,
+<span class="lineNum">     205 </span>            :             Requires&lt;not has_lower_bound&lt;LocalTag&gt;::value&gt; = nullptr&gt;
+<span class="lineNum">     206 </span>            :   static std::string print_lower_bound() noexcept {
+<span class="lineNum">     207 </span>            :     return &quot;&quot;;
+<span class="lineNum">     208 </span>            :   }
+<span class="lineNum">     209 </span>            :   template &lt;typename LocalTag,
+<span class="lineNum">     210 </span>            :             Requires&lt;has_upper_bound&lt;LocalTag&gt;::value&gt; = nullptr&gt;
+<span class="lineNum">     211 </span>            :   static std::string print_upper_bound() noexcept {
+<span class="lineNum">     212 </span>            :     std::ostringstream ss;
+<span class="lineNum">     213 </span>            :     ss &lt;&lt; &quot;max=&quot; &lt;&lt; LocalTag::upper_bound();
+<span class="lineNum">     214 </span>            :     return ss.str();
+<span class="lineNum">     215 </span>            :   }
+<span class="lineNum">     216 </span>            :   template &lt;typename LocalTag,
+<span class="lineNum">     217 </span>            :             Requires&lt;not has_upper_bound&lt;LocalTag&gt;::value&gt; = nullptr&gt;
+<span class="lineNum">     218 </span>            :   static std::string print_upper_bound() noexcept {
+<span class="lineNum">     219 </span>            :     return &quot;&quot;;
+<span class="lineNum">     220 </span>            :   }
+<span class="lineNum">     221 </span>            :   template &lt;typename LocalTag,
+<span class="lineNum">     222 </span>            :             Requires&lt;has_lower_bound_on_size&lt;LocalTag&gt;::value&gt; = nullptr&gt;
+<span class="lineNum">     223 </span>            :   static std::string print_lower_bound_on_size() noexcept {
+<span class="lineNum">     224 </span>            :     std::ostringstream ss;
+<span class="lineNum">     225 </span>            :     ss &lt;&lt; &quot;min size=&quot; &lt;&lt; LocalTag::lower_bound_on_size();
+<span class="lineNum">     226 </span>            :     return ss.str();
+<span class="lineNum">     227 </span>            :   }
+<span class="lineNum">     228 </span>            :   template &lt;typename LocalTag,
+<span class="lineNum">     229 </span>            :             Requires&lt;not has_lower_bound_on_size&lt;LocalTag&gt;::value&gt; = nullptr&gt;
+<span class="lineNum">     230 </span>            :   static std::string print_lower_bound_on_size() noexcept {
+<span class="lineNum">     231 </span>            :     return &quot;&quot;;
+<span class="lineNum">     232 </span>            :   }
+<span class="lineNum">     233 </span>            :   template &lt;typename LocalTag,
+<span class="lineNum">     234 </span>            :             Requires&lt;has_upper_bound_on_size&lt;LocalTag&gt;::value&gt; = nullptr&gt;
+<span class="lineNum">     235 </span>            :   static std::string print_upper_bound_on_size() noexcept {
+<span class="lineNum">     236 </span>            :     std::ostringstream ss;
+<span class="lineNum">     237 </span>            :     ss &lt;&lt; &quot;max size=&quot; &lt;&lt; LocalTag::upper_bound_on_size();
+<span class="lineNum">     238 </span>            :     return ss.str();
+<span class="lineNum">     239 </span>            :   }
+<span class="lineNum">     240 </span>            :   template &lt;typename LocalTag,
+<span class="lineNum">     241 </span>            :             Requires&lt;not has_upper_bound_on_size&lt;LocalTag&gt;::value&gt; = nullptr&gt;
+<span class="lineNum">     242 </span>            :   static std::string print_upper_bound_on_size() noexcept {
+<span class="lineNum">     243 </span>            :     return &quot;&quot;;
+<span class="lineNum">     244 </span>            :   }
+<span class="lineNum">     245 </span>            : 
+<span class="lineNum">     246 </span>            :   static std::string apply(const int max_label_size) noexcept {
+<span class="lineNum">     247 </span>            :     std::ostringstream ss;
+<span class="lineNum">     248 </span>            :     ss &lt;&lt; &quot;  &quot; &lt;&lt; std::setw(max_label_size + 2) &lt;&lt; std::left &lt;&lt; name&lt;Tag&gt;()
+<span class="lineNum">     249 </span>            :        &lt;&lt; yaml_type&lt;typename Tag::type&gt;::value();
+<span class="lineNum">     250 </span>            :     std::string limits;
+<span class="lineNum">     251 </span>            :     for (const auto&amp; limit :
+<span class="lineNum">     252 </span>            :          {print_default&lt;Tag&gt;(), print_lower_bound&lt;Tag&gt;(),
+<span class="lineNum">     253 </span>            :           print_upper_bound&lt;Tag&gt;(), print_lower_bound_on_size&lt;Tag&gt;(),
+<span class="lineNum">     254 </span>            :           print_upper_bound_on_size&lt;Tag&gt;()}) {
+<span class="lineNum">     255 </span>            :       if (not limits.empty() and not limit.empty()) {
+<span class="lineNum">     256 </span>            :         limits += &quot;, &quot;;
+<span class="lineNum">     257 </span>            :       }
+<span class="lineNum">     258 </span>            :       limits += limit;
+<span class="lineNum">     259 </span>            :     }
+<span class="lineNum">     260 </span>            :     if (not limits.empty()) {
+<span class="lineNum">     261 </span>            :       ss &lt;&lt; &quot; [&quot; &lt;&lt; limits &lt;&lt; &quot;]&quot;;
+<span class="lineNum">     262 </span>            :     }
+<span class="lineNum">     263 </span>            :     ss &lt;&lt; &quot;\n&quot; &lt;&lt; std::setw(max_label_size + 4) &lt;&lt; &quot;&quot; &lt;&lt; Tag::help &lt;&lt; &quot;\n\n&quot;;
+<span class="lineNum">     264 </span>            :     return ss.str();
+<span class="lineNum">     265 </span>            :   }
+<span class="lineNum">     266 </span>            : };
+<span class="lineNum">     267 </span>            : 
+<span class="lineNum">     268 </span>            : template &lt;typename OptionList&gt;
+<span class="lineNum">     269 </span>            : struct print {
+<span class="lineNum">     270 </span>            :   explicit print(const int max_label_size) noexcept
+<span class="lineNum">     271 </span>            :       : max_label_size_(max_label_size) {}
+<span class="lineNum">     272 </span>            :   using value_type = std::string;
+<span class="lineNum">     273 </span>            :   template &lt;typename Tag&gt;
+<span class="lineNum">     274 </span>            :   void operator()(tmpl::type_&lt;Tag&gt; /*meta*/) noexcept {
+<span class="lineNum">     275 </span>            :     value += print_impl&lt;Tag, OptionList&gt;::apply(max_label_size_);
+<span class="lineNum">     276 </span>            :   }
+<span class="lineNum">     277 </span>            :   value_type value{};
+<span class="lineNum">     278 </span>            : 
+<span class="lineNum">     279 </span>            :  private:
+<span class="lineNum">     280 </span>            :   const int max_label_size_;
+<span class="lineNum">     281 </span>            : };
+<span class="lineNum">     282 </span>            : 
+<span class="lineNum">     283 </span>            : // TMP function to create an unordered_set of option names.
+<span class="lineNum">     284 </span>            : struct create_valid_names {
+<span class="lineNum">     285 </span>            :   using value_type = std::unordered_set&lt;std::string&gt;;
+<span class="lineNum">     286 </span>            :   value_type value{};
+<span class="lineNum">     287 </span>            :   template &lt;typename T&gt;
+<span class="lineNum">     288 </span>            :   void operator()(tmpl::type_&lt;T&gt; /*meta*/) noexcept {
+<span class="lineNum">     289 </span>            :     const std::string label = name&lt;T&gt;();
+<span class="lineNum">     290 </span>            :     ASSERT(0 == value.count(label), &quot;Duplicate option name: &quot; &lt;&lt; label);
+<span class="lineNum">     291 </span>            :     value.insert(label);
+<span class="lineNum">     292 </span>            :   }
+<span class="lineNum">     293 </span>            : };
+<span class="lineNum">     294 </span>            : 
+<span class="lineNum">     295 </span>            : template &lt;typename T, typename Metavariables&gt;
+<span class="lineNum">     296 </span>            : struct CreateWrapper {
+<span class="lineNum">     297 </span>            :   using metavariables = Metavariables;
+<span class="lineNum">     298 </span>            :   T data{};
+<span class="lineNum">     299 </span>            : };
+<span class="lineNum">     300 </span><span class="lineNoCov">          0 : #define CREATE_WRAPPER_FORWARD_OP(op)                          \</span>
+<span class="lineNum">     301 </span>            :   template &lt;typename T, typename Metavariables&gt;                \
+<span class="lineNum">     302 </span>            :   bool operator op(const CreateWrapper&lt;T, Metavariables&gt;&amp; a,   \
+<span class="lineNum">     303 </span>            :                    const CreateWrapper&lt;T, Metavariables&gt;&amp; b) { \
+<span class="lineNum">     304 </span>            :     return a.data op b.data;                                   \
+<span class="lineNum">     305 </span>            :   }
+<span class="lineNum">     306 </span>            : CREATE_WRAPPER_FORWARD_OP(==)
+<span class="lineNum">     307 </span>            : CREATE_WRAPPER_FORWARD_OP(!=)
+<span class="lineNum">     308 </span>            : CREATE_WRAPPER_FORWARD_OP(&lt;)
+<span class="lineNum">     309 </span>            : CREATE_WRAPPER_FORWARD_OP(&gt;)
+<span class="lineNum">     310 </span>            : CREATE_WRAPPER_FORWARD_OP(&lt;=)
+<span class="lineNum">     311 </span>            : CREATE_WRAPPER_FORWARD_OP(&gt;=)
+<span class="lineNum">     312 </span>            : #undef CREATE_WRAPPER_FORWARD_OP
+<span class="lineNum">     313 </span>            : 
+<span class="lineNum">     314 </span>            : template &lt;typename T, typename = std::nullptr_t&gt;
+<span class="lineNum">     315 </span>            : struct wrap_create_types_impl;
+<span class="lineNum">     316 </span>            : 
+<span class="lineNum">     317 </span>            : template &lt;typename T, typename Metavariables&gt;
+<span class="lineNum">     318 </span>            : using wrap_create_types =
+<span class="lineNum">     319 </span>            :     typename wrap_create_types_impl&lt;T&gt;::template wrapped_type&lt;Metavariables&gt;;
+<span class="lineNum">     320 </span>            : 
+<span class="lineNum">     321 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     322 </span>            : auto unwrap_create_types(T wrapped) {
+<span class="lineNum">     323 </span>            :   return wrap_create_types_impl&lt;T&gt;::unwrap(std::move(wrapped));
+<span class="lineNum">     324 </span>            : }
+<span class="lineNum">     325 </span>            : 
+<span class="lineNum">     326 </span>            : template &lt;typename T, typename&gt;
+<span class="lineNum">     327 </span>            : struct wrap_create_types_impl {
+<span class="lineNum">     328 </span>            :   template &lt;typename Metavariables&gt;
+<span class="lineNum">     329 </span>            :   using wrapped_type = CreateWrapper&lt;T, Metavariables&gt;;
+<span class="lineNum">     330 </span>            : };
+<span class="lineNum">     331 </span>            : 
+<span class="lineNum">     332 </span>            : template &lt;typename T, typename Metavariables&gt;
+<span class="lineNum">     333 </span>            : struct wrap_create_types_impl&lt;CreateWrapper&lt;T, Metavariables&gt;&gt; {
+<span class="lineNum">     334 </span>            :   // Never actually used, but instantiated during unwrapping
+<span class="lineNum">     335 </span>            :   template &lt;typename /*Metavars*/&gt;
+<span class="lineNum">     336 </span>            :   using wrapped_type = void;
+<span class="lineNum">     337 </span>            : 
+<span class="lineNum">     338 </span>            :   static T unwrap(CreateWrapper&lt;T, Metavariables&gt; wrapped) {
+<span class="lineNum">     339 </span>            :     return std::move(wrapped.data);
+<span class="lineNum">     340 </span>            :   }
+<span class="lineNum">     341 </span>            : };
+<span class="lineNum">     342 </span>            : 
+<span class="lineNum">     343 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     344 </span>            : struct wrap_create_types_impl&lt;T, Requires&lt;std::is_fundamental&lt;T&gt;::value&gt;&gt; {
+<span class="lineNum">     345 </span>            :   template &lt;typename Metavariables&gt;
+<span class="lineNum">     346 </span>            :   using wrapped_type = T;
+<span class="lineNum">     347 </span>            : 
+<span class="lineNum">     348 </span>            :   static T unwrap(T wrapped) { return wrapped; }
+<span class="lineNum">     349 </span>            : };
+<span class="lineNum">     350 </span>            : 
+<span class="lineNum">     351 </span>            : // Classes convertible by yaml-cpp
+<span class="lineNum">     352 </span>            : template &lt;&gt;
+<span class="lineNum">     353 </span>            : struct wrap_create_types_impl&lt;std::string&gt; {
+<span class="lineNum">     354 </span>            :   template &lt;typename Metavariables&gt;
+<span class="lineNum">     355 </span>            :   using wrapped_type = std::string;
+<span class="lineNum">     356 </span>            : 
+<span class="lineNum">     357 </span>            :   static std::string unwrap(std::string wrapped) { return wrapped; }
+<span class="lineNum">     358 </span>            : };
+<span class="lineNum">     359 </span>            : 
+<span class="lineNum">     360 </span>            : template &lt;typename K, typename V&gt;
+<span class="lineNum">     361 </span>            : struct wrap_create_types_impl&lt;std::map&lt;K, V&gt;&gt; {
+<span class="lineNum">     362 </span>            :   template &lt;typename Metavariables&gt;
+<span class="lineNum">     363 </span>            :   using wrapped_type = std::map&lt;wrap_create_types&lt;K, Metavariables&gt;,
+<span class="lineNum">     364 </span>            :                                 wrap_create_types&lt;V, Metavariables&gt;&gt;;
+<span class="lineNum">     365 </span>            : 
+<span class="lineNum">     366 </span>            :   static auto unwrap(std::map&lt;K, V&gt; wrapped) {
+<span class="lineNum">     367 </span>            :     using UnwrappedK = decltype(unwrap_create_types&lt;K&gt;(std::declval&lt;K&gt;()));
+<span class="lineNum">     368 </span>            :     using UnwrappedV = decltype(unwrap_create_types&lt;V&gt;(std::declval&lt;V&gt;()));
+<span class="lineNum">     369 </span>            :     std::map&lt;UnwrappedK, UnwrappedV&gt; result;
+<span class="lineNum">     370 </span>            :     for (auto&amp; w : wrapped) {
+<span class="lineNum">     371 </span>            :       result.emplace(unwrap_create_types&lt;K&gt;(std::move(w.first)),
+<span class="lineNum">     372 </span>            :                      unwrap_create_types&lt;V&gt;(std::move(w.second)));
+<span class="lineNum">     373 </span>            :     }
+<span class="lineNum">     374 </span>            :     return result;
+<span class="lineNum">     375 </span>            :   }
+<span class="lineNum">     376 </span>            : };
+<span class="lineNum">     377 </span>            : 
+<span class="lineNum">     378 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     379 </span>            : struct wrap_create_types_impl&lt;std::vector&lt;T&gt;&gt; {
+<span class="lineNum">     380 </span>            :   template &lt;typename Metavariables&gt;
+<span class="lineNum">     381 </span>            :   using wrapped_type = std::vector&lt;wrap_create_types&lt;T, Metavariables&gt;&gt;;
+<span class="lineNum">     382 </span>            : 
+<span class="lineNum">     383 </span>            :   static auto unwrap(std::vector&lt;T&gt; wrapped) {
+<span class="lineNum">     384 </span>            :     using UnwrappedT = decltype(unwrap_create_types&lt;T&gt;(std::declval&lt;T&gt;()));
+<span class="lineNum">     385 </span>            :     std::vector&lt;UnwrappedT&gt; result;
+<span class="lineNum">     386 </span>            :     result.reserve(wrapped.size());
+<span class="lineNum">     387 </span>            :     for (auto&amp; w : wrapped) {
+<span class="lineNum">     388 </span>            :       result.push_back(unwrap_create_types&lt;T&gt;(std::move(w)));
+<span class="lineNum">     389 </span>            :     }
+<span class="lineNum">     390 </span>            :     return result;
+<span class="lineNum">     391 </span>            :   }
+<span class="lineNum">     392 </span>            : };
+<span class="lineNum">     393 </span>            : 
+<span class="lineNum">     394 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     395 </span>            : struct wrap_create_types_impl&lt;std::list&lt;T&gt;&gt; {
+<span class="lineNum">     396 </span>            :   template &lt;typename Metavariables&gt;
+<span class="lineNum">     397 </span>            :   using wrapped_type = std::list&lt;wrap_create_types&lt;T, Metavariables&gt;&gt;;
+<span class="lineNum">     398 </span>            : 
+<span class="lineNum">     399 </span>            :   static auto unwrap(std::list&lt;T&gt; wrapped) {
+<span class="lineNum">     400 </span>            :     using UnwrappedT = decltype(unwrap_create_types&lt;T&gt;(std::declval&lt;T&gt;()));
+<span class="lineNum">     401 </span>            :     std::list&lt;UnwrappedT&gt; result;
+<span class="lineNum">     402 </span>            :     for (auto&amp; w : wrapped) {
+<span class="lineNum">     403 </span>            :       result.push_back(unwrap_create_types&lt;T&gt;(std::move(w)));
+<span class="lineNum">     404 </span>            :     }
+<span class="lineNum">     405 </span>            :     return result;
+<span class="lineNum">     406 </span>            :   }
+<span class="lineNum">     407 </span>            : };
+<span class="lineNum">     408 </span>            : 
+<span class="lineNum">     409 </span>            : template &lt;typename T, size_t N&gt;
+<span class="lineNum">     410 </span>            : struct wrap_create_types_impl&lt;std::array&lt;T, N&gt;&gt; {
+<span class="lineNum">     411 </span>            :   template &lt;typename Metavariables&gt;
+<span class="lineNum">     412 </span>            :   using wrapped_type = std::array&lt;wrap_create_types&lt;T, Metavariables&gt;, N&gt;;
+<span class="lineNum">     413 </span>            : 
+<span class="lineNum">     414 </span>            :   static auto unwrap(std::array&lt;T, N&gt; wrapped) {
+<span class="lineNum">     415 </span>            :     return unwrap_helper(std::move(wrapped), std::make_index_sequence&lt;N&gt;{});
+<span class="lineNum">     416 </span>            :   }
+<span class="lineNum">     417 </span>            : 
+<span class="lineNum">     418 </span>            :   template &lt;size_t... Is&gt;
+<span class="lineNum">     419 </span>            :   static auto unwrap_helper(std::array&lt;T, N&gt; wrapped,
+<span class="lineNum">     420 </span>            :                             std::integer_sequence&lt;size_t, Is...&gt; /*meta*/) {
+<span class="lineNum">     421 </span>            :     using UnwrappedT = decltype(unwrap_create_types&lt;T&gt;(std::declval&lt;T&gt;()));
+<span class="lineNum">     422 </span>            :     static_cast&lt;void&gt;(wrapped);  // Work around broken GCC warning
+<span class="lineNum">     423 </span>            :     return std::array&lt;UnwrappedT, N&gt;{
+<span class="lineNum">     424 </span>            :         {unwrap_create_types&lt;T&gt;(std::move(wrapped[Is]))...}};
+<span class="lineNum">     425 </span>            :   }
+<span class="lineNum">     426 </span>            : };
+<span class="lineNum">     427 </span>            : 
+<span class="lineNum">     428 </span>            : template &lt;typename T, typename U&gt;
+<span class="lineNum">     429 </span>            : struct wrap_create_types_impl&lt;std::pair&lt;T, U&gt;&gt; {
+<span class="lineNum">     430 </span>            :   template &lt;typename Metavariables&gt;
+<span class="lineNum">     431 </span>            :   using wrapped_type = std::pair&lt;wrap_create_types&lt;T, Metavariables&gt;,
+<span class="lineNum">     432 </span>            :                                  wrap_create_types&lt;U, Metavariables&gt;&gt;;
+<span class="lineNum">     433 </span>            : 
+<span class="lineNum">     434 </span>            :   static auto unwrap(std::pair&lt;T, U&gt; wrapped) {
+<span class="lineNum">     435 </span>            :     using UnwrappedT = decltype(unwrap_create_types&lt;T&gt;(std::declval&lt;T&gt;()));
+<span class="lineNum">     436 </span>            :     using UnwrappedU = decltype(unwrap_create_types&lt;U&gt;(std::declval&lt;U&gt;()));
+<span class="lineNum">     437 </span>            :     return std::pair&lt;UnwrappedT, UnwrappedU&gt;(
+<span class="lineNum">     438 </span>            :         unwrap_create_types&lt;T&gt;(std::move(wrapped.first)),
+<span class="lineNum">     439 </span>            :         unwrap_create_types&lt;U&gt;(std::move(wrapped.second)));
+<span class="lineNum">     440 </span>            :   }
+<span class="lineNum">     441 </span>            : };
+<span class="lineNum">     442 </span>            : }  // namespace Options_detail
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

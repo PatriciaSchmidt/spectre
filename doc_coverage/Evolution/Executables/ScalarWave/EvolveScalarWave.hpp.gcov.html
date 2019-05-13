@@ -1,0 +1,278 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Evolution/Executables/ScalarWave/EvolveScalarWave.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">Evolution/Executables/ScalarWave</a> - EvolveScalarWave.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">18</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       7 </span>            : #include &lt;vector&gt;
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : #include &quot;Domain/Creators/RegisterDerivedWithCharm.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;Domain/Tags.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;ErrorHandling/Error.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;ErrorHandling/FloatingPointExceptions.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;Evolution/Actions/ComputeTimeDerivative.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      14 </span>            : #include &quot;Evolution/DiscontinuousGalerkin/DgElementArray.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      15 </span>            : #include &quot;Evolution/DiscontinuousGalerkin/Filtering.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      16 </span>            : #include &quot;Evolution/DiscontinuousGalerkin/InitializeElement.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      17 </span>            : #include &quot;Evolution/DiscontinuousGalerkin/ObserveErrorNorms.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      18 </span>            : #include &quot;Evolution/DiscontinuousGalerkin/ObserveFields.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      19 </span>            : #include &quot;Evolution/EventsAndTriggers/Actions/RunEventsAndTriggers.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      20 </span>            : #include &quot;Evolution/EventsAndTriggers/Event.hpp&quot;
+<span class="lineNum">      21 </span>            : #include &quot;Evolution/EventsAndTriggers/EventsAndTriggers.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      22 </span>            : #include &quot;Evolution/Systems/ScalarWave/Equations.hpp&quot;  // IWYU pragma: keep // for UpwindFlux
+<span class="lineNum">      23 </span>            : #include &quot;Evolution/Systems/ScalarWave/System.hpp&quot;
+<span class="lineNum">      24 </span>            : #include &quot;IO/Observer/Actions.hpp&quot;            // IWYU pragma: keep
+<span class="lineNum">      25 </span>            : #include &quot;IO/Observer/Helpers.hpp&quot;            // IWYU pragma: keep
+<span class="lineNum">      26 </span>            : #include &quot;IO/Observer/ObserverComponent.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      27 </span>            : #include &quot;NumericalAlgorithms/DiscontinuousGalerkin/Actions/ApplyBoundaryFluxesLocalTimeStepping.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      28 </span>            : #include &quot;NumericalAlgorithms/DiscontinuousGalerkin/Actions/ApplyFluxes.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      29 </span>            : #include &quot;NumericalAlgorithms/DiscontinuousGalerkin/Actions/ComputeNonconservativeBoundaryFluxes.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      30 </span>            : #include &quot;NumericalAlgorithms/DiscontinuousGalerkin/Actions/FluxCommunication.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      31 </span>            : #include &quot;NumericalAlgorithms/DiscontinuousGalerkin/Actions/ImposeBoundaryConditions.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      32 </span>            : #include &quot;NumericalAlgorithms/DiscontinuousGalerkin/Tags.hpp&quot;
+<span class="lineNum">      33 </span>            : #include &quot;Options/Options.hpp&quot;
+<span class="lineNum">      34 </span>            : #include &quot;Parallel/GotoAction.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      35 </span>            : #include &quot;Parallel/InitializationFunctions.hpp&quot;
+<span class="lineNum">      36 </span>            : #include &quot;Parallel/Reduction.hpp&quot;
+<span class="lineNum">      37 </span>            : #include &quot;Parallel/RegisterDerivedClassesWithCharm.hpp&quot;
+<span class="lineNum">      38 </span>            : #include &quot;PointwiseFunctions/AnalyticSolutions/Tags.hpp&quot;
+<span class="lineNum">      39 </span>            : #include &quot;PointwiseFunctions/AnalyticSolutions/WaveEquation/PlaneWave.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      40 </span>            : #include &quot;PointwiseFunctions/MathFunctions/MathFunction.hpp&quot;
+<span class="lineNum">      41 </span>            : #include &quot;Time/Actions/AdvanceTime.hpp&quot;            // IWYU pragma: keep
+<span class="lineNum">      42 </span>            : #include &quot;Time/Actions/ChangeStepSize.hpp&quot;         // IWYU pragma: keep
+<span class="lineNum">      43 </span>            : #include &quot;Time/Actions/FinalTime.hpp&quot;              // IWYU pragma: keep
+<span class="lineNum">      44 </span>            : #include &quot;Time/Actions/RecordTimeStepperData.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      45 </span>            : #include &quot;Time/Actions/SelfStartActions.hpp&quot;       // IWYU pragma: keep
+<span class="lineNum">      46 </span>            : #include &quot;Time/Actions/UpdateU.hpp&quot;                // IWYU pragma: keep
+<span class="lineNum">      47 </span>            : #include &quot;Time/StepChoosers/Cfl.hpp&quot;               // IWYU pragma: keep
+<span class="lineNum">      48 </span>            : #include &quot;Time/StepChoosers/Constant.hpp&quot;          // IWYU pragma: keep
+<span class="lineNum">      49 </span>            : #include &quot;Time/StepChoosers/Increase.hpp&quot;          // IWYU pragma: keep
+<span class="lineNum">      50 </span>            : #include &quot;Time/StepChoosers/StepChooser.hpp&quot;
+<span class="lineNum">      51 </span>            : #include &quot;Time/StepControllers/StepController.hpp&quot;
+<span class="lineNum">      52 </span>            : #include &quot;Time/Tags.hpp&quot;
+<span class="lineNum">      53 </span>            : #include &quot;Time/TimeSteppers/TimeStepper.hpp&quot;
+<span class="lineNum">      54 </span>            : #include &quot;Time/Triggers/TimeTriggers.hpp&quot;
+<span class="lineNum">      55 </span>            : #include &quot;Utilities/Functional.hpp&quot;
+<span class="lineNum">      56 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span>            : /// \cond
+<span class="lineNum">      59 </span>            : namespace Frame {
+<span class="lineNum">      60 </span>            : // IWYU pragma: no_forward_declare MathFunction
+<span class="lineNum">      61 </span>            : struct Inertial;
+<span class="lineNum">      62 </span>            : }  // namespace Frame
+<span class="lineNum">      63 </span>            : namespace Parallel {
+<span class="lineNum">      64 </span>            : template &lt;typename Metavariables&gt;
+<span class="lineNum">      65 </span>            : class CProxy_ConstGlobalCache;
+<span class="lineNum">      66 </span>            : }  // namespace Parallel
+<span class="lineNum">      67 </span>            : /// \endcond
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      70 </span>            : struct EvolutionMetavars {
+<span class="lineNum">      71 </span>            :   // Customization/&quot;input options&quot; to simulation
+<span class="lineNum">      72 </span><span class="lineNoCov">          0 :   using system = ScalarWave::System&lt;Dim&gt;;</span>
+<span class="lineNum">      73 </span><span class="lineNoCov">          0 :   using temporal_id = Tags::TimeId;</span>
+<span class="lineNum">      74 </span>            :   static constexpr bool local_time_stepping = true;
+<span class="lineNum">      75 </span><span class="lineNoCov">          0 :   using analytic_solution_tag =</span>
+<span class="lineNum">      76 </span>            :       OptionTags::AnalyticSolution&lt;ScalarWave::Solutions::PlaneWave&lt;Dim&gt;&gt;;
+<span class="lineNum">      77 </span><span class="lineNoCov">          0 :   using boundary_condition_tag = analytic_solution_tag;</span>
+<span class="lineNum">      78 </span><span class="lineNoCov">          0 :   using normal_dot_numerical_flux =</span>
+<span class="lineNum">      79 </span>            :       OptionTags::NumericalFluxParams&lt;ScalarWave::UpwindFlux&lt;Dim&gt;&gt;;
+<span class="lineNum">      80 </span>            : 
+<span class="lineNum">      81 </span>            :   // public for use by the Charm++ registration code
+<span class="lineNum">      82 </span><span class="lineNoCov">          0 :   using events = tmpl::list&lt;</span>
+<span class="lineNum">      83 </span>            :       dg::Events::Registrars::ObserveFields&lt;
+<span class="lineNum">      84 </span>            :           Dim, db::get_variables_tags_list&lt;typename system::variables_tag&gt;,
+<span class="lineNum">      85 </span>            :           db::get_variables_tags_list&lt;typename system::variables_tag&gt;&gt;,
+<span class="lineNum">      86 </span>            :       dg::Events::Registrars::ObserveErrorNorms&lt;
+<span class="lineNum">      87 </span>            :           Dim, db::get_variables_tags_list&lt;typename system::variables_tag&gt;&gt;&gt;;
+<span class="lineNum">      88 </span><span class="lineNoCov">          0 :   using triggers = Triggers::time_triggers;</span>
+<span class="lineNum">      89 </span>            : 
+<span class="lineNum">      90 </span>            :   // A tmpl::list of tags to be added to the ConstGlobalCache by the
+<span class="lineNum">      91 </span>            :   // metavariables
+<span class="lineNum">      92 </span><span class="lineNoCov">          0 :   using const_global_cache_tag_list =</span>
+<span class="lineNum">      93 </span>            :       tmpl::list&lt;analytic_solution_tag,
+<span class="lineNum">      94 </span>            :                  OptionTags::TypedTimeStepper&lt;tmpl::conditional_t&lt;
+<span class="lineNum">      95 </span>            :                      local_time_stepping, LtsTimeStepper, TimeStepper&gt;&gt;,
+<span class="lineNum">      96 </span>            :                  OptionTags::EventsAndTriggers&lt;events, triggers&gt;&gt;;
+<span class="lineNum">      97 </span><span class="lineNoCov">          0 :   using domain_creator_tag = OptionTags::DomainCreator&lt;Dim, Frame::Inertial&gt;;</span>
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span>            :   struct ObservationType {};
+<span class="lineNum">     100 </span><span class="lineNoCov">          0 :   using element_observation_type = ObservationType;</span>
+<span class="lineNum">     101 </span>            : 
+<span class="lineNum">     102 </span><span class="lineNoCov">          0 :   using observed_reduction_data_tags = observers::collect_reduction_data_tags&lt;</span>
+<span class="lineNum">     103 </span>            :       typename Event&lt;events&gt;::creatable_classes&gt;;
+<span class="lineNum">     104 </span>            : 
+<span class="lineNum">     105 </span><span class="lineNoCov">          0 :   using step_choosers =</span>
+<span class="lineNum">     106 </span>            :       tmpl::list&lt;StepChoosers::Registrars::Cfl&lt;Dim, Frame::Inertial&gt;,
+<span class="lineNum">     107 </span>            :                  StepChoosers::Registrars::Constant,
+<span class="lineNum">     108 </span>            :                  StepChoosers::Registrars::Increase&gt;;
+<span class="lineNum">     109 </span>            : 
+<span class="lineNum">     110 </span><span class="lineNoCov">          0 :   using compute_rhs = tmpl::flatten&lt;tmpl::list&lt;</span>
+<span class="lineNum">     111 </span>            :       dg::Actions::ComputeNonconservativeBoundaryFluxes&lt;
+<span class="lineNum">     112 </span>            :           Tags::InternalDirections&lt;Dim&gt;&gt;,
+<span class="lineNum">     113 </span>            :       dg::Actions::SendDataForFluxes&lt;EvolutionMetavars&gt;,
+<span class="lineNum">     114 </span>            :       Actions::ComputeTimeDerivative,
+<span class="lineNum">     115 </span>            :       dg::Actions::ComputeNonconservativeBoundaryFluxes&lt;
+<span class="lineNum">     116 </span>            :           Tags::BoundaryDirectionsInterior&lt;Dim&gt;&gt;,
+<span class="lineNum">     117 </span>            :       dg::Actions::ImposeDirichletBoundaryConditions&lt;EvolutionMetavars&gt;,
+<span class="lineNum">     118 </span>            :       dg::Actions::ReceiveDataForFluxes&lt;EvolutionMetavars&gt;,
+<span class="lineNum">     119 </span>            :       tmpl::conditional_t&lt;local_time_stepping, tmpl::list&lt;&gt;,
+<span class="lineNum">     120 </span>            :                           dg::Actions::ApplyFluxes&gt;,
+<span class="lineNum">     121 </span>            :       Actions::RecordTimeStepperData&gt;&gt;;
+<span class="lineNum">     122 </span>            :   // To add filtering to the executable add the action:
+<span class="lineNum">     123 </span>            :   //
+<span class="lineNum">     124 </span>            :   // dg::Actions::ExponentialFilter&lt;0,
+<span class="lineNum">     125 </span>            :   //        tmpl::list&lt;ScalarWave::Pi, ScalarWave::Psi, ScalarWave::Phi&lt;Dim&gt;&gt;&gt;
+<span class="lineNum">     126 </span>            :   //
+<span class="lineNum">     127 </span>            :   // to the end of `update_variables` so it is after `Actions::UpdateU`.
+<span class="lineNum">     128 </span><span class="lineNoCov">          0 :   using update_variables = tmpl::flatten&lt;tmpl::list&lt;</span>
+<span class="lineNum">     129 </span>            :       tmpl::conditional_t&lt;local_time_stepping,
+<span class="lineNum">     130 </span>            :                           dg::Actions::ApplyBoundaryFluxesLocalTimeStepping,
+<span class="lineNum">     131 </span>            :                           tmpl::list&lt;&gt;&gt;,
+<span class="lineNum">     132 </span>            :       Actions::UpdateU&gt;&gt;;
+<span class="lineNum">     133 </span>            : 
+<span class="lineNum">     134 </span>            :   struct EvolvePhaseStart;
+<span class="lineNum">     135 </span><span class="lineNoCov">          0 :   using component_list = tmpl::list&lt;</span>
+<span class="lineNum">     136 </span>            :       observers::Observer&lt;EvolutionMetavars&gt;,
+<span class="lineNum">     137 </span>            :       observers::ObserverWriter&lt;EvolutionMetavars&gt;,
+<span class="lineNum">     138 </span>            :       DgElementArray&lt;
+<span class="lineNum">     139 </span>            :           EvolutionMetavars, dg::Actions::InitializeElement&lt;Dim&gt;,
+<span class="lineNum">     140 </span>            :           tmpl::flatten&lt;tmpl::list&lt;
+<span class="lineNum">     141 </span>            :               SelfStart::self_start_procedure&lt;compute_rhs, update_variables&gt;,
+<span class="lineNum">     142 </span>            :               Actions::Label&lt;EvolvePhaseStart&gt;, Actions::AdvanceTime,
+<span class="lineNum">     143 </span>            :               Actions::RunEventsAndTriggers, Actions::FinalTime,
+<span class="lineNum">     144 </span>            :               tmpl::conditional_t&lt;local_time_stepping,
+<span class="lineNum">     145 </span>            :                                   Actions::ChangeStepSize&lt;step_choosers&gt;,
+<span class="lineNum">     146 </span>            :                                   tmpl::list&lt;&gt;&gt;,
+<span class="lineNum">     147 </span>            :               compute_rhs, update_variables,
+<span class="lineNum">     148 </span>            :               Actions::Goto&lt;EvolvePhaseStart&gt;&gt;&gt;&gt;&gt;;
+<span class="lineNum">     149 </span>            : 
+<span class="lineNum">     150 </span>            :   static constexpr OptionString help{
+<span class="lineNum">     151 </span>            :       &quot;Evolve a Scalar Wave in Dim spatial dimension.\n\n&quot;
+<span class="lineNum">     152 </span>            :       &quot;The analytic solution is: PlaneWave\n&quot;
+<span class="lineNum">     153 </span>            :       &quot;The numerical flux is:    UpwindFlux\n&quot;};
+<span class="lineNum">     154 </span>            : 
+<span class="lineNum">     155 </span><span class="lineNoCov">          0 :   enum class Phase {</span>
+<span class="lineNum">     156 </span>            :     Initialization,
+<span class="lineNum">     157 </span>            :     RegisterWithObserver,
+<span class="lineNum">     158 </span>            :     Evolve,
+<span class="lineNum">     159 </span>            :     Exit
+<span class="lineNum">     160 </span>            :   };
+<span class="lineNum">     161 </span>            : 
+<span class="lineNum">     162 </span><span class="lineNoCov">          0 :   static Phase determine_next_phase(</span>
+<span class="lineNum">     163 </span>            :       const Phase&amp; current_phase,
+<span class="lineNum">     164 </span>            :       const Parallel::CProxy_ConstGlobalCache&lt;
+<span class="lineNum">     165 </span>            :           EvolutionMetavars&gt;&amp; /*cache_proxy*/) noexcept {
+<span class="lineNum">     166 </span>            :     switch (current_phase) {
+<span class="lineNum">     167 </span>            :       case Phase::Initialization:
+<span class="lineNum">     168 </span>            :         return Phase::RegisterWithObserver;
+<span class="lineNum">     169 </span>            :       case Phase::RegisterWithObserver:
+<span class="lineNum">     170 </span>            :         return Phase::Evolve;
+<span class="lineNum">     171 </span>            :       case Phase::Evolve:
+<span class="lineNum">     172 </span>            :         return Phase::Exit;
+<span class="lineNum">     173 </span>            :       case Phase::Exit:
+<span class="lineNum">     174 </span>            :         ERROR(
+<span class="lineNum">     175 </span>            :             &quot;Should never call determine_next_phase with the current phase &quot;
+<span class="lineNum">     176 </span>            :             &quot;being 'Exit'&quot;);
+<span class="lineNum">     177 </span>            :       default:
+<span class="lineNum">     178 </span>            :         ERROR(
+<span class="lineNum">     179 </span>            :             &quot;Unknown type of phase. Did you static_cast&lt;Phase&gt; an integral &quot;
+<span class="lineNum">     180 </span>            :             &quot;value?&quot;);
+<span class="lineNum">     181 </span>            :     }
+<span class="lineNum">     182 </span>            :   }
+<span class="lineNum">     183 </span>            : };
+<span class="lineNum">     184 </span>            : 
+<span class="lineNum">     185 </span>            : static const std::vector&lt;void (*)()&gt; charm_init_node_funcs{
+<span class="lineNum">     186 </span>            :     &amp;setup_error_handling,
+<span class="lineNum">     187 </span>            :     &amp;domain::creators::register_derived_with_charm,
+<span class="lineNum">     188 </span>            :     &amp;Parallel::register_derived_classes_with_charm&lt;
+<span class="lineNum">     189 </span>            :         Event&lt;metavariables::events&gt;&gt;,
+<span class="lineNum">     190 </span>            :     &amp;Parallel::register_derived_classes_with_charm&lt;MathFunction&lt;1&gt;&gt;,
+<span class="lineNum">     191 </span>            :     &amp;Parallel::register_derived_classes_with_charm&lt;
+<span class="lineNum">     192 </span>            :         StepChooser&lt;metavariables::step_choosers&gt;&gt;,
+<span class="lineNum">     193 </span>            :     &amp;Parallel::register_derived_classes_with_charm&lt;StepController&gt;,
+<span class="lineNum">     194 </span>            :     &amp;Parallel::register_derived_classes_with_charm&lt;TimeStepper&gt;,
+<span class="lineNum">     195 </span>            :     &amp;Parallel::register_derived_classes_with_charm&lt;
+<span class="lineNum">     196 </span>            :         Trigger&lt;metavariables::triggers&gt;&gt;};
+<span class="lineNum">     197 </span>            : static const std::vector&lt;void (*)()&gt; charm_init_proc_funcs{
+<span class="lineNum">     198 </span>            :     &amp;enable_floating_point_exceptions};
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

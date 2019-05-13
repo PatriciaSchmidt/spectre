@@ -1,0 +1,32 @@
+# Distributed under the MIT License.
+# See LICENSE.txt for details.
+
+# Executable: SolvePoissonProblem3D
+# Check: execute
+# ExpectedOutput:
+#   Poisson3DReductions.h5
+#   Poisson3DVolume0.h5
+
+AnalyticSolution:
+    WaveNumbers: [1, 1, 1]
+
+DomainCreator:
+  Brick:
+    LowerBound: [0, 0, 0]
+    UpperBound: [3.141592653589793, 3.141592653589793, 3.141592653589793]
+    IsPeriodicIn: [false, false, false]
+    InitialRefinement: [1, 1, 1]
+    InitialGridPoints: [2, 2, 2]
+
+NumericalFluxParams:
+    PenaltyParameter: 2.5464790894703255 # p^2 / h
+
+Verbosity: Verbose
+
+VolumeFileName: "./Poisson3DVolume"
+ReductionFileName: "./Poisson3DReductions"
+
+ConvergenceCriteria:
+  MaxIterations: 1
+  AbsoluteResidual: 0
+  RelativeResidual: 0

@@ -1,0 +1,190 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Evolution/Systems/RelativisticEuler/Valencia/Characteristics.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">Evolution/Systems/RelativisticEuler/Valencia</a> - Characteristics.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;Evolution/Systems/RelativisticEuler/Valencia/Characteristics.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &quot;DataStructures/DataVector.hpp&quot;
+<span class="lineNum">       7 </span>            : #include &quot;DataStructures/Tensor/EagerMath/DotProduct.hpp&quot;
+<span class="lineNum">       8 </span>            : #include &quot;DataStructures/Tensor/Tensor.hpp&quot;
+<span class="lineNum">       9 </span>            : #include &quot;DataStructures/Variables.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;Utilities/GenerateInstantiations.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            : // IWYU pragma: no_forward_declare Tensor
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : /// \cond
+<span class="lineNum">      17 </span>            : namespace RelativisticEuler {
+<span class="lineNum">      18 </span>            : namespace Valencia {
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      21 </span>            : void characteristic_speeds(
+<span class="lineNum">      22 </span>            :     const gsl::not_null&lt;std::array&lt;DataVector, Dim + 2&gt;*&gt; char_speeds,
+<span class="lineNum">      23 </span>            :     const Scalar&lt;DataVector&gt;&amp; lapse, const tnsr::I&lt;DataVector, Dim&gt;&amp; shift,
+<span class="lineNum">      24 </span>            :     const tnsr::I&lt;DataVector, Dim&gt;&amp; spatial_velocity,
+<span class="lineNum">      25 </span>            :     const Scalar&lt;DataVector&gt;&amp; spatial_velocity_squared,
+<span class="lineNum">      26 </span>            :     const Scalar&lt;DataVector&gt;&amp; sound_speed_squared,
+<span class="lineNum">      27 </span>            :     const tnsr::i&lt;DataVector, Dim&gt;&amp; normal) noexcept {
+<span class="lineNum">      28 </span>            :   const size_t num_grid_points = get&lt;0&gt;(shift).size();
+<span class="lineNum">      29 </span>            :   // Allocating a single large buffer is much faster than many small buffers
+<span class="lineNum">      30 </span>            :   Variables&lt;
+<span class="lineNum">      31 </span>            :       tmpl::list&lt;Tags::TempScalar&lt;0&gt;, Tags::TempScalar&lt;1&gt;, Tags::TempScalar&lt;2&gt;,
+<span class="lineNum">      32 </span>            :                  Tags::TempScalar&lt;3&gt;, Tags::TempScalar&lt;4&gt;&gt;&gt;
+<span class="lineNum">      33 </span>            :       temp_tensors{num_grid_points};
+<span class="lineNum">      34 </span>            : 
+<span class="lineNum">      35 </span>            :   // Because we don't require char_speeds to be of the correct size we use a
+<span class="lineNum">      36 </span>            :   // temp buffer for the dot product, then multiply by -1 assigning the result
+<span class="lineNum">      37 </span>            :   // to char_speeds.
+<span class="lineNum">      38 </span>            :   {
+<span class="lineNum">      39 </span>            :     Scalar&lt;DataVector&gt;&amp; normal_shift =
+<span class="lineNum">      40 </span>            :         get&lt;Tags::TempScalar&lt;0&gt;&gt;(temp_tensors);
+<span class="lineNum">      41 </span>            :     dot_product(make_not_null(&amp;normal_shift), normal, shift);
+<span class="lineNum">      42 </span>            :     (*char_speeds)[0] = -1.0 * get(normal_shift);
+<span class="lineNum">      43 </span>            :   }
+<span class="lineNum">      44 </span>            :   // Dim-fold degenerate eigenvalue, reuse normal_shift allocation
+<span class="lineNum">      45 </span>            :   Scalar&lt;DataVector&gt;&amp; normal_velocity =
+<span class="lineNum">      46 </span>            :       get&lt;Tags::TempScalar&lt;0&gt;&gt;(temp_tensors);
+<span class="lineNum">      47 </span>            :   dot_product(make_not_null(&amp;normal_velocity), normal, spatial_velocity);
+<span class="lineNum">      48 </span>            :   (*char_speeds)[1] = (*char_speeds)[0] + get(lapse) * get(normal_velocity);
+<span class="lineNum">      49 </span>            :   for (size_t i = 2; i &lt; Dim + 1; ++i) {
+<span class="lineNum">      50 </span>            :     gsl::at(*char_speeds, i) = (*char_speeds)[1];
+<span class="lineNum">      51 </span>            :   }
+<span class="lineNum">      52 </span>            : 
+<span class="lineNum">      53 </span>            :   Scalar&lt;DataVector&gt;&amp; one_minus_v_sqrd_cs_sqrd =
+<span class="lineNum">      54 </span>            :       get&lt;Tags::TempScalar&lt;1&gt;&gt;(temp_tensors);
+<span class="lineNum">      55 </span>            :   get(one_minus_v_sqrd_cs_sqrd) =
+<span class="lineNum">      56 </span>            :       1.0 - get(spatial_velocity_squared) * get(sound_speed_squared);
+<span class="lineNum">      57 </span>            :   Scalar&lt;DataVector&gt;&amp; vn_times_one_minus_cs_sqrd =
+<span class="lineNum">      58 </span>            :       get&lt;Tags::TempScalar&lt;2&gt;&gt;(temp_tensors);
+<span class="lineNum">      59 </span>            :   get(vn_times_one_minus_cs_sqrd) =
+<span class="lineNum">      60 </span>            :       get(normal_velocity) * (1.0 - get(sound_speed_squared));
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span>            :   Scalar&lt;DataVector&gt;&amp; first_term = get&lt;Tags::TempScalar&lt;3&gt;&gt;(temp_tensors);
+<span class="lineNum">      63 </span>            :   get(first_term) = get(lapse) / get(one_minus_v_sqrd_cs_sqrd);
+<span class="lineNum">      64 </span>            :   Scalar&lt;DataVector&gt;&amp; second_term = get&lt;Tags::TempScalar&lt;4&gt;&gt;(temp_tensors);
+<span class="lineNum">      65 </span>            :   get(second_term) =
+<span class="lineNum">      66 </span>            :       get(first_term) * sqrt(get(sound_speed_squared)) *
+<span class="lineNum">      67 </span>            :       sqrt((1.0 - get(spatial_velocity_squared)) *
+<span class="lineNum">      68 </span>            :            (get(one_minus_v_sqrd_cs_sqrd) -
+<span class="lineNum">      69 </span>            :             get(normal_velocity) * get(vn_times_one_minus_cs_sqrd)));
+<span class="lineNum">      70 </span>            :   get(first_term) *= get(vn_times_one_minus_cs_sqrd);
+<span class="lineNum">      71 </span>            : 
+<span class="lineNum">      72 </span>            :   (*char_speeds)[Dim + 1] =
+<span class="lineNum">      73 </span>            :       (*char_speeds)[0] + get(first_term) + get(second_term);
+<span class="lineNum">      74 </span>            :   (*char_speeds)[0] += get(first_term) - get(second_term);
+<span class="lineNum">      75 </span>            : }
+<span class="lineNum">      76 </span>            : 
+<span class="lineNum">      77 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      78 </span>            : std::array&lt;DataVector, Dim + 2&gt; characteristic_speeds(
+<span class="lineNum">      79 </span>            :     const Scalar&lt;DataVector&gt;&amp; lapse, const tnsr::I&lt;DataVector, Dim&gt;&amp; shift,
+<span class="lineNum">      80 </span>            :     const tnsr::I&lt;DataVector, Dim&gt;&amp; spatial_velocity,
+<span class="lineNum">      81 </span>            :     const Scalar&lt;DataVector&gt;&amp; spatial_velocity_squared,
+<span class="lineNum">      82 </span>            :     const Scalar&lt;DataVector&gt;&amp; sound_speed_squared,
+<span class="lineNum">      83 </span>            :     const tnsr::i&lt;DataVector, Dim&gt;&amp; normal) noexcept {
+<span class="lineNum">      84 </span>            :   std::array&lt;DataVector, Dim + 2&gt; char_speeds{};
+<span class="lineNum">      85 </span>            :   characteristic_speeds(make_not_null(&amp;char_speeds), lapse, shift,
+<span class="lineNum">      86 </span>            :                         spatial_velocity, spatial_velocity_squared,
+<span class="lineNum">      87 </span>            :                         sound_speed_squared, normal);
+<span class="lineNum">      88 </span>            :   return char_speeds;
+<span class="lineNum">      89 </span>            : }
+<span class="lineNum">      90 </span>            : 
+<span class="lineNum">      91 </span>            : }  // namespace Valencia
+<span class="lineNum">      92 </span>            : }  // namespace RelativisticEuler
+<span class="lineNum">      93 </span>            : 
+<span class="lineNum">      94 </span>            : #define DIM(data) BOOST_PP_TUPLE_ELEM(0, data)
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span>            : #define INSTANTIATE(_, data)                                  \
+<span class="lineNum">      97 </span>            :   template std::array&lt;DataVector, DIM(data) + 2&gt;              \
+<span class="lineNum">      98 </span>            :   RelativisticEuler::Valencia::characteristic_speeds(         \
+<span class="lineNum">      99 </span>            :       const Scalar&lt;DataVector&gt;&amp; lapse,                        \
+<span class="lineNum">     100 </span>            :       const tnsr::I&lt;DataVector, DIM(data)&gt;&amp; shift,            \
+<span class="lineNum">     101 </span>            :       const tnsr::I&lt;DataVector, DIM(data)&gt;&amp; spatial_velocity, \
+<span class="lineNum">     102 </span>            :       const Scalar&lt;DataVector&gt;&amp; spatial_velocity_squared,     \
+<span class="lineNum">     103 </span>            :       const Scalar&lt;DataVector&gt;&amp; sound_speed_squared,          \
+<span class="lineNum">     104 </span>            :       const tnsr::i&lt;DataVector, DIM(data)&gt;&amp; normal) noexcept;
+<span class="lineNum">     105 </span>            : 
+<span class="lineNum">     106 </span>            : GENERATE_INSTANTIATIONS(INSTANTIATE, (1, 2, 3))
+<span class="lineNum">     107 </span>            : 
+<span class="lineNum">     108 </span>            : #undef DIM
+<span class="lineNum">     109 </span>            : #undef INSTANTIATE
+<span class="lineNum">     110 </span>            : /// \endcond
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

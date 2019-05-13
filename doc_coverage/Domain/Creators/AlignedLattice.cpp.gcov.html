@@ -1,0 +1,163 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Domain/Creators/AlignedLattice.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">Domain/Creators</a> - AlignedLattice.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryLo">50.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;Domain/Creators/AlignedLattice.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &quot;Domain/Domain.hpp&quot;
+<span class="lineNum">       7 </span>            : #include &quot;Domain/DomainHelpers.hpp&quot;
+<span class="lineNum">       8 </span>            : #include &quot;ErrorHandling/Error.hpp&quot;
+<span class="lineNum">       9 </span>            : #include &quot;Utilities/Algorithm.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;Utilities/StdArrayHelpers.hpp&quot;
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : namespace Frame {
+<span class="lineNum">      13 </span>            : struct Grid;
+<span class="lineNum">      14 </span>            : struct Inertial;
+<span class="lineNum">      15 </span>            : }  // namespace Frame
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            : namespace domain {
+<span class="lineNum">      18 </span><span class="lineCov">          1 : namespace creators {</span>
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : template &lt;size_t VolumeDim, typename TargetFrame&gt;
+<span class="lineNum">      21 </span>            : AlignedLattice&lt;VolumeDim, TargetFrame&gt;::AlignedLattice(
+<span class="lineNum">      22 </span>            :     const typename BlockBounds::type block_bounds,
+<span class="lineNum">      23 </span>            :     const typename IsPeriodicIn::type is_periodic_in,
+<span class="lineNum">      24 </span>            :     const typename InitialRefinement::type initial_refinement_levels,
+<span class="lineNum">      25 </span>            :     const typename InitialGridPoints::type initial_number_of_grid_points,
+<span class="lineNum">      26 </span>            :     typename BlocksToExclude::type blocks_to_exclude) noexcept
+<span class="lineNum">      27 </span>            :     // clang-tidy: trivially copyable
+<span class="lineNum">      28 </span>            :     : block_bounds_(std::move(block_bounds)),         // NOLINT
+<span class="lineNum">      29 </span>            :       is_periodic_in_(std::move(is_periodic_in)),     // NOLINT
+<span class="lineNum">      30 </span>            :       initial_refinement_levels_(                     // NOLINT
+<span class="lineNum">      31 </span>            :           std::move(initial_refinement_levels)),      // NOLINT
+<span class="lineNum">      32 </span>            :       initial_number_of_grid_points_(                 // NOLINT
+<span class="lineNum">      33 </span>            :           std::move(initial_number_of_grid_points)),  // NOLINT
+<span class="lineNum">      34 </span>            :       blocks_to_exclude_(std::move(blocks_to_exclude)),
+<span class="lineNum">      35 </span>            :       number_of_blocks_by_dim_{
+<span class="lineNum">      36 </span>            :           map_array(block_bounds_, [](const std::vector&lt;double&gt;&amp; v) noexcept {
+<span class="lineNum">      37 </span>            :             return v.size() - 1;
+<span class="lineNum">      38 </span>            :           })} {
+<span class="lineNum">      39 </span>            :   if (not blocks_to_exclude_.empty() and
+<span class="lineNum">      40 </span>            :       alg::any_of(is_periodic_in_, [](const bool t) noexcept { return t; })) {
+<span class="lineNum">      41 </span>            :     ERROR(
+<span class="lineNum">      42 </span>            :         &quot;Cannot exclude blocks as well as have periodic boundary &quot;
+<span class="lineNum">      43 </span>            :         &quot;conditions!&quot;);
+<span class="lineNum">      44 </span>            :   }
+<span class="lineNum">      45 </span>            : }
+<span class="lineNum">      46 </span>            : 
+<span class="lineNum">      47 </span>            : template &lt;size_t VolumeDim, typename TargetFrame&gt;
+<span class="lineNum">      48 </span>            : Domain&lt;VolumeDim, TargetFrame&gt;
+<span class="lineNum">      49 </span>            : AlignedLattice&lt;VolumeDim, TargetFrame&gt;::create_domain() const noexcept {
+<span class="lineNum">      50 </span>            :   if (blocks_to_exclude_.empty()) {
+<span class="lineNum">      51 </span>            :     return rectilinear_domain&lt;VolumeDim, TargetFrame&gt;(
+<span class="lineNum">      52 </span>            :         number_of_blocks_by_dim_, block_bounds_, {}, {}, is_periodic_in_);
+<span class="lineNum">      53 </span>            :   }
+<span class="lineNum">      54 </span>            :   return rectilinear_domain&lt;VolumeDim, TargetFrame&gt;(
+<span class="lineNum">      55 </span>            :       number_of_blocks_by_dim_, block_bounds_,
+<span class="lineNum">      56 </span>            :       {std::vector&lt;Index&lt;VolumeDim&gt;&gt;(blocks_to_exclude_.begin(),
+<span class="lineNum">      57 </span>            :                                      blocks_to_exclude_.end())},
+<span class="lineNum">      58 </span>            :       {}, make_array&lt;VolumeDim&gt;(false));
+<span class="lineNum">      59 </span>            : }
+<span class="lineNum">      60 </span>            : 
+<span class="lineNum">      61 </span>            : template &lt;size_t VolumeDim, typename TargetFrame&gt;
+<span class="lineNum">      62 </span>            : std::vector&lt;std::array&lt;size_t, VolumeDim&gt;&gt;
+<span class="lineNum">      63 </span>            : AlignedLattice&lt;VolumeDim, TargetFrame&gt;::initial_extents() const noexcept {
+<span class="lineNum">      64 </span>            :   return {number_of_blocks_by_dim_.product() - blocks_to_exclude_.size(),
+<span class="lineNum">      65 </span>            :           initial_number_of_grid_points_};
+<span class="lineNum">      66 </span>            : }
+<span class="lineNum">      67 </span>            : 
+<span class="lineNum">      68 </span>            : template &lt;size_t VolumeDim, typename TargetFrame&gt;
+<span class="lineNum">      69 </span>            : std::vector&lt;std::array&lt;size_t, VolumeDim&gt;&gt;
+<span class="lineNum">      70 </span>            : AlignedLattice&lt;VolumeDim, TargetFrame&gt;::initial_refinement_levels() const
+<span class="lineNum">      71 </span>            :     noexcept {
+<span class="lineNum">      72 </span>            :   return {number_of_blocks_by_dim_.product() - blocks_to_exclude_.size(),
+<span class="lineNum">      73 </span>            :           initial_refinement_levels_};
+<span class="lineNum">      74 </span>            : }
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span>            : template class AlignedLattice&lt;1, Frame::Inertial&gt;;
+<span class="lineNum">      77 </span>            : template class AlignedLattice&lt;1, Frame::Grid&gt;;
+<span class="lineNum">      78 </span>            : template class AlignedLattice&lt;2, Frame::Inertial&gt;;
+<span class="lineNum">      79 </span>            : template class AlignedLattice&lt;2, Frame::Grid&gt;;
+<span class="lineNum">      80 </span>            : template class AlignedLattice&lt;3, Frame::Inertial&gt;;
+<span class="lineNum">      81 </span>            : template class AlignedLattice&lt;3, Frame::Grid&gt;;
+<span class="lineNum">      82 </span>            : }  // namespace creators
+<span class="lineNum">      83 </span>            : }  // namespace domain
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

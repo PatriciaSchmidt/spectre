@@ -1,0 +1,200 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - DataStructures/SliceIterator.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">DataStructures</a> - SliceIterator.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryLo">50.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;DataStructures/SliceIterator.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;functional&gt;
+<span class="lineNum">       7 </span>            : #include &lt;numeric&gt;
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : #include &quot;DataStructures/Index.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      10 </span>            : #include &quot;ErrorHandling/Assert.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;Utilities/GenerateInstantiations.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;Utilities/Literals.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;Utilities/Numeric.hpp&quot;
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      17 </span>            : SliceIterator::SliceIterator(const Index&lt;Dim&gt;&amp; extents, const size_t fixed_dim,
+<span class="lineNum">      18 </span>            :                              const size_t fixed_index)
+<span class="lineNum">      19 </span>            :     : size_(extents.product()),
+<span class="lineNum">      20 </span>            :       stride_(std::accumulate(extents.begin(), extents.begin() + fixed_dim,
+<span class="lineNum">      21 </span>            :                               1_st, std::multiplies&lt;size_t&gt;())),
+<span class="lineNum">      22 </span>            :       stride_count_(0),
+<span class="lineNum">      23 </span>            :       jump_((extents[fixed_dim] - 1) * stride_),
+<span class="lineNum">      24 </span>            :       initial_offset_(fixed_index * stride_),
+<span class="lineNum">      25 </span>            :       volume_offset_(initial_offset_),
+<span class="lineNum">      26 </span>            :       slice_offset_(0) {}
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            : SliceIterator&amp; SliceIterator::operator++() {
+<span class="lineNum">      29 </span>            :   ++volume_offset_;
+<span class="lineNum">      30 </span>            :   ++slice_offset_;
+<span class="lineNum">      31 </span>            :   ++stride_count_;
+<span class="lineNum">      32 </span>            :   if (stride_count_ == stride_) {
+<span class="lineNum">      33 </span>            :     volume_offset_ += jump_;
+<span class="lineNum">      34 </span>            :     stride_count_ = 0;
+<span class="lineNum">      35 </span>            :   }
+<span class="lineNum">      36 </span>            :   return *this;
+<span class="lineNum">      37 </span>            : }
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span>            : void SliceIterator::reset() {
+<span class="lineNum">      40 </span>            :   volume_offset_ = initial_offset_;
+<span class="lineNum">      41 </span>            :   slice_offset_ = 0;
+<span class="lineNum">      42 </span>            : }
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span>            : template &lt;size_t VolumeDim&gt;
+<span class="lineNum">      45 </span>            : std::pair&lt;std::unique_ptr&lt;std::pair&lt;size_t, size_t&gt;[], decltype(&amp;free)&gt;,
+<span class="lineNum">      46 </span>            :           std::array&lt;std::pair&lt;gsl::span&lt;std::pair&lt;size_t, size_t&gt;&gt;,
+<span class="lineNum">      47 </span>            :                                gsl::span&lt;std::pair&lt;size_t, size_t&gt;&gt;&gt;,
+<span class="lineNum">      48 </span>            :                      VolumeDim&gt;&gt;
+<span class="lineNum">      49 </span><span class="lineCov">          1 : volume_and_slice_indices(const Index&lt;VolumeDim&gt;&amp; extents) noexcept {</span>
+<span class="lineNum">      50 </span>            :   std::unique_ptr&lt;std::pair&lt;size_t, size_t&gt;[], decltype(&amp;free)&gt; indices_buffer(
+<span class="lineNum">      51 </span>            :       nullptr, &amp;free);
+<span class="lineNum">      52 </span>            :   // array over dim, pair over lower/upper, span&lt;pair&gt; over volume/boundary
+<span class="lineNum">      53 </span>            :   std::array&lt;std::pair&lt;gsl::span&lt;std::pair&lt;size_t, size_t&gt;&gt;,
+<span class="lineNum">      54 </span>            :                        gsl::span&lt;std::pair&lt;size_t, size_t&gt;&gt;&gt;,
+<span class="lineNum">      55 </span>            :              VolumeDim&gt;
+<span class="lineNum">      56 </span>            :       volume_and_slice_indices{};
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span>            :   const size_t half_number_boundary_points = alg::accumulate(
+<span class="lineNum">      59 </span>            :       alg::iota(std::array&lt;size_t, VolumeDim&gt;{{}}, 0_st),
+<span class="lineNum">      60 </span>            :       0_st, [&amp;extents](const size_t state, const size_t d) noexcept {
+<span class="lineNum">      61 </span>            :         return state + extents.slice_away(d).product();
+<span class="lineNum">      62 </span>            :       });
+<span class="lineNum">      63 </span>            :   ASSERT(half_number_boundary_points != 0,
+<span class="lineNum">      64 </span>            :          &quot;If you encounter this assert you've found a bug in the &quot;
+<span class="lineNum">      65 </span>            :          &quot;'volume_and_slice_indices' function. Please file an issue describing &quot;
+<span class="lineNum">      66 </span>            :          &quot;the necessary steps to reproduce this error. Thank you!&quot;);
+<span class="lineNum">      67 </span>            :   // clang-tidy thinks we make size zero allocations. The ASSERT prevents that.
+<span class="lineNum">      68 </span>            :   // NOLINTNEXTLINE(clang-analyzer-unix.API)
+<span class="lineNum">      69 </span>            :   indices_buffer.reset(static_cast&lt;std::pair&lt;size_t, size_t&gt;*&gt;(malloc(
+<span class="lineNum">      70 </span>            :       sizeof(std::pair&lt;size_t, size_t&gt;) * half_number_boundary_points * 2)));
+<span class="lineNum">      71 </span>            :   size_t alloc_offset = 0;
+<span class="lineNum">      72 </span>            :   for (size_t d = 0; d &lt; VolumeDim; ++d) {
+<span class="lineNum">      73 </span>            :     const auto boundary_extents = extents.slice_away(d);
+<span class="lineNum">      74 </span>            :     const auto num_points = boundary_extents.product();
+<span class="lineNum">      75 </span>            :     gsl::at(volume_and_slice_indices, d).first =
+<span class="lineNum">      76 </span>            :         gsl::make_span(indices_buffer.get() + alloc_offset, num_points);
+<span class="lineNum">      77 </span>            :     alloc_offset += num_points;
+<span class="lineNum">      78 </span>            :     gsl::at(volume_and_slice_indices, d).second =
+<span class="lineNum">      79 </span>            :         gsl::make_span(indices_buffer.get() + alloc_offset, num_points);
+<span class="lineNum">      80 </span>            :     alloc_offset += num_points;
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span>            :     size_t index = 0;
+<span class="lineNum">      83 </span>            :     // si_lower is a macro in some standard libs, so name sli_
+<span class="lineNum">      84 </span>            :     for (SliceIterator sli_lower(extents, d, 0),
+<span class="lineNum">      85 </span>            :          sli_upper(extents, d, extents[d] - 1);
+<span class="lineNum">      86 </span>            :          sli_lower and sli_upper;
+<span class="lineNum">      87 </span>            :          (void)++sli_lower, (void)++sli_upper, (void)++index) {
+<span class="lineNum">      88 </span>            :       gsl::at(gsl::at(volume_and_slice_indices, d).first, index).first =
+<span class="lineNum">      89 </span>            :           sli_lower.volume_offset();
+<span class="lineNum">      90 </span>            :       gsl::at(gsl::at(volume_and_slice_indices, d).first, index).second =
+<span class="lineNum">      91 </span>            :           sli_lower.slice_offset();
+<span class="lineNum">      92 </span>            : 
+<span class="lineNum">      93 </span>            :       gsl::at(gsl::at(volume_and_slice_indices, d).second, index).first =
+<span class="lineNum">      94 </span>            :           sli_upper.volume_offset();
+<span class="lineNum">      95 </span>            :       gsl::at(gsl::at(volume_and_slice_indices, d).second, index).second =
+<span class="lineNum">      96 </span>            :           sli_upper.slice_offset();
+<span class="lineNum">      97 </span>            :     }
+<span class="lineNum">      98 </span>            :   }
+<span class="lineNum">      99 </span>            : 
+<span class="lineNum">     100 </span>            :   return {std::move(indices_buffer), std::move(volume_and_slice_indices)};
+<span class="lineNum">     101 </span>            : }
+<span class="lineNum">     102 </span>            : 
+<span class="lineNum">     103 </span>            : /// \cond HIDDEN_SYMBOLS
+<span class="lineNum">     104 </span>            : #define DIM(data) BOOST_PP_TUPLE_ELEM(0, data)
+<span class="lineNum">     105 </span>            : #define INSTANTIATION(r, data)                                                 \
+<span class="lineNum">     106 </span>            :   template SliceIterator::SliceIterator(const Index&lt;DIM(data)&gt;&amp;, const size_t, \
+<span class="lineNum">     107 </span>            :                                         const size_t);                         \
+<span class="lineNum">     108 </span>            :   template std::pair&lt;                                                          \
+<span class="lineNum">     109 </span>            :       std::unique_ptr&lt;std::pair&lt;size_t, size_t&gt;[], decltype(&amp;free)&gt;,           \
+<span class="lineNum">     110 </span>            :       std::array&lt;std::pair&lt;gsl::span&lt;std::pair&lt;size_t, size_t&gt;&gt;,               \
+<span class="lineNum">     111 </span>            :                            gsl::span&lt;std::pair&lt;size_t, size_t&gt;&gt;&gt;,              \
+<span class="lineNum">     112 </span>            :                  DIM(data)&gt;&gt;                                                   \
+<span class="lineNum">     113 </span>            :   volume_and_slice_indices&lt;DIM(data)&gt;(                                         \
+<span class="lineNum">     114 </span>            :       const Index&lt;DIM(data)&gt;&amp; extents) noexcept;
+<span class="lineNum">     115 </span>            : 
+<span class="lineNum">     116 </span>            : GENERATE_INSTANTIATIONS(INSTANTIATION, (1, 2, 3))
+<span class="lineNum">     117 </span>            : 
+<span class="lineNum">     118 </span>            : #undef DIM
+<span class="lineNum">     119 </span>            : #undef INSTANTIATE
+<span class="lineNum">     120 </span>            : /// \endcond
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

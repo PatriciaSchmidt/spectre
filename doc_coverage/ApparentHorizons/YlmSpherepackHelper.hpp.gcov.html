@@ -1,0 +1,130 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - ApparentHorizons/YlmSpherepackHelper.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">ApparentHorizons</a> - YlmSpherepackHelper.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;array&gt;
+<span class="lineNum">       7 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       8 </span>            : #include &lt;vector&gt;
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : namespace YlmSpherepack_detail {
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            : /// Holds the various 'work' arrays for YlmSpherepack.
+<span class="lineNum">      15 </span>            : struct Storage {
+<span class="lineNum">      16 </span>            :   std::vector&lt;double&gt; work_phys_to_spec;
+<span class="lineNum">      17 </span>            :   std::vector&lt;double&gt; work_scalar_spec_to_phys;
+<span class="lineNum">      18 </span>            :   std::vector&lt;double&gt; work_vector_spec_to_phys;
+<span class="lineNum">      19 </span>            :   std::vector&lt;double&gt; theta, phi, sin_theta, cos_theta;
+<span class="lineNum">      20 </span>            :   std::vector&lt;double&gt; cos_phi, sin_phi, cosec_theta, cot_theta;
+<span class="lineNum">      21 </span>            :   std::vector&lt;double&gt; quadrature_weights;
+<span class="lineNum">      22 </span>            :   std::vector&lt;double&gt; work_interp_alpha;
+<span class="lineNum">      23 </span>            :   std::vector&lt;double&gt; work_interp_beta;
+<span class="lineNum">      24 </span>            :   std::vector&lt;double&gt; work_interp_pmm;
+<span class="lineNum">      25 </span>            :   std::vector&lt;size_t&gt; work_interp_index;
+<span class="lineNum">      26 </span>            : };
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            : /// This is a quick way of providing temporary space that is
+<span class="lineNum">      29 </span>            : /// re-utilized many times without the expense of mallocs.  This
+<span class="lineNum">      30 </span>            : /// turned out to be important for optimizing SpEC (because
+<span class="lineNum">      31 </span>            : /// YlmSpherepack is used for the basis functions in the most
+<span class="lineNum">      32 </span>            : /// expensive subdomains) but may or may not be important for SpECTRE.
+<span class="lineNum">      33 </span>            : class MemoryPool {
+<span class="lineNum">      34 </span>            :  public:
+<span class="lineNum">      35 </span>            :   MemoryPool() = default;
+<span class="lineNum">      36 </span>            :   std::vector&lt;double&gt;&amp; get(size_t n_pts) noexcept;
+<span class="lineNum">      37 </span>            :   void free(const std::vector&lt;double&gt;&amp; to_be_freed) noexcept;
+<span class="lineNum">      38 </span>            :   void free(gsl::not_null&lt;double*&gt; to_be_freed) noexcept;
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span>            :  private:
+<span class="lineNum">      41 </span>            :   struct StorageAndAvailability {
+<span class="lineNum">      42 </span>            :     std::vector&lt;double&gt; storage;
+<span class="lineNum">      43 </span>            :     bool currently_in_use{false};
+<span class="lineNum">      44 </span>            :   };
+<span class="lineNum">      45 </span>            :   // It turns out that the maximum number of temporaries needed in a
+<span class="lineNum">      46 </span>            :   // single YlmSpherepack calculation is 9.
+<span class="lineNum">      47 </span>            :   static const constexpr size_t num_temps_ = 9;
+<span class="lineNum">      48 </span>            :   std::array&lt;StorageAndAvailability, num_temps_&gt; memory_pool_;
+<span class="lineNum">      49 </span>            : };
+<span class="lineNum">      50 </span>            : }  // namespace YlmSpherepack_detail
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

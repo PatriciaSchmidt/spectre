@@ -1,0 +1,167 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - DataStructures/SliceIterator.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">DataStructures</a> - SliceIterator.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntry">16</td>
+            <td class="headerCovTableEntryLo">50.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;array&gt;
+<span class="lineNum">       7 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       8 </span>            : #include &lt;cstdlib&gt;
+<span class="lineNum">       9 </span>            : #include &lt;limits&gt;
+<span class="lineNum">      10 </span>            : #include &lt;memory&gt;
+<span class="lineNum">      11 </span>            : #include &lt;utility&gt;
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : /// \cond
+<span class="lineNum">      16 </span>            : template &lt;size_t&gt;
+<span class="lineNum">      17 </span>            : class Index;
+<span class="lineNum">      18 </span>            : /// \endcond
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : /*!
+<span class="lineNum">      21 </span>            :  * \ingroup DataStructuresGroup
+<span class="lineNum">      22 </span>            :  * \brief Iterate over a (dim-1)-dimensional slice
+<span class="lineNum">      23 </span>            :  */
+<span class="lineNum">      24 </span><span class="lineCov">          1 : class SliceIterator {</span>
+<span class="lineNum">      25 </span>            :  public:
+<span class="lineNum">      26 </span>            :   /*!
+<span class="lineNum">      27 </span>            :    * @param extents the number of grid points in each dimension
+<span class="lineNum">      28 </span>            :    * @param fixed_dim the dimension to slice in
+<span class="lineNum">      29 </span>            :    * @param fixed_index the index of the `fixed_dim` to slice at
+<span class="lineNum">      30 </span>            :    */
+<span class="lineNum">      31 </span>            :   template &lt;size_t Dim&gt;
+<span class="lineNum">      32 </span><span class="lineCov">          1 :   SliceIterator(const Index&lt;Dim&gt;&amp; extents, size_t fixed_dim,</span>
+<span class="lineNum">      33 </span>            :                 size_t fixed_index);
+<span class="lineNum">      34 </span>            : 
+<span class="lineNum">      35 </span>            :   /// Returns `true` if the iterator is valid
+<span class="lineNum">      36 </span><span class="lineCov">          1 :   explicit operator bool() const noexcept { return volume_offset_ &lt; size_; }</span>
+<span class="lineNum">      37 </span>            : 
+<span class="lineNum">      38 </span>            :   /// Step to the next grid point
+<span class="lineNum">      39 </span><span class="lineCov">          1 :   SliceIterator&amp; operator++();</span>
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            :   /// Offset into a Dim-dimensional DataVector at the current gridpoint.
+<span class="lineNum">      42 </span>            :   /// Note that the size of the DataVector is assumed to be the product of the
+<span class="lineNum">      43 </span>            :   /// extents used to construct this SliceIterator
+<span class="lineNum">      44 </span><span class="lineCov">          1 :   size_t volume_offset() const noexcept { return volume_offset_; }</span>
+<span class="lineNum">      45 </span>            : 
+<span class="lineNum">      46 </span>            :   /// Offset into a (Dim-1)-dimensional DataVector at the current gridpoint.
+<span class="lineNum">      47 </span>            :   /// Note that the size of the DataVector is assumed to be the product of the
+<span class="lineNum">      48 </span>            :   /// extents used to construct this SliceIterator divided by the extent in
+<span class="lineNum">      49 </span>            :   /// the fixed_dim used to construct this SliceIterator
+<span class="lineNum">      50 </span><span class="lineCov">          1 :   size_t slice_offset() const noexcept { return slice_offset_; }</span>
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            :   /// Reset the iterator
+<span class="lineNum">      53 </span><span class="lineCov">          1 :   void reset();</span>
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span>            :  private:
+<span class="lineNum">      56 </span><span class="lineNoCov">          0 :   size_t size_ = std::numeric_limits&lt;size_t&gt;::max();</span>
+<span class="lineNum">      57 </span><span class="lineNoCov">          0 :   size_t stride_ = std::numeric_limits&lt;size_t&gt;::max();</span>
+<span class="lineNum">      58 </span><span class="lineNoCov">          0 :   size_t stride_count_ = std::numeric_limits&lt;size_t&gt;::max();</span>
+<span class="lineNum">      59 </span><span class="lineNoCov">          0 :   size_t jump_ = std::numeric_limits&lt;size_t&gt;::max();</span>
+<span class="lineNum">      60 </span><span class="lineNoCov">          0 :   size_t initial_offset_ = std::numeric_limits&lt;size_t&gt;::max();</span>
+<span class="lineNum">      61 </span><span class="lineNoCov">          0 :   size_t volume_offset_ = std::numeric_limits&lt;size_t&gt;::max();</span>
+<span class="lineNum">      62 </span><span class="lineNoCov">          0 :   size_t slice_offset_ = std::numeric_limits&lt;size_t&gt;::max();</span>
+<span class="lineNum">      63 </span>            : };
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span>            : /*!
+<span class="lineNum">      66 </span>            :  * \ingroup DataStructuresGroup
+<span class="lineNum">      67 </span>            :  * \brief Get the mapping between volume and boundary slice indices
+<span class="lineNum">      68 </span>            :  *
+<span class="lineNum">      69 </span>            :  * SliceIterator is used to map between the index of a point on a slice in the
+<span class="lineNum">      70 </span>            :  * volume data and the index in the corresponding sliced data. Repeatedly
+<span class="lineNum">      71 </span>            :  * applying the SliceIterator on various components of a tensor becomes very
+<span class="lineNum">      72 </span>            :  * expensive and so precomputing the index map is sometimes advantageous. This
+<span class="lineNum">      73 </span>            :  * function computes the index map onto all boundary slices of volume mesh with
+<span class="lineNum">      74 </span>            :  * extents `extents`.
+<span class="lineNum">      75 </span>            :  *
+<span class="lineNum">      76 </span>            :  * The `unique_ptr` is where the volume and slice indices are stored in memory,
+<span class="lineNum">      77 </span>            :  * the array holds views into the memory buffer. The index of the array is the
+<span class="lineNum">      78 </span>            :  * fixed dimension, the outer `pair` holds the indices for the lower and upper
+<span class="lineNum">      79 </span>            :  * side,  respectively, while the `pair`s in the `span`s hold the volume and
+<span class="lineNum">      80 </span>            :  * slice indices, respectively.
+<span class="lineNum">      81 </span>            :  */
+<span class="lineNum">      82 </span>            : template &lt;size_t VolumeDim&gt;
+<span class="lineNum">      83 </span><span class="lineCov">          1 : auto volume_and_slice_indices(const Index&lt;VolumeDim&gt;&amp; extents) noexcept</span>
+<span class="lineNum">      84 </span>            :     -&gt; std::pair&lt;std::unique_ptr&lt;std::pair&lt;size_t, size_t&gt;[], decltype(&amp;free)&gt;,
+<span class="lineNum">      85 </span>            :                  std::array&lt;std::pair&lt;gsl::span&lt;std::pair&lt;size_t, size_t&gt;&gt;,
+<span class="lineNum">      86 </span>            :                                       gsl::span&lt;std::pair&lt;size_t, size_t&gt;&gt;&gt;,
+<span class="lineNum">      87 </span>            :                             VolumeDim&gt;&gt;;
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

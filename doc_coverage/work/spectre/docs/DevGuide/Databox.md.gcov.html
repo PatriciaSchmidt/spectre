@@ -1,0 +1,449 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - /work/spectre/docs/DevGuide/Databox.md</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">work/spectre/docs/DevGuide</a> - Databox.md</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : \cond NEVER</span>
+<span class="lineNum">       2 </span>            : Distributed under the MIT License.
+<span class="lineNum">       3 </span>            : See LICENSE.txt for details.
+<span class="lineNum">       4 </span>            : \endcond
+<span class="lineNum">       5 </span>            : # Motivation for SpECTRE's DataBox {#databox_foundations}
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            : \tableofcontents
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : # Introduction {#introduction}
+<span class="lineNum">      10 </span>            : This page walks the user through the iterative process that led to SpECTRE's
+<span class="lineNum">      11 </span>            : DataBox. At each stage, it discusses the advances and challenges that result
+<span class="lineNum">      12 </span>            : from each improvement.
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            : # Towards SpECTRE's DataBox {#towards_spectres_databox}
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : ## Working without DataBoxes {#working_without_databoxes}
+<span class="lineNum">      17 </span>            : In a small C++ program, it is common to use the built-in fundamental types
+<span class="lineNum">      18 </span>            : (bool, int, double, etc.) in computations, and to give variable names to
+<span class="lineNum">      19 </span>            : objects of these types. For example, a section of a small program may look like
+<span class="lineNum">      20 </span>            : this:
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : \snippet Test_DataBoxDocumentation.cpp working_without_databoxes_small_program_1
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : What changes as our program's size increases in scale? In SpECTRE, one of our
+<span class="lineNum">      25 </span>            : driving design goals is modularity. In other words, functionality should be
+<span class="lineNum">      26 </span>            : easy to swap in and out as desired. These smaller modules are easier to test,
+<span class="lineNum">      27 </span>            : and keep the code flexible. We could wrap our calculation in such a module,
+<span class="lineNum">      28 </span>            : which would then allow us to decouple the initial setup of the variables from
+<span class="lineNum">      29 </span>            : where they are used in calculations:
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span>            : \snippet Test_DataBoxDocumentation.cpp working_without_databoxes_mass_compute
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span>            : \snippet Test_DataBoxDocumentation.cpp working_without_databoxes_accel_compute
+<span class="lineNum">      34 </span>            : 
+<span class="lineNum">      35 </span>            : Our small program can now be written as:
+<span class="lineNum">      36 </span>            : 
+<span class="lineNum">      37 </span>            : \snippet Test_DataBoxDocumentation.cpp working_without_databoxes_small_program_2
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span>            : One advantage is immediate: we are free to add other computation modules that
+<span class="lineNum">      40 </span>            : are independently testable and reusable. As the number of routines grows, we
+<span class="lineNum">      41 </span>            : can even begin to write routines that work on top of existing ones.
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span>            : \snippet Test_DataBoxDocumentation.cpp working_without_databoxes_force_compute
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span>            : While we have made progress, two problems arise. Our first problem is that as
+<span class="lineNum">      46 </span>            : the number of quantities grows, it becomes more unwieldy to have to specify
+<span class="lineNum">      47 </span>            : each function argument in our routine. The second problem is worse: the
+<span class="lineNum">      48 </span>            : arguments passed to functions can be transposed and the program will still
+<span class="lineNum">      49 </span>            : compile and run, but produce incorrect output. For example, the following two
+<span class="lineNum">      50 </span>            : lines are equally well-formed from the point of view of the program:
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            : \snippet Test_DataBoxDocumentation.cpp working_without_databoxes_failed_accel
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span>            : Every time we call `acceleration_compute` we need to make sure we pass in the
+<span class="lineNum">      55 </span>            : arguments in the correct order. In large programs where `acceleration_compute`
+<span class="lineNum">      56 </span>            : is called many times, it becomes inevitable that the arguments will be
+<span class="lineNum">      57 </span>            : accidentally transposed. We can address the two problems described above with a
+<span class="lineNum">      58 </span>            : `std::map`, the first container we'll consider in this series.
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span>            : ##A std::map DataBox {#a_std_map_databox}
+<span class="lineNum">      61 </span>            : We can encapsulate the variables we use in a `std::map`, and the first half of
+<span class="lineNum">      62 </span>            : our small program example now looks like this:
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span>            : \snippet Test_DataBoxDocumentation.cpp std_map_databox_small_program_1
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span>            : We have not yet taken full advantage of the encapsulation that `std::map`
+<span class="lineNum">      67 </span>            : provides. We do so by rewriting our other routines to take only a single
+<span class="lineNum">      68 </span>            : argument, i.e. the `std::map` itself:
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span>            : \snippet Test_DataBoxDocumentation.cpp std_map_databox_mass_compute
+<span class="lineNum">      71 </span>            : 
+<span class="lineNum">      72 </span>            : \snippet Test_DataBoxDocumentation.cpp std_map_databox_accel_compute
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span>            : Notice that this solves the problem of having to provide the arguments
+<span class="lineNum">      75 </span>            : in the correct order to every function call of `acceleration_compute`:
+<span class="lineNum">      76 </span>            : 
+<span class="lineNum">      77 </span>            : \snippet Test_DataBoxDocumentation.cpp std_map_databox_force_compute
+<span class="lineNum">      78 </span>            : 
+<span class="lineNum">      79 </span>            : 
+<span class="lineNum">      80 </span>            : Our small program now looks like:
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span>            : \snippet Test_DataBoxDocumentation.cpp std_map_databox_small_program_2
+<span class="lineNum">      83 </span>            : 
+<span class="lineNum">      84 </span>            : Within each function, we no longer need to worry about passing in the arguments
+<span class="lineNum">      85 </span>            : in the correct order. This is a great improvement, but our reliance on proper
+<span class="lineNum">      86 </span>            : names does leave us open to the following mistake:
+<span class="lineNum">      87 </span>            : 
+<span class="lineNum">      88 </span>            : ~~~{.c}
+<span class="lineNum">      89 </span>            : // returns 0 without emitting an error!
+<span class="lineNum">      90 </span>            : return naive_databox[&quot;MisspelledKey&quot;];
+<span class="lineNum">      91 </span>            : ~~~
+<span class="lineNum">      92 </span>            : 
+<span class="lineNum">      93 </span>            : In the above example, the map is asked to return a value given a key
+<span class="lineNum">      94 </span>            : that does not exist! As written, however, the program is well-formed and no
+<span class="lineNum">      95 </span>            : error is emitted. (In the case of std::map, [a value is created.]
+<span class="lineNum">      96 </span>            : (https://en.cppreference.com/w/cpp/container/map/operator_at)) Because the keys
+<span class="lineNum">      97 </span>            : are indistinguishable from their type alone, the mistake cannot be caught at
+<span class="lineNum">      98 </span>            : compile time. In our example, the mistake won't even be caught at run time. The
+<span class="lineNum">      99 </span>            : run time portion of a SpECTRE calculation will typically be much longer (up to
+<span class="lineNum">     100 </span>            : thousands of times longer!) than the compile time portion, so it is critical to
+<span class="lineNum">     101 </span>            : catch costly mistakes like this as early into the calculation as possible.
+<span class="lineNum">     102 </span>            : Although names encoded as `std::string` cannot be distinguished by the
+<span class="lineNum">     103 </span>            : compiler, names encoded as types *can* be. This is possible with C++'s static
+<span class="lineNum">     104 </span>            : typing, and to take advantage of this we need a container that is
+<span class="lineNum">     105 </span>            : *heterogeneous*, that is, capable of holding objects of different types.
+<span class="lineNum">     106 </span>            : 
+<span class="lineNum">     107 </span>            : ## A std::tuple DataBox {#a_std_tuple_databox}
+<span class="lineNum">     108 </span>            : 
+<span class="lineNum">     109 </span>            : A well-documented example of a fixed-size heterogeneous container of types is
+<span class="lineNum">     110 </span>            : [std::tuple](https://en.cppreference.com/w/cpp/utility/tuple):
+<span class="lineNum">     111 </span>            : 
+<span class="lineNum">     112 </span>            : \snippet Test_DataBoxDocumentation.cpp std_tuple_databox_1
+<span class="lineNum">     113 </span>            : 
+<span class="lineNum">     114 </span>            : The contents of the `std_tuple` are obtained using
+<span class="lineNum">     115 </span>            : [std::get](https://en.cppreference.com/w/cpp/utility/tuple/get):
+<span class="lineNum">     116 </span>            : 
+<span class="lineNum">     117 </span>            : \snippet Test_DataBoxDocumentation.cpp std_tuple_databox_2
+<span class="lineNum">     118 </span>            : 
+<span class="lineNum">     119 </span>            : In the above, we can see that we have promoted our keys from different values
+<span class="lineNum">     120 </span>            : all of type `std::string` to different types entirely. We are not limited to
+<span class="lineNum">     121 </span>            : fundamental types, we are free to make our own structs that serve as keys.
+<span class="lineNum">     122 </span>            : These user-created types are called *tags*.
+<span class="lineNum">     123 </span>            : 
+<span class="lineNum">     124 </span>            : As the sole purpose of the tag is to provide the compiler with a type
+<span class="lineNum">     125 </span>            : distinguishable from other types, they can be as simple as the following:
+<span class="lineNum">     126 </span>            : 
+<span class="lineNum">     127 </span>            : \snippet Test_DataBoxDocumentation.cpp std_tuple_tags
+<span class="lineNum">     128 </span>            : 
+<span class="lineNum">     129 </span>            : Note that we have now promoted `Velocity`, `Radius`, etc. from being *values*
+<span class="lineNum">     130 </span>            : associated with `std::string`s at run time, to *types* distinguishable from
+<span class="lineNum">     131 </span>            : other types at compile time. A large portion of SpECTRE is designed with the
+<span class="lineNum">     132 </span>            : philosophy of enlisting the help of the compiler in assuring the correctness
+<span class="lineNum">     133 </span>            : of our programs. An example of a `std::tuple` making use of these tags might
+<span class="lineNum">     134 </span>            : look like:
+<span class="lineNum">     135 </span>            : 
+<span class="lineNum">     136 </span>            : ~~~{.c}
+<span class="lineNum">     137 </span>            : // Note: This won't work!
+<span class="lineNum">     138 </span>            : std::tuple&lt;Velocity, Radius, Density, Volume&gt; sophomore_databox =
+<span class="lineNum">     139 </span>            :   std::make_tuple(4.0, 2.0, 0.5, 10.0);
+<span class="lineNum">     140 </span>            : ~~~
+<span class="lineNum">     141 </span>            : 
+<span class="lineNum">     142 </span>            : Unfortunately, this will not work. The types passed as template parameters to
+<span class="lineNum">     143 </span>            : `std::tuple` must also be the types of the arguments passed to
+<span class="lineNum">     144 </span>            : `std::make_tuple`. Using a `std::pair`, we could write the above as:
+<span class="lineNum">     145 </span>            : 
+<span class="lineNum">     146 </span>            : \snippet Test_DataBoxDocumentation.cpp std_tuple_small_program_1
+<span class="lineNum">     147 </span>            : 
+<span class="lineNum">     148 </span>            : What remains is to rewrite our functions to use `std::tuple` instead of
+<span class="lineNum">     149 </span>            : `std::map`. Note that since we are now using a heterogeneous container of
+<span class="lineNum">     150 </span>            : potentially unknown type, our functions must be templated on the
+<span class="lineNum">     151 </span>            : pairs used to create the `sophomore_databox`. Our functions then look like:
+<span class="lineNum">     152 </span>            : 
+<span class="lineNum">     153 </span>            : \snippet Test_DataBoxDocumentation.cpp std_tuple_mass_compute
+<span class="lineNum">     154 </span>            : 
+<span class="lineNum">     155 </span>            : \snippet Test_DataBoxDocumentation.cpp std_tuple_acceleration_compute
+<span class="lineNum">     156 </span>            : 
+<span class="lineNum">     157 </span>            : \snippet Test_DataBoxDocumentation.cpp std_tuple_force_compute
+<span class="lineNum">     158 </span>            : 
+<span class="lineNum">     159 </span>            : Using all these `std::pair`s to get our `std::tuple` to work is a bit
+<span class="lineNum">     160 </span>            : cumbersome. There is another way to package together the tagging ability
+<span class="lineNum">     161 </span>            : of the struct names with the type information of the values we wish to store.
+<span class="lineNum">     162 </span>            : To do this we need to make modifications to both our tags as well as our
+<span class="lineNum">     163 </span>            : %Databox implementation. This is what is done in SpECTRE's
+<span class="lineNum">     164 </span>            : `tuples::TaggedTuple`, which is an improved implementation of `std::tuple` in
+<span class="lineNum">     165 </span>            : terms of both performance and interface.
+<span class="lineNum">     166 </span>            : 
+<span class="lineNum">     167 </span>            : ##A TaggedTuple DataBox {#a_taggedtuple_databox}
+<span class="lineNum">     168 </span>            : 
+<span class="lineNum">     169 </span>            : TaggedTuple is an implementation of a compile time container where the keys
+<span class="lineNum">     170 </span>            : are tags.
+<span class="lineNum">     171 </span>            : 
+<span class="lineNum">     172 </span>            : Tags that are compatible with SpECTRE's `tuples::TaggedTuple` must have the
+<span class="lineNum">     173 </span>            : type alias `type` in their structs. This type alias carries the type
+<span class="lineNum">     174 </span>            : information of the data we wish to store in the databox. `tuples::TaggedTuple`
+<span class="lineNum">     175 </span>            : is able to make use of this type information so we won't need auxiliary
+<span class="lineNum">     176 </span>            : constructs such as `std::pair` to package this information together anymore.
+<span class="lineNum">     177 </span>            : Our new tags now look like:
+<span class="lineNum">     178 </span>            : 
+<span class="lineNum">     179 </span>            : \snippet Test_DataBoxDocumentation.cpp tagged_tuple_tags
+<span class="lineNum">     180 </span>            : 
+<span class="lineNum">     181 </span>            : We are now able to create the `junior_databox` below in the same way we
+<span class="lineNum">     182 </span>            : initially wished to create the `sophomore_databox` above:
+<span class="lineNum">     183 </span>            : 
+<span class="lineNum">     184 </span>            : \snippet Test_DataBoxDocumentation.cpp tagged_tuple_databox_1
+<span class="lineNum">     185 </span>            : 
+<span class="lineNum">     186 </span>            : Our functions similarly simplify:
+<span class="lineNum">     187 </span>            : 
+<span class="lineNum">     188 </span>            : \snippet Test_DataBoxDocumentation.cpp tagged_tuple_mass_compute
+<span class="lineNum">     189 </span>            : 
+<span class="lineNum">     190 </span>            : \snippet Test_DataBoxDocumentation.cpp tagged_tuple_acceleration_compute
+<span class="lineNum">     191 </span>            : 
+<span class="lineNum">     192 </span>            : \snippet Test_DataBoxDocumentation.cpp tagged_tuple_force_compute
+<span class="lineNum">     193 </span>            : 
+<span class="lineNum">     194 </span>            : In each of these iterations of the Databox, we started with initial quantities
+<span class="lineNum">     195 </span>            : and computed subsequent quantities. Let us consider again `force_compute`, in
+<span class="lineNum">     196 </span>            : which `mass` and `acceleration` are recomputed for every call to
+<span class="lineNum">     197 </span>            : `force_compute`. If `Mass` and `Acceleration` were tags somewhow, that is, if we
+<span class="lineNum">     198 </span>            : could compute them once, place them in the databox, and get them back out
+<span class="lineNum">     199 </span>            : through the use of tags, we could get around this problem. We are now ready to
+<span class="lineNum">     200 </span>            : consider SpECTRE's DataBox, which provides the solution to this problem in the
+<span class="lineNum">     201 </span>            : form of `ComputeTags`.
+<span class="lineNum">     202 </span>            : 
+<span class="lineNum">     203 </span>            : # SpECTRE's DataBox {#a_proper_databox}
+<span class="lineNum">     204 </span>            : 
+<span class="lineNum">     205 </span>            : A brief description of SpECTRE's DataBox: a TaggedTuple with compute-on-demand.
+<span class="lineNum">     206 </span>            : For a detailed description of SpECTRE's DataBox, see the
+<span class="lineNum">     207 </span>            : \ref DataBoxGroup &quot;DataBox documentation&quot;.
+<span class="lineNum">     208 </span>            : 
+<span class="lineNum">     209 </span>            : ## SimpleTags {#documentation_for_simple_tags}
+<span class="lineNum">     210 </span>            : Just as we needed to modify our tags to make them compatible with
+<span class="lineNum">     211 </span>            : `TaggedTuple`, we need to again modify them for use with DataBox. Our ordinary
+<span class="lineNum">     212 </span>            : tags become SpECTRE's SimpleTags:
+<span class="lineNum">     213 </span>            : 
+<span class="lineNum">     214 </span>            : \snippet Test_DataBoxDocumentation.cpp proper_databox_tags
+<span class="lineNum">     215 </span>            : 
+<span class="lineNum">     216 </span>            : As seen above, SimpleTags have a `type` and a `name` in their struct.
+<span class="lineNum">     217 </span>            : When creating tags for use with a DataBox, we must make sure to the tag
+<span class="lineNum">     218 </span>            : inherits from one of the existing DataBox tag types such as `db::SimpleTag`.
+<span class="lineNum">     219 </span>            : We now create our first DataBox using these `SimpleTags`:
+<span class="lineNum">     220 </span>            : 
+<span class="lineNum">     221 </span>            : \snippet Test_DataBoxDocumentation.cpp refined_databox
+<span class="lineNum">     222 </span>            : 
+<span class="lineNum">     223 </span>            : We can get our quantities out of the DataBox by using `db::get`:
+<span class="lineNum">     224 </span>            : 
+<span class="lineNum">     225 </span>            : \snippet Test_DataBoxDocumentation.cpp refined_databox_get
+<span class="lineNum">     226 </span>            : 
+<span class="lineNum">     227 </span>            : So far, the usage of DataBox has been similar to the usage of TaggedTuple. To
+<span class="lineNum">     228 </span>            : address the desire to combine the functionality of tags with the modularity of
+<span class="lineNum">     229 </span>            : functions, DataBox provides ComputeTags.
+<span class="lineNum">     230 </span>            : 
+<span class="lineNum">     231 </span>            : ## ComputeTags {#documentation_for_compute_tags}
+<span class="lineNum">     232 </span>            : ComputeTags are used to tag functions that are used in conjunction with a
+<span class="lineNum">     233 </span>            : DataBox to produce a new quantity. ComputeTags look like:
+<span class="lineNum">     234 </span>            : 
+<span class="lineNum">     235 </span>            : \snippet Test_DataBoxDocumentation.cpp compute_tags
+<span class="lineNum">     236 </span>            : 
+<span class="lineNum">     237 </span>            : ComputeTags inherit from `db::ComputeTag`, and it is convenient to have them
+<span class="lineNum">     238 </span>            : additionally inherit from an existing SimpleTag (in this case `Mass`) so that
+<span class="lineNum">     239 </span>            : the quantity `MassCompute` can be obtained through the SimpleTag `Mass`.
+<span class="lineNum">     240 </span>            : We use the naming convention `TagNameCompute` so that `TagNameCompute` and
+<span class="lineNum">     241 </span>            : `TagName` appear next to each other in documentation that lists tags in
+<span class="lineNum">     242 </span>            : alphabetical order.
+<span class="lineNum">     243 </span>            : 
+<span class="lineNum">     244 </span>            : We have also added the type alias `argument_tags`, which is necessary in order
+<span class="lineNum">     245 </span>            : to refer to the correct tagged quantities in the DataBox.
+<span class="lineNum">     246 </span>            : 
+<span class="lineNum">     247 </span>            : \note
+<span class="lineNum">     248 </span>            : The `tmpl::list` used in the type alias is a contiguous container only
+<span class="lineNum">     249 </span>            : holding types. That is, there is no variable runtime data associated with it
+<span class="lineNum">     250 </span>            : like there is for `std::tuple`, which is a container associating types with
+<span class="lineNum">     251 </span>            : values. `tmpl::list`s are useful in situations when one is working with
+<span class="lineNum">     252 </span>            : multiple tags at once.
+<span class="lineNum">     253 </span>            : 
+<span class="lineNum">     254 </span>            : Using nested type aliases to pass around information at compile time is a
+<span class="lineNum">     255 </span>            : common pattern in SpECTRE. Let us see how we can compute our beloved quantity
+<span class="lineNum">     256 </span>            : of mass times acceleration:
+<span class="lineNum">     257 </span>            : 
+<span class="lineNum">     258 </span>            : \snippet Test_DataBoxDocumentation.cpp compute_tags_force_compute
+<span class="lineNum">     259 </span>            : 
+<span class="lineNum">     260 </span>            : And that's it! `db::get` utilizes the `argument_tags` specified in
+<span class="lineNum">     261 </span>            : `ForceCompute` to determine which items to get out of the `refined_databox`.
+<span class="lineNum">     262 </span>            : With the corresponding quantities in hand, `db::get` passes them as arguments
+<span class="lineNum">     263 </span>            : to the `function` specified in `ForceCompute`. This is why every `ComputeTag`
+<span class="lineNum">     264 </span>            : must have an `argument_tags` as well as a `function` specified; this is the
+<span class="lineNum">     265 </span>            : contract with DataBox they must satisfy in order to enjoy the full benefits of
+<span class="lineNum">     266 </span>            : DataBox's generality.
+<span class="lineNum">     267 </span>            : 
+<span class="lineNum">     268 </span>            : ## Mutating DataBox items {#documentation_for_mutate_tags}
+<span class="lineNum">     269 </span>            : It is reasonable to expect that in a complicated calculation, we will encounter
+<span class="lineNum">     270 </span>            : time-dependent or iteration-dependent variables. As a result, in addition to
+<span class="lineNum">     271 </span>            : adding and retrieving items from our DataBox, we also need a way to *mutate*
+<span class="lineNum">     272 </span>            : quantities already present in the DataBox. This can be done via
+<span class="lineNum">     273 </span>            : `db::mutate_apply` and can look like the following:
+<span class="lineNum">     274 </span>            : 
+<span class="lineNum">     275 </span>            : \note
+<span class="lineNum">     276 </span>            : There is an alternative to `db::mutate_apply`, `db::mutate`. See the
+<span class="lineNum">     277 </span>            : \ref DataBoxGroup &quot;DataBox documentation&quot; for more details.
+<span class="lineNum">     278 </span>            : 
+<span class="lineNum">     279 </span>            : \snippet Test_DataBoxDocumentation.cpp mutate_tags
+<span class="lineNum">     280 </span>            : \snippet Test_DataBoxDocumentation.cpp time_dep_databox
+<span class="lineNum">     281 </span>            : 
+<span class="lineNum">     282 </span>            : \note
+<span class="lineNum">     283 </span>            : The `not_null`s here are used to give us the assurance that the pointers
+<span class="lineNum">     284 </span>            : `time` and `falling_speed` are not null pointers. Using raw pointers alone, we
+<span class="lineNum">     285 </span>            : risk running into segmentation faults if we dereference null pointers. With
+<span class="lineNum">     286 </span>            : `not_null`s we instead run into a run time error that tells us what went wrong.
+<span class="lineNum">     287 </span>            : For information on the usage of `not_null`, see the documentation for Gsl.hpp.
+<span class="lineNum">     288 </span>            : 
+<span class="lineNum">     289 </span>            : In the above `db::mutate_apply` example, we are changing two values in the
+<span class="lineNum">     290 </span>            : DataBox using four values from the DataBox. The mutated quantities must be
+<span class="lineNum">     291 </span>            : passed in as `gsl::not_null`s to the lambda. The non-mutated quantities are
+<span class="lineNum">     292 </span>            : passed in as const references to the lambda.
+<span class="lineNum">     293 </span>            : 
+<span class="lineNum">     294 </span>            : \note
+<span class="lineNum">     295 </span>            : It is critical to guarantee that there is a strict demarcation between
+<span class="lineNum">     296 </span>            : pre-`db::mutate` and post-`db::mutate` quantities. `db::mutate` provides this
+<span class="lineNum">     297 </span>            : guarantee via a locking mechanism; within one mutate call, all initial
+<span class="lineNum">     298 </span>            : pre-mutated quantities are obtained from the DataBox before performing a single
+<span class="lineNum">     299 </span>            : mutation.
+<span class="lineNum">     300 </span>            : 
+<span class="lineNum">     301 </span>            : \note
+<span class="lineNum">     302 </span>            : The mutate functions described above are the only accepted ways to edit data
+<span class="lineNum">     303 </span>            : in the Databox. It is technically possible to use pointers or references to
+<span class="lineNum">     304 </span>            : edit data stored in the Databox, but this bypasses the compute tags
+<span class="lineNum">     305 </span>            : architecture. All changes to the Databox must be made by the Databox itself
+<span class="lineNum">     306 </span>            : via mutate functions.
+<span class="lineNum">     307 </span>            : 
+<span class="lineNum">     308 </span>            : From the above, we can see that the different kinds of tags are provided in two
+<span class="lineNum">     309 </span>            : different `tmpl::list`s. The `MutateTags`, also called `ReturnTags`, refer to
+<span class="lineNum">     310 </span>            : the quantities in the DataBox we wish to mutate, and the `ArgumentTags` refer to
+<span class="lineNum">     311 </span>            : additional quantities we need from the DataBox to complete our computation. We
+<span class="lineNum">     312 </span>            : now return to the recurring question of how to make this construction more
+<span class="lineNum">     313 </span>            : modular.
+<span class="lineNum">     314 </span>            : 
+<span class="lineNum">     315 </span>            : We have now worked our way up to SpECTRE's DataBox, but as we can see in the
+<span class="lineNum">     316 </span>            : above `db::mutate_apply` example, the lambda used to perform the mutation ends
+<span class="lineNum">     317 </span>            : up being independent of any tags or template parameters! This means we can
+<span class="lineNum">     318 </span>            : factor it out and place it in its own module, where it can be tested
+<span class="lineNum">     319 </span>            : independently of the DataBox.
+<span class="lineNum">     320 </span>            : 
+<span class="lineNum">     321 </span>            : # Toward SpECTRE's Actions {#towards_actions}
+<span class="lineNum">     322 </span>            : 
+<span class="lineNum">     323 </span>            : ## Mutators {#documentation_for_mutators}
+<span class="lineNum">     324 </span>            : These constructs that exist independently of the DataBox are the precursors to
+<span class="lineNum">     325 </span>            : SpECTRE's *Actions*. As they are designed to be used with `db::mutate` and
+<span class="lineNum">     326 </span>            : `db::mutate_apply`, we give them the name *Mutators*. Here is the above lambda
+<span class="lineNum">     327 </span>            : written as a Mutator-prototype, a struct-with-void-apply:
+<span class="lineNum">     328 </span>            : 
+<span class="lineNum">     329 </span>            : \snippet Test_DataBoxDocumentation.cpp intended_mutation
+<span class="lineNum">     330 </span>            : 
+<span class="lineNum">     331 </span>            : The call to `db::mutate_apply` has now been made much simpler:
+<span class="lineNum">     332 </span>            : 
+<span class="lineNum">     333 </span>            : \snippet Test_DataBoxDocumentation.cpp time_dep_databox2
+<span class="lineNum">     334 </span>            : 
+<span class="lineNum">     335 </span>            : There is a key step that we take here after this point, to make our
+<span class="lineNum">     336 </span>            : struct-with-void-apply into a proper Mutator. As we will see, this addition
+<span class="lineNum">     337 </span>            : will allow us to entirely divorce the internal details of `IntendedMutation`
+<span class="lineNum">     338 </span>            : from the mechanism through which we update the DataBox. The key step is to
+<span class="lineNum">     339 </span>            : add type aliases to `IntendedMutation`:
+<span class="lineNum">     340 </span>            : 
+<span class="lineNum">     341 </span>            : \snippet Test_DataBoxDocumentation.cpp intended_mutation2
+<span class="lineNum">     342 </span>            : 
+<span class="lineNum">     343 </span>            : We are now able to write our call to `db::mutate_apply` in the following way:
+<span class="lineNum">     344 </span>            : 
+<span class="lineNum">     345 </span>            : \snippet Test_DataBoxDocumentation.cpp time_dep_databox3
+<span class="lineNum">     346 </span>            : 
+<span class="lineNum">     347 </span>            : As we saw earlier with `QuantityCompute`, we found that we were able to imbue
+<span class="lineNum">     348 </span>            : structs with the ability to &quot;read in&quot; types specified in other structs, through
+<span class="lineNum">     349 </span>            : the use of templates and member type aliases. This liberated us from having to
+<span class="lineNum">     350 </span>            : hard-code in specific types. We notice immediately that `IntendedMutation` is a
+<span class="lineNum">     351 </span>            : hard-coded type that we can factor out in favor of a template parameter:
+<span class="lineNum">     352 </span>            : 
+<span class="lineNum">     353 </span>            : \snippet Test_DataBoxDocumentation.cpp my_first_action
+<span class="lineNum">     354 </span>            : 
+<span class="lineNum">     355 </span>            : Note how the `return_tags` and `argument_tags` are used as metavariables and
+<span class="lineNum">     356 </span>            : are resolved by the compiler. Our call to `db::mutate_apply` has been fully
+<span class="lineNum">     357 </span>            : wrapped and now takes the form:
+<span class="lineNum">     358 </span>            : 
+<span class="lineNum">     359 </span>            : \snippet Test_DataBoxDocumentation.cpp time_dep_databox4
+<span class="lineNum">     360 </span>            : 
+<span class="lineNum">     361 </span>            : The details of applying Mutators to the DataBox are entirely handled by
+<span class="lineNum">     362 </span>            : `MyFirstAction`, with the details of the specific Mutator itself entirely
+<span class="lineNum">     363 </span>            : encapsulated in `IntendedMutation`.
+<span class="lineNum">     364 </span>            : 
+<span class="lineNum">     365 </span>            : SpECTRE algorithms are decomposed into Actions which can depend on more
+<span class="lineNum">     366 </span>            : things than we have considered here. Feel free to look at the
+<span class="lineNum">     367 </span>            : existing \ref ActionsGroup &quot;actions that have been written.&quot; The intricacies of
+<span class="lineNum">     368 </span>            : Actions at the level that SpECTRE uses them is the subject of a future addition
+<span class="lineNum">     369 </span>            : to the \ref dev_guide &quot;Developer's Guide.&quot;
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

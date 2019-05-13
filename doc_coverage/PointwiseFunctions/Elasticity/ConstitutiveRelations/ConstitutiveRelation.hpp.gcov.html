@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - PointwiseFunctions/Elasticity/ConstitutiveRelations/ConstitutiveRelation.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">PointwiseFunctions/Elasticity/ConstitutiveRelations</a> - ConstitutiveRelation.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">12</td>
+            <td class="headerCovTableEntryLo">25.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       7 </span>            : #include &lt;pup.h&gt;
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : #include &quot;DataStructures/Tensor/TypeAliases.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;Parallel/CharmPupable.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            : /// \cond
+<span class="lineNum">      14 </span>            : class DataVector;
+<span class="lineNum">      15 </span>            : namespace Elasticity {
+<span class="lineNum">      16 </span>            : namespace ConstitutiveRelations {
+<span class="lineNum">      17 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      18 </span>            : struct IsotropicHomogeneous;  // IWYU pragma: keep
+<span class="lineNum">      19 </span>            : }  // namespace ConstitutiveRelations
+<span class="lineNum">      20 </span>            : }  // namespace Elasticity
+<span class="lineNum">      21 </span>            : /// \endcond
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : namespace Elasticity {
+<span class="lineNum">      24 </span>            : /*!
+<span class="lineNum">      25 </span>            :  * \brief Constitutive (stress-strain) relations that characterize the elastic
+<span class="lineNum">      26 </span>            :  * properties of a material
+<span class="lineNum">      27 </span>            :  */
+<span class="lineNum">      28 </span>            : namespace ConstitutiveRelations {
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span>            : /*!
+<span class="lineNum">      31 </span>            :  * \brief Base class for constitutive (stress-strain) relations that
+<span class="lineNum">      32 </span>            :  * characterize the elastic properties of a material
+<span class="lineNum">      33 </span>            :  *
+<span class="lineNum">      34 </span>            :  * \details A constitutive relation, in the context of elasticity, relates the
+<span class="lineNum">      35 </span>            :  * Stress \f$T^{ij}\f$ and Strain \f$S_{ij}=\nabla_{(i}u_{j)}\f$ within an
+<span class="lineNum">      36 </span>            :  * elastic material (see \ref Elasticity). For small stresses it is approximated
+<span class="lineNum">      37 </span>            :  * by the linear relation \f[ T^{ij} = -Y^{ijkl}S_{kl} \f] (Eq. 11.17 in
+<span class="lineNum">      38 </span>            :  * \cite ThorneBlandford2017) that is referred to as _Hooke's law_. The
+<span class="lineNum">      39 </span>            :  * constitutive relation in this linear approximation is determined by the
+<span class="lineNum">      40 </span>            :  * elasticity (or _Young's_) tensor \f$Y^{ijkl}=Y^{(ij)(kl)}=Y^{klij}\f$ that
+<span class="lineNum">      41 </span>            :  * generalizes a simple proportionality to a three-dimensional and (possibly)
+<span class="lineNum">      42 </span>            :  * anisotropic material.
+<span class="lineNum">      43 </span>            :  *
+<span class="lineNum">      44 </span>            :  * \note We assume a Euclidean metric in Cartesian coordinates here (for now).
+<span class="lineNum">      45 </span>            :  */
+<span class="lineNum">      46 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      47 </span><span class="lineCov">          1 : class ConstitutiveRelation : public PUP::able {</span>
+<span class="lineNum">      48 </span>            :  public:
+<span class="lineNum">      49 </span><span class="lineNoCov">          0 :   using creatable_classes = tmpl::list&lt;IsotropicHomogeneous&lt;Dim&gt;&gt;;</span>
+<span class="lineNum">      50 </span>            : 
+<span class="lineNum">      51 </span><span class="lineNoCov">          0 :   ConstitutiveRelation() = default;</span>
+<span class="lineNum">      52 </span><span class="lineNoCov">          0 :   ConstitutiveRelation(const ConstitutiveRelation&amp;) = delete;</span>
+<span class="lineNum">      53 </span><span class="lineNoCov">          0 :   ConstitutiveRelation&amp; operator=(const ConstitutiveRelation&amp;) = delete;</span>
+<span class="lineNum">      54 </span><span class="lineNoCov">          0 :   ConstitutiveRelation(ConstitutiveRelation&amp;&amp;) = default;</span>
+<span class="lineNum">      55 </span><span class="lineNoCov">          0 :   ConstitutiveRelation&amp; operator=(ConstitutiveRelation&amp;&amp;) = default;</span>
+<span class="lineNum">      56 </span><span class="lineNoCov">          0 :   ~ConstitutiveRelation() override = default;</span>
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span><span class="lineNoCov">          0 :   WRAPPED_PUPable_abstract(ConstitutiveRelation);  // NOLINT</span>
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span>            :   /// The constitutive relation that characterizes the elastic properties of a
+<span class="lineNum">      61 </span>            :   /// material
+<span class="lineNum">      62 </span><span class="lineCov">          1 :   virtual tnsr::II&lt;DataVector, Dim&gt; stress(</span>
+<span class="lineNum">      63 </span>            :       const tnsr::ii&lt;DataVector, Dim&gt;&amp; strain,
+<span class="lineNum">      64 </span>            :       const tnsr::I&lt;DataVector, Dim&gt;&amp; x) const noexcept = 0;
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span>            :   /// Symmmetrize the displacement gradient to compute the strain, then pass it
+<span class="lineNum">      67 </span>            :   /// to the constitutive relation
+<span class="lineNum">      68 </span><span class="lineCov">          1 :   tnsr::II&lt;DataVector, Dim&gt; stress(</span>
+<span class="lineNum">      69 </span>            :       const tnsr::iJ&lt;DataVector, Dim&gt;&amp; grad_displacement,
+<span class="lineNum">      70 </span>            :       const tnsr::I&lt;DataVector, Dim&gt;&amp; x) const noexcept;
+<span class="lineNum">      71 </span>            : };
+<span class="lineNum">      72 </span>            : 
+<span class="lineNum">      73 </span>            : }  // namespace ConstitutiveRelations
+<span class="lineNum">      74 </span>            : }  // namespace Elasticity
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span>            : #include &quot;PointwiseFunctions/Elasticity/ConstitutiveRelations/IsotropicHomogeneous.hpp&quot;  // IWYU pragma: keep
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

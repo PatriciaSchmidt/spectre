@@ -1,0 +1,316 @@
+<!-- HTML header for doxygen 1.8.10-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=9"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="SXS Collaboration">
+    <meta name="generator" content="Doxygen 1.8.13"/>
+    <style>
+        /*!
+         * IE10 viewport hack for Surface/desktop Windows 8 bug
+         * Copyright 2014-2015 Twitter, Inc.
+         * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+         */
+        @-webkit-viewport { width: device-width; }
+        @-moz-viewport    { width: device-width; }
+        @-ms-viewport     { width: device-width; }
+        @-o-viewport      { width: device-width; }
+        @viewport         { width: device-width; }
+      </style>
+  <title>SpECTRE: Poisson::Solutions::Lorentzian&lt; Dim &gt; Class Template Reference</title>
+  <link href="tabs.css" rel="stylesheet" type="text/css"/>
+  <script type="text/javascript" src="jquery.js"></script>
+  <script type="text/javascript" src="dynsections.js"></script>
+  <link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js", "color.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+});
+MathJax.Hub.Config({
+    TeX: { equationNumbers: { autoNumber: "AMS" } }
+});
+MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['^^','^^'], ['\\(', '\\)']]}
+});
+</script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js"></script>
+  <link href="octicons.css" rel="stylesheet">
+  <link href="bootstrap.min.css" rel="stylesheet">
+  <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <script type="text/javascript" src="jquery.js"></script>
+  <script type="text/javascript" src="popper.min.js"></script>
+  <script type="text/javascript" src="bootstrap.min.js"></script>
+  <script type="text/javascript" src="spectre.js"></script>
+  </head>
+  <body>
+  <div id="top" class="navbar-fixed-top"><!-- do not remove this div, it is closed by doxygen! -->
+  <!-- BEGIN TITLEAREA -->
+  <div id="titlearea">
+  <script type="text/javascript">
+  var searchBox = new SearchBox("searchBox", "search",false,'Search');
+  </script>
+  <div id="main-nav">
+    <ul class="sm sm-dox" id="main-menu">
+      <li>
+      <a href="index.html">
+      SpECTRE &#160;
+        <span id="projectnumber">v0.0.0</span>
+      </a>
+      </li>
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="selected">
+          <span id="selected">
+            <i class="octicon octicon-book"></i><span>Documentation</span>
+          </span>
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li style="min-width: 135px;">
+            <a href="index.html">
+            <i class="octicon octicon-book"></i><span>Introduction</span></a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="installation.html">
+              <i class="octicon octicon-desktop-download"></i><span>Installation</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="tutorials.html">
+              <i class="octicon octicon-mortar-board"></i><span>User Tutorials</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="dev_guide.html">
+              <i class="octicon octicon-gist-secret"></i><span>Dev Guide</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="code_of_conduct.html">
+              <i class="octicon octicon-comment-discussion"></i><span>Code of Conduct</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="contributing_to_spectre.html">
+              <i class="octicon octicon-git-pull-request"></i><span>Contributing Guide</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="selected">
+          <span id="selected">
+            <i class="octicon octicon-code"></i>
+              <span>Code Reference</span>
+          </span>
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li style="min-width: 130px;">
+            <a href="modules.html">
+              <i class="octicon octicon-code"></i>
+              <span>Topics</span>
+            </a>
+          </li>
+          <li style="min-width: 130px;">
+            <a href="namespaces.html">
+              <i class="octicon octicon-gist"></i>
+              <span>Namespaces</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <a href="files.html">
+          <i class="octicon octicon-file-directory"></i><span>Files</span>
+        </a>
+      </li>
+      <li>
+        <a href="citelist.html">
+          <i class="octicon octicon-file-text"></i><span>Bibliography</span>
+        </a>
+      </li>
+      <li>
+        <a href="https://github.com/sxs-collaboration/spectre" target="_blank">
+          <i class="octicon octicon-mark-github"></i><span>View on GitHub</span>
+        </a>
+      </li>
+      <!--The Search <li> is added by doxygen later-->
+    </ul>
+  </div><!-- main-nav -->
+  </div><!-- titlearea -->
+  <!-- window showing the filter options -->
+  <div id="MSearchSelectWindow"  style="position: fixed;"
+       onmouseover="return searchBox.OnSearchSelectShow()"
+       onmouseout="return searchBox.OnSearchSelectHide()"
+       onkeydown="return searchBox.OnSearchSelectKey(event)">
+  </div>
+  <!-- iframe showing the search results (closed by default) -->
+  <div id="MSearchResultsWindow"  style="position: fixed;">
+  <iframe src="javascript:void(0)" frameborder="0"
+          name="MSearchResults" id="MSearchResults">
+  </iframe>
+  </div>
+<!-- Generated by Doxygen 1.8.13 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search",false,'Search');
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="namespacePoisson.html">Poisson</a></li><li class="navelem"><a class="el" href="namespacePoisson_1_1Solutions.html">Solutions</a></li><li class="navelem"><a class="el" href="classPoisson_1_1Solutions_1_1Lorentzian.html">Lorentzian</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
+<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
+<a href="classPoisson_1_1Solutions_1_1Lorentzian-members.html">List of all members</a>  </div>
+  <div class="headertitle">
+<div class="title">Poisson::Solutions::Lorentzian&lt; Dim &gt; Class Template Reference</div>  </div>
+</div><!--header-->
+<div class="contents">
+
+<p>A <a class="el" href="classPoisson_1_1Solutions_1_1Lorentzian.html" title="A Lorentzian solution to the Poisson equation. ">Lorentzian</a> solution to the <a class="el" href="namespacePoisson.html" title="Items related to solving a Poisson equation . ">Poisson</a> equation.  
+ <a href="classPoisson_1_1Solutions_1_1Lorentzian.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="Lorentzian_8hpp_source.html">Lorentzian.hpp</a>&gt;</code></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:ae937f92eb0646148f9198a64a6a2b912"><td class="memItemLeft" align="right" valign="top"><a id="ae937f92eb0646148f9198a64a6a2b912"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>options</b> = tmpl::list&lt;&gt;</td></tr>
+<tr class="separator:ae937f92eb0646148f9198a64a6a2b912"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a0fc9f17dc93055c77794e2059c94dd19"><td class="memItemLeft" align="right" valign="top"><a id="a0fc9f17dc93055c77794e2059c94dd19"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Lorentzian</b> (const <a class="el" href="classPoisson_1_1Solutions_1_1Lorentzian.html">Lorentzian</a> &amp;) noexcept=delete</td></tr>
+<tr class="separator:a0fc9f17dc93055c77794e2059c94dd19"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5b2c09319586efd066e8b64adf04f153"><td class="memItemLeft" align="right" valign="top"><a id="a5b2c09319586efd066e8b64adf04f153"></a>
+<a class="el" href="classPoisson_1_1Solutions_1_1Lorentzian.html">Lorentzian</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classPoisson_1_1Solutions_1_1Lorentzian.html">Lorentzian</a> &amp;) noexcept=delete</td></tr>
+<tr class="separator:a5b2c09319586efd066e8b64adf04f153"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4dc132a2b91eb567e0c4c38a386c4056"><td class="memItemLeft" align="right" valign="top"><a id="a4dc132a2b91eb567e0c4c38a386c4056"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Lorentzian</b> (<a class="el" href="classPoisson_1_1Solutions_1_1Lorentzian.html">Lorentzian</a> &amp;&amp;) noexcept=default</td></tr>
+<tr class="separator:a4dc132a2b91eb567e0c4c38a386c4056"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae28fe617d54503a2420e110fe5905f84"><td class="memItemLeft" align="right" valign="top"><a id="ae28fe617d54503a2420e110fe5905f84"></a>
+<a class="el" href="classPoisson_1_1Solutions_1_1Lorentzian.html">Lorentzian</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classPoisson_1_1Solutions_1_1Lorentzian.html">Lorentzian</a> &amp;&amp;) noexcept=default</td></tr>
+<tr class="separator:ae28fe617d54503a2420e110fe5905f84"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a21113aa0d458bb291207dbffac28763e"><td class="memItemLeft" align="right" valign="top"><a id="a21113aa0d458bb291207dbffac28763e"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>pup</b> (PUP::er &amp;p) noexcept</td></tr>
+<tr class="separator:a21113aa0d458bb291207dbffac28763e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac0b3d79853a6c5f40b6c08e3bb76144d"><td class="memTemplParams" colspan="2"><a id="ac0b3d79853a6c5f40b6c08e3bb76144d"></a>
+template&lt;&gt; </td></tr>
+<tr class="memitem:ac0b3d79853a6c5f40b6c08e3bb76144d"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classtuples_1_1TaggedTuple.html">tuples::TaggedTuple</a>&lt; <a class="el" href="structPoisson_1_1Field.html">Field</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>variables</b> (const tnsr::I&lt; <a class="el" href="classDataVector.html">DataVector</a>, 3 &gt; &amp;x, tmpl::list&lt; <a class="el" href="structPoisson_1_1Field.html">Field</a> &gt;) noexcept</td></tr>
+<tr class="separator:ac0b3d79853a6c5f40b6c08e3bb76144d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1966c7b73c14448019307ae482e12abb"><td class="memTemplParams" colspan="2"><a id="a1966c7b73c14448019307ae482e12abb"></a>
+template&lt;&gt; </td></tr>
+<tr class="memitem:a1966c7b73c14448019307ae482e12abb"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classtuples_1_1TaggedTuple.html">tuples::TaggedTuple</a>&lt;::<a class="el" href="structTags_1_1Source.html">Tags::Source</a>&lt; <a class="el" href="structPoisson_1_1Field.html">Field</a> &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>variables</b> (const tnsr::I&lt; <a class="el" href="classDataVector.html">DataVector</a>, 3 &gt; &amp;x, tmpl::list&lt;::<a class="el" href="structTags_1_1Source.html">Tags::Source</a>&lt; <a class="el" href="structPoisson_1_1Field.html">Field</a> &gt;&gt;) noexcept</td></tr>
+<tr class="separator:a1966c7b73c14448019307ae482e12abb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3b47484c35aa681b19866b82315307b6"><td class="memTemplParams" colspan="2"><a id="a3b47484c35aa681b19866b82315307b6"></a>
+template&lt;&gt; </td></tr>
+<tr class="memitem:a3b47484c35aa681b19866b82315307b6"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classtuples_1_1TaggedTuple.html">tuples::TaggedTuple</a>&lt;::<a class="el" href="structTags_1_1Source.html">Tags::Source</a>&lt; <a class="el" href="structPoisson_1_1AuxiliaryField.html">AuxiliaryField</a>&lt; 3 &gt; &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>variables</b> (const tnsr::I&lt; <a class="el" href="classDataVector.html">DataVector</a>, 3 &gt; &amp;x, tmpl::list&lt;::<a class="el" href="structTags_1_1Source.html">Tags::Source</a>&lt; <a class="el" href="structPoisson_1_1AuxiliaryField.html">AuxiliaryField</a>&lt; 3 &gt;&gt;&gt;) noexcept</td></tr>
+<tr class="separator:a3b47484c35aa681b19866b82315307b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a67a7451aaaeeb328a8b442f86247c96d"><td class="memTemplParams" colspan="2"><a id="a67a7451aaaeeb328a8b442f86247c96d"></a>
+template&lt;typename... Tags&gt; </td></tr>
+<tr class="memitem:a67a7451aaaeeb328a8b442f86247c96d"><td class="memTemplItemLeft" align="right" valign="top">static <a class="el" href="classtuples_1_1TaggedTuple.html">tuples::TaggedTuple</a>&lt; Tags... &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classPoisson_1_1Solutions_1_1Lorentzian.html#a67a7451aaaeeb328a8b442f86247c96d">variables</a> (const tnsr::I&lt; <a class="el" href="classDataVector.html">DataVector</a>, Dim, <a class="el" href="structFrame_1_1Inertial.html">Frame::Inertial</a> &gt; &amp;x, tmpl::list&lt; Tags... &gt;) noexcept</td></tr>
+<tr class="memdesc:a67a7451aaaeeb328a8b442f86247c96d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve a collection of variables at coordinates <code>x</code> <br /></td></tr>
+<tr class="separator:a67a7451aaaeeb328a8b442f86247c96d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader"></div></td></tr>
+<tr class="memitem:ad7299db635cd7ab57e705bbf818dfc79"><td class="memItemLeft" align="right" valign="top"><a id="ad7299db635cd7ab57e705bbf818dfc79"></a>
+static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPoisson_1_1Solutions_1_1Lorentzian.html#ad7299db635cd7ab57e705bbf818dfc79">variables</a> (const tnsr::I&lt; <a class="el" href="classDataVector.html">DataVector</a>, Dim, <a class="el" href="structFrame_1_1Inertial.html">Frame::Inertial</a> &gt; &amp;x, tmpl::list&lt; <a class="el" href="structPoisson_1_1Field.html">Field</a> &gt;) noexcept -&gt; <a class="el" href="classtuples_1_1TaggedTuple.html">tuples::TaggedTuple</a>&lt; <a class="el" href="structPoisson_1_1Field.html">Field</a> &gt;</td></tr>
+<tr class="memdesc:ad7299db635cd7ab57e705bbf818dfc79"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve variable at coordinates <code>x</code> <br /></td></tr>
+<tr class="separator:ad7299db635cd7ab57e705bbf818dfc79"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5fbe050ed91af63c30ca81d12ca1c605"><td class="memItemLeft" align="right" valign="top"><a id="a5fbe050ed91af63c30ca81d12ca1c605"></a>
+static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPoisson_1_1Solutions_1_1Lorentzian.html#a5fbe050ed91af63c30ca81d12ca1c605">variables</a> (const tnsr::I&lt; <a class="el" href="classDataVector.html">DataVector</a>, Dim, <a class="el" href="structFrame_1_1Inertial.html">Frame::Inertial</a> &gt; &amp;x, tmpl::list&lt;::<a class="el" href="structTags_1_1Source.html">Tags::Source</a>&lt; <a class="el" href="structPoisson_1_1Field.html">Field</a> &gt;&gt;) noexcept -&gt; <a class="el" href="classtuples_1_1TaggedTuple.html">tuples::TaggedTuple</a>&lt;::<a class="el" href="structTags_1_1Source.html">Tags::Source</a>&lt; <a class="el" href="structPoisson_1_1Field.html">Field</a> &gt;&gt;</td></tr>
+<tr class="memdesc:a5fbe050ed91af63c30ca81d12ca1c605"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve variable at coordinates <code>x</code> <br /></td></tr>
+<tr class="separator:a5fbe050ed91af63c30ca81d12ca1c605"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaff51178979a7a78ed438e93550b0c17"><td class="memItemLeft" align="right" valign="top"><a id="aaff51178979a7a78ed438e93550b0c17"></a>
+static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPoisson_1_1Solutions_1_1Lorentzian.html#aaff51178979a7a78ed438e93550b0c17">variables</a> (const tnsr::I&lt; <a class="el" href="classDataVector.html">DataVector</a>, Dim, <a class="el" href="structFrame_1_1Inertial.html">Frame::Inertial</a> &gt; &amp;x, tmpl::list&lt;::<a class="el" href="structTags_1_1Source.html">Tags::Source</a>&lt; <a class="el" href="structPoisson_1_1AuxiliaryField.html">AuxiliaryField</a>&lt; Dim &gt;&gt;&gt;) noexcept -&gt; <a class="el" href="classtuples_1_1TaggedTuple.html">tuples::TaggedTuple</a>&lt;::<a class="el" href="structTags_1_1Source.html">Tags::Source</a>&lt; <a class="el" href="structPoisson_1_1AuxiliaryField.html">AuxiliaryField</a>&lt; Dim &gt;&gt;&gt;</td></tr>
+<tr class="memdesc:aaff51178979a7a78ed438e93550b0c17"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve variable at coordinates <code>x</code> <br /></td></tr>
+<tr class="separator:aaff51178979a7a78ed438e93550b0c17"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:a0fe1d7ca8d18bd7fc92346a98e12b464"><td class="memItemLeft" align="right" valign="top">static constexpr <a class="el" href="Options_8hpp.html#ac6df7d1b74fbddedd85b06a0087d93f6">OptionString</a>&#160;</td><td class="memItemRight" valign="bottom"><b>help</b></td></tr>
+<tr class="separator:a0fe1d7ca8d18bd7fc92346a98e12b464"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;size_t Dim&gt;<br />
+class Poisson::Solutions::Lorentzian&lt; Dim &gt;</h3>
+
+<p>A <a class="el" href="classPoisson_1_1Solutions_1_1Lorentzian.html" title="A Lorentzian solution to the Poisson equation. ">Lorentzian</a> solution to the <a class="el" href="namespacePoisson.html" title="Items related to solving a Poisson equation . ">Poisson</a> equation. </p>
+<h3>Details</h3>
+<p>This implements the <a class="el" href="classPoisson_1_1Solutions_1_1Lorentzian.html" title="A Lorentzian solution to the Poisson equation. ">Lorentzian</a> solution \(u(\boldsymbol{x})=\left(1+r^2\right)^{-\frac{1}{2}}\) to the three-dimensional <a class="el" href="namespacePoisson.html" title="Items related to solving a Poisson equation . ">Poisson</a> equation \(-\Delta u(\boldsymbol{x})=f(\boldsymbol{x})\), where \(r^2=x^2+y^2+z^2\). The corresponding source is \(f(\boldsymbol{x})=3\left(1+r^2\right)^{-\frac{5}{2}}\).</p>
+<dl class="section note"><dt>Note</dt><dd>Corresponding 1D and 2D solutions are not implemented yet. </dd></dl>
+</div><h2 class="groupheader">Member Data Documentation</h2>
+<a id="a0fe1d7ca8d18bd7fc92346a98e12b464"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0fe1d7ca8d18bd7fc92346a98e12b464">&#9670;&nbsp;</a></span>help</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;size_t Dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr <a class="el" href="Options_8hpp.html#ac6df7d1b74fbddedd85b06a0087d93f6">OptionString</a> <a class="el" href="classPoisson_1_1Solutions_1_1Lorentzian.html">Poisson::Solutions::Lorentzian</a>&lt; Dim &gt;::help</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">{</div><div class="line">      <span class="stringliteral">&quot;A Lorentzian solution to the Poisson equation.&quot;</span>}</div></div><!-- fragment -->
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following files:<ul>
+<li>src/PointwiseFunctions/AnalyticSolutions/Poisson/<a class="el" href="Lorentzian_8hpp_source.html">Lorentzian.hpp</a></li>
+<li>src/PointwiseFunctions/AnalyticSolutions/Poisson/Lorentzian.cpp</li>
+</ul>
+</div><!-- contents -->
+<!-- HTML footer for doxygen 1.8.10-->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+&copy; Copyright 2017 - 2019
+<a href="https://black-holes.org">SXS Collaboration</a>,
+<a href="LICENSE.txt" target="_blank">
+<span class="hidden-xs">Distributed under the</span>
+MIT License</a>
+</small></address>
+</body>
+</html>

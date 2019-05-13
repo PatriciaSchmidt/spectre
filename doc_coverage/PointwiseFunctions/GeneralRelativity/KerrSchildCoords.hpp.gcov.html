@@ -1,0 +1,279 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - PointwiseFunctions/GeneralRelativity/KerrSchildCoords.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">PointwiseFunctions/GeneralRelativity</a> - KerrSchildCoords.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">16</td>
+            <td class="headerCovTableEntryLo">18.8 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;limits&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : #include &quot;DataStructures/Tensor/TypeAliases.hpp&quot;
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : // IWYU pragma:  no_include &lt;pup.h&gt;
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : /// \cond
+<span class="lineNum">      13 </span>            : namespace PUP {
+<span class="lineNum">      14 </span>            : class er;  // IWYU pragma: keep
+<span class="lineNum">      15 </span>            : }  // namespace PUP
+<span class="lineNum">      16 </span>            : /// \endcond
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            : namespace gr {
+<span class="lineNum">      19 </span>            : /*!
+<span class="lineNum">      20 </span>            :  * \brief Contains helper functions for transforming tensors in Kerr
+<span class="lineNum">      21 </span>            :  * spacetime to Kerr-Schild coordinates.
+<span class="lineNum">      22 </span>            :  *
+<span class="lineNum">      23 </span>            :  * Consider the Kerr-Schild form of the Kerr metric in Cartesian
+<span class="lineNum">      24 </span>            :  * coordinates \f$ (t, x, y, z)\f$,
+<span class="lineNum">      25 </span>            :  *
+<span class="lineNum">      26 </span>            :  * \f{align*}
+<span class="lineNum">      27 </span>            :  * ds^2 = -dt^2 + dx^2 + dy^2 + dz^2 + \dfrac{2Mr^3}{r^4 + a^2 z^2}
+<span class="lineNum">      28 </span>            :  * \left[dt + \dfrac{r(x\,dx + y\,dy)}{r^2 + a^2} +
+<span class="lineNum">      29 </span>            :  * \dfrac{a(y\,dx - x\,dy)}{r^2 + a^2} + \dfrac{z}{r}dz\right]^2,
+<span class="lineNum">      30 </span>            :  * \f}
+<span class="lineNum">      31 </span>            :  *
+<span class="lineNum">      32 </span>            :  * where \f$r\f$ is the function defined through
+<span class="lineNum">      33 </span>            :  *
+<span class="lineNum">      34 </span>            :  * \f{align*}
+<span class="lineNum">      35 </span>            :  * r^2(x, y, z) = \frac{x^2 + y^2 + z^2 - a^2}{2} +
+<span class="lineNum">      36 </span>            :  * \sqrt{\left(\frac{x^2 + y^2 + z^2 - a^2}{2}\right)^2 + a^2 z^2}.
+<span class="lineNum">      37 </span>            :  * \f}
+<span class="lineNum">      38 </span>            :  *
+<span class="lineNum">      39 </span>            :  * Depending on the physical context, the following coordinate transformations
+<span class="lineNum">      40 </span>            :  * are usually adopted:
+<span class="lineNum">      41 </span>            :  *
+<span class="lineNum">      42 </span>            :  * - \em Spherical \em coordinates, defined by the usual transformation
+<span class="lineNum">      43 </span>            :  *
+<span class="lineNum">      44 </span>            :  *   \f{align*}
+<span class="lineNum">      45 </span>            :  *   x &amp;= r_\text{sph}\sin\theta\cos\phi,\\
+<span class="lineNum">      46 </span>            :  *   y &amp;= r_\text{sph}\sin\theta\sin\phi,\\
+<span class="lineNum">      47 </span>            :  *   z &amp;= r_\text{sph}\cos\theta.
+<span class="lineNum">      48 </span>            :  *   \f}
+<span class="lineNum">      49 </span>            :  *
+<span class="lineNum">      50 </span>            :  *   Note that \f$r_\text{sph} \neq r\f$, so the
+<span class="lineNum">      51 </span>            :  *   horizon of a Kerr black hole is \em not at constant \f$r_\text{sph}\f$.
+<span class="lineNum">      52 </span>            :  *
+<span class="lineNum">      53 </span>            :  * - \em Oblate \em spheroidal \em coordinates,
+<span class="lineNum">      54 </span>            :  *
+<span class="lineNum">      55 </span>            :  *   \f{align*}
+<span class="lineNum">      56 </span>            :  *   x &amp;= \sqrt{r^2 + a^2}\sin\vartheta\cos\phi,\\
+<span class="lineNum">      57 </span>            :  *   y &amp;= \sqrt{r^2 + a^2}\sin\vartheta\sin\phi,\\
+<span class="lineNum">      58 </span>            :  *   z &amp;= r\cos\vartheta.
+<span class="lineNum">      59 </span>            :  *   \f}
+<span class="lineNum">      60 </span>            :  *
+<span class="lineNum">      61 </span>            :  *   Notice that \f$r\f$ is that defined in the Kerr-Schild form of the Kerr
+<span class="lineNum">      62 </span>            :  *   metric, so the horizon is at constant \f$r\f$. (As it will be noted below,
+<span class="lineNum">      63 </span>            :  *   \f$r\f$ corresponds to the Boyer-Lindquist radial coordinate.) Also, note
+<span class="lineNum">      64 </span>            :  *   that the azimuthal angle \f$\phi\f$ is the same as the corresponding
+<span class="lineNum">      65 </span>            :  *   angle in spherical coordinates, whereas the zenithal angle
+<span class="lineNum">      66 </span>            :  *   \f$\vartheta\f$ differs from the corresponding angle \f$\theta\f$.
+<span class="lineNum">      67 </span>            :  *
+<span class="lineNum">      68 </span>            :  * - \em Kerr \em coordinates (sometimes also referred to as
+<span class="lineNum">      69 </span>            :  *   &quot;Kerr-Schild coordinates&quot;), defined by
+<span class="lineNum">      70 </span>            :  *
+<span class="lineNum">      71 </span>            :  *   \f{align*}
+<span class="lineNum">      72 </span>            :  *   x &amp;= (r \cos\varphi - a \sin\varphi)\sin\vartheta =
+<span class="lineNum">      73 </span>            :  *   \sqrt{r^2 + a^2}\sin\vartheta\cos\left(\varphi +
+<span class="lineNum">      74 </span>            :  *   \tan^{-1}(a/ r)\right),\\
+<span class="lineNum">      75 </span>            :  *   y &amp;= (r \sin\varphi + a \cos\varphi)\sin\vartheta =
+<span class="lineNum">      76 </span>            :  *   \sqrt{r^2 + a^2}\sin\vartheta\sin\left(\varphi +
+<span class="lineNum">      77 </span>            :  *   \tan^{-1}(a/ r)\right),\\
+<span class="lineNum">      78 </span>            :  *   z &amp;= r \cos\vartheta.
+<span class="lineNum">      79 </span>            :  *   \f}
+<span class="lineNum">      80 </span>            :  *
+<span class="lineNum">      81 </span>            :  *   These are the coordinates used in the gr::KerrSchildCoords class.
+<span class="lineNum">      82 </span>            :  *   Notice that \f$r\f$ and \f$\vartheta\f$ are the same as those in
+<span class="lineNum">      83 </span>            :  *   spheroidal coordinates, whereas the azimuthal angle
+<span class="lineNum">      84 </span>            :  *   \f$\varphi \neq \phi\f$.
+<span class="lineNum">      85 </span>            :  *
+<span class="lineNum">      86 </span>            :  *   \note Kerr's original &quot;advanced Eddington-Finkelstein&quot; form of his metric
+<span class="lineNum">      87 </span>            :  *   is retrieved by performing the additional transformation \f$t = u - r\f$.
+<span class="lineNum">      88 </span>            :  *   Note that Kerr's choice of the letter \f$u\f$ for the time coordinate
+<span class="lineNum">      89 </span>            :  *   is not consistent with the convention of denoting the advanced time
+<span class="lineNum">      90 </span>            :  *   \f$v = t + r\f$ (in flat space), and the retarded time \f$u = t - r\f$
+<span class="lineNum">      91 </span>            :  *   (in flat space). Finally, note that Kerr's original metric has the sign
+<span class="lineNum">      92 </span>            :  *   of \f$a\f$ flipped.
+<span class="lineNum">      93 </span>            :  *
+<span class="lineNum">      94 </span>            :  *   The Kerr coordinates have been used in the hydro community to evolve the
+<span class="lineNum">      95 </span>            :  *   GRMHD equations. They are the intermediate step in getting the Kerr metric
+<span class="lineNum">      96 </span>            :  *   in Boyer-Lindquist coordinates. The relation between both is
+<span class="lineNum">      97 </span>            :  *
+<span class="lineNum">      98 </span>            :  *   \f{align*}
+<span class="lineNum">      99 </span>            :  *   dt_\text{BL} &amp;=
+<span class="lineNum">     100 </span>            :  *   dt - \frac{2M r\,dr}{r^2 - 2Mr + a^2}, \\
+<span class="lineNum">     101 </span>            :  *   dr_\text{BL} &amp;= dr,\\
+<span class="lineNum">     102 </span>            :  *   d\theta_\text{BL} &amp;= d\vartheta,\\
+<span class="lineNum">     103 </span>            :  *   d\phi_\text{BL} &amp;= d\varphi - \frac{a\,dr}{r^2-2Mr + a^2}.
+<span class="lineNum">     104 </span>            :  *   \f}
+<span class="lineNum">     105 </span>            :  *
+<span class="lineNum">     106 </span>            :  *   The above transformation makes explicit that \f$r\f$ is the Boyer-Lindquist
+<span class="lineNum">     107 </span>            :  *   radial coodinate, \f$ r = r_\text{BL}\f$. Likewise,
+<span class="lineNum">     108 </span>            :  *   \f$\vartheta = \theta_\text{BL}\f$.
+<span class="lineNum">     109 </span>            :  *
+<span class="lineNum">     110 </span>            :  *   \note Sometimes (especially in the GRMHD community), the Kerr coordinates
+<span class="lineNum">     111 </span>            :  *   as defined above are referred to as &quot;spherical Kerr-Schild&quot; coordinates.
+<span class="lineNum">     112 </span>            :  *   These should not be confused with the true spherical coordinates defined
+<span class="lineNum">     113 </span>            :  *   in this documentation.
+<span class="lineNum">     114 </span>            :  *
+<span class="lineNum">     115 </span>            :  *   The Kerr metric in Kerr coodinates is sometimes used to write analytic
+<span class="lineNum">     116 </span>            :  *   initial data for hydro simulations. In this coordinate system, the
+<span class="lineNum">     117 </span>            :  *   metric takes the form
+<span class="lineNum">     118 </span>            :  *
+<span class="lineNum">     119 </span>            :  *   \f{align*}
+<span class="lineNum">     120 </span>            :  *   ds^2 &amp;= -(1 - B)\,dt^2 + (1 + B)\,dr^2 + \Sigma\,d\vartheta^2 +
+<span class="lineNum">     121 </span>            :  *   \left(r^2 + a^2 + B a^2\sin^2\vartheta\right)\sin^2\vartheta\,d\varphi^2\\
+<span class="lineNum">     122 </span>            :  *   &amp;\quad + 2B\,dt\,dr - 2aB\sin^2\vartheta\,dt\,d\varphi -
+<span class="lineNum">     123 </span>            :  *   2a\left(1 + B\right)\sin^2\vartheta\,dr\,d\varphi,
+<span class="lineNum">     124 </span>            :  *   \f}
+<span class="lineNum">     125 </span>            :  *
+<span class="lineNum">     126 </span>            :  *   where \f$B = 2M r/ \Sigma\f$ and \f$\Sigma = r^2 + a^2\cos^2\vartheta\f$.
+<span class="lineNum">     127 </span>            :  *   Using the additional relations
+<span class="lineNum">     128 </span>            :  *
+<span class="lineNum">     129 </span>            :  *   \f{align*}
+<span class="lineNum">     130 </span>            :  *   \sin\vartheta &amp;= \sqrt{\frac{x^2 + y^2}{r^2 + a^2}},\quad
+<span class="lineNum">     131 </span>            :  *   \cos\vartheta = \frac{z}{r},\\
+<span class="lineNum">     132 </span>            :  *   \sin\varphi &amp;= \frac{y r - x a}{\sqrt{(x^2 + y^2)(r^2 + a^2)}},\quad
+<span class="lineNum">     133 </span>            :  *   \cos\varphi = \frac{x r + y a}{\sqrt{(x^2 + y^2)(r^2 + a^2)}},
+<span class="lineNum">     134 </span>            :  *   \f}
+<span class="lineNum">     135 </span>            :  *
+<span class="lineNum">     136 </span>            :  *   the Jacobian of the transformation to Cartesian Kerr-Schild coordinates is
+<span class="lineNum">     137 </span>            :  *
+<span class="lineNum">     138 </span>            :  *   \f{align*}
+<span class="lineNum">     139 </span>            :  *   \dfrac{\partial(x, y, z)}{\partial(r, \vartheta, \varphi)} &amp;=
+<span class="lineNum">     140 </span>            :  *   \left(\begin{array}{ccc}
+<span class="lineNum">     141 </span>            :  *   \dfrac{xr + ya}{r^2 + a^2} &amp;
+<span class="lineNum">     142 </span>            :  *   \dfrac{xz}{r}\sqrt{\dfrac{r^2 + a^2}{x^2 + y^2}} &amp; -y\\
+<span class="lineNum">     143 </span>            :  *   \dfrac{yr - ax}{r^2 + a^2} &amp;
+<span class="lineNum">     144 </span>            :  *   \dfrac{yz}{r}\sqrt{\dfrac{r^2 + a^2}{x^2 + y^2}} &amp; x\\
+<span class="lineNum">     145 </span>            :  *   \dfrac{z}{r} &amp; - r\sqrt{\dfrac{x^2 + y^2}{r^2 + a^2}} &amp; 0
+<span class="lineNum">     146 </span>            :  *   \end{array}\right),
+<span class="lineNum">     147 </span>            :  *   \f}
+<span class="lineNum">     148 </span>            :  *
+<span class="lineNum">     149 </span>            :  *   which can be used to transform tensors between both coordinate systems.
+<span class="lineNum">     150 </span>            :  */
+<span class="lineNum">     151 </span><span class="lineCov">          1 : class KerrSchildCoords {</span>
+<span class="lineNum">     152 </span>            :  public:
+<span class="lineNum">     153 </span><span class="lineNoCov">          0 :   KerrSchildCoords() = default;</span>
+<span class="lineNum">     154 </span><span class="lineNoCov">          0 :   KerrSchildCoords(const KerrSchildCoords&amp; /*rhs*/) = delete;</span>
+<span class="lineNum">     155 </span><span class="lineNoCov">          0 :   KerrSchildCoords&amp; operator=(const KerrSchildCoords&amp; /*rhs*/) = delete;</span>
+<span class="lineNum">     156 </span><span class="lineNoCov">          0 :   KerrSchildCoords(KerrSchildCoords&amp;&amp; /*rhs*/) noexcept = default;</span>
+<span class="lineNum">     157 </span><span class="lineNoCov">          0 :   KerrSchildCoords&amp; operator=(KerrSchildCoords&amp;&amp; /*rhs*/) noexcept = default;</span>
+<span class="lineNum">     158 </span><span class="lineNoCov">          0 :   ~KerrSchildCoords() = default;</span>
+<span class="lineNum">     159 </span>            : 
+<span class="lineNum">     160 </span><span class="lineNoCov">          0 :   KerrSchildCoords(double bh_mass, double bh_dimless_spin) noexcept;</span>
+<span class="lineNum">     161 </span>            : 
+<span class="lineNum">     162 </span>            :   /// Transforms a spatial vector from Kerr (or &quot;spherical Kerr-Schild&quot;)
+<span class="lineNum">     163 </span>            :   /// coordinates to Cartesian Kerr-Schild coordinates. If applied on points
+<span class="lineNum">     164 </span>            :   /// on the z-axis, the vector to transform must have a vanishing
+<span class="lineNum">     165 </span>            :   /// \f$v^\vartheta\f$ in order for the transformation to be single-valued.
+<span class="lineNum">     166 </span>            :   template &lt;typename DataType&gt;
+<span class="lineNum">     167 </span><span class="lineCov">          1 :   tnsr::I&lt;DataType, 3, Frame::Inertial&gt; cartesian_from_spherical_ks(</span>
+<span class="lineNum">     168 </span>            :       const tnsr::I&lt;DataType, 3, Frame::NoFrame&gt;&amp; spatial_vector,
+<span class="lineNum">     169 </span>            :       const tnsr::I&lt;DataType, 3, Frame::Inertial&gt;&amp; cartesian_coords) const
+<span class="lineNum">     170 </span>            :       noexcept;
+<span class="lineNum">     171 </span>            : 
+<span class="lineNum">     172 </span>            :   /// Kerr-Schild \f$r^2\f$ in terms of the Cartesian coordinates.
+<span class="lineNum">     173 </span>            :   template &lt;typename DataType&gt;
+<span class="lineNum">     174 </span><span class="lineCov">          1 :   Scalar&lt;DataType&gt; r_coord_squared(</span>
+<span class="lineNum">     175 </span>            :       const tnsr::I&lt;DataType, 3, Frame::Inertial&gt;&amp; cartesian_coords) const
+<span class="lineNum">     176 </span>            :       noexcept;
+<span class="lineNum">     177 </span>            : 
+<span class="lineNum">     178 </span>            :   // clang-tidy: google-runtime-references
+<span class="lineNum">     179 </span><span class="lineNoCov">          0 :   void pup(PUP::er&amp; /*p*/) noexcept;  // NOLINT</span>
+<span class="lineNum">     180 </span>            : 
+<span class="lineNum">     181 </span>            :  private:
+<span class="lineNum">     182 </span><span class="lineNoCov">          0 :   friend bool operator==(const KerrSchildCoords&amp; lhs,</span>
+<span class="lineNum">     183 </span>            :                          const KerrSchildCoords&amp; rhs) noexcept;
+<span class="lineNum">     184 </span>            : 
+<span class="lineNum">     185 </span>            :   // The spatial components of the Jacobian of the transformation from
+<span class="lineNum">     186 </span>            :   // Kerr coordinates to Cartesian coordinates (x, y, z).
+<span class="lineNum">     187 </span>            :   template &lt;typename DataType&gt;
+<span class="lineNum">     188 </span><span class="lineNoCov">          0 :   tnsr::Ij&lt;DataType, 3, Frame::NoFrame&gt; jacobian_matrix(const DataType&amp; x,</span>
+<span class="lineNum">     189 </span>            :                                                         const DataType&amp; y,
+<span class="lineNum">     190 </span>            :                                                         const DataType&amp; z) const
+<span class="lineNum">     191 </span>            :       noexcept;
+<span class="lineNum">     192 </span>            : 
+<span class="lineNum">     193 </span><span class="lineNoCov">          0 :   double spin_a_ = std::numeric_limits&lt;double&gt;::signaling_NaN();</span>
+<span class="lineNum">     194 </span>            : };
+<span class="lineNum">     195 </span>            : 
+<span class="lineNum">     196 </span><span class="lineNoCov">          0 : bool operator!=(const KerrSchildCoords&amp; lhs,</span>
+<span class="lineNum">     197 </span>            :                 const KerrSchildCoords&amp; rhs) noexcept;
+<span class="lineNum">     198 </span>            : 
+<span class="lineNum">     199 </span>            : }  // namespace gr
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

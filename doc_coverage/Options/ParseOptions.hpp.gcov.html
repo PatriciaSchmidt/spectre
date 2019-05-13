@@ -1,0 +1,763 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Options/ParseOptions.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">Options</a> - ParseOptions.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">25</td>
+            <td class="headerCovTableEntry">32</td>
+            <td class="headerCovTableEntryMed">78.1 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineCov">          1 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : /// \file
+<span class="lineNum">       5 </span>            : /// Defines classes and functions that handle parsing of input parameters.
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            : #pragma once
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : #include &lt;cstring&gt;
+<span class="lineNum">      10 </span>            : #include &lt;exception&gt;
+<span class="lineNum">      11 </span>            : #include &lt;iterator&gt;
+<span class="lineNum">      12 </span>            : #include &lt;map&gt;
+<span class="lineNum">      13 </span>            : #include &lt;ostream&gt;
+<span class="lineNum">      14 </span>            : #include &lt;sstream&gt;
+<span class="lineNum">      15 </span>            : #include &lt;string&gt;
+<span class="lineNum">      16 </span>            : #include &lt;unordered_map&gt;
+<span class="lineNum">      17 </span>            : #include &lt;unordered_set&gt;
+<span class="lineNum">      18 </span>            : #include &lt;utility&gt;
+<span class="lineNum">      19 </span>            : #include &lt;vector&gt;
+<span class="lineNum">      20 </span>            : #include &lt;yaml-cpp/yaml.h&gt;
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : #include &quot;ErrorHandling/Assert.hpp&quot;
+<span class="lineNum">      23 </span>            : #include &quot;ErrorHandling/Error.hpp&quot;
+<span class="lineNum">      24 </span>            : #include &quot;Options/Options.hpp&quot;
+<span class="lineNum">      25 </span>            : #include &quot;Options/OptionsDetails.hpp&quot;
+<span class="lineNum">      26 </span>            : #include &quot;Utilities/NoSuchType.hpp&quot;
+<span class="lineNum">      27 </span>            : #include &quot;Utilities/Overloader.hpp&quot;
+<span class="lineNum">      28 </span>            : #include &quot;Utilities/PrettyType.hpp&quot;
+<span class="lineNum">      29 </span>            : #include &quot;Utilities/Requires.hpp&quot;
+<span class="lineNum">      30 </span>            : #include &quot;Utilities/StdHelpers.hpp&quot;
+<span class="lineNum">      31 </span>            : #include &quot;Utilities/TypeTraits.hpp&quot;
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span>            : // Defining methods as inline in a different header from the class
+<span class="lineNum">      34 </span>            : // definition is somewhat strange.  It is done here to minimize the
+<span class="lineNum">      35 </span>            : // amount of code in the frequently-included Options.hpp file.  The
+<span class="lineNum">      36 </span>            : // only external consumers of Option should be create_from_yaml
+<span class="lineNum">      37 </span>            : // specializations, and they should only be instantiated by code in
+<span class="lineNum">      38 </span>            : // this file.  (Or explicitly instantiated in cpp files, which can
+<span class="lineNum">      39 </span>            : // include this file.)
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            : inline Option::Option(YAML::Node node, OptionContext context) noexcept
+<span class="lineNum">      42 </span>            :     // clang-tidy: YAML::Node not movable (as of yaml-cpp-0.5.3)
+<span class="lineNum">      43 </span>            :     : node_(std::make_unique&lt;YAML::Node&gt;(std::move(node))),
+<span class="lineNum">      44 </span>            :       context_(std::move(context)) {  // NOLINT
+<span class="lineNum">      45 </span>            :   context_.line = node.Mark().line;
+<span class="lineNum">      46 </span>            :   context_.column = node.Mark().column;
+<span class="lineNum">      47 </span>            : }
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span>            : inline Option::Option(OptionContext context) noexcept
+<span class="lineNum">      50 </span>            :     : node_(std::make_unique&lt;YAML::Node&gt;()), context_(std::move(context)) {}
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            : inline const YAML::Node&amp; Option::node() const noexcept { return *node_; }
+<span class="lineNum">      53 </span>            : inline const OptionContext&amp; Option::context() const noexcept {
+<span class="lineNum">      54 </span>            :   return context_;
+<span class="lineNum">      55 </span>            : }
+<span class="lineNum">      56 </span>            : 
+<span class="lineNum">      57 </span>            : /// Append a line to the contained context.
+<span class="lineNum">      58 </span>            : inline void Option::append_context(const std::string&amp; context) noexcept {
+<span class="lineNum">      59 </span>            :   context_.append(context);
+<span class="lineNum">      60 </span>            : }
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span>            : inline void Option::set_node(YAML::Node node) noexcept {
+<span class="lineNum">      63 </span>            :   // clang-tidy: YAML::Node not movable (as of yaml-cpp-0.5.3)
+<span class="lineNum">      64 </span>            :   *node_ = std::move(node);  // NOLINT
+<span class="lineNum">      65 </span>            :   context_.line = node_-&gt;Mark().line;
+<span class="lineNum">      66 </span>            :   context_.column = node_-&gt;Mark().column;
+<span class="lineNum">      67 </span>            : }
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span>            : template &lt;typename T, typename Metavariables&gt;
+<span class="lineNum">      70 </span>            : T Option::parse_as() const {
+<span class="lineNum">      71 </span>            :   try {
+<span class="lineNum">      72 </span>            :     // yaml-cpp's `as` method won't parse empty nodes, so we need to
+<span class="lineNum">      73 </span>            :     // inline a bit of its logic.
+<span class="lineNum">      74 </span>            :     Options_detail::wrap_create_types&lt;T, Metavariables&gt; result{};
+<span class="lineNum">      75 </span>            :     if (YAML::convert&lt;decltype(result)&gt;::decode(node(), result)) {
+<span class="lineNum">      76 </span>            :       return Options_detail::unwrap_create_types(std::move(result));
+<span class="lineNum">      77 </span>            :     }
+<span class="lineNum">      78 </span>            :     // clang-tidy: thrown exception is not nothrow copy constructible
+<span class="lineNum">      79 </span>            :     throw YAML::BadConversion(node().Mark());  // NOLINT
+<span class="lineNum">      80 </span>            :   } catch (const YAML::BadConversion&amp; e) {
+<span class="lineNum">      81 </span>            :     // This happens when trying to parse an empty value as a container
+<span class="lineNum">      82 </span>            :     // with no entries.
+<span class="lineNum">      83 </span>            :     if ((tt::is_a_v&lt;std::vector, T&gt; or tt::is_std_array_of_size_v&lt;0, T&gt; or
+<span class="lineNum">      84 </span>            :          tt::is_maplike_v&lt;T&gt;) and node().IsNull()) {
+<span class="lineNum">      85 </span>            :       return T{};
+<span class="lineNum">      86 </span>            :     }
+<span class="lineNum">      87 </span>            :     OptionContext error_context = context();
+<span class="lineNum">      88 </span>            :     error_context.line = e.mark.line;
+<span class="lineNum">      89 </span>            :     error_context.column = e.mark.column;
+<span class="lineNum">      90 </span>            :     std::ostringstream ss;
+<span class="lineNum">      91 </span>            :     ss &lt;&lt; &quot;Failed to convert value to type &quot;
+<span class="lineNum">      92 </span>            :        &lt;&lt; Options_detail::yaml_type&lt;T&gt;::value() &lt;&lt; &quot;:&quot;;
+<span class="lineNum">      93 </span>            : 
+<span class="lineNum">      94 </span>            :     const std::string value_text = YAML::Dump(node());
+<span class="lineNum">      95 </span>            :     if (value_text.find('\n') == std::string::npos) {
+<span class="lineNum">      96 </span>            :       ss &lt;&lt; &quot; &quot; &lt;&lt; value_text;
+<span class="lineNum">      97 </span>            :     } else {
+<span class="lineNum">      98 </span>            :       // Indent each line of the value by two spaces and start on a new line
+<span class="lineNum">      99 </span>            :       ss &lt;&lt; &quot;\n  &quot;;
+<span class="lineNum">     100 </span>            :       for (char c : value_text) {
+<span class="lineNum">     101 </span>            :         ss &lt;&lt; c;
+<span class="lineNum">     102 </span>            :         if (c == '\n') {
+<span class="lineNum">     103 </span>            :           ss &lt;&lt; &quot;  &quot;;
+<span class="lineNum">     104 </span>            :         }
+<span class="lineNum">     105 </span>            :       }
+<span class="lineNum">     106 </span>            :     }
+<span class="lineNum">     107 </span>            : 
+<span class="lineNum">     108 </span>            :     if (tt::is_a_v&lt;std::vector, T&gt; or tt::is_std_array_v&lt;T&gt;) {
+<span class="lineNum">     109 </span>            :       ss &lt;&lt; &quot;\n\nNote: For sequences this can happen because the length of the &quot;
+<span class="lineNum">     110 </span>            :             &quot;sequence specified\nin the input file is not equal to the length &quot;
+<span class="lineNum">     111 </span>            :             &quot;expected by the code. Sequences in\nfiles can be denoted either &quot;
+<span class="lineNum">     112 </span>            :             &quot;as a bracket enclosed list ([foo, bar]) or with each\nentry on a &quot;
+<span class="lineNum">     113 </span>            :             &quot;separate line, indented and preceeded by a dash (  - foo).&quot;;
+<span class="lineNum">     114 </span>            :     }
+<span class="lineNum">     115 </span>            :     PARSE_ERROR(error_context, ss.str());
+<span class="lineNum">     116 </span>            :   } catch (const Options_detail::propagate_context&amp; e) {
+<span class="lineNum">     117 </span>            :     OptionContext error_context = context();
+<span class="lineNum">     118 </span>            :     // Avoid line numbers in the middle of the trace
+<span class="lineNum">     119 </span>            :     error_context.line = -1;
+<span class="lineNum">     120 </span>            :     error_context.column = -1;
+<span class="lineNum">     121 </span>            :     PARSE_ERROR(error_context, e.message());
+<span class="lineNum">     122 </span>            :   } catch (std::exception&amp; e) {
+<span class="lineNum">     123 </span>            :     ERROR(&quot;Unexpected exception: &quot; &lt;&lt; e.what());
+<span class="lineNum">     124 </span>            :   }
+<span class="lineNum">     125 </span>            : }
+<span class="lineNum">     126 </span>            : 
+<span class="lineNum">     127 </span>            : namespace Options_detail {
+<span class="lineNum">     128 </span>            : template &lt;typename T, typename Metavariables, typename Subgroup&gt;
+<span class="lineNum">     129 </span>            : struct get_impl;
+<span class="lineNum">     130 </span>            : }  // namespace Options_detail
+<span class="lineNum">     131 </span>            : 
+<span class="lineNum">     132 </span>            : /// \ingroup OptionParsingGroup
+<span class="lineNum">     133 </span>            : /// \brief Class that handles parsing an input file
+<span class="lineNum">     134 </span>            : ///
+<span class="lineNum">     135 </span>            : /// Options must be given YAML data to parse before output can be
+<span class="lineNum">     136 </span>            : /// extracted.  This can be done either from a file (parse_file
+<span class="lineNum">     137 </span>            : /// method), from a string (parse method), or, in the case of
+<span class="lineNum">     138 </span>            : /// recursive parsing, from an Option (parse method).  The options
+<span class="lineNum">     139 </span>            : /// can then be extracted using the get method.
+<span class="lineNum">     140 </span>            : ///
+<span class="lineNum">     141 </span>            : /// \example
+<span class="lineNum">     142 </span>            : /// \snippet Test_Options.cpp options_example_scalar_struct
+<span class="lineNum">     143 </span>            : /// \snippet Test_Options.cpp options_example_scalar_parse
+<span class="lineNum">     144 </span>            : ///
+<span class="lineNum">     145 </span>            : /// \see the \ref dev_guide_option_parsing tutorial
+<span class="lineNum">     146 </span>            : ///
+<span class="lineNum">     147 </span>            : /// \tparam OptionList the list of option structs to parse
+<span class="lineNum">     148 </span>            : /// \tparam Group the option group with a group hierarchy
+<span class="lineNum">     149 </span>            : template &lt;typename OptionList, typename Group = NoSuchType&gt;
+<span class="lineNum">     150 </span><span class="lineCov">          1 : class Options {</span>
+<span class="lineNum">     151 </span>            :  public:
+<span class="lineNum">     152 </span>            :   /// \param help_text an overall description of the options
+<span class="lineNum">     153 </span><span class="lineCov">          1 :   explicit Options(std::string help_text) noexcept;</span>
+<span class="lineNum">     154 </span>            : 
+<span class="lineNum">     155 </span>            :   /// Parse a string to obtain options and their values.
+<span class="lineNum">     156 </span>            :   ///
+<span class="lineNum">     157 </span>            :   /// \param options the string holding the YAML formatted options
+<span class="lineNum">     158 </span><span class="lineCov">          1 :   void parse(const std::string&amp; options) noexcept;</span>
+<span class="lineNum">     159 </span>            : 
+<span class="lineNum">     160 </span>            :   /// Parse an Option to obtain options and their values.
+<span class="lineNum">     161 </span><span class="lineCov">          1 :   void parse(const Option&amp; options);</span>
+<span class="lineNum">     162 </span>            : 
+<span class="lineNum">     163 </span>            :   /// Parse a file containing options
+<span class="lineNum">     164 </span>            :   ///
+<span class="lineNum">     165 </span>            :   /// \param file_name the path to the file to parse
+<span class="lineNum">     166 </span><span class="lineCov">          1 :   void parse_file(const std::string&amp; file_name) noexcept;</span>
+<span class="lineNum">     167 </span>            : 
+<span class="lineNum">     168 </span>            :   /// Parse a YAML node containing options
+<span class="lineNum">     169 </span><span class="lineCov">          1 :   void parse(const YAML::Node&amp; node);</span>
+<span class="lineNum">     170 </span>            : 
+<span class="lineNum">     171 </span>            :   /// Get the value of the specified option
+<span class="lineNum">     172 </span>            :   ///
+<span class="lineNum">     173 </span>            :   /// \tparam T the option to retrieve
+<span class="lineNum">     174 </span>            :   /// \return the value of the option
+<span class="lineNum">     175 </span>            :   template &lt;typename T, typename Metavariables = NoSuchType&gt;
+<span class="lineNum">     176 </span><span class="lineCov">          1 :   typename T::type get() const;</span>
+<span class="lineNum">     177 </span>            : 
+<span class="lineNum">     178 </span>            :   /// Call a function with the specified options as arguments.
+<span class="lineNum">     179 </span>            :   ///
+<span class="lineNum">     180 </span>            :   /// \tparam TagList a typelist of options to pass
+<span class="lineNum">     181 </span>            :   /// \return the result of the function call
+<span class="lineNum">     182 </span>            :   template &lt;typename TagList, typename Metavariables = NoSuchType, typename F&gt;
+<span class="lineNum">     183 </span><span class="lineCov">          1 :   decltype(auto) apply(F&amp;&amp; func) const;</span>
+<span class="lineNum">     184 </span>            : 
+<span class="lineNum">     185 </span>            :   /// Get the help string
+<span class="lineNum">     186 </span><span class="lineCov">          1 :   std::string help() const noexcept;</span>
+<span class="lineNum">     187 </span>            : 
+<span class="lineNum">     188 </span>            :  private:
+<span class="lineNum">     189 </span>            :   template &lt;typename, typename, typename&gt;
+<span class="lineNum">     190 </span>            :   friend struct Options_detail::get_impl;
+<span class="lineNum">     191 </span>            : 
+<span class="lineNum">     192 </span>            :   static_assert(tt::is_a&lt;tmpl::list, OptionList&gt;::value,
+<span class="lineNum">     193 </span>            :                 &quot;The OptionList template parameter to Options must be a &quot;
+<span class="lineNum">     194 </span>            :                 &quot;tmpl::list&lt;...&gt;.&quot;);
+<span class="lineNum">     195 </span>            : 
+<span class="lineNum">     196 </span>            :   /// All top-level options and top-level groups of options. Every option in
+<span class="lineNum">     197 </span>            :   /// `OptionList` is either in this list or in the hierarchy of one of the
+<span class="lineNum">     198 </span>            :   /// groups in this list.
+<span class="lineNum">     199 </span><span class="lineCov">          1 :   using tags_and_subgroups_list = tmpl::remove_duplicates&lt;tmpl::transform&lt;</span>
+<span class="lineNum">     200 </span>            :       OptionList, Options_detail::find_subgroup&lt;tmpl::_1, Group&gt;&gt;&gt;;
+<span class="lineNum">     201 </span>            : 
+<span class="lineNum">     202 </span>            :   // The maximum length of an option label. 21 characters fits
+<span class="lineNum">     203 </span>            :   // &quot;DiscontinuousGalerkin&quot;.
+<span class="lineNum">     204 </span><span class="lineNoCov">          0 :   static constexpr int max_label_size_ = 21;</span>
+<span class="lineNum">     205 </span>            :   // The maximum length of option help strings.
+<span class="lineNum">     206 </span><span class="lineNoCov">          0 :   static constexpr size_t max_help_size_ = 55;</span>
+<span class="lineNum">     207 </span>            : 
+<span class="lineNum">     208 </span>            :   //@{
+<span class="lineNum">     209 </span>            :   /// Check that the size is not smaller than the lower bound
+<span class="lineNum">     210 </span>            :   ///
+<span class="lineNum">     211 </span>            :   /// \tparam T the option struct
+<span class="lineNum">     212 </span>            :   /// \param t the value of the read in option
+<span class="lineNum">     213 </span>            :   template &lt;
+<span class="lineNum">     214 </span>            :       typename T,
+<span class="lineNum">     215 </span>            :       Requires&lt;Options_detail::has_lower_bound_on_size&lt;T&gt;::value&gt; = nullptr&gt;
+<span class="lineNum">     216 </span><span class="lineCov">          1 :   void check_lower_bound_on_size(const typename T::type&amp; t,</span>
+<span class="lineNum">     217 </span>            :                                  const OptionContext&amp; context) const;
+<span class="lineNum">     218 </span>            :   template &lt;
+<span class="lineNum">     219 </span>            :       typename T,
+<span class="lineNum">     220 </span>            :       Requires&lt;not Options_detail::has_lower_bound_on_size&lt;T&gt;::value&gt; = nullptr&gt;
+<span class="lineNum">     221 </span><span class="lineCov">          1 :   constexpr void check_lower_bound_on_size(</span>
+<span class="lineNum">     222 </span>            :       const typename T::type&amp; /*t*/, const OptionContext&amp; /*context*/) const
+<span class="lineNum">     223 </span>            :       noexcept {}
+<span class="lineNum">     224 </span>            :   //@}
+<span class="lineNum">     225 </span>            : 
+<span class="lineNum">     226 </span>            :   //@{
+<span class="lineNum">     227 </span>            :   /// Check that the size is not larger than the upper bound
+<span class="lineNum">     228 </span>            :   ///
+<span class="lineNum">     229 </span>            :   /// \tparam T the option struct
+<span class="lineNum">     230 </span>            :   /// \param t the value of the read in option
+<span class="lineNum">     231 </span>            :   template &lt;
+<span class="lineNum">     232 </span>            :       typename T,
+<span class="lineNum">     233 </span>            :       Requires&lt;Options_detail::has_upper_bound_on_size&lt;T&gt;::value&gt; = nullptr&gt;
+<span class="lineNum">     234 </span><span class="lineCov">          1 :   void check_upper_bound_on_size(const typename T::type&amp; t,</span>
+<span class="lineNum">     235 </span>            :                                  const OptionContext&amp; context) const;
+<span class="lineNum">     236 </span>            :   template &lt;
+<span class="lineNum">     237 </span>            :       typename T,
+<span class="lineNum">     238 </span>            :       Requires&lt;not Options_detail::has_upper_bound_on_size&lt;T&gt;::value&gt; = nullptr&gt;
+<span class="lineNum">     239 </span><span class="lineCov">          1 :   constexpr void check_upper_bound_on_size(</span>
+<span class="lineNum">     240 </span>            :       const typename T::type&amp; /*t*/, const OptionContext&amp; /*context*/) const
+<span class="lineNum">     241 </span>            :       noexcept {}
+<span class="lineNum">     242 </span>            :   //@}
+<span class="lineNum">     243 </span>            : 
+<span class="lineNum">     244 </span>            :   //@{
+<span class="lineNum">     245 </span>            :   /// Returns the default value or errors if there is no default.
+<span class="lineNum">     246 </span>            :   ///
+<span class="lineNum">     247 </span>            :   /// \tparam T the option struct
+<span class="lineNum">     248 </span>            :   template &lt;typename T,
+<span class="lineNum">     249 </span>            :             Requires&lt;Options_detail::has_default&lt;T&gt;::value&gt; = nullptr&gt;
+<span class="lineNum">     250 </span><span class="lineCov">          1 :   typename T::type get_default() const noexcept {</span>
+<span class="lineNum">     251 </span>            :     static_assert(
+<span class="lineNum">     252 </span>            :         cpp17::is_same_v&lt;decltype(T::default_value()), typename T::type&gt;,
+<span class="lineNum">     253 </span>            :         &quot;Default value is not of the same type as the option.&quot;);
+<span class="lineNum">     254 </span>            :     return T::default_value();
+<span class="lineNum">     255 </span>            :   }
+<span class="lineNum">     256 </span>            :   template &lt;typename T,
+<span class="lineNum">     257 </span>            :             Requires&lt;not Options_detail::has_default&lt;T&gt;::value&gt; = nullptr&gt;
+<span class="lineNum">     258 </span><span class="lineCov">          1 :   [[noreturn]] typename T::type get_default() const {</span>
+<span class="lineNum">     259 </span>            :     PARSE_ERROR(context_, &quot;You did not specify the option '&quot;
+<span class="lineNum">     260 </span>            :                               &lt;&lt; Options_detail::name&lt;T&gt;() &lt;&lt; &quot;'.\n&quot;
+<span class="lineNum">     261 </span>            :                               &lt;&lt; help());
+<span class="lineNum">     262 </span>            :   }
+<span class="lineNum">     263 </span>            :   //@}
+<span class="lineNum">     264 </span>            : 
+<span class="lineNum">     265 </span>            :   //@{
+<span class="lineNum">     266 </span>            :   /// If the options has a lower bound, check it is satisfied.
+<span class="lineNum">     267 </span>            :   ///
+<span class="lineNum">     268 </span>            :   /// Note: Lower bounds are &gt;=, not just &gt;.
+<span class="lineNum">     269 </span>            :   /// \tparam T the option struct
+<span class="lineNum">     270 </span>            :   /// \param t the value of the read in option
+<span class="lineNum">     271 </span>            :   template &lt;typename T,
+<span class="lineNum">     272 </span>            :             Requires&lt;Options_detail::has_lower_bound&lt;T&gt;::value&gt; = nullptr&gt;
+<span class="lineNum">     273 </span><span class="lineCov">          1 :   void check_lower_bound(const typename T::type&amp; t,</span>
+<span class="lineNum">     274 </span>            :                          const OptionContext&amp; context) const;
+<span class="lineNum">     275 </span>            :   template &lt;typename T,
+<span class="lineNum">     276 </span>            :             Requires&lt;not Options_detail::has_lower_bound&lt;T&gt;::value&gt; = nullptr&gt;
+<span class="lineNum">     277 </span><span class="lineCov">          1 :   constexpr void check_lower_bound(const typename T::type&amp; /*t*/,</span>
+<span class="lineNum">     278 </span>            :                                    const OptionContext&amp; /*context*/) const
+<span class="lineNum">     279 </span>            :       noexcept {}
+<span class="lineNum">     280 </span>            :   //@}
+<span class="lineNum">     281 </span>            : 
+<span class="lineNum">     282 </span>            :   //@{
+<span class="lineNum">     283 </span>            :   /// If the options has a upper bound, check it is satisfied.
+<span class="lineNum">     284 </span>            :   ///
+<span class="lineNum">     285 </span>            :   /// Note: Upper bounds are &lt;=, not just &lt;.
+<span class="lineNum">     286 </span>            :   /// \tparam T the option struct
+<span class="lineNum">     287 </span>            :   /// \param t the value of the read in option
+<span class="lineNum">     288 </span>            :   template &lt;typename T,
+<span class="lineNum">     289 </span>            :             Requires&lt;Options_detail::has_upper_bound&lt;T&gt;::value&gt; = nullptr&gt;
+<span class="lineNum">     290 </span><span class="lineCov">          1 :   void check_upper_bound(const typename T::type&amp; t,</span>
+<span class="lineNum">     291 </span>            :                          const OptionContext&amp; context) const;
+<span class="lineNum">     292 </span>            :   template &lt;typename T,
+<span class="lineNum">     293 </span>            :             Requires&lt;not Options_detail::has_upper_bound&lt;T&gt;::value&gt; = nullptr&gt;
+<span class="lineNum">     294 </span><span class="lineCov">          1 :   constexpr void check_upper_bound(const typename T::type&amp; /*t*/,</span>
+<span class="lineNum">     295 </span>            :                                    const OptionContext&amp; /*context*/) const
+<span class="lineNum">     296 </span>            :       noexcept {}
+<span class="lineNum">     297 </span>            :   //@}
+<span class="lineNum">     298 </span>            : 
+<span class="lineNum">     299 </span>            :   //@{
+<span class="lineNum">     300 </span>            :   /// Check that the default (if any) satisfies the bounds
+<span class="lineNum">     301 </span>            :   ///
+<span class="lineNum">     302 </span>            :   /// \tparam T the option struct
+<span class="lineNum">     303 </span>            :   template &lt;typename T,
+<span class="lineNum">     304 </span>            :             Requires&lt;Options_detail::has_default&lt;T&gt;::value&gt; = nullptr&gt;
+<span class="lineNum">     305 </span><span class="lineCov">          1 :   void validate_default() const {</span>
+<span class="lineNum">     306 </span>            :     OptionContext context;
+<span class="lineNum">     307 </span>            :     context.append(&quot;Checking DEFAULT value for &quot; + Options_detail::name&lt;T&gt;());
+<span class="lineNum">     308 </span>            :     const auto default_value = T::default_value();
+<span class="lineNum">     309 </span>            :     check_lower_bound_on_size&lt;T&gt;(default_value, context);
+<span class="lineNum">     310 </span>            :     check_upper_bound_on_size&lt;T&gt;(default_value, context);
+<span class="lineNum">     311 </span>            :     check_lower_bound&lt;T&gt;(default_value, context);
+<span class="lineNum">     312 </span>            :     check_upper_bound&lt;T&gt;(default_value, context);
+<span class="lineNum">     313 </span>            :   }
+<span class="lineNum">     314 </span>            :   template &lt;typename T,
+<span class="lineNum">     315 </span>            :             Requires&lt;not Options_detail::has_default&lt;T&gt;::value&gt; = nullptr&gt;
+<span class="lineNum">     316 </span><span class="lineCov">          1 :   constexpr void validate_default() const noexcept {}</span>
+<span class="lineNum">     317 </span>            :   //@}
+<span class="lineNum">     318 </span>            : 
+<span class="lineNum">     319 </span>            :   /// Get the help string for parsing errors
+<span class="lineNum">     320 </span><span class="lineCov">          1 :   std::string parsing_help(const YAML::Node&amp; options) const noexcept;</span>
+<span class="lineNum">     321 </span>            : 
+<span class="lineNum">     322 </span>            :   /// Error message when failed to parse an input file.
+<span class="lineNum">     323 </span><span class="lineCov">          1 :   [[noreturn]] void parser_error(const YAML::Exception&amp; e) const noexcept;</span>
+<span class="lineNum">     324 </span>            : 
+<span class="lineNum">     325 </span><span class="lineNoCov">          0 :   std::string help_text_{};</span>
+<span class="lineNum">     326 </span><span class="lineNoCov">          0 :   OptionContext context_{};</span>
+<span class="lineNum">     327 </span><span class="lineNoCov">          0 :   std::unordered_set&lt;std::string&gt; valid_names_{};</span>
+<span class="lineNum">     328 </span><span class="lineNoCov">          0 :   std::unordered_map&lt;std::string, YAML::Node&gt; parsed_options_{};</span>
+<span class="lineNum">     329 </span>            : };
+<span class="lineNum">     330 </span>            : 
+<span class="lineNum">     331 </span>            : template &lt;typename OptionList, typename Group&gt;
+<span class="lineNum">     332 </span>            : Options&lt;OptionList, Group&gt;::Options(std::string help_text) noexcept
+<span class="lineNum">     333 </span>            :     : help_text_(std::move(help_text)),
+<span class="lineNum">     334 </span>            :       valid_names_(tmpl::for_each&lt;tags_and_subgroups_list&gt;(
+<span class="lineNum">     335 </span>            :                        Options_detail::create_valid_names{})
+<span class="lineNum">     336 </span>            :                        .value) {
+<span class="lineNum">     337 </span>            :   tmpl::for_each&lt;tags_and_subgroups_list&gt;([](auto t) noexcept {
+<span class="lineNum">     338 </span>            :     using T = typename decltype(t)::type;
+<span class="lineNum">     339 </span>            :     const std::string label = Options_detail::name&lt;T&gt;();
+<span class="lineNum">     340 </span>            :     ASSERT(label.size() &lt;= max_label_size_,
+<span class="lineNum">     341 </span>            :            &quot;The option name &quot; &lt;&lt; label
+<span class="lineNum">     342 </span>            :                               &lt;&lt; &quot; is too long for nice formatting, &quot;
+<span class="lineNum">     343 </span>            :                                  &quot;please shorten the name to &quot;
+<span class="lineNum">     344 </span>            :                               &lt;&lt; max_label_size_ &lt;&lt; &quot; characters or fewer&quot;);
+<span class="lineNum">     345 </span>            :     ASSERT(std::strlen(T::help) &gt; 0,
+<span class="lineNum">     346 </span>            :            &quot;You must supply a help string of non-zero length for &quot; &lt;&lt; label);
+<span class="lineNum">     347 </span>            :     ASSERT(std::strlen(T::help) &lt;= max_help_size_,
+<span class="lineNum">     348 </span>            :            &quot;Option help strings should be short and to the point.  &quot;
+<span class="lineNum">     349 </span>            :            &quot;The help string for &quot;
+<span class="lineNum">     350 </span>            :                &lt;&lt; label &lt;&lt; &quot; should have &quot; &lt;&lt; max_help_size_
+<span class="lineNum">     351 </span>            :                &lt;&lt; &quot; characters or fewer.&quot;);
+<span class="lineNum">     352 </span>            :   });
+<span class="lineNum">     353 </span>            : }
+<span class="lineNum">     354 </span>            : 
+<span class="lineNum">     355 </span>            : template &lt;typename OptionList, typename Group&gt;
+<span class="lineNum">     356 </span>            : void Options&lt;OptionList, Group&gt;::parse_file(
+<span class="lineNum">     357 </span>            :     const std::string&amp; file_name) noexcept {
+<span class="lineNum">     358 </span>            :   context_.append(&quot;In &quot; + file_name);
+<span class="lineNum">     359 </span>            :   try {
+<span class="lineNum">     360 </span>            :     parse(YAML::LoadFile(file_name));
+<span class="lineNum">     361 </span>            :   } catch (YAML::BadFile&amp; /*e*/) {
+<span class="lineNum">     362 </span>            :     ERROR(&quot;Could not open the input file &quot; &lt;&lt; file_name);
+<span class="lineNum">     363 </span>            :   } catch (const YAML::Exception&amp; e) {
+<span class="lineNum">     364 </span>            :     parser_error(e);
+<span class="lineNum">     365 </span>            :   }
+<span class="lineNum">     366 </span>            : }
+<span class="lineNum">     367 </span>            : 
+<span class="lineNum">     368 </span>            : template &lt;typename OptionList, typename Group&gt;
+<span class="lineNum">     369 </span>            : void Options&lt;OptionList, Group&gt;::parse(const std::string&amp; options) noexcept {
+<span class="lineNum">     370 </span>            :   context_.append(&quot;In string&quot;);
+<span class="lineNum">     371 </span>            :   try {
+<span class="lineNum">     372 </span>            :     parse(YAML::Load(options));
+<span class="lineNum">     373 </span>            :   } catch (YAML::Exception&amp; e) {
+<span class="lineNum">     374 </span>            :     parser_error(e);
+<span class="lineNum">     375 </span>            :   }
+<span class="lineNum">     376 </span>            : }
+<span class="lineNum">     377 </span>            : 
+<span class="lineNum">     378 </span>            : template &lt;typename OptionList, typename Group&gt;
+<span class="lineNum">     379 </span>            : void Options&lt;OptionList, Group&gt;::parse(const Option&amp; options) {
+<span class="lineNum">     380 </span>            :   context_ = options.context();
+<span class="lineNum">     381 </span>            :   parse(options.node());
+<span class="lineNum">     382 </span>            : }
+<span class="lineNum">     383 </span>            : 
+<span class="lineNum">     384 </span>            : template &lt;typename OptionList, typename Group&gt;
+<span class="lineNum">     385 </span>            : void Options&lt;OptionList, Group&gt;::parse(const YAML::Node&amp; node) {
+<span class="lineNum">     386 </span>            :   if (not(node.IsMap() or node.IsNull())) {
+<span class="lineNum">     387 </span>            :     PARSE_ERROR(context_, &quot;'&quot; &lt;&lt; node &lt;&lt; &quot;' does not look like options.\n&quot;
+<span class="lineNum">     388 </span>            :                               &lt;&lt; help());
+<span class="lineNum">     389 </span>            :   }
+<span class="lineNum">     390 </span>            :   for (const auto&amp; name_and_value : node) {
+<span class="lineNum">     391 </span>            :     const auto&amp; name = name_and_value.first.as&lt;std::string&gt;();
+<span class="lineNum">     392 </span>            :     const auto&amp; value = name_and_value.second;
+<span class="lineNum">     393 </span>            :     auto context = context_;
+<span class="lineNum">     394 </span>            :     context.line = name_and_value.first.Mark().line;
+<span class="lineNum">     395 </span>            :     context.column = name_and_value.first.Mark().column;
+<span class="lineNum">     396 </span>            : 
+<span class="lineNum">     397 </span>            :     // Check for invalid key
+<span class="lineNum">     398 </span>            :     if (1 != valid_names_.count(name)) {
+<span class="lineNum">     399 </span>            :       PARSE_ERROR(context, &quot;Option '&quot; &lt;&lt; name &lt;&lt; &quot;' is not a valid option.\n&quot;
+<span class="lineNum">     400 </span>            :                                       &lt;&lt; parsing_help(node));
+<span class="lineNum">     401 </span>            :     }
+<span class="lineNum">     402 </span>            : 
+<span class="lineNum">     403 </span>            :     // Check for duplicate key
+<span class="lineNum">     404 </span>            :     if (0 != parsed_options_.count(name)) {
+<span class="lineNum">     405 </span>            :       PARSE_ERROR(context, &quot;Option '&quot; &lt;&lt; name &lt;&lt; &quot;' specified twice.\n&quot;
+<span class="lineNum">     406 </span>            :                                       &lt;&lt; parsing_help(node));
+<span class="lineNum">     407 </span>            :     }
+<span class="lineNum">     408 </span>            :     parsed_options_.emplace(name, value);
+<span class="lineNum">     409 </span>            :   }
+<span class="lineNum">     410 </span>            : }
+<span class="lineNum">     411 </span>            : 
+<span class="lineNum">     412 </span>            : namespace Options_detail {
+<span class="lineNum">     413 </span>            : template &lt;typename Tag, typename Metavariables, typename Subgroup&gt;
+<span class="lineNum">     414 </span>            : struct get_impl {
+<span class="lineNum">     415 </span>            :   template &lt;typename OptionList, typename Group&gt;
+<span class="lineNum">     416 </span>            :   static typename Tag::type apply(const Options&lt;OptionList, Group&gt;&amp; opts) {
+<span class="lineNum">     417 </span>            :     static_assert(
+<span class="lineNum">     418 </span>            :         tmpl::list_contains_v&lt;OptionList, Tag&gt;,
+<span class="lineNum">     419 </span>            :         &quot;Could not find requested option in the list of options provided. Did &quot;
+<span class="lineNum">     420 </span>            :         &quot;you forget to add the option tag to the OptionList?&quot;);
+<span class="lineNum">     421 </span>            :     const std::string subgroup_label = name&lt;Subgroup&gt;();
+<span class="lineNum">     422 </span>            :     Options&lt;options_in_group&lt;OptionList, Subgroup&gt;, Subgroup&gt; subgroup_options(
+<span class="lineNum">     423 </span>            :         Subgroup::help);
+<span class="lineNum">     424 </span>            :     subgroup_options.context_ = opts.context_;
+<span class="lineNum">     425 </span>            :     subgroup_options.context_.append(&quot;In group &quot; + subgroup_label);
+<span class="lineNum">     426 </span>            :     subgroup_options.parse(opts.parsed_options_.find(subgroup_label)-&gt;second);
+<span class="lineNum">     427 </span>            :     return subgroup_options.template get&lt;Tag, Metavariables&gt;();
+<span class="lineNum">     428 </span>            :   }
+<span class="lineNum">     429 </span>            : };
+<span class="lineNum">     430 </span>            : 
+<span class="lineNum">     431 </span>            : template &lt;typename Tag, typename Metavariables&gt;
+<span class="lineNum">     432 </span>            : struct get_impl&lt;Tag, Metavariables, Tag&gt; {
+<span class="lineNum">     433 </span>            :   template &lt;typename OptionList, typename Group&gt;
+<span class="lineNum">     434 </span>            :   static typename Tag::type apply(const Options&lt;OptionList, Group&gt;&amp; opts) {
+<span class="lineNum">     435 </span>            :     static_assert(
+<span class="lineNum">     436 </span>            :         tmpl::list_contains_v&lt;OptionList, Tag&gt;,
+<span class="lineNum">     437 </span>            :         &quot;Could not find requested option in the list of options provided. Did &quot;
+<span class="lineNum">     438 </span>            :         &quot;you forget to add the option tag to the OptionList?&quot;);
+<span class="lineNum">     439 </span>            :     const std::string label = name&lt;Tag&gt;();
+<span class="lineNum">     440 </span>            : 
+<span class="lineNum">     441 </span>            :     opts.template validate_default&lt;Tag&gt;();
+<span class="lineNum">     442 </span>            :     if (0 == opts.parsed_options_.count(label)) {
+<span class="lineNum">     443 </span>            :       return opts.template get_default&lt;Tag&gt;();
+<span class="lineNum">     444 </span>            :     }
+<span class="lineNum">     445 </span>            : 
+<span class="lineNum">     446 </span>            :     Option option(opts.parsed_options_.find(label)-&gt;second, opts.context_);
+<span class="lineNum">     447 </span>            :     option.append_context(&quot;While parsing option &quot; + label);
+<span class="lineNum">     448 </span>            : 
+<span class="lineNum">     449 </span>            :     auto t = option.parse_as&lt;typename Tag::type, Metavariables&gt;();
+<span class="lineNum">     450 </span>            : 
+<span class="lineNum">     451 </span>            :     opts.template check_lower_bound_on_size&lt;Tag&gt;(t, option.context());
+<span class="lineNum">     452 </span>            :     opts.template check_upper_bound_on_size&lt;Tag&gt;(t, option.context());
+<span class="lineNum">     453 </span>            :     opts.template check_lower_bound&lt;Tag&gt;(t, option.context());
+<span class="lineNum">     454 </span>            :     opts.template check_upper_bound&lt;Tag&gt;(t, option.context());
+<span class="lineNum">     455 </span>            :     return t;
+<span class="lineNum">     456 </span>            :   }
+<span class="lineNum">     457 </span>            : };
+<span class="lineNum">     458 </span>            : }  // namespace Options_detail
+<span class="lineNum">     459 </span>            : 
+<span class="lineNum">     460 </span>            : template &lt;typename OptionList, typename Group&gt;
+<span class="lineNum">     461 </span>            : template &lt;typename Tag, typename Metavariables&gt;
+<span class="lineNum">     462 </span><span class="lineNoCov">          0 : typename Tag::type Options&lt;OptionList, Group&gt;::get() const {</span>
+<span class="lineNum">     463 </span>            :   return Options_detail::get_impl&lt;
+<span class="lineNum">     464 </span>            :       Tag, Metavariables,
+<span class="lineNum">     465 </span>            :       typename Options_detail::find_subgroup&lt;Tag, Group&gt;::type&gt;::apply(*this);
+<span class="lineNum">     466 </span>            : }
+<span class="lineNum">     467 </span>            : 
+<span class="lineNum">     468 </span>            : namespace Options_detail {
+<span class="lineNum">     469 </span>            : template &lt;typename&gt;
+<span class="lineNum">     470 </span>            : struct apply_helper;
+<span class="lineNum">     471 </span>            : 
+<span class="lineNum">     472 </span>            : template &lt;typename... Tags&gt;
+<span class="lineNum">     473 </span>            : struct apply_helper&lt;tmpl::list&lt;Tags...&gt;&gt; {
+<span class="lineNum">     474 </span>            :   template &lt;typename Metavariables, typename Options, typename F&gt;
+<span class="lineNum">     475 </span>            :   static decltype(auto) apply(const Options&amp; opts, F&amp;&amp; func) {
+<span class="lineNum">     476 </span>            :     return func(opts.template get&lt;Tags&gt;()...);
+<span class="lineNum">     477 </span>            :   }
+<span class="lineNum">     478 </span>            : };
+<span class="lineNum">     479 </span>            : }  // namespace Options_detail
+<span class="lineNum">     480 </span>            : 
+<span class="lineNum">     481 </span>            : // \cond
+<span class="lineNum">     482 </span>            : // Doxygen is confused by decltype(auto)
+<span class="lineNum">     483 </span>            : template &lt;typename OptionList, typename Group&gt;
+<span class="lineNum">     484 </span>            : template &lt;typename TagList, typename Metavariables, typename F&gt;
+<span class="lineNum">     485 </span>            : decltype(auto) Options&lt;OptionList, Group&gt;::apply(F&amp;&amp; func) const {
+<span class="lineNum">     486 </span>            :   return Options_detail::apply_helper&lt;TagList&gt;::template apply&lt;Metavariables&gt;(
+<span class="lineNum">     487 </span>            :       *this, std::forward&lt;F&gt;(func));
+<span class="lineNum">     488 </span>            : }
+<span class="lineNum">     489 </span>            : // \endcond
+<span class="lineNum">     490 </span>            : 
+<span class="lineNum">     491 </span>            : template &lt;typename OptionList, typename Group&gt;
+<span class="lineNum">     492 </span>            : std::string Options&lt;OptionList, Group&gt;::help() const noexcept {
+<span class="lineNum">     493 </span>            :   std::ostringstream ss;
+<span class="lineNum">     494 </span>            :   ss &lt;&lt; &quot;\n==== Description of expected options:\n&quot; &lt;&lt; help_text_;
+<span class="lineNum">     495 </span>            :   if (tmpl::size&lt;tags_and_subgroups_list&gt;::value &gt; 0) {
+<span class="lineNum">     496 </span>            :     ss &lt;&lt; &quot;\n\nOptions:\n&quot;
+<span class="lineNum">     497 </span>            :        &lt;&lt; tmpl::for_each&lt;tags_and_subgroups_list&gt;(
+<span class="lineNum">     498 </span>            :               Options_detail::print&lt;OptionList&gt;{max_label_size_})
+<span class="lineNum">     499 </span>            :               .value;
+<span class="lineNum">     500 </span>            :   } else {
+<span class="lineNum">     501 </span>            :     ss &lt;&lt; &quot;\n\n&lt;No options&gt;\n&quot;;
+<span class="lineNum">     502 </span>            :   }
+<span class="lineNum">     503 </span>            :   return ss.str();
+<span class="lineNum">     504 </span>            : }
+<span class="lineNum">     505 </span>            : 
+<span class="lineNum">     506 </span>            : template &lt;typename OptionList, typename Group&gt;
+<span class="lineNum">     507 </span>            : template &lt;typename T,
+<span class="lineNum">     508 </span>            :           Requires&lt;Options_detail::has_lower_bound_on_size&lt;T&gt;::value&gt;&gt;
+<span class="lineNum">     509 </span>            : void Options&lt;OptionList, Group&gt;::check_lower_bound_on_size(
+<span class="lineNum">     510 </span>            :     const typename T::type&amp; t, const OptionContext&amp; context) const {
+<span class="lineNum">     511 </span>            :   static_assert(cpp17::is_same_v&lt;decltype(T::lower_bound_on_size()), size_t&gt;,
+<span class="lineNum">     512 </span>            :                 &quot;lower_bound_on_size() is not a size_t.&quot;);
+<span class="lineNum">     513 </span>            :   if (t.size() &lt; T::lower_bound_on_size()) {
+<span class="lineNum">     514 </span>            :     PARSE_ERROR(context, &quot;Value must have at least &quot;
+<span class="lineNum">     515 </span>            :                              &lt;&lt; T::lower_bound_on_size() &lt;&lt; &quot; entries, but &quot;
+<span class="lineNum">     516 </span>            :                              &lt;&lt; t.size() &lt;&lt; &quot; were given.\n&quot;
+<span class="lineNum">     517 </span>            :                              &lt;&lt; help());
+<span class="lineNum">     518 </span>            :   }
+<span class="lineNum">     519 </span>            : }
+<span class="lineNum">     520 </span>            : 
+<span class="lineNum">     521 </span>            : template &lt;typename OptionList, typename Group&gt;
+<span class="lineNum">     522 </span>            : template &lt;typename T,
+<span class="lineNum">     523 </span>            :           Requires&lt;Options_detail::has_upper_bound_on_size&lt;T&gt;::value&gt;&gt;
+<span class="lineNum">     524 </span>            : void Options&lt;OptionList, Group&gt;::check_upper_bound_on_size(
+<span class="lineNum">     525 </span>            :     const typename T::type&amp; t, const OptionContext&amp; context) const {
+<span class="lineNum">     526 </span>            :   static_assert(cpp17::is_same_v&lt;decltype(T::upper_bound_on_size()), size_t&gt;,
+<span class="lineNum">     527 </span>            :                 &quot;upper_bound_on_size() is not a size_t.&quot;);
+<span class="lineNum">     528 </span>            :   if (t.size() &gt; T::upper_bound_on_size()) {
+<span class="lineNum">     529 </span>            :     PARSE_ERROR(context, &quot;Value must have at most &quot;
+<span class="lineNum">     530 </span>            :                              &lt;&lt; T::upper_bound_on_size() &lt;&lt; &quot; entries, but &quot;
+<span class="lineNum">     531 </span>            :                              &lt;&lt; t.size() &lt;&lt; &quot; were given.\n&quot;
+<span class="lineNum">     532 </span>            :                              &lt;&lt; help());
+<span class="lineNum">     533 </span>            :   }
+<span class="lineNum">     534 </span>            : }
+<span class="lineNum">     535 </span>            : 
+<span class="lineNum">     536 </span>            : template &lt;typename OptionList, typename Group&gt;
+<span class="lineNum">     537 </span>            : template &lt;typename T, Requires&lt;Options_detail::has_lower_bound&lt;T&gt;::value&gt;&gt;
+<span class="lineNum">     538 </span>            : inline void Options&lt;OptionList, Group&gt;::check_lower_bound(
+<span class="lineNum">     539 </span>            :     const typename T::type&amp; t, const OptionContext&amp; context) const {
+<span class="lineNum">     540 </span>            :   static_assert(cpp17::is_same_v&lt;decltype(T::lower_bound()), typename T::type&gt;,
+<span class="lineNum">     541 </span>            :                 &quot;Lower bound is not of the same type as the option.&quot;);
+<span class="lineNum">     542 </span>            :   static_assert(not cpp17::is_same_v&lt;typename T::type, bool&gt;,
+<span class="lineNum">     543 </span>            :                 &quot;Cannot set a lower bound for a bool.&quot;);
+<span class="lineNum">     544 </span>            :   if (t &lt; T::lower_bound()) {
+<span class="lineNum">     545 </span>            :     PARSE_ERROR(context, &quot;Value &quot; &lt;&lt; t &lt;&lt; &quot; is below the lower bound of &quot;
+<span class="lineNum">     546 </span>            :                                   &lt;&lt; T::lower_bound() &lt;&lt; &quot;.\n&quot;
+<span class="lineNum">     547 </span>            :                                   &lt;&lt; help());
+<span class="lineNum">     548 </span>            :   }
+<span class="lineNum">     549 </span>            : }
+<span class="lineNum">     550 </span>            : 
+<span class="lineNum">     551 </span>            : template &lt;typename OptionList, typename Group&gt;
+<span class="lineNum">     552 </span>            : template &lt;typename T, Requires&lt;Options_detail::has_upper_bound&lt;T&gt;::value&gt;&gt;
+<span class="lineNum">     553 </span>            : inline void Options&lt;OptionList, Group&gt;::check_upper_bound(
+<span class="lineNum">     554 </span>            :     const typename T::type&amp; t, const OptionContext&amp; context) const {
+<span class="lineNum">     555 </span>            :   static_assert(cpp17::is_same_v&lt;decltype(T::upper_bound()), typename T::type&gt;,
+<span class="lineNum">     556 </span>            :                 &quot;Upper bound is not of the same type as the option.&quot;);
+<span class="lineNum">     557 </span>            :   static_assert(not cpp17::is_same_v&lt;typename T::type, bool&gt;,
+<span class="lineNum">     558 </span>            :                 &quot;Cannot set an upper bound for a bool.&quot;);
+<span class="lineNum">     559 </span>            :   if (t &gt; T::upper_bound()) {
+<span class="lineNum">     560 </span>            :     PARSE_ERROR(context, &quot;Value &quot; &lt;&lt; t &lt;&lt; &quot; is above the upper bound of &quot;
+<span class="lineNum">     561 </span>            :                                   &lt;&lt; T::upper_bound() &lt;&lt; &quot;.\n&quot;
+<span class="lineNum">     562 </span>            :                                   &lt;&lt; help());
+<span class="lineNum">     563 </span>            :   }
+<span class="lineNum">     564 </span>            : }
+<span class="lineNum">     565 </span>            : 
+<span class="lineNum">     566 </span>            : template &lt;typename OptionList, typename Group&gt;
+<span class="lineNum">     567 </span>            : std::string Options&lt;OptionList, Group&gt;::parsing_help(
+<span class="lineNum">     568 </span>            :     const YAML::Node&amp; options) const noexcept {
+<span class="lineNum">     569 </span>            :   std::ostringstream os;
+<span class="lineNum">     570 </span>            :   // At top level this would dump the entire input file, which is very
+<span class="lineNum">     571 </span>            :   // verbose and not very informative.  At lower levels the result
+<span class="lineNum">     572 </span>            :   // should be much shorter and may actually give useful context for
+<span class="lineNum">     573 </span>            :   // what part of the file is being parsed.
+<span class="lineNum">     574 </span>            :   if (not context_.top_level) {
+<span class="lineNum">     575 </span>            :     os &lt;&lt; &quot;\n==== Parsing the option string:\n&quot; &lt;&lt; options &lt;&lt; &quot;\n&quot;;
+<span class="lineNum">     576 </span>            :   }
+<span class="lineNum">     577 </span>            :   os &lt;&lt; help();
+<span class="lineNum">     578 </span>            :   return os.str();
+<span class="lineNum">     579 </span>            : }
+<span class="lineNum">     580 </span>            : 
+<span class="lineNum">     581 </span>            : template &lt;typename OptionList, typename Group&gt;
+<span class="lineNum">     582 </span>            : [[noreturn]] void Options&lt;OptionList, Group&gt;::parser_error(
+<span class="lineNum">     583 </span>            :     const YAML::Exception&amp; e) const noexcept {
+<span class="lineNum">     584 </span>            :   auto context = context_;
+<span class="lineNum">     585 </span>            :   context.line = e.mark.line;
+<span class="lineNum">     586 </span>            :   context.column = e.mark.column;
+<span class="lineNum">     587 </span>            :   // Inline the top_level branch of PARSE_ERROR to avoid warning that
+<span class="lineNum">     588 </span>            :   // the other branch would call terminate.  (Parser errors can only
+<span class="lineNum">     589 </span>            :   // be generated at top level.)
+<span class="lineNum">     590 </span>            :   ERROR(
+<span class="lineNum">     591 </span>            :       &quot;\n&quot;
+<span class="lineNum">     592 </span>            :       &lt;&lt; context
+<span class="lineNum">     593 </span>            :       &lt;&lt; &quot;Unable to correctly parse the input file because of a syntax error.\n&quot;
+<span class="lineNum">     594 </span>            :          &quot;This is often due to placing a suboption on the same line as an &quot;
+<span class="lineNum">     595 </span>            :          &quot;option, e.g.:\nDomainCreator: CreateInterval:\n  IsPeriodicIn: &quot;
+<span class="lineNum">     596 </span>            :          &quot;[false]\n\nShould be:\nDomainCreator:\n  CreateInterval:\n    &quot;
+<span class="lineNum">     597 </span>            :          &quot;IsPeriodicIn: [true]\n\nSee an example input file for help.&quot;);
+<span class="lineNum">     598 </span>            : }
+<span class="lineNum">     599 </span>            : 
+<span class="lineNum">     600 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     601 </span>            : template &lt;typename Metavariables&gt;
+<span class="lineNum">     602 </span>            : T create_from_yaml&lt;T&gt;::create(const Option&amp; options) {
+<span class="lineNum">     603 </span>            :   Options&lt;typename T::options&gt; parser(T::help);
+<span class="lineNum">     604 </span>            :   parser.parse(options);
+<span class="lineNum">     605 </span>            :   return parser.template apply&lt;typename T::options&gt;([&amp;options](auto&amp;&amp;... args) {
+<span class="lineNum">     606 </span>            :     return make_overloader(
+<span class="lineNum">     607 </span>            :         [&amp;options](std::false_type /*option_context_no_metavars*/,
+<span class="lineNum">     608 </span>            :                    std::true_type /*option_context_with_metavars*/,
+<span class="lineNum">     609 </span>            :                    auto&amp;&amp;... args2) {
+<span class="lineNum">     610 </span>            :           return T(std::move(args2)..., options.context(), Metavariables{});
+<span class="lineNum">     611 </span>            :         },
+<span class="lineNum">     612 </span>            :         [&amp;options](std::true_type /*option_context_no_metavars*/,
+<span class="lineNum">     613 </span>            :                    std::false_type /*option_context_with_metavars*/,
+<span class="lineNum">     614 </span>            :                    auto&amp;&amp;... args2) {
+<span class="lineNum">     615 </span>            :           return T(std::move(args2)..., options.context());
+<span class="lineNum">     616 </span>            :         },
+<span class="lineNum">     617 </span>            :         [](std::false_type /*option_context_no_metavars*/,
+<span class="lineNum">     618 </span>            :            std::false_type /*option_context_with_metavars*/, auto&amp;&amp;... args2) {
+<span class="lineNum">     619 </span>            :           return T(std::move(args2)...);
+<span class="lineNum">     620 </span>            :         })(cpp17::is_constructible_t&lt;T, decltype(std::move(args))...,
+<span class="lineNum">     621 </span>            :                                      const OptionContext&amp;&gt;{},
+<span class="lineNum">     622 </span>            :            cpp17::is_constructible_t&lt;T, decltype(std::move(args))...,
+<span class="lineNum">     623 </span>            :                                      const OptionContext&amp;, Metavariables&gt;{},
+<span class="lineNum">     624 </span>            :            std::move(args)...);
+<span class="lineNum">     625 </span>            :   });
+<span class="lineNum">     626 </span>            : }
+<span class="lineNum">     627 </span>            : 
+<span class="lineNum">     628 </span>            : namespace YAML {
+<span class="lineNum">     629 </span>            : template &lt;typename T, typename Metavariables&gt;
+<span class="lineNum">     630 </span>            : struct convert&lt;Options_detail::CreateWrapper&lt;T, Metavariables&gt;&gt; {
+<span class="lineNum">     631 </span>            :   /* clang-tidy: non-const reference parameter */
+<span class="lineNum">     632 </span>            :   static bool decode(
+<span class="lineNum">     633 </span>            :       const Node&amp; node,
+<span class="lineNum">     634 </span>            :       Options_detail::CreateWrapper&lt;T, Metavariables&gt;&amp; rhs) { /* NOLINT */
+<span class="lineNum">     635 </span>            :     OptionContext context;
+<span class="lineNum">     636 </span>            :     context.top_level = false;
+<span class="lineNum">     637 </span>            :     context.append(&quot;While creating a &quot; + pretty_type::short_name&lt;T&gt;());
+<span class="lineNum">     638 </span>            :     Option options(node, std::move(context));
+<span class="lineNum">     639 </span>            :     rhs = Options_detail::CreateWrapper&lt;T, Metavariables&gt;{
+<span class="lineNum">     640 </span>            :         create_from_yaml&lt;T&gt;::template create&lt;Metavariables&gt;(options)};
+<span class="lineNum">     641 </span>            :     return true;
+<span class="lineNum">     642 </span>            :   }
+<span class="lineNum">     643 </span>            : };
+<span class="lineNum">     644 </span>            : }  // namespace YAML
+<span class="lineNum">     645 </span>            : 
+<span class="lineNum">     646 </span>            : // yaml-cpp doesn't handle C++11 types yet
+<span class="lineNum">     647 </span>            : template &lt;typename K, typename V, typename H, typename P&gt;
+<span class="lineNum">     648 </span>            : struct create_from_yaml&lt;std::unordered_map&lt;K, V, H, P&gt;&gt; {
+<span class="lineNum">     649 </span>            :   template &lt;typename Metavariables&gt;
+<span class="lineNum">     650 </span>            :   static std::unordered_map&lt;K, V, H, P&gt; create(const Option&amp; options) {
+<span class="lineNum">     651 </span>            :     // This shared_ptr stuff is a hack to work around the inability to
+<span class="lineNum">     652 </span>            :     // extract keys from maps before C++17.  Once we require C++17
+<span class="lineNum">     653 </span>            :     // this function and the conversion code for maps in
+<span class="lineNum">     654 </span>            :     // OptionsDetails.hpp can be updated to use the map `extract`
+<span class="lineNum">     655 </span>            :     // method and the shared_ptr conversion below can be removed.
+<span class="lineNum">     656 </span>            :     std::map&lt;std::shared_ptr&lt;K&gt;, V&gt; ordered =
+<span class="lineNum">     657 </span>            :         options.parse_as&lt;std::map&lt;std::shared_ptr&lt;K&gt;, V&gt;, Metavariables&gt;();
+<span class="lineNum">     658 </span>            :     std::unordered_map&lt;K, V, H, P&gt; result;
+<span class="lineNum">     659 </span>            :     for (auto&amp; kv : ordered) {
+<span class="lineNum">     660 </span>            :       result.emplace(std::move(*kv.first), std::move(kv.second));
+<span class="lineNum">     661 </span>            :     }
+<span class="lineNum">     662 </span>            :     return result;
+<span class="lineNum">     663 </span>            :   }
+<span class="lineNum">     664 </span>            : };
+<span class="lineNum">     665 </span>            : 
+<span class="lineNum">     666 </span>            : // This is more of the hack for pre-C++17 unordered_maps
+<span class="lineNum">     667 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     668 </span>            : struct create_from_yaml&lt;std::shared_ptr&lt;T&gt;&gt; {
+<span class="lineNum">     669 </span>            :   template &lt;typename Metavariables&gt;
+<span class="lineNum">     670 </span>            :   static std::shared_ptr&lt;T&gt; create(const Option&amp; options) {
+<span class="lineNum">     671 </span>            :     return std::make_shared&lt;T&gt;(options.parse_as&lt;T, Metavariables&gt;());
+<span class="lineNum">     672 </span>            :   }
+<span class="lineNum">     673 </span>            : };
+<span class="lineNum">     674 </span>            : 
+<span class="lineNum">     675 </span>            : // This is more of the hack for pre-C++17 unordered_maps
+<span class="lineNum">     676 </span>            : namespace Options_detail {
+<span class="lineNum">     677 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     678 </span>            : struct yaml_type&lt;std::shared_ptr&lt;T&gt;&gt; {
+<span class="lineNum">     679 </span>            :   static std::string value() noexcept { return yaml_type&lt;T&gt;::value(); }
+<span class="lineNum">     680 </span>            : };
+<span class="lineNum">     681 </span>            : }  // namespace Options_detail
+<span class="lineNum">     682 </span>            : 
+<span class="lineNum">     683 </span>            : #include &quot;Options/Factory.hpp&quot;
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

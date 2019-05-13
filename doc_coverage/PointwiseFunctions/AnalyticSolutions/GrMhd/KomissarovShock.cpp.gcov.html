@@ -1,0 +1,302 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - PointwiseFunctions/AnalyticSolutions/GrMhd/KomissarovShock.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">PointwiseFunctions/AnalyticSolutions/GrMhd</a> - KomissarovShock.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;PointwiseFunctions/AnalyticSolutions/GrMhd/KomissarovShock.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;pup.h&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : #include &quot;DataStructures/DataBox/DataBoxTag.hpp&quot;
+<span class="lineNum">       9 </span>            : #include &quot;DataStructures/Tensor/EagerMath/DotProduct.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;DataStructures/Tensor/Tensor.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      11 </span>            : #include &quot;Parallel/PupStlCpp11.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;PointwiseFunctions/Hydro/LorentzFactor.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;Utilities/GenerateInstantiations.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;Utilities/MakeWithValue.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;Utilities/Math.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            : // IWYU pragma: no_forward_declare Tensor
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span><span class="lineNoCov">          0 : namespace {</span>
+<span class="lineNum">      20 </span>            : template &lt;typename DataType&gt;
+<span class="lineNum">      21 </span>            : Scalar&lt;DataType&gt; compute_piecewise(
+<span class="lineNum">      22 </span>            :     const tnsr::I&lt;DataType, 3, Frame::Inertial&gt;&amp; x, const double shock_position,
+<span class="lineNum">      23 </span>            :     const double left_value, const double right_value) noexcept {
+<span class="lineNum">      24 </span>            :   return Scalar&lt;DataType&gt;(left_value -
+<span class="lineNum">      25 </span>            :                           (left_value - right_value) *
+<span class="lineNum">      26 </span>            :                               step_function(get&lt;0&gt;(x) - shock_position));
+<span class="lineNum">      27 </span>            : }
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            : template &lt;typename DataType&gt;
+<span class="lineNum">      30 </span>            : tnsr::I&lt;DataType, 3, Frame::Inertial&gt; compute_piecewise_vector(
+<span class="lineNum">      31 </span>            :     const tnsr::I&lt;DataType, 3, Frame::Inertial&gt;&amp; x, const double shock_position,
+<span class="lineNum">      32 </span>            :     const std::array&lt;double, 3&gt;&amp; left_value,
+<span class="lineNum">      33 </span>            :     const std::array&lt;double, 3&gt;&amp; right_value) noexcept {
+<span class="lineNum">      34 </span>            :   return tnsr::I&lt;DataType, 3, Frame::Inertial&gt;{
+<span class="lineNum">      35 </span>            :       {{left_value[0] - (left_value[0] - right_value[0]) *
+<span class="lineNum">      36 </span>            :                             step_function(get&lt;0&gt;(x) - shock_position),
+<span class="lineNum">      37 </span>            :         left_value[1] - (left_value[1] - right_value[1]) *
+<span class="lineNum">      38 </span>            :                             step_function(get&lt;0&gt;(x) - shock_position),
+<span class="lineNum">      39 </span>            :         left_value[2] - (left_value[2] - right_value[2]) *
+<span class="lineNum">      40 </span>            :                             step_function(get&lt;0&gt;(x) - shock_position)}}};
+<span class="lineNum">      41 </span>            : }
+<span class="lineNum">      42 </span>            : }  // namespace
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span>            : /// \cond
+<span class="lineNum">      45 </span>            : namespace grmhd {
+<span class="lineNum">      46 </span>            : namespace Solutions {
+<span class="lineNum">      47 </span>            : 
+<span class="lineNum">      48 </span>            : KomissarovShock::KomissarovShock(
+<span class="lineNum">      49 </span>            :     AdiabaticIndex::type adiabatic_index,
+<span class="lineNum">      50 </span>            :     LeftRestMassDensity::type left_rest_mass_density,
+<span class="lineNum">      51 </span>            :     RightRestMassDensity::type right_rest_mass_density,
+<span class="lineNum">      52 </span>            :     LeftPressure::type left_pressure, RightPressure::type right_pressure,
+<span class="lineNum">      53 </span>            :     LeftSpatialVelocity::type left_spatial_velocity,
+<span class="lineNum">      54 </span>            :     RightSpatialVelocity::type right_spatial_velocity,
+<span class="lineNum">      55 </span>            :     LeftMagneticField::type left_magnetic_field,
+<span class="lineNum">      56 </span>            :     RightMagneticField::type right_magnetic_field,
+<span class="lineNum">      57 </span>            :     ShockSpeed::type shock_speed) noexcept
+<span class="lineNum">      58 </span>            :     : equation_of_state_(adiabatic_index),
+<span class="lineNum">      59 </span>            :       adiabatic_index_(adiabatic_index),
+<span class="lineNum">      60 </span>            :       left_rest_mass_density_(left_rest_mass_density),
+<span class="lineNum">      61 </span>            :       right_rest_mass_density_(right_rest_mass_density),
+<span class="lineNum">      62 </span>            :       left_pressure_(left_pressure),
+<span class="lineNum">      63 </span>            :       right_pressure_(right_pressure),
+<span class="lineNum">      64 </span>            :       left_spatial_velocity_(left_spatial_velocity),
+<span class="lineNum">      65 </span>            :       right_spatial_velocity_(right_spatial_velocity),
+<span class="lineNum">      66 </span>            :       left_magnetic_field_(left_magnetic_field),
+<span class="lineNum">      67 </span>            :       right_magnetic_field_(right_magnetic_field),
+<span class="lineNum">      68 </span>            :       shock_speed_(shock_speed) {}
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span>            : void KomissarovShock::pup(PUP::er&amp; p) noexcept {
+<span class="lineNum">      71 </span>            :   p | adiabatic_index_;
+<span class="lineNum">      72 </span>            :   p | left_rest_mass_density_;
+<span class="lineNum">      73 </span>            :   p | right_rest_mass_density_;
+<span class="lineNum">      74 </span>            :   p | left_pressure_;
+<span class="lineNum">      75 </span>            :   p | right_pressure_;
+<span class="lineNum">      76 </span>            :   p | left_spatial_velocity_;
+<span class="lineNum">      77 </span>            :   p | right_spatial_velocity_;
+<span class="lineNum">      78 </span>            :   p | left_magnetic_field_;
+<span class="lineNum">      79 </span>            :   p | right_magnetic_field_;
+<span class="lineNum">      80 </span>            :   p | shock_speed_;
+<span class="lineNum">      81 </span>            :   p | equation_of_state_;
+<span class="lineNum">      82 </span>            :   p | background_spacetime_;
+<span class="lineNum">      83 </span>            : }
+<span class="lineNum">      84 </span>            : 
+<span class="lineNum">      85 </span>            : template &lt;typename DataType&gt;
+<span class="lineNum">      86 </span>            : tuples::TaggedTuple&lt;hydro::Tags::RestMassDensity&lt;DataType&gt;&gt;
+<span class="lineNum">      87 </span>            : KomissarovShock::variables(
+<span class="lineNum">      88 </span>            :     const tnsr::I&lt;DataType, 3, Frame::Inertial&gt;&amp; x, const double t,
+<span class="lineNum">      89 </span>            :     tmpl::list&lt;hydro::Tags::RestMassDensity&lt;DataType&gt;&gt; /*meta*/) const
+<span class="lineNum">      90 </span>            :     noexcept {
+<span class="lineNum">      91 </span>            :   return compute_piecewise(x, t * shock_speed_, left_rest_mass_density_,
+<span class="lineNum">      92 </span>            :                            right_rest_mass_density_);
+<span class="lineNum">      93 </span>            : }
+<span class="lineNum">      94 </span>            : 
+<span class="lineNum">      95 </span>            : template &lt;typename DataType&gt;
+<span class="lineNum">      96 </span>            : tuples::TaggedTuple&lt;hydro::Tags::SpatialVelocity&lt;DataType, 3&gt;&gt;
+<span class="lineNum">      97 </span>            : KomissarovShock::variables(
+<span class="lineNum">      98 </span>            :     const tnsr::I&lt;DataType, 3, Frame::Inertial&gt;&amp; x, const double t,
+<span class="lineNum">      99 </span>            :     tmpl::list&lt;hydro::Tags::SpatialVelocity&lt;DataType, 3&gt;&gt; /*meta*/) const
+<span class="lineNum">     100 </span>            :     noexcept {
+<span class="lineNum">     101 </span>            :   return compute_piecewise_vector(x, t * shock_speed_, left_spatial_velocity_,
+<span class="lineNum">     102 </span>            :                                   right_spatial_velocity_);
+<span class="lineNum">     103 </span>            : }
+<span class="lineNum">     104 </span>            : 
+<span class="lineNum">     105 </span>            : template &lt;typename DataType&gt;
+<span class="lineNum">     106 </span>            : tuples::TaggedTuple&lt;hydro::Tags::SpecificInternalEnergy&lt;DataType&gt;&gt;
+<span class="lineNum">     107 </span>            : KomissarovShock::variables(
+<span class="lineNum">     108 </span>            :     const tnsr::I&lt;DataType, 3, Frame::Inertial&gt;&amp; x, const double t,
+<span class="lineNum">     109 </span>            :     tmpl::list&lt;hydro::Tags::SpecificInternalEnergy&lt;DataType&gt;&gt; /*meta*/) const
+<span class="lineNum">     110 </span>            :     noexcept {
+<span class="lineNum">     111 </span>            :   return equation_of_state_.specific_internal_energy_from_density_and_pressure(
+<span class="lineNum">     112 </span>            :       get&lt;hydro::Tags::RestMassDensity&lt;DataType&gt;&gt;(variables(
+<span class="lineNum">     113 </span>            :           x, t, tmpl::list&lt;hydro::Tags::RestMassDensity&lt;DataType&gt;&gt;{})),
+<span class="lineNum">     114 </span>            :       get&lt;hydro::Tags::Pressure&lt;DataType&gt;&gt;(
+<span class="lineNum">     115 </span>            :           variables(x, t, tmpl::list&lt;hydro::Tags::Pressure&lt;DataType&gt;&gt;{})));
+<span class="lineNum">     116 </span>            : }
+<span class="lineNum">     117 </span>            : 
+<span class="lineNum">     118 </span>            : template &lt;typename DataType&gt;
+<span class="lineNum">     119 </span>            : tuples::TaggedTuple&lt;hydro::Tags::Pressure&lt;DataType&gt;&gt; KomissarovShock::variables(
+<span class="lineNum">     120 </span>            :     const tnsr::I&lt;DataType, 3, Frame::Inertial&gt;&amp; x, const double t,
+<span class="lineNum">     121 </span>            :     tmpl::list&lt;hydro::Tags::Pressure&lt;DataType&gt;&gt; /*meta*/) const noexcept {
+<span class="lineNum">     122 </span>            :   return compute_piecewise(x, t * shock_speed_, left_pressure_,
+<span class="lineNum">     123 </span>            :                            right_pressure_);
+<span class="lineNum">     124 </span>            :   ;
+<span class="lineNum">     125 </span>            : }
+<span class="lineNum">     126 </span>            : 
+<span class="lineNum">     127 </span>            : template &lt;typename DataType&gt;
+<span class="lineNum">     128 </span>            : tuples::TaggedTuple&lt;hydro::Tags::MagneticField&lt;DataType, 3&gt;&gt;
+<span class="lineNum">     129 </span>            : KomissarovShock::variables(
+<span class="lineNum">     130 </span>            :     const tnsr::I&lt;DataType, 3, Frame::Inertial&gt;&amp; x, const double t,
+<span class="lineNum">     131 </span>            :     tmpl::list&lt;hydro::Tags::MagneticField&lt;DataType, 3&gt;&gt; /*meta*/) const
+<span class="lineNum">     132 </span>            :     noexcept {
+<span class="lineNum">     133 </span>            :   return compute_piecewise_vector(x, t * shock_speed_, left_magnetic_field_,
+<span class="lineNum">     134 </span>            :                                   right_magnetic_field_);
+<span class="lineNum">     135 </span>            : }
+<span class="lineNum">     136 </span>            : 
+<span class="lineNum">     137 </span>            : template &lt;typename DataType&gt;
+<span class="lineNum">     138 </span>            : tuples::TaggedTuple&lt;hydro::Tags::DivergenceCleaningField&lt;DataType&gt;&gt;
+<span class="lineNum">     139 </span>            : KomissarovShock::variables(
+<span class="lineNum">     140 </span>            :     const tnsr::I&lt;DataType, 3, Frame::Inertial&gt;&amp; x, const double /*t*/,
+<span class="lineNum">     141 </span>            :     tmpl::list&lt;hydro::Tags::DivergenceCleaningField&lt;DataType&gt;&gt; /*meta*/) const
+<span class="lineNum">     142 </span>            :     noexcept {
+<span class="lineNum">     143 </span>            :   return {make_with_value&lt;
+<span class="lineNum">     144 </span>            :       db::item_type&lt;hydro::Tags::DivergenceCleaningField&lt;DataType&gt;&gt;&gt;(x, 0.0)};
+<span class="lineNum">     145 </span>            : }
+<span class="lineNum">     146 </span>            : 
+<span class="lineNum">     147 </span>            : template &lt;typename DataType&gt;
+<span class="lineNum">     148 </span>            : tuples::TaggedTuple&lt;hydro::Tags::LorentzFactor&lt;DataType&gt;&gt;
+<span class="lineNum">     149 </span>            : KomissarovShock::variables(
+<span class="lineNum">     150 </span>            :     const tnsr::I&lt;DataType, 3, Frame::Inertial&gt;&amp; x, const double t,
+<span class="lineNum">     151 </span>            :     tmpl::list&lt;hydro::Tags::LorentzFactor&lt;DataType&gt;&gt; /*meta*/) const noexcept {
+<span class="lineNum">     152 </span>            :   const auto spatial_velocity = get&lt;hydro::Tags::SpatialVelocity&lt;DataType, 3&gt;&gt;(
+<span class="lineNum">     153 </span>            :       variables(x, t, tmpl::list&lt;hydro::Tags::SpatialVelocity&lt;DataType, 3&gt;&gt;{}));
+<span class="lineNum">     154 </span>            :   return {
+<span class="lineNum">     155 </span>            :       hydro::lorentz_factor(dot_product(spatial_velocity, spatial_velocity))};
+<span class="lineNum">     156 </span>            : }
+<span class="lineNum">     157 </span>            : 
+<span class="lineNum">     158 </span>            : template &lt;typename DataType&gt;
+<span class="lineNum">     159 </span>            : tuples::TaggedTuple&lt;hydro::Tags::SpecificEnthalpy&lt;DataType&gt;&gt;
+<span class="lineNum">     160 </span>            : KomissarovShock::variables(
+<span class="lineNum">     161 </span>            :     const tnsr::I&lt;DataType, 3, Frame::Inertial&gt;&amp; x, const double t,
+<span class="lineNum">     162 </span>            :     tmpl::list&lt;hydro::Tags::SpecificEnthalpy&lt;DataType&gt;&gt; /*meta*/) const
+<span class="lineNum">     163 </span>            :     noexcept {
+<span class="lineNum">     164 </span>            :   return equation_of_state_.specific_enthalpy_from_density_and_energy(
+<span class="lineNum">     165 </span>            :       get&lt;hydro::Tags::RestMassDensity&lt;DataType&gt;&gt;(variables(
+<span class="lineNum">     166 </span>            :           x, t, tmpl::list&lt;hydro::Tags::RestMassDensity&lt;DataType&gt;&gt;{})),
+<span class="lineNum">     167 </span>            :       get&lt;hydro::Tags::SpecificInternalEnergy&lt;DataType&gt;&gt;(variables(
+<span class="lineNum">     168 </span>            :           x, t, tmpl::list&lt;hydro::Tags::SpecificInternalEnergy&lt;DataType&gt;&gt;{})));
+<span class="lineNum">     169 </span>            : }
+<span class="lineNum">     170 </span>            : 
+<span class="lineNum">     171 </span>            : bool operator==(const KomissarovShock&amp; lhs,
+<span class="lineNum">     172 </span>            :                 const KomissarovShock&amp; rhs) noexcept {
+<span class="lineNum">     173 </span>            :   return lhs.adiabatic_index_ == rhs.adiabatic_index_ and
+<span class="lineNum">     174 </span>            :          lhs.left_rest_mass_density_ == rhs.left_rest_mass_density_ and
+<span class="lineNum">     175 </span>            :          lhs.right_rest_mass_density_ == rhs.right_rest_mass_density_ and
+<span class="lineNum">     176 </span>            :          lhs.left_pressure_ == rhs.left_pressure_ and
+<span class="lineNum">     177 </span>            :          lhs.right_pressure_ == rhs.right_pressure_ and
+<span class="lineNum">     178 </span>            :          lhs.left_spatial_velocity_ == rhs.left_spatial_velocity_ and
+<span class="lineNum">     179 </span>            :          lhs.right_spatial_velocity_ == rhs.right_spatial_velocity_ and
+<span class="lineNum">     180 </span>            :          lhs.left_magnetic_field_ == rhs.left_magnetic_field_ and
+<span class="lineNum">     181 </span>            :          lhs.right_magnetic_field_ == rhs.right_magnetic_field_ and
+<span class="lineNum">     182 </span>            :          lhs.shock_speed_ == rhs.shock_speed_;
+<span class="lineNum">     183 </span>            : }
+<span class="lineNum">     184 </span>            : 
+<span class="lineNum">     185 </span>            : bool operator!=(const KomissarovShock&amp; lhs,
+<span class="lineNum">     186 </span>            :                 const KomissarovShock&amp; rhs) noexcept {
+<span class="lineNum">     187 </span>            :   return not(lhs == rhs);
+<span class="lineNum">     188 </span>            : }
+<span class="lineNum">     189 </span>            : 
+<span class="lineNum">     190 </span>            : #define DTYPE(data) BOOST_PP_TUPLE_ELEM(0, data)
+<span class="lineNum">     191 </span>            : #define TAG(data) BOOST_PP_TUPLE_ELEM(1, data)
+<span class="lineNum">     192 </span>            : 
+<span class="lineNum">     193 </span>            : #define INSTANTIATE_SCALARS(_, data)                               \
+<span class="lineNum">     194 </span>            :   template tuples::TaggedTuple&lt;TAG(data) &lt; DTYPE(data)&gt;&gt;           \
+<span class="lineNum">     195 </span>            :       KomissarovShock::variables(                                  \
+<span class="lineNum">     196 </span>            :           const tnsr::I&lt;DTYPE(data), 3, Frame::Inertial&gt;&amp;, double, \
+<span class="lineNum">     197 </span>            :           tmpl::list&lt;TAG(data) &lt; DTYPE(data)&gt;&gt;) const noexcept;
+<span class="lineNum">     198 </span>            : 
+<span class="lineNum">     199 </span>            : GENERATE_INSTANTIATIONS(
+<span class="lineNum">     200 </span>            :     INSTANTIATE_SCALARS, (double, DataVector),
+<span class="lineNum">     201 </span>            :     (hydro::Tags::RestMassDensity, hydro::Tags::SpecificInternalEnergy,
+<span class="lineNum">     202 </span>            :      hydro::Tags::Pressure, hydro::Tags::DivergenceCleaningField,
+<span class="lineNum">     203 </span>            :      hydro::Tags::LorentzFactor, hydro::Tags::SpecificEnthalpy))
+<span class="lineNum">     204 </span>            : 
+<span class="lineNum">     205 </span>            : #define INSTANTIATE_VECTORS(_, data)                                \
+<span class="lineNum">     206 </span>            :   template tuples::TaggedTuple&lt;TAG(data) &lt; DTYPE(data), 3&gt;&gt;         \
+<span class="lineNum">     207 </span>            :       KomissarovShock::variables(                                   \
+<span class="lineNum">     208 </span>            :           const tnsr::I&lt;DTYPE(data), 3, Frame::Inertial&gt;&amp;, double,  \
+<span class="lineNum">     209 </span>            :           tmpl::list&lt;TAG(data) &lt; DTYPE(data), 3, Frame::Inertial&gt;&gt;) \
+<span class="lineNum">     210 </span>            :           const noexcept;
+<span class="lineNum">     211 </span>            : 
+<span class="lineNum">     212 </span>            : GENERATE_INSTANTIATIONS(INSTANTIATE_VECTORS, (double, DataVector),
+<span class="lineNum">     213 </span>            :                         (hydro::Tags::SpatialVelocity,
+<span class="lineNum">     214 </span>            :                          hydro::Tags::MagneticField))
+<span class="lineNum">     215 </span>            : 
+<span class="lineNum">     216 </span>            : #undef DTYPE
+<span class="lineNum">     217 </span>            : #undef TAG
+<span class="lineNum">     218 </span>            : #undef INSTANTIATE_SCALARS
+<span class="lineNum">     219 </span>            : #undef INSTANTIATE_VECTORS
+<span class="lineNum">     220 </span>            : }  // namespace Solutions
+<span class="lineNum">     221 </span>            : }  // namespace grmhd
+<span class="lineNum">     222 </span>            : /// \endcond
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

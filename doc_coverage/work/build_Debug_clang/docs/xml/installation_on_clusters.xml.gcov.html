@@ -1,0 +1,104 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - /work/build_Debug_clang/docs/xml/installation_on_clusters.xml</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">work/build_Debug_clang/docs/xml</a> - installation_on_clusters.xml</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineCov">          1 : &lt;?xml version='1.0' encoding='UTF-8' standalone='no'?&gt;</span>
+<span class="lineNum">       2 </span>            : &lt;doxygen xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:noNamespaceSchemaLocation=&quot;compound.xsd&quot; version=&quot;1.8.13&quot;&gt;
+<span class="lineNum">       3 </span>            :   &lt;compounddef id=&quot;installation_on_clusters&quot; kind=&quot;page&quot;&gt;
+<span class="lineNum">       4 </span>            :     &lt;compoundname&gt;installation_on_clusters&lt;/compoundname&gt;
+<span class="lineNum">       5 </span>            :     &lt;title&gt;Installation on Clusters&lt;/title&gt;
+<span class="lineNum">       6 </span>            :     &lt;detaileddescription&gt;
+<span class="lineNum">       7 </span>            : &lt;para&gt;The installation instructions are the same for most systems because we use shell scripts to set up the environment for each supercomputer. We describe the generic installation instructions once, and only note special instructions if necessary for the particular system. If you have already built SpECTRE and just want to load the modules, source the shell file for your system and run &lt;computeroutput&gt;spectre_load_modules&lt;/computeroutput&gt;.&lt;/para&gt;&lt;para&gt;&lt;simplesect kind=&quot;note&quot;&gt;&lt;para&gt;Sample submit scripts for some systems are available in &lt;computeroutput&gt;support/SubmitScripts&lt;/computeroutput&gt;.&lt;/para&gt;&lt;/simplesect&gt;
+<span class="lineNum">       8 </span>            : &lt;heading level=&quot;2&quot;&gt;General Instructions&lt;/heading&gt;
+<span class="lineNum">       9 </span>            : &lt;/para&gt;&lt;para&gt;&lt;orderedlist&gt;
+<span class="lineNum">      10 </span>            : &lt;listitem&gt;&lt;para&gt;Run &lt;computeroutput&gt;export SPECTRE_HOME=/path/to/where/you/want/to/clone&lt;/computeroutput&gt;&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;Clone SpECTRE using &lt;computeroutput&gt;git clone SPECTRE_URL $SPECTRE_HOME&lt;/computeroutput&gt;&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;Run &lt;computeroutput&gt;cd $SPECTRE_HOME &amp;amp;&amp;amp; mkdir build &amp;amp;&amp;amp; cd build&lt;/computeroutput&gt;&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;Run &lt;computeroutput&gt;. $SPECTRE_HOME/support/Environments/SYSTEM_TO_RUN_ON_gcc.sh&lt;/computeroutput&gt;, where &lt;computeroutput&gt;SYSTEM_TO_RUN_ON&lt;/computeroutput&gt; is replaced by the name of the system as described in the relevant section below.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;If you haven&amp;apos;t already installed the dependencies, run &lt;computeroutput&gt;export SPECTRE_DEPS=/path/to/where/you/want/the/deps&lt;/computeroutput&gt; Then run &lt;computeroutput&gt;spectre_setup_modules $SPECTRE_DEPS&lt;/computeroutput&gt;. This will take a while to finish. Near the end the command will tell you how to make the modules available by providing a &lt;computeroutput&gt;module use&lt;/computeroutput&gt; command. Make sure you are providing an absolute path to &lt;computeroutput&gt;spectre_setup_modules&lt;/computeroutput&gt;.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;Run &lt;computeroutput&gt;module use $SPECTRE_DEPS/modules&lt;/computeroutput&gt;&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;Run &lt;computeroutput&gt;spectre_run_cmake&lt;/computeroutput&gt;, if you get module loading errors run &lt;computeroutput&gt;spectre_unload_modules&lt;/computeroutput&gt; and try running &lt;computeroutput&gt;spectre_run_cmake&lt;/computeroutput&gt; again. CMake should set up successfully.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;Build the targets you are interested in by running, e.g. &lt;computeroutput&gt;make -j4 test-executables&lt;/computeroutput&gt;&lt;/para&gt;&lt;/listitem&gt;&lt;/orderedlist&gt;
+<span class="lineNum">      11 </span>            : &lt;/para&gt;&lt;para&gt;&lt;heading level=&quot;2&quot;&gt;BlueWaters at the National Center for Supercomputing Applications&lt;/heading&gt;
+<span class="lineNum">      12 </span>            : &lt;/para&gt;&lt;para&gt;First run &lt;computeroutput&gt;module load bwpy &amp;amp;&amp;amp; bwpy-environ&lt;/computeroutput&gt;, then follow the general instructions using &lt;computeroutput&gt;bluewaters&lt;/computeroutput&gt; as the &lt;computeroutput&gt;SYSTEM_TO_RUN_ON&lt;/computeroutput&gt;. Note that once the installation is completed, you will still need to run &lt;computeroutput&gt;module load bwpy &amp;amp;&amp;amp; bwpy-environ&lt;/computeroutput&gt; in order to run SpECTRE. Also note that adding this command to your &lt;computeroutput&gt;.bashrc&lt;/computeroutput&gt; may cause BlueWaters to hang; you must run this command from the command line.&lt;/para&gt;&lt;para&gt;&lt;heading level=&quot;4&quot;&gt;Running tests on BlueWaters&lt;/heading&gt;
+<span class="lineNum">      13 </span>            : &lt;/para&gt;&lt;para&gt;You cannot just run &lt;computeroutput&gt;make test&lt;/computeroutput&gt; or &lt;computeroutput&gt;ctest&lt;/computeroutput&gt; on BlueWaters. To run the tests:&lt;orderedlist&gt;
+<span class="lineNum">      14 </span>            : &lt;listitem&gt;&lt;para&gt;Get an interactive node using, e.g. &lt;computeroutput&gt;qsub -q debug -I -l nodes=1:ppn=16:xe -l walltime=00:30:00&lt;/computeroutput&gt; or see the &lt;ulink url=&quot;https://bluewaters.ncsa.illinois.edu/interactive-jobs&quot;&gt;BlueWaters documentation&lt;/ulink&gt;&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;Setup the bwpy environment &lt;computeroutput&gt;module load bwpy &amp;amp;&amp;amp; bwpy-environ&lt;/computeroutput&gt;&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;Run the &lt;computeroutput&gt;module use&lt;/computeroutput&gt; command you did earlier&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;Load the module using the &lt;computeroutput&gt;spectre_load_modules&lt;/computeroutput&gt; command&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;Run &lt;programlisting&gt;&lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;aprun&lt;sp/&gt;-n1&lt;sp/&gt;-d1&lt;sp/&gt;--&lt;sp/&gt;bwpy-environ&lt;sp/&gt;--&lt;sp/&gt;\&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      15 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;sp/&gt;&lt;sp/&gt;$SPECTRE_HOME/build/bin/NonFailureTestsRunTests.sh&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      16 </span>            : &lt;/programlisting&gt;&lt;/para&gt;&lt;/listitem&gt;&lt;/orderedlist&gt;
+<span class="lineNum">      17 </span>            : &lt;/para&gt;&lt;para&gt;&lt;heading level=&quot;2&quot;&gt;Cedar, Graham, and Niagara at ComputeCanada&lt;/heading&gt;
+<span class="lineNum">      18 </span>            : &lt;/para&gt;&lt;para&gt;Use &lt;computeroutput&gt;compute_canada&lt;/computeroutput&gt; as the &lt;computeroutput&gt;SYSTEM_TO_RUN_ON&lt;/computeroutput&gt; in the general instructions.&lt;/para&gt;&lt;para&gt;&lt;heading level=&quot;2&quot;&gt;Wheeler at Caltech&lt;/heading&gt;
+<span class="lineNum">      19 </span>            : &lt;/para&gt;&lt;para&gt;Follow the general instructions using &lt;computeroutput&gt;wheeler&lt;/computeroutput&gt; for &lt;computeroutput&gt;SYSTEM_TO_RUN_ON&lt;/computeroutput&gt;, except you do not need to install any dependencies, so you can skip steps 5 and 6. You can optionally compile using LLVM/Clang by sourcing &lt;computeroutput&gt;wheeler_clang.sh&lt;/computeroutput&gt; instead of &lt;computeroutput&gt;wheeler_gcc.sh&lt;/computeroutput&gt;&lt;/para&gt;&lt;para&gt;&lt;heading level=&quot;2&quot;&gt;Ocean at Fullerton&lt;/heading&gt;
+<span class="lineNum">      20 </span>            : &lt;/para&gt;&lt;para&gt;Follow the general instructions, using &lt;computeroutput&gt;ocean&lt;/computeroutput&gt; for &lt;computeroutput&gt;SYSTEM_TO_RUN_ON&lt;/computeroutput&gt;, you do not need to install any dependencies, so you can skip steps 5 and 6.&lt;/para&gt;&lt;para&gt;&lt;heading level=&quot;2&quot;&gt;Orca at Fullerton&lt;/heading&gt;
+<span class="lineNum">      21 </span>            : &lt;/para&gt;&lt;para&gt;Follow the general instructions, using &lt;computeroutput&gt;orca&lt;/computeroutput&gt; for &lt;computeroutput&gt;SYSTEM_TO_RUN_ON&lt;/computeroutput&gt;, you do not need to install any dependencies, so you can skip steps 5 and 6.&lt;/para&gt;&lt;para&gt;&lt;heading level=&quot;2&quot;&gt;Zwicky at Fullerton&lt;/heading&gt;
+<span class="lineNum">      22 </span>            : &lt;/para&gt;&lt;para&gt;Follow the general instructions using &lt;computeroutput&gt;zwicky&lt;/computeroutput&gt; for &lt;computeroutput&gt;SYSTEM_TO_RUN_ON&lt;/computeroutput&gt;, except you do not need to install any dependencies, so you can skip steps 5 and 6. Only gcc is supported (use &lt;computeroutput&gt;zwicky_gcc.sh&lt;/computeroutput&gt;).&lt;/para&gt;&lt;para&gt;Note that this is a very old machine, so you&amp;apos;ll need to load many modules to do common things (e.g. load modules for openssh and git operations). Do &lt;computeroutput&gt;module avail&lt;/computeroutput&gt; for a list of available modules, and look at &lt;computeroutput&gt;/home/geoffrey/.bash_profile&lt;/computeroutput&gt; for an example list of modules to load. &lt;/para&gt;    &lt;/detaileddescription&gt;
+<span class="lineNum">      23 </span>            :   &lt;/compounddef&gt;
+<span class="lineNum">      24 </span>            : &lt;/doxygen&gt;
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

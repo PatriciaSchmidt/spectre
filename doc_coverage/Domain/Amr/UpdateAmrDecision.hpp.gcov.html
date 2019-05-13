@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Domain/Amr/UpdateAmrDecision.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">Domain/Amr</a> - UpdateAmrDecision.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;array&gt;
+<span class="lineNum">       7 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : #include &quot;Domain/Amr/Flag.hpp&quot;
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : /// \cond
+<span class="lineNum">      12 </span>            : namespace gsl {
+<span class="lineNum">      13 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      14 </span>            : class not_null;
+<span class="lineNum">      15 </span>            : }  // namespace gsl
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            : template &lt;size_t VolumeDim&gt;
+<span class="lineNum">      18 </span>            : class Element;
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : template &lt;size_t VolumeDim&gt;
+<span class="lineNum">      21 </span>            : class ElementId;
+<span class="lineNum">      22 </span>            : /// \endcond
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : namespace amr {
+<span class="lineNum">      25 </span>            : /// \ingroup ComputationalDomainGroup
+<span class="lineNum">      26 </span>            : /// \brief Updates the AMR decisions `my_current_amr_flags` of the Element
+<span class="lineNum">      27 </span>            : /// `element` based on the AMR decisions `neighbor_amr_flags` of a neighbor
+<span class="lineNum">      28 </span>            : /// Element with ElementId `neighbor_id`.
+<span class="lineNum">      29 </span>            : ///
+<span class="lineNum">      30 </span>            : /// \details  This function is called by each element when it receives the AMR
+<span class="lineNum">      31 </span>            : /// decisions of one of its neighbors.  If any of its flags are updated, the
+<span class="lineNum">      32 </span>            : /// element should send its new decisions to each of its neighbors.  The
+<span class="lineNum">      33 </span>            : /// following changes are made to the current flags of the element:
+<span class="lineNum">      34 </span>            : /// - If the neighbor wants to be two or more refinement levels higher than
+<span class="lineNum">      35 </span>            : ///   the element, the flag is updated to bring the element to within one level
+<span class="lineNum">      36 </span>            : /// - If the element wants to join, and the neighbor is a potential sibling but
+<span class="lineNum">      37 </span>            : ///   wants to be at a different refinement level in any dimension, the flag is
+<span class="lineNum">      38 </span>            : ///   updated to not do h-refinement.
+<span class="lineNum">      39 </span>            : ///
+<span class="lineNum">      40 </span>            : /// \returns true if any flag is changed
+<span class="lineNum">      41 </span>            : ///
+<span class="lineNum">      42 </span>            : /// \note Modifies `my_current_amr_flags` which are the AMR decisions of
+<span class="lineNum">      43 </span>            : /// `element`.
+<span class="lineNum">      44 </span>            : template &lt;size_t VolumeDim&gt;
+<span class="lineNum">      45 </span>            : bool update_amr_decision(
+<span class="lineNum">      46 </span>            :     gsl::not_null&lt;std::array&lt;amr::Flag, VolumeDim&gt;*&gt; my_current_amr_flags,
+<span class="lineNum">      47 </span>            :     const Element&lt;VolumeDim&gt;&amp; element, const ElementId&lt;VolumeDim&gt;&amp; neighbor_id,
+<span class="lineNum">      48 </span>            :     const std::array&lt;amr::Flag, VolumeDim&gt;&amp; neighbor_amr_flags) noexcept;
+<span class="lineNum">      49 </span>            : }  // namespace amr
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

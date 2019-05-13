@@ -1,0 +1,178 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Domain/Creators/Shell.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">Domain/Creators</a> - Shell.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;Domain/Creators/Shell.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;memory&gt;
+<span class="lineNum">       7 </span>            : #include &lt;utility&gt;
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : #include &quot;Domain/Block.hpp&quot;                         // IWYU pragma: keep
+<span class="lineNum">      10 </span>            : #include &quot;Domain/BlockNeighbor.hpp&quot;                 // IWYU pragma: keep
+<span class="lineNum">      11 </span>            : #include &quot;Domain/CoordinateMaps/CoordinateMap.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      12 </span>            : #include &quot;Domain/Creators/DomainCreator.hpp&quot;        // IWYU pragma: keep
+<span class="lineNum">      13 </span>            : #include &quot;Domain/Domain.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;Domain/DomainHelpers.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      16 </span>            : #include &quot;Utilities/MakeArray.hpp&quot;
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            : /// \cond
+<span class="lineNum">      19 </span>            : namespace Frame {
+<span class="lineNum">      20 </span>            : struct Grid;
+<span class="lineNum">      21 </span>            : struct Inertial;
+<span class="lineNum">      22 </span>            : struct Logical;
+<span class="lineNum">      23 </span>            : }  // namespace Frame
+<span class="lineNum">      24 </span>            : /// \endcond
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            : namespace domain {
+<span class="lineNum">      27 </span>            : namespace creators {
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            : template &lt;typename TargetFrame&gt;
+<span class="lineNum">      30 </span>            : Shell&lt;TargetFrame&gt;::Shell(
+<span class="lineNum">      31 </span>            :     typename InnerRadius::type inner_radius,
+<span class="lineNum">      32 </span>            :     typename OuterRadius::type outer_radius,
+<span class="lineNum">      33 </span>            :     typename InitialRefinement::type initial_refinement,
+<span class="lineNum">      34 </span>            :     typename InitialGridPoints::type initial_number_of_grid_points,
+<span class="lineNum">      35 </span>            :     typename UseEquiangularMap::type use_equiangular_map,
+<span class="lineNum">      36 </span>            :     typename AspectRatio::type aspect_ratio,
+<span class="lineNum">      37 </span>            :     typename UseLogarithmicMap::type use_logarithmic_map,
+<span class="lineNum">      38 </span>            :     typename WhichWedges::type which_wedges,
+<span class="lineNum">      39 </span>            :     typename RadialBlockLayers::type number_of_layers) noexcept
+<span class="lineNum">      40 </span>            :     // clang-tidy: trivially copyable
+<span class="lineNum">      41 </span>            :     : inner_radius_(std::move(inner_radius)),                // NOLINT
+<span class="lineNum">      42 </span>            :       outer_radius_(std::move(outer_radius)),                // NOLINT
+<span class="lineNum">      43 </span>            :       initial_refinement_(                                   // NOLINT
+<span class="lineNum">      44 </span>            :           std::move(initial_refinement)),                    // NOLINT
+<span class="lineNum">      45 </span>            :       initial_number_of_grid_points_(                        // NOLINT
+<span class="lineNum">      46 </span>            :           std::move(initial_number_of_grid_points)),         // NOLINT
+<span class="lineNum">      47 </span>            :       use_equiangular_map_(std::move(use_equiangular_map)),  // NOLINT
+<span class="lineNum">      48 </span>            :       aspect_ratio_(std::move(aspect_ratio)),                // NOLINT
+<span class="lineNum">      49 </span>            :       use_logarithmic_map_(std::move(use_logarithmic_map)),  // NOLINT
+<span class="lineNum">      50 </span>            :       which_wedges_(std::move(which_wedges)),                // NOLINT
+<span class="lineNum">      51 </span>            :       number_of_layers_(std::move(number_of_layers)) {}      // NOLINT
+<span class="lineNum">      52 </span>            : 
+<span class="lineNum">      53 </span>            : template &lt;typename TargetFrame&gt;
+<span class="lineNum">      54 </span>            : Domain&lt;3, TargetFrame&gt; Shell&lt;TargetFrame&gt;::create_domain() const noexcept {
+<span class="lineNum">      55 </span>            :   std::vector&lt;
+<span class="lineNum">      56 </span>            :       std::unique_ptr&lt;CoordinateMapBase&lt;Frame::Logical, TargetFrame, 3&gt;&gt;&gt;
+<span class="lineNum">      57 </span>            :       coord_maps = wedge_coordinate_maps&lt;TargetFrame&gt;(
+<span class="lineNum">      58 </span>            :           inner_radius_, outer_radius_, 1.0, 1.0, use_equiangular_map_, 0.0,
+<span class="lineNum">      59 </span>            :           false, aspect_ratio_, use_logarithmic_map_, which_wedges_,
+<span class="lineNum">      60 </span>            :           number_of_layers_);
+<span class="lineNum">      61 </span>            :   return Domain&lt;3, TargetFrame&gt;{
+<span class="lineNum">      62 </span>            :       std::move(coord_maps),
+<span class="lineNum">      63 </span>            :       corners_for_radially_layered_domains(
+<span class="lineNum">      64 </span>            :           number_of_layers_, false, {{1, 2, 3, 4, 5, 6, 7, 8}}, which_wedges_)};
+<span class="lineNum">      65 </span>            : }
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span>            : template &lt;typename TargetFrame&gt;
+<span class="lineNum">      68 </span>            : std::vector&lt;std::array&lt;size_t, 3&gt;&gt; Shell&lt;TargetFrame&gt;::initial_extents() const
+<span class="lineNum">      69 </span>            :     noexcept {
+<span class="lineNum">      70 </span>            :   std::vector&lt;std::array&lt;size_t, 3&gt;&gt;::size_type num_wedges =
+<span class="lineNum">      71 </span>            :       6 * number_of_layers_;
+<span class="lineNum">      72 </span>            :   if (UNLIKELY(which_wedges_ == ShellWedges::FourOnEquator)) {
+<span class="lineNum">      73 </span>            :     num_wedges = 4 * number_of_layers_;
+<span class="lineNum">      74 </span>            :   } else if (UNLIKELY(which_wedges_ == ShellWedges::OneAlongMinusX)) {
+<span class="lineNum">      75 </span>            :     num_wedges = number_of_layers_;
+<span class="lineNum">      76 </span>            :   }
+<span class="lineNum">      77 </span>            :   return {
+<span class="lineNum">      78 </span>            :       num_wedges,
+<span class="lineNum">      79 </span>            :       {{initial_number_of_grid_points_[1], initial_number_of_grid_points_[1],
+<span class="lineNum">      80 </span>            :         initial_number_of_grid_points_[0]}}};
+<span class="lineNum">      81 </span>            : }
+<span class="lineNum">      82 </span>            : template &lt;typename TargetFrame&gt;
+<span class="lineNum">      83 </span>            : std::vector&lt;std::array&lt;size_t, 3&gt;&gt;
+<span class="lineNum">      84 </span>            : Shell&lt;TargetFrame&gt;::initial_refinement_levels() const noexcept {
+<span class="lineNum">      85 </span>            :   std::vector&lt;std::array&lt;size_t, 3&gt;&gt;::size_type num_wedges =
+<span class="lineNum">      86 </span>            :       6 * number_of_layers_;
+<span class="lineNum">      87 </span>            :   if (UNLIKELY(which_wedges_ == ShellWedges::FourOnEquator)) {
+<span class="lineNum">      88 </span>            :     num_wedges = 4 * number_of_layers_;
+<span class="lineNum">      89 </span>            :   } else if (UNLIKELY(which_wedges_ == ShellWedges::OneAlongMinusX)) {
+<span class="lineNum">      90 </span>            :     num_wedges = number_of_layers_;
+<span class="lineNum">      91 </span>            :   }
+<span class="lineNum">      92 </span>            :   return {num_wedges, make_array&lt;3&gt;(initial_refinement_)};
+<span class="lineNum">      93 </span>            : }
+<span class="lineNum">      94 </span>            : 
+<span class="lineNum">      95 </span>            : template class Shell&lt;Frame::Grid&gt;;
+<span class="lineNum">      96 </span>            : template class Shell&lt;Frame::Inertial&gt;;
+<span class="lineNum">      97 </span>            : }  // namespace creators
+<span class="lineNum">      98 </span>            : }  // namespace domain
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

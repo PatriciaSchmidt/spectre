@@ -1,0 +1,182 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Utilities/Math.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">Utilities</a> - Math.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntry">7</td>
+            <td class="headerCovTableEntryMed">85.7 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;cmath&gt;
+<span class="lineNum">       7 </span>            : #include &lt;numeric&gt;
+<span class="lineNum">       8 </span>            : #include &lt;type_traits&gt;
+<span class="lineNum">       9 </span>            : #include &lt;vector&gt;
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : #include &quot;Utilities/ForceInline.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;Utilities/MakeWithValue.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;Utilities/Requires.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;Utilities/TypeTraits.hpp&quot;
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : // using for overload resolution with blaze
+<span class="lineNum">      17 </span>            : // clang-tidy doesn't want these in the global namespace
+<span class="lineNum">      18 </span>            : using std::conj; //NOLINT
+<span class="lineNum">      19 </span>            : using std::imag; //NOLINT
+<span class="lineNum">      20 </span>            : using std::real; //NOLINT
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : /*!
+<span class="lineNum">      23 </span>            :  * \ingroup UtilitiesGroup
+<span class="lineNum">      24 </span>            :  * \brief Returns the number of digits in an integer number
+<span class="lineNum">      25 </span>            :  */
+<span class="lineNum">      26 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      27 </span><span class="lineCov">          1 : SPECTRE_ALWAYS_INLINE T number_of_digits(const T number) {</span>
+<span class="lineNum">      28 </span>            :   static_assert(tt::is_integer_v&lt;std::decay_t&lt;T&gt;&gt;,
+<span class="lineNum">      29 </span>            :                 &quot;Must call number_of_digits with an integer number&quot;);
+<span class="lineNum">      30 </span>            :   return number == 0 ? 1 : static_cast&lt;decltype(number)&gt;(
+<span class="lineNum">      31 </span>            :                                std::ceil(std::log10(std::abs(number) + 1)));
+<span class="lineNum">      32 </span>            : }
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            : /*!
+<span class="lineNum">      35 </span>            :  * \ingroup UtilitiesGroup
+<span class="lineNum">      36 </span>            :  * \brief Evaluate a polynomial \f$\sum_{p=0}^N c_p x^p\f$ with Horner's rule
+<span class="lineNum">      37 </span>            :  *
+<span class="lineNum">      38 </span>            :  * \param coeffs The polynomial coefficients \f$c_p\f$ ordered from constant to
+<span class="lineNum">      39 </span>            :  * largest power
+<span class="lineNum">      40 </span>            :  * \param x The polynomial variable \f$x\f$
+<span class="lineNum">      41 </span>            :  *
+<span class="lineNum">      42 </span>            :  * \tparam U The type of the polynomial coefficients \p coeffs. Can be `double`,
+<span class="lineNum">      43 </span>            :  * which means the coefficients are constant for all values in \p x. Can also be
+<span class="lineNum">      44 </span>            :  * a vector type of typically the same size as `T`, which means the coefficients
+<span class="lineNum">      45 </span>            :  * vary with the elements in \p x.
+<span class="lineNum">      46 </span>            :  * \tparam T The type of the polynomial variable \p x. Must support
+<span class="lineNum">      47 </span>            :  * `make_with_value&lt;T, T&gt;`, as well as (elementwise) addition with `U` and
+<span class="lineNum">      48 </span>            :  * multiplication with `T`.
+<span class="lineNum">      49 </span>            :  */
+<span class="lineNum">      50 </span>            : template &lt;typename U, typename T&gt;
+<span class="lineNum">      51 </span><span class="lineCov">          1 : T evaluate_polynomial(const std::vector&lt;U&gt;&amp; coeffs, const T&amp; x) noexcept {</span>
+<span class="lineNum">      52 </span>            :   return std::accumulate(
+<span class="lineNum">      53 </span>            :       coeffs.rbegin(), coeffs.rend(), make_with_value&lt;T&gt;(x, 0.),
+<span class="lineNum">      54 </span>            :       [&amp;x](const T&amp; state, const U&amp; element) { return state * x + element; });
+<span class="lineNum">      55 </span>            : }
+<span class="lineNum">      56 </span>            : 
+<span class="lineNum">      57 </span>            : /// \ingroup UtilitiesGroup
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span>            : /// \brief Defines the Heaviside step function \f$\Theta\f$ for arithmetic
+<span class="lineNum">      60 </span>            : /// types.  \f$\Theta(0) = 1\f$.
+<span class="lineNum">      61 </span>            : template &lt;typename T, Requires&lt;std::is_arithmetic&lt;T&gt;::value&gt; = nullptr&gt;
+<span class="lineNum">      62 </span><span class="lineCov">          1 : constexpr T step_function(const T&amp; arg) noexcept {</span>
+<span class="lineNum">      63 </span>            :   return static_cast&lt;T&gt;((arg &gt;= static_cast&lt;T&gt;(0)) ? 1 : 0);
+<span class="lineNum">      64 </span>            : }
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span>            : /// \ingroup UtilitiesGroup
+<span class="lineNum">      67 </span>            : /// \brief Defines the inverse square-root (\f$1/\sqrt{x}\f$) for arithmetic
+<span class="lineNum">      68 </span>            : /// and complex types
+<span class="lineNum">      69 </span>            : template &lt;typename T, Requires&lt;std::is_arithmetic&lt;T&gt;::value or
+<span class="lineNum">      70 </span>            :                                tt::is_a_v&lt;std::complex, T&gt;&gt; = nullptr&gt;
+<span class="lineNum">      71 </span><span class="lineCov">          1 : auto invsqrt(const T&amp; arg) noexcept {</span>
+<span class="lineNum">      72 </span>            :   return static_cast&lt;T&gt;(1.0) / sqrt(arg);
+<span class="lineNum">      73 </span>            : }
+<span class="lineNum">      74 </span>            : 
+<span class="lineNum">      75 </span>            : /// \ingroup UtilitiesGroup
+<span class="lineNum">      76 </span>            : /// \brief Defines the inverse cube-root (\f$1/\sqrt[3]{x}\f$) for arithmetic
+<span class="lineNum">      77 </span>            : /// types
+<span class="lineNum">      78 </span>            : template &lt;typename T, Requires&lt;std::is_arithmetic&lt;T&gt;::value&gt; = nullptr&gt;
+<span class="lineNum">      79 </span><span class="lineCov">          1 : auto invcbrt(const T&amp; arg) noexcept {</span>
+<span class="lineNum">      80 </span>            :   return static_cast&lt;T&gt;(1.0) / cbrt(arg);
+<span class="lineNum">      81 </span>            : }
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span>            : namespace sgn_detail {
+<span class="lineNum">      84 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      85 </span>            : constexpr T sgn(const T&amp; val, std::true_type /*is_signed*/) noexcept {
+<span class="lineNum">      86 </span>            :   return static_cast&lt;T&gt;(static_cast&lt;T&gt;(0) &lt; val) -
+<span class="lineNum">      87 </span>            :          static_cast&lt;T&gt;(val &lt; static_cast&lt;T&gt;(0));
+<span class="lineNum">      88 </span>            : }
+<span class="lineNum">      89 </span>            : 
+<span class="lineNum">      90 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      91 </span>            : constexpr T sgn(const T&amp; val, std::false_type /*is_signed*/) noexcept {
+<span class="lineNum">      92 </span>            :   return static_cast&lt;T&gt;(static_cast&lt;T&gt;(0) &lt; val);
+<span class="lineNum">      93 </span>            : }
+<span class="lineNum">      94 </span>            : }  // namespace sgn_detail
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span>            : /// \ingroup UtilitiesGroup
+<span class="lineNum">      97 </span>            : /// \brief Compute the sign function of `val` defined as `1` if `val &gt; 0`, `0`
+<span class="lineNum">      98 </span>            : /// if `val == 0`, and `-1` if `val &lt; 0`.
+<span class="lineNum">      99 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     100 </span><span class="lineCov">          1 : constexpr T sgn(const T&amp; val) noexcept {</span>
+<span class="lineNum">     101 </span>            :   return sgn_detail::sgn(val, std::is_signed&lt;T&gt;{});
+<span class="lineNum">     102 </span>            : }
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

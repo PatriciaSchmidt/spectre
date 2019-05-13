@@ -1,0 +1,271 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - PointwiseFunctions/AnalyticSolutions/Xcts/ConstantDensityStar.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">PointwiseFunctions/AnalyticSolutions/Xcts</a> - ConstantDensityStar.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntry">35</td>
+            <td class="headerCovTableEntryLo">22.9 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;limits&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : #include &quot;DataStructures/DataBox/Prefixes.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">       9 </span>            : #include &quot;DataStructures/Tensor/Tensor.hpp&quot;     // IWYU pragma: keep
+<span class="lineNum">      10 </span>            : #include &quot;Elliptic/Systems/Xcts/Tags.hpp&quot;       // IWYU pragma: keep
+<span class="lineNum">      11 </span>            : #include &quot;Options/Options.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;PointwiseFunctions/GeneralRelativity/Tags.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;Utilities/TaggedTuple.hpp&quot;
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : // IWYU pragma: no_forward_declare Tensor
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            : /// \cond
+<span class="lineNum">      19 </span>            : namespace PUP {
+<span class="lineNum">      20 </span>            : class er;
+<span class="lineNum">      21 </span>            : }  // namespace PUP
+<span class="lineNum">      22 </span>            : /// \endcond
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : namespace Xcts {
+<span class="lineNum">      25 </span><span class="lineNoCov">          0 : namespace Solutions {</span>
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span>            : /*!
+<span class="lineNum">      28 </span>            :  * \brief A constant density star in general relativity
+<span class="lineNum">      29 </span>            :  *
+<span class="lineNum">      30 </span>            :  * \details This solution describes a star with constant density \f$\rho_0\f$
+<span class="lineNum">      31 </span>            :  * that extends to a (conformal) radius \f$R\f$. It solves the XCTS Hamiltonian
+<span class="lineNum">      32 </span>            :  * constraint that reduces to the non-linear elliptic equation
+<span class="lineNum">      33 </span>            :  * \f[
+<span class="lineNum">      34 </span>            :  * \Delta^2\psi+2\pi\rho\psi^5=0
+<span class="lineNum">      35 </span>            :  * \f]
+<span class="lineNum">      36 </span>            :  * for the conformal factor \f$\psi\f$ (see `Xcts`) under the following
+<span class="lineNum">      37 </span>            :  * assumptions \cite Baumgarte2006ug :
+<span class="lineNum">      38 </span>            :  *
+<span class="lineNum">      39 </span>            :  * - Time-symmetry \f$K_{ij}=0\f$
+<span class="lineNum">      40 </span>            :  * - Conformal flatness \f$\overline{\gamma}=\delta\f$, so \f$\Delta\f$ is the
+<span class="lineNum">      41 </span>            :  * flat-space Laplacian
+<span class="lineNum">      42 </span>            :  * - Spherical symmetry
+<span class="lineNum">      43 </span>            :  *
+<span class="lineNum">      44 </span>            :  * Imposing boundary conditions
+<span class="lineNum">      45 </span>            :  * \f[
+<span class="lineNum">      46 </span>            :  * \frac{\partial\psi}{\partial r}=0 \quad \text{for} \quad r=0\\
+<span class="lineNum">      47 </span>            :  * \psi\rightarrow 1 \quad \text{for} \quad r\rightarrow\infty
+<span class="lineNum">      48 </span>            :  * \f]
+<span class="lineNum">      49 </span>            :  * and considering the energy density
+<span class="lineNum">      50 </span>            :  * \f[
+<span class="lineNum">      51 </span>            :  * \rho(r\leq R)=\rho_0 \quad \text{and} \quad \rho(r&gt;R)=0
+<span class="lineNum">      52 </span>            :  * \f]
+<span class="lineNum">      53 </span>            :  * of the star the authors of \cite Baumgarte2006ug find the solution
+<span class="lineNum">      54 </span>            :  * \f[
+<span class="lineNum">      55 </span>            :  * \psi(r\leq R)=C u_\alpha(r) \quad \text{and}
+<span class="lineNum">      56 </span>            :  * \quad \psi(r&gt;R)=\frac{\beta}{r} + 1
+<span class="lineNum">      57 </span>            :  * \f]
+<span class="lineNum">      58 </span>            :  * with \f$C=(2\pi\rho_0/3)^{-1/4}\f$, the Sobolev functions
+<span class="lineNum">      59 </span>            :  * \f[
+<span class="lineNum">      60 </span>            :  * u_\alpha(r)=\sqrt{\frac{\alpha R}{r^2+(\alpha R)^2}}
+<span class="lineNum">      61 </span>            :  * \f]
+<span class="lineNum">      62 </span>            :  * and real parameters \f$\alpha\f$ and \f$\beta\f$ that are determined by
+<span class="lineNum">      63 </span>            :  * the following relations:
+<span class="lineNum">      64 </span>            :  * \f[
+<span class="lineNum">      65 </span>            :  * \rho_0 R^2=\frac{3}{2\pi}f^2(\alpha) \quad \text{with}
+<span class="lineNum">      66 </span>            :  * \quad f(\alpha)=\frac{\alpha^5}{(1+\alpha^2)^3} \\
+<span class="lineNum">      67 </span>            :  * \frac{\beta}{R} + 1 = C u_\alpha(R)
+<span class="lineNum">      68 </span>            :  * \f]
+<span class="lineNum">      69 </span>            :  *
+<span class="lineNum">      70 </span>            :  * This solution is described in detail in \cite Baumgarte2006ug since it
+<span class="lineNum">      71 </span>            :  * exhibits the non-uniqueness properties that are typical for the XCTS system.
+<span class="lineNum">      72 </span>            :  * In the simple case of the constant-density star the non-uniqueness is
+<span class="lineNum">      73 </span>            :  * apparent from the function \f$f(\alpha)\f$, which has two solutions for any
+<span class="lineNum">      74 </span>            :  * \f$\rho_0\f$ smaller than a critical density
+<span class="lineNum">      75 </span>            :  * \f[
+<span class="lineNum">      76 </span>            :  * \rho_\mathrm{crit}=\frac{3}{2\pi R^2}\frac{5^2}{6^6}
+<span class="lineNum">      77 </span>            :  * \approx\frac{0.0320}{R^2} \text{,}
+<span class="lineNum">      78 </span>            :  * \f]
+<span class="lineNum">      79 </span>            :  * a unique solution for \f$\rho_0=\rho_\mathrm{crit}\f$ and no solutions
+<span class="lineNum">      80 </span>            :  * above the critical density \cite Baumgarte2006ug . The authors identify the
+<span class="lineNum">      81 </span>            :  * \f$\alpha &lt; \alpha_\mathrm{crit}=\sqrt{5}\f$ and \f$\alpha &gt;
+<span class="lineNum">      82 </span>            :  * \alpha_\mathrm{crit}\f$ branches of solutions with the strong-field and
+<span class="lineNum">      83 </span>            :  * weak-field regimes, respectively (see \cite Baumgarte2006ug for details).
+<span class="lineNum">      84 </span>            :  * In this implementation we compute the weak-field solution by choosing the
+<span class="lineNum">      85 </span>            :  * \f$\alpha &gt; \alpha_\mathrm{crit}\f$ that corresponds to the density
+<span class="lineNum">      86 </span>            :  * \f$\rho_0\f$ of the star. Therefore, we supply initial data
+<span class="lineNum">      87 </span>            :  * \f$\psi_\mathrm{init}=1\f$ so that a nonlinear iterative numerical solver
+<span class="lineNum">      88 </span>            :  * will converge to the same weak-field solution.
+<span class="lineNum">      89 </span>            :  */
+<span class="lineNum">      90 </span><span class="lineCov">          1 : class ConstantDensityStar {</span>
+<span class="lineNum">      91 </span>            :  private:
+<span class="lineNum">      92 </span><span class="lineNoCov">          0 :   struct Density {</span>
+<span class="lineNum">      93 </span><span class="lineNoCov">          0 :     using type = double;</span>
+<span class="lineNum">      94 </span><span class="lineNoCov">          0 :     static constexpr OptionString help{&quot;The constant density within the star&quot;};</span>
+<span class="lineNum">      95 </span><span class="lineNoCov">          0 :     static double lower_bound() noexcept { return 0.; }</span>
+<span class="lineNum">      96 </span>            :   };
+<span class="lineNum">      97 </span><span class="lineNoCov">          0 :   struct Radius {</span>
+<span class="lineNum">      98 </span><span class="lineNoCov">          0 :     using type = double;</span>
+<span class="lineNum">      99 </span><span class="lineNoCov">          0 :     static constexpr OptionString help{&quot;The conformal radius of the star&quot;};</span>
+<span class="lineNum">     100 </span><span class="lineNoCov">          0 :     static double lower_bound() noexcept { return 0.; }</span>
+<span class="lineNum">     101 </span>            :   };
+<span class="lineNum">     102 </span>            : 
+<span class="lineNum">     103 </span>            :  public:
+<span class="lineNum">     104 </span><span class="lineNoCov">          0 :   using options = tmpl::list&lt;Density, Radius&gt;;</span>
+<span class="lineNum">     105 </span><span class="lineNoCov">          0 :   static constexpr OptionString help{</span>
+<span class="lineNum">     106 </span>            :       &quot;A constant density star in general relativity&quot;};
+<span class="lineNum">     107 </span>            : 
+<span class="lineNum">     108 </span><span class="lineNoCov">          0 :   ConstantDensityStar() = default;</span>
+<span class="lineNum">     109 </span><span class="lineNoCov">          0 :   ConstantDensityStar(const ConstantDensityStar&amp;) noexcept = delete;</span>
+<span class="lineNum">     110 </span><span class="lineNoCov">          0 :   ConstantDensityStar&amp; operator=(const ConstantDensityStar&amp;) noexcept = delete;</span>
+<span class="lineNum">     111 </span><span class="lineNoCov">          0 :   ConstantDensityStar(ConstantDensityStar&amp;&amp;) noexcept = default;</span>
+<span class="lineNum">     112 </span><span class="lineNoCov">          0 :   ConstantDensityStar&amp; operator=(ConstantDensityStar&amp;&amp;) noexcept = default;</span>
+<span class="lineNum">     113 </span><span class="lineNoCov">          0 :   ~ConstantDensityStar() noexcept = default;</span>
+<span class="lineNum">     114 </span>            : 
+<span class="lineNum">     115 </span><span class="lineNoCov">          0 :   ConstantDensityStar(double density, double radius,</span>
+<span class="lineNum">     116 </span>            :                       const OptionContext&amp; context = {});
+<span class="lineNum">     117 </span>            : 
+<span class="lineNum">     118 </span><span class="lineNoCov">          0 :   double density() const noexcept { return density_; }</span>
+<span class="lineNum">     119 </span><span class="lineNoCov">          0 :   double radius() const noexcept { return radius_; }</span>
+<span class="lineNum">     120 </span>            : 
+<span class="lineNum">     121 </span>            :   // @{
+<span class="lineNum">     122 </span>            :   /// Retrieve variable at coordinates `x`
+<span class="lineNum">     123 </span>            :   template &lt;typename DataType&gt;
+<span class="lineNum">     124 </span><span class="lineCov">          1 :   auto variables(</span>
+<span class="lineNum">     125 </span>            :       const tnsr::I&lt;DataType, 3, Frame::Inertial&gt;&amp; x,
+<span class="lineNum">     126 </span>            :       tmpl::list&lt;Xcts::Tags::ConformalFactor&lt;DataType&gt;&gt; /*meta*/) const noexcept
+<span class="lineNum">     127 </span>            :       -&gt; tuples::TaggedTuple&lt;Xcts::Tags::ConformalFactor&lt;DataType&gt;&gt;;
+<span class="lineNum">     128 </span>            : 
+<span class="lineNum">     129 </span>            :   template &lt;typename DataType&gt;
+<span class="lineNum">     130 </span><span class="lineCov">          1 :   auto variables(const tnsr::I&lt;DataType, 3, Frame::Inertial&gt;&amp; x,</span>
+<span class="lineNum">     131 </span>            :                  tmpl::list&lt;::Tags::Initial&lt;
+<span class="lineNum">     132 </span>            :                      Xcts::Tags::ConformalFactor&lt;DataType&gt;&gt;&gt; /*meta*/) const
+<span class="lineNum">     133 </span>            :       noexcept -&gt; tuples::TaggedTuple&lt;
+<span class="lineNum">     134 </span>            :           ::Tags::Initial&lt;Xcts::Tags::ConformalFactor&lt;DataType&gt;&gt;&gt;;
+<span class="lineNum">     135 </span>            : 
+<span class="lineNum">     136 </span>            :   template &lt;typename DataType&gt;
+<span class="lineNum">     137 </span><span class="lineCov">          1 :   auto variables(const tnsr::I&lt;DataType, 3, Frame::Inertial&gt;&amp; x,</span>
+<span class="lineNum">     138 </span>            :                  tmpl::list&lt;::Tags::Initial&lt;Xcts::Tags::ConformalFactorGradient&lt;
+<span class="lineNum">     139 </span>            :                      3, Frame::Inertial, DataType&gt;&gt;&gt; /*meta*/) const noexcept
+<span class="lineNum">     140 </span>            :       -&gt; tuples::TaggedTuple&lt;::Tags::Initial&lt;
+<span class="lineNum">     141 </span>            :           Xcts::Tags::ConformalFactorGradient&lt;3, Frame::Inertial, DataType&gt;&gt;&gt;;
+<span class="lineNum">     142 </span>            : 
+<span class="lineNum">     143 </span>            :   template &lt;typename DataType&gt;
+<span class="lineNum">     144 </span><span class="lineCov">          1 :   auto variables(</span>
+<span class="lineNum">     145 </span>            :       const tnsr::I&lt;DataType, 3, Frame::Inertial&gt;&amp; x,
+<span class="lineNum">     146 </span>            :       tmpl::list&lt;
+<span class="lineNum">     147 </span>            :           ::Tags::Source&lt;Xcts::Tags::ConformalFactor&lt;DataType&gt;&gt;&gt; /*meta*/) const
+<span class="lineNum">     148 </span>            :       noexcept -&gt; tuples::TaggedTuple&lt;
+<span class="lineNum">     149 </span>            :           ::Tags::Source&lt;Xcts::Tags::ConformalFactor&lt;DataType&gt;&gt;&gt;;
+<span class="lineNum">     150 </span>            : 
+<span class="lineNum">     151 </span>            :   template &lt;typename DataType&gt;
+<span class="lineNum">     152 </span><span class="lineCov">          1 :   auto variables(const tnsr::I&lt;DataType, 3, Frame::Inertial&gt;&amp; x,</span>
+<span class="lineNum">     153 </span>            :                  tmpl::list&lt;::Tags::Source&lt;Xcts::Tags::ConformalFactorGradient&lt;
+<span class="lineNum">     154 </span>            :                      3, Frame::Inertial, DataType&gt;&gt;&gt; /*meta*/) const noexcept
+<span class="lineNum">     155 </span>            :       -&gt; tuples::TaggedTuple&lt;::Tags::Source&lt;
+<span class="lineNum">     156 </span>            :           Xcts::Tags::ConformalFactorGradient&lt;3, Frame::Inertial, DataType&gt;&gt;&gt;;
+<span class="lineNum">     157 </span>            : 
+<span class="lineNum">     158 </span>            :   template &lt;typename DataType&gt;
+<span class="lineNum">     159 </span><span class="lineCov">          1 :   auto variables(const tnsr::I&lt;DataType, 3, Frame::Inertial&gt;&amp; x,</span>
+<span class="lineNum">     160 </span>            :                  tmpl::list&lt;gr::Tags::EnergyDensity&lt;DataType&gt;&gt; /*meta*/) const
+<span class="lineNum">     161 </span>            :       noexcept -&gt; tuples::TaggedTuple&lt;gr::Tags::EnergyDensity&lt;DataType&gt;&gt;;
+<span class="lineNum">     162 </span>            :   // @}
+<span class="lineNum">     163 </span>            : 
+<span class="lineNum">     164 </span>            :   /// Retrieve a collection of variables at coordinates `x`
+<span class="lineNum">     165 </span>            :   template &lt;typename DataType, typename... Tags&gt;
+<span class="lineNum">     166 </span><span class="lineCov">          1 :   tuples::TaggedTuple&lt;Tags...&gt; variables(</span>
+<span class="lineNum">     167 </span>            :       const tnsr::I&lt;DataType, 3, Frame::Inertial&gt;&amp; x,
+<span class="lineNum">     168 </span>            :       tmpl::list&lt;Tags...&gt; /*meta*/) const noexcept {
+<span class="lineNum">     169 </span>            :     static_assert(sizeof...(Tags) &gt; 1,
+<span class="lineNum">     170 </span>            :                   &quot;The generic template will recurse infinitely if only one &quot;
+<span class="lineNum">     171 </span>            :                   &quot;tag is being retrieved.&quot;);
+<span class="lineNum">     172 </span>            :     return {tuples::get&lt;Tags&gt;(variables(x, tmpl::list&lt;Tags&gt;{}))...};
+<span class="lineNum">     173 </span>            :   }
+<span class="lineNum">     174 </span>            : 
+<span class="lineNum">     175 </span>            :   // clang-tidy: no pass by reference
+<span class="lineNum">     176 </span><span class="lineNoCov">          0 :   void pup(PUP::er&amp; p) noexcept;  // NOLINT</span>
+<span class="lineNum">     177 </span>            : 
+<span class="lineNum">     178 </span>            :  private:
+<span class="lineNum">     179 </span><span class="lineNoCov">          0 :   double density_ = std::numeric_limits&lt;double&gt;::signaling_NaN();</span>
+<span class="lineNum">     180 </span><span class="lineNoCov">          0 :   double radius_ = std::numeric_limits&lt;double&gt;::signaling_NaN();</span>
+<span class="lineNum">     181 </span><span class="lineNoCov">          0 :   double alpha_ = std::numeric_limits&lt;double&gt;::signaling_NaN();</span>
+<span class="lineNum">     182 </span>            : };
+<span class="lineNum">     183 </span>            : 
+<span class="lineNum">     184 </span><span class="lineNoCov">          0 : bool operator==(const ConstantDensityStar&amp; /*lhs*/,</span>
+<span class="lineNum">     185 </span>            :                 const ConstantDensityStar&amp; /*rhs*/) noexcept;
+<span class="lineNum">     186 </span>            : 
+<span class="lineNum">     187 </span><span class="lineNoCov">          0 : bool operator!=(const ConstantDensityStar&amp; lhs,</span>
+<span class="lineNum">     188 </span>            :                 const ConstantDensityStar&amp; rhs) noexcept;
+<span class="lineNum">     189 </span>            : 
+<span class="lineNum">     190 </span>            : }  // namespace Solutions
+<span class="lineNum">     191 </span>            : }  // namespace Xcts
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

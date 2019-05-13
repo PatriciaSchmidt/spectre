@@ -1,0 +1,161 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - IO/H5/StellarCollapseEos.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">IO/H5</a> - StellarCollapseEos.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntry">7</td>
+            <td class="headerCovTableEntryLo">71.4 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineCov">          1 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : /// \file
+<span class="lineNum">       5 </span>            : /// Defines class h5::StellarCollapseEos
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            : #pragma once
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : #include &lt;hdf5.h&gt;
+<span class="lineNum">      10 </span>            : #include &lt;string&gt;
+<span class="lineNum">      11 </span>            : #include &lt;vector&gt;
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            : #include &quot;DataStructures/BoostMultiArray.hpp&quot; // IWYU pragma: keep
+<span class="lineNum">      14 </span>            : #include &quot;IO/H5/Object.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;IO/H5/OpenGroup.hpp&quot;
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            : // IWYU pragma: no_include &lt;boost/multi_array.hpp&gt;
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : namespace h5 {
+<span class="lineNum">      20 </span>            : /*!
+<span class="lineNum">      21 </span>            :  * \ingroup HDF5Group
+<span class="lineNum">      22 </span>            :  * \brief Reads in tabulated equation of state file from
+<span class="lineNum">      23 </span>            :  * [stellarcollapse.org](https://stellarcollapse.org)
+<span class="lineNum">      24 </span>            :  *
+<span class="lineNum">      25 </span>            :  * Reads in H5 file containing data for tabulated equation of state.
+<span class="lineNum">      26 </span>            :  * Contains functions to obtain thermodynamic quantities from the file,
+<span class="lineNum">      27 </span>            :  * stored as either rank-1 or rank-3 datasets.
+<span class="lineNum">      28 </span>            :  *
+<span class="lineNum">      29 </span>            :  * It is assumed that the file is in the format of the
+<span class="lineNum">      30 </span>            :  * [SRO (Schneider, Roberts, Ott 2017) Equation of State files](https://
+<span class="lineNum">      31 </span>            :  * stellarcollapse.org/SROEOS)
+<span class="lineNum">      32 </span>            :  *
+<span class="lineNum">      33 </span>            :  * The description of each dataset in the file can be found
+<span class="lineNum">      34 </span>            :  * [here](https://bitbucket.org/andschn/sroeos/src/master/
+<span class="lineNum">      35 </span>            :  * User_Guide/User_Guide.pdf?fileviewer=file-view-default)
+<span class="lineNum">      36 </span>            :  *
+<span class="lineNum">      37 </span>            :  */
+<span class="lineNum">      38 </span><span class="lineCov">          1 : class StellarCollapseEos : public h5::Object {</span>
+<span class="lineNum">      39 </span>            :  public:
+<span class="lineNum">      40 </span>            :   /// \cond
+<span class="lineNum">      41 </span>            :   // The root-level HDF5 group in the SRO Equation of State files does not
+<span class="lineNum">      42 </span>            :   // have an extension in its group name
+<span class="lineNum">      43 </span>            :   static std::string extension() noexcept { return &quot;&quot;; }
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span>            :   StellarCollapseEos(bool exists, detail::OpenGroup&amp;&amp; group, hid_t location,
+<span class="lineNum">      46 </span>            :                      const std::string&amp; /*name*/) noexcept;
+<span class="lineNum">      47 </span>            : 
+<span class="lineNum">      48 </span>            :   StellarCollapseEos(const StellarCollapseEos&amp; /*rhs*/) = delete;
+<span class="lineNum">      49 </span>            :   StellarCollapseEos&amp; operator=(const StellarCollapseEos&amp; /*rhs*/) = delete;
+<span class="lineNum">      50 </span>            :   StellarCollapseEos(StellarCollapseEos&amp;&amp; /*rhs*/) noexcept = delete;
+<span class="lineNum">      51 </span>            :   StellarCollapseEos&amp; operator=(StellarCollapseEos&amp;&amp; /*rhs*/) noexcept = delete;
+<span class="lineNum">      52 </span>            : 
+<span class="lineNum">      53 </span>            :   ~StellarCollapseEos() override = default;
+<span class="lineNum">      54 </span>            :   /// \endcond
+<span class="lineNum">      55 </span>            : 
+<span class="lineNum">      56 </span>            :   /*!
+<span class="lineNum">      57 </span>            :    * \ingroup HDF5Group
+<span class="lineNum">      58 </span>            :    * \brief reads a rank-0 dataset (contains only one element)
+<span class="lineNum">      59 </span>            :    */
+<span class="lineNum">      60 </span>            :   template &lt;typename T&gt;
+<span class="lineNum">      61 </span><span class="lineCov">          1 :   T get_scalar_dataset(const std::string&amp; dataset_name) const noexcept;</span>
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span>            :   /*!
+<span class="lineNum">      64 </span>            :    * \ingroup HDF5Group
+<span class="lineNum">      65 </span>            :    * \brief reads a dataset with elements along 1 dimension
+<span class="lineNum">      66 </span>            :    */
+<span class="lineNum">      67 </span><span class="lineCov">          1 :   std::vector&lt;double&gt; get_rank1_dataset(const std::string&amp; dataset_name) const</span>
+<span class="lineNum">      68 </span>            :       noexcept;
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span>            :   /*!
+<span class="lineNum">      71 </span>            :    * \ingroup HDF5Group
+<span class="lineNum">      72 </span>            :    * \brief reads a dataset with elements along 3 dimensions
+<span class="lineNum">      73 </span>            :    */
+<span class="lineNum">      74 </span><span class="lineCov">          1 :   boost::multi_array&lt;double, 3&gt; get_rank3_dataset(</span>
+<span class="lineNum">      75 </span>            :       const std::string&amp; dataset_name) const noexcept;
+<span class="lineNum">      76 </span>            : 
+<span class="lineNum">      77 </span>            :  private:
+<span class="lineNum">      78 </span><span class="lineNoCov">          0 :   detail::OpenGroup root_group_;</span>
+<span class="lineNum">      79 </span><span class="lineNoCov">          0 :   detail::OpenGroup group_;</span>
+<span class="lineNum">      80 </span>            : };
+<span class="lineNum">      81 </span>            : }  // namespace h5
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,310 @@
+<!-- HTML header for doxygen 1.8.10-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=9"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="SXS Collaboration">
+    <meta name="generator" content="Doxygen 1.8.13"/>
+    <style>
+        /*!
+         * IE10 viewport hack for Surface/desktop Windows 8 bug
+         * Copyright 2014-2015 Twitter, Inc.
+         * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+         */
+        @-webkit-viewport { width: device-width; }
+        @-moz-viewport    { width: device-width; }
+        @-ms-viewport     { width: device-width; }
+        @-o-viewport      { width: device-width; }
+        @viewport         { width: device-width; }
+      </style>
+  <title>SpECTRE: Elliptic::Initialization::DiscontinuousGalerkin&lt; Metavariables &gt; Struct Template Reference</title>
+  <link href="tabs.css" rel="stylesheet" type="text/css"/>
+  <script type="text/javascript" src="jquery.js"></script>
+  <script type="text/javascript" src="dynsections.js"></script>
+  <link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js", "color.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+});
+MathJax.Hub.Config({
+    TeX: { equationNumbers: { autoNumber: "AMS" } }
+});
+MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['^^','^^'], ['\\(', '\\)']]}
+});
+</script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js"></script>
+  <link href="octicons.css" rel="stylesheet">
+  <link href="bootstrap.min.css" rel="stylesheet">
+  <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <script type="text/javascript" src="jquery.js"></script>
+  <script type="text/javascript" src="popper.min.js"></script>
+  <script type="text/javascript" src="bootstrap.min.js"></script>
+  <script type="text/javascript" src="spectre.js"></script>
+  </head>
+  <body>
+  <div id="top" class="navbar-fixed-top"><!-- do not remove this div, it is closed by doxygen! -->
+  <!-- BEGIN TITLEAREA -->
+  <div id="titlearea">
+  <script type="text/javascript">
+  var searchBox = new SearchBox("searchBox", "search",false,'Search');
+  </script>
+  <div id="main-nav">
+    <ul class="sm sm-dox" id="main-menu">
+      <li>
+      <a href="index.html">
+      SpECTRE &#160;
+        <span id="projectnumber">v0.0.0</span>
+      </a>
+      </li>
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="selected">
+          <span id="selected">
+            <i class="octicon octicon-book"></i><span>Documentation</span>
+          </span>
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li style="min-width: 135px;">
+            <a href="index.html">
+            <i class="octicon octicon-book"></i><span>Introduction</span></a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="installation.html">
+              <i class="octicon octicon-desktop-download"></i><span>Installation</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="tutorials.html">
+              <i class="octicon octicon-mortar-board"></i><span>User Tutorials</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="dev_guide.html">
+              <i class="octicon octicon-gist-secret"></i><span>Dev Guide</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="code_of_conduct.html">
+              <i class="octicon octicon-comment-discussion"></i><span>Code of Conduct</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="contributing_to_spectre.html">
+              <i class="octicon octicon-git-pull-request"></i><span>Contributing Guide</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="selected">
+          <span id="selected">
+            <i class="octicon octicon-code"></i>
+              <span>Code Reference</span>
+          </span>
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li style="min-width: 130px;">
+            <a href="modules.html">
+              <i class="octicon octicon-code"></i>
+              <span>Topics</span>
+            </a>
+          </li>
+          <li style="min-width: 130px;">
+            <a href="namespaces.html">
+              <i class="octicon octicon-gist"></i>
+              <span>Namespaces</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <a href="files.html">
+          <i class="octicon octicon-file-directory"></i><span>Files</span>
+        </a>
+      </li>
+      <li>
+        <a href="citelist.html">
+          <i class="octicon octicon-file-text"></i><span>Bibliography</span>
+        </a>
+      </li>
+      <li>
+        <a href="https://github.com/sxs-collaboration/spectre" target="_blank">
+          <i class="octicon octicon-mark-github"></i><span>View on GitHub</span>
+        </a>
+      </li>
+      <!--The Search <li> is added by doxygen later-->
+    </ul>
+  </div><!-- main-nav -->
+  </div><!-- titlearea -->
+  <!-- window showing the filter options -->
+  <div id="MSearchSelectWindow"  style="position: fixed;"
+       onmouseover="return searchBox.OnSearchSelectShow()"
+       onmouseout="return searchBox.OnSearchSelectHide()"
+       onkeydown="return searchBox.OnSearchSelectKey(event)">
+  </div>
+  <!-- iframe showing the search results (closed by default) -->
+  <div id="MSearchResultsWindow"  style="position: fixed;">
+  <iframe src="javascript:void(0)" frameborder="0"
+          name="MSearchResults" id="MSearchResults">
+  </iframe>
+  </div>
+<!-- Generated by Doxygen 1.8.13 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search",false,'Search');
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><b>Elliptic</b></li><li class="navelem"><b>Initialization</b></li><li class="navelem"><a class="el" href="structElliptic_1_1Initialization_1_1DiscontinuousGalerkin.html">DiscontinuousGalerkin</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
+<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
+<a href="structElliptic_1_1Initialization_1_1DiscontinuousGalerkin-members.html">List of all members</a>  </div>
+  <div class="headertitle">
+<div class="title">Elliptic::Initialization::DiscontinuousGalerkin&lt; Metavariables &gt; Struct Template Reference</div>  </div>
+</div><!--header-->
+<div class="contents">
+
+<p>Initializes DataBox tags related to discontinuous Galerkin fluxes.  
+ <a href="structElliptic_1_1Initialization_1_1DiscontinuousGalerkin.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="Elliptic_2Initialization_2DiscontinuousGalerkin_8hpp_source.html">DiscontinuousGalerkin.hpp</a>&gt;</code></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:a3f5fa04587b2465de3745e0d2c05baa6"><td class="memItemLeft" align="right" valign="top"><a id="a3f5fa04587b2465de3745e0d2c05baa6"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>temporal_id_tag</b> = typename <a class="el" href="structLinearSolver_1_1Tags_1_1IterationId.html">Metavariables::temporal_id</a></td></tr>
+<tr class="separator:a3f5fa04587b2465de3745e0d2c05baa6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0562afba104a53644a300936a03a271c"><td class="memItemLeft" align="right" valign="top"><a id="a0562afba104a53644a300936a03a271c"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>flux_comm_types</b> = ::<a class="el" href="structdg_1_1FluxCommunicationTypes.html">dg::FluxCommunicationTypes</a>&lt; <a class="el" href="structMetavariables.html">Metavariables</a> &gt;</td></tr>
+<tr class="separator:a0562afba104a53644a300936a03a271c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a11d119499d28a7d9f0fac0fd31c6436a"><td class="memItemLeft" align="right" valign="top"><a id="a11d119499d28a7d9f0fac0fd31c6436a"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>mortar_data_tag</b> = typename <a class="el" href="structdg_1_1FluxCommunicationTypes.html#aa1bb8e631164be166961986150e85e86">flux_comm_types::simple_mortar_data_tag</a></td></tr>
+<tr class="separator:a11d119499d28a7d9f0fac0fd31c6436a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4c5b08f8292802096390b5c044521bc2"><td class="memTemplParams" colspan="2"><a id="a4c5b08f8292802096390b5c044521bc2"></a>
+template&lt;typename Tag &gt; </td></tr>
+<tr class="memitem:a4c5b08f8292802096390b5c044521bc2"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>interface_tag</b> = <a class="el" href="structTags_1_1Interface.html">Tags::Interface</a>&lt; <a class="el" href="structTags_1_1InternalDirections.html">Tags::InternalDirections</a>&lt; volume_dim &gt;, Tag &gt;</td></tr>
+<tr class="separator:a4c5b08f8292802096390b5c044521bc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6baf6d260834d5d26e8f4fcab570d99f"><td class="memTemplParams" colspan="2"><a id="a6baf6d260834d5d26e8f4fcab570d99f"></a>
+template&lt;typename Tag &gt; </td></tr>
+<tr class="memitem:a6baf6d260834d5d26e8f4fcab570d99f"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>boundary_tag</b> = <a class="el" href="structTags_1_1Interface.html">Tags::Interface</a>&lt; <a class="el" href="structTags_1_1BoundaryDirectionsInterior.html">Tags::BoundaryDirectionsInterior</a>&lt; volume_dim &gt;, Tag &gt;</td></tr>
+<tr class="separator:a6baf6d260834d5d26e8f4fcab570d99f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d733df469ce151e1647de9f6f6966fa"><td class="memTemplParams" colspan="2"><a id="a1d733df469ce151e1647de9f6f6966fa"></a>
+template&lt;typename Tag &gt; </td></tr>
+<tr class="memitem:a1d733df469ce151e1647de9f6f6966fa"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>mortar_tag</b> = <a class="el" href="structTags_1_1Mortars.html">Tags::Mortars</a>&lt; Tag, volume_dim &gt;</td></tr>
+<tr class="separator:a1d733df469ce151e1647de9f6f6966fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2becbd3e354b979326ae720575f81d41"><td class="memItemLeft" align="right" valign="top"><a id="a2becbd3e354b979326ae720575f81d41"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>simple_tags</b> = <a class="el" href="group__DataBoxGroup.html#ga3dc674ba575ece4a8be1c23fa6c2cdcb">db::AddSimpleTags</a>&lt; mortar_data_tag, <a class="el" href="structTags_1_1Mortars.html">mortar_tag</a>&lt; <a class="el" href="structTags_1_1Next.html">Tags::Next</a>&lt; temporal_id_tag &gt; &gt;, <a class="el" href="structTags_1_1Mortars.html">mortar_tag</a>&lt; <a class="el" href="structTags_1_1Mesh.html">Tags::Mesh</a>&lt; volume_dim - 1 &gt; &gt;, <a class="el" href="structTags_1_1Mortars.html">mortar_tag</a>&lt; <a class="el" href="structTags_1_1MortarSize.html">Tags::MortarSize</a>&lt; volume_dim - 1 &gt; &gt;, <a class="el" href="structTags_1_1Interface.html">interface_tag</a>&lt; typename <a class="el" href="structdg_1_1FluxCommunicationTypes.html#a0f8b03dabb4860e6acbb33f777f42429">flux_comm_types::normal_dot_fluxes_tag</a> &gt;, <a class="el" href="structTags_1_1Interface.html">boundary_tag</a>&lt; typename <a class="el" href="structdg_1_1FluxCommunicationTypes.html#a0f8b03dabb4860e6acbb33f777f42429">flux_comm_types::normal_dot_fluxes_tag</a> &gt; &gt;</td></tr>
+<tr class="separator:a2becbd3e354b979326ae720575f81d41"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afba16e82954416464e62753e0a4a35b6"><td class="memItemLeft" align="right" valign="top"><a id="afba16e82954416464e62753e0a4a35b6"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>compute_tags</b> = <a class="el" href="group__DataBoxGroup.html#ga64597eb7f5df0dc4d99698289265b1a7">db::AddComputeTags</a>&lt;&gt;</td></tr>
+<tr class="separator:afba16e82954416464e62753e0a4a35b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a6caa0967914939918c67e40964d24a52"><td class="memTemplParams" colspan="2"><a id="a6caa0967914939918c67e40964d24a52"></a>
+template&lt;typename TagsList &gt; </td></tr>
+<tr class="memitem:a6caa0967914939918c67e40964d24a52"><td class="memTemplItemLeft" align="right" valign="top">static auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>add_mortar_data</b> (<a class="el" href="classdb_1_1DataBox.html">db::DataBox</a>&lt; TagsList &gt; &amp;&amp;box, const <a class="elRef" doxygen="/work/spectre/docs/config/cppreference-doxygen-web.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/container/vector.html">std::vector</a>&lt; <a class="elRef" doxygen="/work/spectre/docs/config/cppreference-doxygen-web.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/container/array.html">std::array</a>&lt; size_t, volume_dim &gt;&gt; &amp;initial_extents) noexcept</td></tr>
+<tr class="separator:a6caa0967914939918c67e40964d24a52"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6357759b6965e0374d1e66126b03ce2c"><td class="memTemplParams" colspan="2"><a id="a6357759b6965e0374d1e66126b03ce2c"></a>
+template&lt;typename TagsList &gt; </td></tr>
+<tr class="memitem:a6357759b6965e0374d1e66126b03ce2c"><td class="memTemplItemLeft" align="right" valign="top">static auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>initialize</b> (<a class="el" href="classdb_1_1DataBox.html">db::DataBox</a>&lt; TagsList &gt; &amp;&amp;box, const <a class="elRef" doxygen="/work/spectre/docs/config/cppreference-doxygen-web.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/container/vector.html">std::vector</a>&lt; <a class="elRef" doxygen="/work/spectre/docs/config/cppreference-doxygen-web.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/container/array.html">std::array</a>&lt; size_t, volume_dim &gt;&gt; &amp;initial_extents) noexcept</td></tr>
+<tr class="separator:a6357759b6965e0374d1e66126b03ce2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:a3c18d48b2c3ebf43c1f54876701dc39c"><td class="memItemLeft" align="right" valign="top"><a id="a3c18d48b2c3ebf43c1f54876701dc39c"></a>
+static constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>volume_dim</b> = Metavariables::system::volume_dim</td></tr>
+<tr class="separator:a3c18d48b2c3ebf43c1f54876701dc39c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;typename Metavariables&gt;<br />
+struct Elliptic::Initialization::DiscontinuousGalerkin&lt; Metavariables &gt;</h3>
+
+<p>Initializes DataBox tags related to discontinuous Galerkin fluxes. </p>
+<p>With:</p><ul>
+<li><code>flux_comm_types</code> = <code><a class="el" href="structdg_1_1FluxCommunicationTypes.html" title="Types related to flux communication. ">dg::FluxCommunicationTypes</a>&lt;<a class="el" href="structMetavariables.html">Metavariables</a>&gt;</code></li>
+<li><code>mortar_data_tag</code> = <code><a class="el" href="structdg_1_1FluxCommunicationTypes.html#aa1bb8e631164be166961986150e85e86" title="The DataBox tag for the data stored on the mortars for global stepping. ">flux_comm_types::simple_mortar_data_tag</a></code></li>
+<li><code>interface&lt;Tag&gt;</code> = <code><a class="el" href="structTags_1_1Interface.html" title="Tag which is either a SimpleTag for quantities on an interface, base tag to a compute item which acts...">Tags::Interface</a>&lt;<a class="el" href="structTags_1_1InternalDirections.html" title="The set of directions to neighboring Elements. ">Tags::InternalDirections</a>&lt;volume_dim&gt;, Tag&gt;</code></li>
+<li><code>boundary&lt;Tag&gt;</code> = <code><a class="el" href="structTags_1_1Interface.html" title="Tag which is either a SimpleTag for quantities on an interface, base tag to a compute item which acts...">Tags::Interface</a>&lt;<a class="el" href="structTags_1_1BoundaryDirectionsInterior.html" title="The set of directions which correspond to external boundaries. Used for representing data on the inte...">Tags::BoundaryDirectionsInterior</a>&lt;volume_dim&gt;, Tag&gt;</code></li>
+<li><code>mortar&lt;Tag&gt;</code> = <code><a class="el" href="structTags_1_1Mortars.html" title="Data on mortars, indexed by (Direction, ElementId) pairs. ">Tags::Mortars</a>&lt;Tag, volume_dim&gt;</code></li>
+</ul>
+<p>Uses:</p><ul>
+<li><a class="el" href="structMetavariables.html">Metavariables</a>:<ul>
+<li><code>temporal_id</code></li>
+<li>Items required by <code>flux_comm_types</code></li>
+</ul>
+</li>
+<li><a class="el" href="structElliptic_1_1Initialization_1_1System.html" title="Initializes the DataBox tags related to the system. ">System</a>:<ul>
+<li><code>volume_dim</code></li>
+</ul>
+</li>
+<li>DataBox:<ul>
+<li><code><a class="el" href="structTags_1_1Element.html" title="The Element associated with the DataBox. ">Tags::Element</a>&lt;volume_dim&gt;</code></li>
+<li><code><a class="el" href="structTags_1_1Mesh.html" title="The computational grid of the Element in the DataBox. ">Tags::Mesh</a>&lt;volume_dim&gt;</code></li>
+<li><code>temporal_id</code></li>
+<li><code><a class="el" href="structTags_1_1InternalDirections.html" title="The set of directions to neighboring Elements. ">Tags::InternalDirections</a>&lt;volume_dim&gt;</code></li>
+<li><code><a class="el" href="structTags_1_1BoundaryDirectionsInterior.html" title="The set of directions which correspond to external boundaries. Used for representing data on the inte...">Tags::BoundaryDirectionsInterior</a>&lt;volume_dim&gt;</code></li>
+<li><code>interface&lt;<a class="el" href="structTags_1_1Mesh.html" title="The computational grid of the Element in the DataBox. ">Tags::Mesh</a>&lt;volume_dim - 1&gt;&gt;</code></li>
+<li><code>boundary&lt;<a class="el" href="structTags_1_1Mesh.html" title="The computational grid of the Element in the DataBox. ">Tags::Mesh</a>&lt;volume_dim - 1&gt;&gt;</code></li>
+</ul>
+</li>
+</ul>
+<p>DataBox:</p><ul>
+<li>Adds:<ul>
+<li><code>mortar_data_tag</code></li>
+<li><code>mortar&lt;<a class="el" href="structTags_1_1Next.html" title="Prefix indicating the value a quantity will take on the next iteration of the algorithm. ">Tags::Next</a>&lt;temporal_id&gt;&gt;</code></li>
+<li><code>mortar&lt;<a class="el" href="structTags_1_1Mesh.html" title="The computational grid of the Element in the DataBox. ">Tags::Mesh</a>&lt;volume_dim - 1&gt;&gt;</code></li>
+<li><code>mortar&lt;<a class="el" href="structTags_1_1MortarSize.html" title="Size of a mortar, relative to the element face. That is, the part of the face that it covers...">Tags::MortarSize</a>&lt;volume_dim - 1&gt;&gt;</code></li>
+<li><code>interface&lt;<a class="el" href="structdg_1_1FluxCommunicationTypes.html#a0f8b03dabb4860e6acbb33f777f42429" title="The DataBox tag for the normal fluxes of the evolved variables. ">flux_comm_types::normal_dot_fluxes_tag</a>&gt;</code></li>
+<li><code>boundary&lt;<a class="el" href="structdg_1_1FluxCommunicationTypes.html#a0f8b03dabb4860e6acbb33f777f42429" title="The DataBox tag for the normal fluxes of the evolved variables. ">flux_comm_types::normal_dot_fluxes_tag</a>&gt;</code> </li>
+</ul>
+</li>
+</ul>
+</div><hr/>The documentation for this struct was generated from the following file:<ul>
+<li>src/Elliptic/Initialization/<a class="el" href="Elliptic_2Initialization_2DiscontinuousGalerkin_8hpp_source.html">DiscontinuousGalerkin.hpp</a></li>
+</ul>
+</div><!-- contents -->
+<!-- HTML footer for doxygen 1.8.10-->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+&copy; Copyright 2017 - 2019
+<a href="https://black-holes.org">SXS Collaboration</a>,
+<a href="LICENSE.txt" target="_blank">
+<span class="hidden-xs">Distributed under the</span>
+MIT License</a>
+</small></address>
+</body>
+</html>

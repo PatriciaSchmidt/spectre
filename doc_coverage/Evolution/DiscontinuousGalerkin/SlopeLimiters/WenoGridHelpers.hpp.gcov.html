@@ -1,0 +1,145 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Evolution/DiscontinuousGalerkin/SlopeLimiters/WenoGridHelpers.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">Evolution/DiscontinuousGalerkin/SlopeLimiters</a> - WenoGridHelpers.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;array&gt;
+<span class="lineNum">       7 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : /// \cond
+<span class="lineNum">      10 </span>            : class DataVector;
+<span class="lineNum">      11 </span>            : template &lt;size_t&gt;
+<span class="lineNum">      12 </span>            : class Direction;
+<span class="lineNum">      13 </span>            : template &lt;size_t&gt;
+<span class="lineNum">      14 </span>            : class Element;
+<span class="lineNum">      15 </span>            : template &lt;size_t&gt;
+<span class="lineNum">      16 </span>            : class Mesh;
+<span class="lineNum">      17 </span>            : /// \endcond
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : namespace SlopeLimiters {
+<span class="lineNum">      20 </span>            : namespace Weno_detail {
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : // Check that an element has just one neighbor in a particular direction, and
+<span class="lineNum">      23 </span>            : // that this neighbor has the same refinement level as the element.
+<span class="lineNum">      24 </span>            : template &lt;size_t VolumeDim&gt;
+<span class="lineNum">      25 </span>            : bool check_element_has_one_similar_neighbor_in_direction(
+<span class="lineNum">      26 </span>            :     const Element&lt;VolumeDim&gt;&amp; element,
+<span class="lineNum">      27 </span>            :     const Direction&lt;VolumeDim&gt;&amp; direction) noexcept;
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            : // Compute the coordinate positions of a neighbor element's grid points in the
+<span class="lineNum">      30 </span>            : // logical coordinates of the local element.
+<span class="lineNum">      31 </span>            : //
+<span class="lineNum">      32 </span>            : // However, the results are organized to match the expected input of a
+<span class="lineNum">      33 </span>            : // RegularGridInterpolator constructor:
+<span class="lineNum">      34 </span>            : // - The coordinates are given as an array of 1D coordinate values.
+<span class="lineNum">      35 </span>            : // - For any dimension where the local and neighbor meshes share the same 1D
+<span class="lineNum">      36 </span>            : //   submesh, the array is empty. (This tells the RegularGridInterpolator that
+<span class="lineNum">      37 </span>            : //   no interpolation needs to be done in this dimension.)
+<span class="lineNum">      38 </span>            : //
+<span class="lineNum">      39 </span>            : // Limitations:
+<span class="lineNum">      40 </span>            : // - No support for h-refinement. It is ASSERT'ed that the element has only one
+<span class="lineNum">      41 </span>            : //   neighbor in the specified direction, and that this neighbor is of the same
+<span class="lineNum">      42 </span>            : //   refinement level as the local element.
+<span class="lineNum">      43 </span>            : // - Assumes a uniform rectilinear grid. No support for elements of different
+<span class="lineNum">      44 </span>            : //   sizes (as could occur if all elements have the same refinement level but
+<span class="lineNum">      45 </span>            : //   different blocks have different physical size), or curvilinear elements.
+<span class="lineNum">      46 </span>            : //   This is not checked.
+<span class="lineNum">      47 </span>            : template &lt;size_t VolumeDim&gt;
+<span class="lineNum">      48 </span>            : std::array&lt;DataVector, VolumeDim&gt; neighbor_grid_points_in_local_logical_coords(
+<span class="lineNum">      49 </span>            :     const Mesh&lt;VolumeDim&gt;&amp; local_mesh, const Mesh&lt;VolumeDim&gt;&amp; neighbor_mesh,
+<span class="lineNum">      50 </span>            :     const Element&lt;VolumeDim&gt;&amp; element,
+<span class="lineNum">      51 </span>            :     const Direction&lt;VolumeDim&gt;&amp; direction_to_neighbor) noexcept;
+<span class="lineNum">      52 </span>            : 
+<span class="lineNum">      53 </span>            : // Compute the coordinate positions of the local element's grid points in the
+<span class="lineNum">      54 </span>            : // logical coordinates of the a neighbor element.
+<span class="lineNum">      55 </span>            : //
+<span class="lineNum">      56 </span>            : // See documentation of `neighbor_grid_points_in_local_logical_coords` for
+<span class="lineNum">      57 </span>            : // further details and limitations.
+<span class="lineNum">      58 </span>            : template &lt;size_t VolumeDim&gt;
+<span class="lineNum">      59 </span>            : std::array&lt;DataVector, VolumeDim&gt; local_grid_points_in_neighbor_logical_coords(
+<span class="lineNum">      60 </span>            :     const Mesh&lt;VolumeDim&gt;&amp; local_mesh, const Mesh&lt;VolumeDim&gt;&amp; neighbor_mesh,
+<span class="lineNum">      61 </span>            :     const Element&lt;VolumeDim&gt;&amp; element,
+<span class="lineNum">      62 </span>            :     const Direction&lt;VolumeDim&gt;&amp; direction_to_neighbor) noexcept;
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span>            : }  // namespace Weno_detail
+<span class="lineNum">      65 </span>            : }  // namespace SlopeLimiters
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

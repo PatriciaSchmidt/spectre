@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Utilities/Registration.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">Utilities</a> - Registration.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntryLo">60.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : /// \ingroup UtilitiesGroup
+<span class="lineNum">       9 </span>            : /// \brief Helpers for derived class registration
+<span class="lineNum">      10 </span>            : ///
+<span class="lineNum">      11 </span>            : /// SpECTRE's factory mechanism requires that the base class contain a
+<span class="lineNum">      12 </span>            : /// list of all derived classes (in the special nested type alias
+<span class="lineNum">      13 </span>            : /// `creatable_classes`).  This can be problematic when the desired
+<span class="lineNum">      14 </span>            : /// list of derived classes can vary with use of the base class.
+<span class="lineNum">      15 </span>            : /// These helpers provide a method to simplify handling these
+<span class="lineNum">      16 </span>            : /// compile-time registrations.
+<span class="lineNum">      17 </span>            : ///
+<span class="lineNum">      18 </span>            : /// Each optional derived class defines a registrar helper and both
+<span class="lineNum">      19 </span>            : /// the base class and derived classes are templated on the list of
+<span class="lineNum">      20 </span>            : /// registrars.  The typical structure of these classes is:
+<span class="lineNum">      21 </span>            : /// \snippet Test_Registration.cpp registrar_structure
+<span class="lineNum">      22 </span>            : /// A concrete base class type with a specific set of derived classes
+<span class="lineNum">      23 </span>            : /// is constructed like
+<span class="lineNum">      24 </span>            : /// \snippet Test_Registration.cpp registrar_use
+<span class="lineNum">      25 </span>            : ///
+<span class="lineNum">      26 </span>            : /// It is frequently useful to default the registrar list in a derived
+<span class="lineNum">      27 </span>            : /// class to the registrar for that class.  This ensures that any
+<span class="lineNum">      28 </span>            : /// methods in the base class using the registrar list (such as those
+<span class="lineNum">      29 </span>            : /// using `DEFINE_FAKE_VIRTUAL()` or `call_with_dynamic_type()`) work
+<span class="lineNum">      30 </span>            : /// as expected on an explicitly constructed derived class with the
+<span class="lineNum">      31 </span>            : /// list omitted.
+<span class="lineNum">      32 </span><span class="lineCov">          1 : namespace Registration {</span>
+<span class="lineNum">      33 </span>            : /// A template for defining a registrar.
+<span class="lineNum">      34 </span>            : ///
+<span class="lineNum">      35 </span>            : /// A registrar for a class can be defined by making a type alias to
+<span class="lineNum">      36 </span>            : /// this struct, filling in the registrant.
+<span class="lineNum">      37 </span>            : /// \snippet Test_Registration.cpp registrar
+<span class="lineNum">      38 </span>            : /// In more complex cases (such as with non-type template
+<span class="lineNum">      39 </span>            : /// parameters) defining a registrar manually may be necessary.
+<span class="lineNum">      40 </span>            : /// \snippet Test_Registration.cpp custom_registrar
+<span class="lineNum">      41 </span>            : template &lt;template &lt;typename...&gt; class Registrant, typename... Args&gt;
+<span class="lineNum">      42 </span><span class="lineCov">          1 : struct Registrar {</span>
+<span class="lineNum">      43 </span>            :   // Final registrant type, specialized with input Args... and the
+<span class="lineNum">      44 </span>            :   // RegistrarList it was extracted from.  This will be a full
+<span class="lineNum">      45 </span>            :   // specialization of a derived class that uses the registration
+<span class="lineNum">      46 </span>            :   // framework.
+<span class="lineNum">      47 </span>            :   template &lt;typename RegistrarList&gt;
+<span class="lineNum">      48 </span><span class="lineNoCov">          0 :   using f = Registrant&lt;Args..., RegistrarList&gt;;</span>
+<span class="lineNum">      49 </span>            : };
+<span class="lineNum">      50 </span>            : 
+<span class="lineNum">      51 </span>            : namespace detail {
+<span class="lineNum">      52 </span>            : template &lt;typename RegistrarList, typename Registrar&gt;
+<span class="lineNum">      53 </span>            : struct registrant {
+<span class="lineNum">      54 </span>            :   using type = typename Registrar::template f&lt;RegistrarList&gt;;
+<span class="lineNum">      55 </span>            : };
+<span class="lineNum">      56 </span>            : }  // namespace detail
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span>            : /// Transform a list of registrars into the list of associated
+<span class="lineNum">      59 </span>            : /// registrants.  This is usually used to define the
+<span class="lineNum">      60 </span>            : /// `creatable_classes` type list.
+<span class="lineNum">      61 </span>            : template &lt;typename RegistrarList&gt;
+<span class="lineNum">      62 </span><span class="lineCov">          1 : using registrants = tmpl::transform&lt;</span>
+<span class="lineNum">      63 </span>            :     tmpl::remove_duplicates&lt;RegistrarList&gt;,
+<span class="lineNum">      64 </span>            :     detail::registrant&lt;tmpl::pin&lt;tmpl::remove_duplicates&lt;RegistrarList&gt;&gt;,
+<span class="lineNum">      65 </span>            :                        tmpl::_1&gt;&gt;;
+<span class="lineNum">      66 </span>            : }  // namespace Registration
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - DataStructures/ComplexDataVector.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">DataStructures</a> - ComplexDataVector.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">27</td>
+            <td class="headerCovTableEntryLo">3.7 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;complex&gt;
+<span class="lineNum">       7 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       8 </span>            : #include &lt;functional&gt;  // for std::reference_wrapper
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : #include &quot;DataStructures/DataVector.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;DataStructures/VectorImpl.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;Utilities/ConstantExpressions.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;Utilities/ForceInline.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;Utilities/Requires.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;Utilities/StdArrayHelpers.hpp&quot;
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            : // IWYU pragma: no_forward_declare ConstantExpressions_detail::pow
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : /*!
+<span class="lineNum">      20 </span>            :  * \ingroup DataStructuresGroup
+<span class="lineNum">      21 </span>            :  * \brief Stores a collection of complex function values.
+<span class="lineNum">      22 </span>            :  *
+<span class="lineNum">      23 </span>            :  * \details Use ComplexDataVector to represent function values on the
+<span class="lineNum">      24 </span>            :  * computational domain. Note that interpreting the data also requires knowledge
+<span class="lineNum">      25 </span>            :  * of the points that these function values correspond to.
+<span class="lineNum">      26 </span>            :  *
+<span class="lineNum">      27 </span>            :  * A ComplexDataVector holds an array of contiguous data. The ComplexDataVector
+<span class="lineNum">      28 </span>            :  * can be owning, meaning the array is deleted when the ComplexDataVector goes
+<span class="lineNum">      29 </span>            :  * out of scope, or non-owning, meaning it just has a pointer to an array.
+<span class="lineNum">      30 </span>            :  *
+<span class="lineNum">      31 </span>            :  * Refer to the \ref DataStructuresGroup documentation for a list of other
+<span class="lineNum">      32 </span>            :  * available types.
+<span class="lineNum">      33 </span>            :  *
+<span class="lineNum">      34 </span>            :  * ComplexDataVectors support a variety of mathematical operations that are
+<span class="lineNum">      35 </span>            :  * applicable contiguous data. In addition to common arithmetic operations such
+<span class="lineNum">      36 </span>            :  * as element-wise addition, subtraction, multiplication and division,
+<span class="lineNum">      37 </span>            :  * element-wise operations between `ComplexDataVector` and `DataVector` are
+<span class="lineNum">      38 </span>            :  * supported. See [blaze-wiki/Vector_Operations]
+<span class="lineNum">      39 </span>            :  * (https://bitbucket.org/blaze-lib/blaze/wiki/Vector%20Operations).
+<span class="lineNum">      40 </span>            :  *
+<span class="lineNum">      41 </span>            :  * in addition, support is provided for:
+<span class="lineNum">      42 </span>            :  * - abs  (returns DataVector, as the result is real)
+<span class="lineNum">      43 </span>            :  * - conj
+<span class="lineNum">      44 </span>            :  * - imag  (returns DataVector, as the result is real)
+<span class="lineNum">      45 </span>            :  * - real  (returns DataVector, as the result is real)
+<span class="lineNum">      46 </span>            :  */
+<span class="lineNum">      47 </span>            : class ComplexDataVector
+<span class="lineNum">      48 </span><span class="lineCov">          1 :     : public VectorImpl&lt;std::complex&lt;double&gt;, ComplexDataVector&gt; {</span>
+<span class="lineNum">      49 </span>            :  public:
+<span class="lineNum">      50 </span>            :   using VectorImpl&lt;std::complex&lt;double&gt;, ComplexDataVector&gt;::operator=;
+<span class="lineNum">      51 </span>            :   using VectorImpl&lt;std::complex&lt;double&gt;, ComplexDataVector&gt;::VectorImpl;
+<span class="lineNum">      52 </span>            : 
+<span class="lineNum">      53 </span>            :   MAKE_MATH_ASSIGN_EXPRESSION_ARITHMETIC(ComplexDataVector)
+<span class="lineNum">      54 </span>            : };
+<span class="lineNum">      55 </span>            : 
+<span class="lineNum">      56 </span><span class="lineNoCov">          0 : namespace blaze {</span>
+<span class="lineNum">      57 </span><span class="lineNoCov">          0 : VECTOR_BLAZE_TRAIT_SPECIALIZE_ARITHMETIC_TRAITS(ComplexDataVector);</span>
+<span class="lineNum">      58 </span><span class="lineNoCov">          0 : VECTOR_BLAZE_TRAIT_SPECIALIZE_ALL_MAP_TRAITS(ComplexDataVector);</span>
+<span class="lineNum">      59 </span>            : #if ((BLAZE_MAJOR_VERSION == 3) &amp;&amp; (BLAZE_MINOR_VERSION &lt;= 3))
+<span class="lineNum">      60 </span>            : template &lt;&gt;
+<span class="lineNum">      61 </span>            : struct UnaryMapTrait&lt;ComplexDataVector, blaze::Real&gt; {
+<span class="lineNum">      62 </span>            :   using Type = DataVector;
+<span class="lineNum">      63 </span>            : };
+<span class="lineNum">      64 </span>            : template &lt;&gt;
+<span class="lineNum">      65 </span>            : struct UnaryMapTrait&lt;ComplexDataVector, blaze::Imag&gt; {
+<span class="lineNum">      66 </span>            :   using Type = DataVector;
+<span class="lineNum">      67 </span>            : };
+<span class="lineNum">      68 </span>            : template &lt;&gt;
+<span class="lineNum">      69 </span>            : struct UnaryMapTrait&lt;DataVector, blaze::Real&gt; {
+<span class="lineNum">      70 </span>            :   using Type = DataVector;
+<span class="lineNum">      71 </span>            : };
+<span class="lineNum">      72 </span>            : template &lt;&gt;
+<span class="lineNum">      73 </span>            : struct UnaryMapTrait&lt;DataVector, blaze::Imag&gt; {
+<span class="lineNum">      74 </span>            :   using Type = DataVector;
+<span class="lineNum">      75 </span>            : };
+<span class="lineNum">      76 </span>            : template &lt;&gt;
+<span class="lineNum">      77 </span>            : struct UnaryMapTrait&lt;ComplexDataVector, blaze::Abs&gt; {
+<span class="lineNum">      78 </span>            :   using Type = DataVector;
+<span class="lineNum">      79 </span>            : };
+<span class="lineNum">      80 </span>            : #else
+<span class="lineNum">      81 </span>            : template &lt;&gt;
+<span class="lineNum">      82 </span><span class="lineNoCov">          0 : struct MapTrait&lt;ComplexDataVector, blaze::Real&gt; {</span>
+<span class="lineNum">      83 </span><span class="lineNoCov">          0 :   using Type = DataVector;</span>
+<span class="lineNum">      84 </span>            : };
+<span class="lineNum">      85 </span>            : template &lt;&gt;
+<span class="lineNum">      86 </span><span class="lineNoCov">          0 : struct MapTrait&lt;ComplexDataVector, blaze::Imag&gt; {</span>
+<span class="lineNum">      87 </span><span class="lineNoCov">          0 :   using Type = DataVector;</span>
+<span class="lineNum">      88 </span>            : };
+<span class="lineNum">      89 </span>            : template &lt;&gt;
+<span class="lineNum">      90 </span><span class="lineNoCov">          0 : struct MapTrait&lt;DataVector, blaze::Real&gt; {</span>
+<span class="lineNum">      91 </span><span class="lineNoCov">          0 :   using Type = DataVector;</span>
+<span class="lineNum">      92 </span>            : };
+<span class="lineNum">      93 </span>            : template &lt;&gt;
+<span class="lineNum">      94 </span><span class="lineNoCov">          0 : struct MapTrait&lt;DataVector, blaze::Imag&gt; {</span>
+<span class="lineNum">      95 </span><span class="lineNoCov">          0 :   using Type = DataVector;</span>
+<span class="lineNum">      96 </span>            : };
+<span class="lineNum">      97 </span>            : template &lt;&gt;
+<span class="lineNum">      98 </span><span class="lineNoCov">          0 : struct MapTrait&lt;ComplexDataVector, blaze::Abs&gt; {</span>
+<span class="lineNum">      99 </span><span class="lineNoCov">          0 :   using Type = DataVector;</span>
+<span class="lineNum">     100 </span>            : };
+<span class="lineNum">     101 </span>            : #endif  // ((BLAZE_MAJOR_VERSION == 3) &amp;&amp; (BLAZE_MINOR_VERSION &lt;= 3))
+<span class="lineNum">     102 </span>            : 
+<span class="lineNum">     103 </span><span class="lineNoCov">          0 : BLAZE_TRAIT_SPECIALIZE_COMPATIBLE_BINARY_TRAIT(ComplexDataVector, DataVector,</span>
+<span class="lineNum">     104 </span>            :                                                AddTrait);
+<span class="lineNum">     105 </span><span class="lineNoCov">          0 : BLAZE_TRAIT_SPECIALIZE_COMPATIBLE_BINARY_TRAIT(ComplexDataVector, DataVector,</span>
+<span class="lineNum">     106 </span>            :                                                DivTrait);
+<span class="lineNum">     107 </span><span class="lineNoCov">          0 : BLAZE_TRAIT_SPECIALIZE_COMPATIBLE_BINARY_TRAIT(ComplexDataVector, DataVector,</span>
+<span class="lineNum">     108 </span>            :                                                MultTrait);
+<span class="lineNum">     109 </span><span class="lineNoCov">          0 : BLAZE_TRAIT_SPECIALIZE_COMPATIBLE_BINARY_TRAIT(ComplexDataVector, DataVector,</span>
+<span class="lineNum">     110 </span>            :                                                SubTrait);
+<span class="lineNum">     111 </span>            : 
+<span class="lineNum">     112 </span><span class="lineNoCov">          0 : BLAZE_TRAIT_SPECIALIZE_COMPATIBLE_BINARY_TRAIT(ComplexDataVector, double,</span>
+<span class="lineNum">     113 </span>            :                                                AddTrait);
+<span class="lineNum">     114 </span><span class="lineNoCov">          0 : BLAZE_TRAIT_SPECIALIZE_COMPATIBLE_BINARY_TRAIT(ComplexDataVector, double,</span>
+<span class="lineNum">     115 </span>            :                                                DivTrait);
+<span class="lineNum">     116 </span><span class="lineNoCov">          0 : BLAZE_TRAIT_SPECIALIZE_COMPATIBLE_BINARY_TRAIT(ComplexDataVector, double,</span>
+<span class="lineNum">     117 </span>            :                                                MultTrait);
+<span class="lineNum">     118 </span><span class="lineNoCov">          0 : BLAZE_TRAIT_SPECIALIZE_COMPATIBLE_BINARY_TRAIT(ComplexDataVector, double,</span>
+<span class="lineNum">     119 </span>            :                                                SubTrait);
+<span class="lineNum">     120 </span>            : 
+<span class="lineNum">     121 </span>            : #if ((BLAZE_MAJOR_VERSION == 3) &amp;&amp; (BLAZE_MINOR_VERSION &lt;= 3))
+<span class="lineNum">     122 </span>            : template &lt;typename Operator&gt;
+<span class="lineNum">     123 </span>            : struct BinaryMapTrait&lt;DataVector, ComplexDataVector, Operator&gt; {
+<span class="lineNum">     124 </span>            :   using Type = ComplexDataVector;
+<span class="lineNum">     125 </span>            : };
+<span class="lineNum">     126 </span>            : template &lt;typename Operator&gt;
+<span class="lineNum">     127 </span>            : struct BinaryMapTrait&lt;ComplexDataVector, DataVector, Operator&gt; {
+<span class="lineNum">     128 </span>            :   using Type = ComplexDataVector;
+<span class="lineNum">     129 </span>            : };
+<span class="lineNum">     130 </span>            : #else
+<span class="lineNum">     131 </span>            : template &lt;typename Operator&gt;
+<span class="lineNum">     132 </span><span class="lineNoCov">          0 : struct MapTrait&lt;DataVector, ComplexDataVector, Operator&gt; {</span>
+<span class="lineNum">     133 </span><span class="lineNoCov">          0 :   using Type = ComplexDataVector;</span>
+<span class="lineNum">     134 </span>            : };
+<span class="lineNum">     135 </span>            : template &lt;typename Operator&gt;
+<span class="lineNum">     136 </span><span class="lineNoCov">          0 : struct MapTrait&lt;ComplexDataVector, DataVector, Operator&gt; {</span>
+<span class="lineNum">     137 </span><span class="lineNoCov">          0 :   using Type = ComplexDataVector;</span>
+<span class="lineNum">     138 </span>            : };
+<span class="lineNum">     139 </span>            : #endif  // ((BLAZE_MAJOR_VERSION == 3) &amp;&amp; (BLAZE_MINOR_VERSION &lt;= 3))
+<span class="lineNum">     140 </span>            : }  // namespace blaze
+<span class="lineNum">     141 </span>            : 
+<span class="lineNum">     142 </span>            : MAKE_STD_ARRAY_VECTOR_BINOPS(ComplexDataVector)
+<span class="lineNum">     143 </span>            : 
+<span class="lineNum">     144 </span>            : /// \cond HIDDEN_SYMBOLS
+<span class="lineNum">     145 </span>            : DEFINE_STD_ARRAY_BINOP(ComplexDataVector, ComplexDataVector,
+<span class="lineNum">     146 </span>            :                        DataVector, operator+, std::plus&lt;&gt;())
+<span class="lineNum">     147 </span>            : DEFINE_STD_ARRAY_BINOP(ComplexDataVector, DataVector,
+<span class="lineNum">     148 </span>            :                        ComplexDataVector, operator+, std::plus&lt;&gt;())
+<span class="lineNum">     149 </span>            : DEFINE_STD_ARRAY_BINOP(ComplexDataVector, ComplexDataVector, double, operator+,
+<span class="lineNum">     150 </span>            :                        std::plus&lt;&gt;())
+<span class="lineNum">     151 </span>            : DEFINE_STD_ARRAY_BINOP(ComplexDataVector, double, ComplexDataVector, operator+,
+<span class="lineNum">     152 </span>            :                        std::plus&lt;&gt;())
+<span class="lineNum">     153 </span>            : 
+<span class="lineNum">     154 </span>            : DEFINE_STD_ARRAY_BINOP(ComplexDataVector, ComplexDataVector,
+<span class="lineNum">     155 </span>            :                        DataVector, operator-, std::minus&lt;&gt;())
+<span class="lineNum">     156 </span>            : DEFINE_STD_ARRAY_BINOP(ComplexDataVector, DataVector,
+<span class="lineNum">     157 </span>            :                        ComplexDataVector, operator-, std::minus&lt;&gt;())
+<span class="lineNum">     158 </span>            : DEFINE_STD_ARRAY_BINOP(ComplexDataVector, ComplexDataVector, double, operator-,
+<span class="lineNum">     159 </span>            :                        std::minus&lt;&gt;())
+<span class="lineNum">     160 </span>            : DEFINE_STD_ARRAY_BINOP(ComplexDataVector, double, ComplexDataVector, operator-,
+<span class="lineNum">     161 </span>            :                        std::minus&lt;&gt;())
+<span class="lineNum">     162 </span>            : 
+<span class="lineNum">     163 </span>            : DEFINE_STD_ARRAY_INPLACE_BINOP(ComplexDataVector, DataVector, operator+=,
+<span class="lineNum">     164 </span>            :                                std::plus&lt;&gt;())
+<span class="lineNum">     165 </span>            : DEFINE_STD_ARRAY_INPLACE_BINOP(ComplexDataVector, DataVector, operator-=,
+<span class="lineNum">     166 </span>            :                                std::minus&lt;&gt;())
+<span class="lineNum">     167 </span>            : DEFINE_STD_ARRAY_INPLACE_BINOP(ComplexDataVector, double, operator+=,
+<span class="lineNum">     168 </span>            :                                std::plus&lt;&gt;())
+<span class="lineNum">     169 </span>            : DEFINE_STD_ARRAY_INPLACE_BINOP(ComplexDataVector, double, operator-=,
+<span class="lineNum">     170 </span>            :                                std::minus&lt;&gt;())
+<span class="lineNum">     171 </span>            : /// \endcond
+<span class="lineNum">     172 </span>            : 
+<span class="lineNum">     173 </span>            : MAKE_WITH_VALUE_IMPL_DEFINITION_FOR(ComplexDataVector)
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

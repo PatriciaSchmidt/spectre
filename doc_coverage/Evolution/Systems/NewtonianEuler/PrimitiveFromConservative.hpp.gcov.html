@@ -1,0 +1,155 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Evolution/Systems/NewtonianEuler/PrimitiveFromConservative.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">Evolution/Systems/NewtonianEuler</a> - PrimitiveFromConservative.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntryLo">20.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : #include &quot;DataStructures/Tensor/TypeAliases.hpp&quot;
+<span class="lineNum">       9 </span>            : #include &quot;Evolution/Systems/NewtonianEuler/TagsDeclarations.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      10 </span>            : #include &quot;PointwiseFunctions/Hydro/EquationsOfState/EquationOfState.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      11 </span>            : #include &quot;PointwiseFunctions/Hydro/Tags.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            : // IWYU pragma: no_forward_declare EquationsOfState::EquationOfState
+<span class="lineNum">      15 </span>            : // IWYU pragma: no_forward_declare NewtonianEuler::Tags::EnergyDensity
+<span class="lineNum">      16 </span>            : // IWYU pragma: no_forward_declare NewtonianEuler::Tags::MassDensity
+<span class="lineNum">      17 </span>            : // IWYU pragma: no_forward_declare NewtonianEuler::Tags::MassDensityCons
+<span class="lineNum">      18 </span>            : // IWYU pragma: no_forward_declare NewtonianEuler::Tags::MomentumDensity
+<span class="lineNum">      19 </span>            : // IWYU pragma: no_forward_declare NewtonianEuler::Tags::Pressure
+<span class="lineNum">      20 </span>            : // IWYU pragma: no_forward_declare NewtonianEuler::Tags::SpecificInternalEnergy
+<span class="lineNum">      21 </span>            : // IWYU pragma: no_forward_declare NewtonianEuler::Tags::Velocity
+<span class="lineNum">      22 </span>            : // IWYU pragma: no_forward_declare hydro::Tags::EquationOfStateBase
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : /// \cond
+<span class="lineNum">      25 </span>            : namespace gsl {
+<span class="lineNum">      26 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      27 </span>            : class not_null;
+<span class="lineNum">      28 </span>            : }  // namespace gsl
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span>            : class DataVector;
+<span class="lineNum">      31 </span>            : /// \endcond
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span>            : // IWYU pragma: no_forward_declare Tensor
+<span class="lineNum">      34 </span>            : 
+<span class="lineNum">      35 </span>            : namespace NewtonianEuler {
+<span class="lineNum">      36 </span>            : 
+<span class="lineNum">      37 </span>            : /*!
+<span class="lineNum">      38 </span>            :  * \brief Compute the primitive variables from the conservative variables.
+<span class="lineNum">      39 </span>            :  *
+<span class="lineNum">      40 </span>            :  * \f{align*}
+<span class="lineNum">      41 </span>            :  * v^i &amp;= \frac{S^i}{\rho} \\
+<span class="lineNum">      42 </span>            :  * \epsilon &amp;= \frac{e}{\rho} - \frac{1}{2}\frac{S^2}{\rho^2}
+<span class="lineNum">      43 </span>            :  * \f}
+<span class="lineNum">      44 </span>            :  *
+<span class="lineNum">      45 </span>            :  * where \f$v^i\f$ is the velocity, \f$\epsilon\f$ is the specific
+<span class="lineNum">      46 </span>            :  * internal energy, \f$e\f$ is the energy density, \f$\rho\f$
+<span class="lineNum">      47 </span>            :  * is the mass density, \f$S^i\f$ is the momentum density, and
+<span class="lineNum">      48 </span>            :  * \f$S^2\f$ is the momentum density squared.
+<span class="lineNum">      49 </span>            :  *
+<span class="lineNum">      50 </span>            :  * This routine also returns the mass density as a primitive, and the pressure
+<span class="lineNum">      51 </span>            :  * from a generic equation of state \f$p = p(\rho, \epsilon)\f$.
+<span class="lineNum">      52 </span>            :  */
+<span class="lineNum">      53 </span>            : template &lt;size_t Dim, size_t ThermodynamicDim&gt;
+<span class="lineNum">      54 </span><span class="lineCov">          1 : struct PrimitiveFromConservative {</span>
+<span class="lineNum">      55 </span><span class="lineNoCov">          0 :   using return_tags =</span>
+<span class="lineNum">      56 </span>            :       tmpl::list&lt;Tags::MassDensity&lt;DataVector&gt;, Tags::Velocity&lt;DataVector, Dim&gt;,
+<span class="lineNum">      57 </span>            :                  Tags::SpecificInternalEnergy&lt;DataVector&gt;,
+<span class="lineNum">      58 </span>            :                  Tags::Pressure&lt;DataVector&gt;&gt;;
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span><span class="lineNoCov">          0 :   using argument_tags = tmpl::list&lt;</span>
+<span class="lineNum">      61 </span>            :       Tags::MassDensityCons&lt;DataVector&gt;, Tags::MomentumDensity&lt;DataVector, Dim&gt;,
+<span class="lineNum">      62 </span>            :       Tags::EnergyDensity&lt;DataVector&gt;, hydro::Tags::EquationOfStateBase&gt;;
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span><span class="lineNoCov">          0 :   static void apply(</span>
+<span class="lineNum">      65 </span>            :       gsl::not_null&lt;Scalar&lt;DataVector&gt;*&gt; mass_density,
+<span class="lineNum">      66 </span>            :       gsl::not_null&lt;tnsr::I&lt;DataVector, Dim&gt;*&gt; velocity,
+<span class="lineNum">      67 </span>            :       gsl::not_null&lt;Scalar&lt;DataVector&gt;*&gt; specific_internal_energy,
+<span class="lineNum">      68 </span>            :       gsl::not_null&lt;Scalar&lt;DataVector&gt;*&gt; pressure,
+<span class="lineNum">      69 </span>            :       const Scalar&lt;DataVector&gt;&amp; mass_density_cons,
+<span class="lineNum">      70 </span>            :       const tnsr::I&lt;DataVector, Dim&gt;&amp; momentum_density,
+<span class="lineNum">      71 </span>            :       const Scalar&lt;DataVector&gt;&amp; energy_density,
+<span class="lineNum">      72 </span>            :       const EquationsOfState::EquationOfState&lt;false, ThermodynamicDim&gt;&amp;
+<span class="lineNum">      73 </span>            :           equation_of_state) noexcept;
+<span class="lineNum">      74 </span>            : };
+<span class="lineNum">      75 </span>            : }  // namespace NewtonianEuler
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

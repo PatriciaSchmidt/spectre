@@ -1,0 +1,162 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - NumericalAlgorithms/Interpolation/RegularGridInterpolant.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">NumericalAlgorithms/Interpolation</a> - RegularGridInterpolant.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;RegularGridInterpolant.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &quot;Domain/LogicalCoordinates.hpp&quot;
+<span class="lineNum">       7 </span>            : #include &quot;Domain/Mesh.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">       8 </span>            : #include &quot;NumericalAlgorithms/Spectral/Spectral.hpp&quot;
+<span class="lineNum">       9 </span>            : #include &quot;Utilities/GenerateInstantiations.hpp&quot;
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : namespace intrp {
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      14 </span>            : RegularGrid&lt;Dim&gt;::RegularGrid(
+<span class="lineNum">      15 </span>            :     const Mesh&lt;Dim&gt;&amp; source_mesh, const Mesh&lt;Dim&gt;&amp; target_mesh,
+<span class="lineNum">      16 </span>            :     const std::array&lt;DataVector, Dim&gt;&amp;
+<span class="lineNum">      17 </span>            :         override_target_mesh_with_1d_logical_coords) noexcept
+<span class="lineNum">      18 </span>            :     : number_of_target_points_(1), source_extents_(source_mesh.extents()) {
+<span class="lineNum">      19 </span>            :   for (size_t d = 0; d &lt; Dim; ++d) {
+<span class="lineNum">      20 </span>            :     const auto source_mesh_1d = source_mesh.slice_through(d);
+<span class="lineNum">      21 </span>            :     const auto target_mesh_1d = target_mesh.slice_through(d);
+<span class="lineNum">      22 </span>            :     if (gsl::at(override_target_mesh_with_1d_logical_coords, d).size() == 0) {
+<span class="lineNum">      23 </span>            :       // Normal mode: use target_mesh
+<span class="lineNum">      24 </span>            :       // Only make a matrix if source and target meshes differ; when a default-
+<span class="lineNum">      25 </span>            :       // constructed matrix is given instead, apply_matrices does no work.
+<span class="lineNum">      26 </span>            :       if (source_mesh_1d != target_mesh_1d) {
+<span class="lineNum">      27 </span>            :         gsl::at(interpolation_matrices_, d) = Spectral::interpolation_matrix(
+<span class="lineNum">      28 </span>            :             source_mesh_1d, get&lt;0&gt;(logical_coordinates(target_mesh_1d)));
+<span class="lineNum">      29 </span>            :       }
+<span class="lineNum">      30 </span>            :       number_of_target_points_ *= target_mesh_1d.number_of_grid_points();
+<span class="lineNum">      31 </span>            :     } else {
+<span class="lineNum">      32 </span>            :       // Override mode: override target_mesh with given points
+<span class="lineNum">      33 </span>            :       const auto&amp; target_coords_1d =
+<span class="lineNum">      34 </span>            :           gsl::at(override_target_mesh_with_1d_logical_coords, d);
+<span class="lineNum">      35 </span>            :       gsl::at(interpolation_matrices_, d) =
+<span class="lineNum">      36 </span>            :           Spectral::interpolation_matrix(source_mesh_1d, target_coords_1d);
+<span class="lineNum">      37 </span>            :       number_of_target_points_ *= target_coords_1d.size();
+<span class="lineNum">      38 </span>            :     }
+<span class="lineNum">      39 </span>            :   }
+<span class="lineNum">      40 </span>            : }
+<span class="lineNum">      41 </span>            : 
+<span class="lineNum">      42 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      43 </span>            : RegularGrid&lt;Dim&gt;::RegularGrid() = default;
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      46 </span>            : void RegularGrid&lt;Dim&gt;::pup(PUP::er&amp; p) noexcept {
+<span class="lineNum">      47 </span>            :   p | number_of_target_points_;
+<span class="lineNum">      48 </span>            :   p | source_extents_;
+<span class="lineNum">      49 </span>            :   p | interpolation_matrices_;
+<span class="lineNum">      50 </span>            : }
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            : template &lt;size_t LocalDim&gt;
+<span class="lineNum">      53 </span><span class="lineNoCov">          0 : bool operator==(const RegularGrid&lt;LocalDim&gt;&amp; lhs,</span>
+<span class="lineNum">      54 </span>            :                 const RegularGrid&lt;LocalDim&gt;&amp; rhs) noexcept {
+<span class="lineNum">      55 </span>            :   return lhs.number_of_target_points_ == rhs.number_of_target_points_ and
+<span class="lineNum">      56 </span>            :          lhs.source_extents_ == rhs.source_extents_ and
+<span class="lineNum">      57 </span>            :          lhs.interpolation_matrices_ == rhs.interpolation_matrices_;
+<span class="lineNum">      58 </span>            : }
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      61 </span><span class="lineNoCov">          0 : bool operator!=(const RegularGrid&lt;Dim&gt;&amp; lhs,</span>
+<span class="lineNum">      62 </span>            :                 const RegularGrid&lt;Dim&gt;&amp; rhs) noexcept {
+<span class="lineNum">      63 </span>            :   return not(lhs == rhs);
+<span class="lineNum">      64 </span>            : }
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span>            : /// \cond
+<span class="lineNum">      67 </span>            : #define DIM(data) BOOST_PP_TUPLE_ELEM(0, data)
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span>            : #define INSTANTIATE(_, data)                                        \
+<span class="lineNum">      70 </span>            :   template class RegularGrid&lt;DIM(data)&gt;;                            \
+<span class="lineNum">      71 </span>            :   template bool operator==(const RegularGrid&lt;DIM(data)&gt;&amp;,           \
+<span class="lineNum">      72 </span>            :                            const RegularGrid&lt;DIM(data)&gt;&amp;) noexcept; \
+<span class="lineNum">      73 </span>            :   template bool operator!=(const RegularGrid&lt;DIM(data)&gt;&amp;,           \
+<span class="lineNum">      74 </span>            :                            const RegularGrid&lt;DIM(data)&gt;&amp;) noexcept;
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span>            : GENERATE_INSTANTIATIONS(INSTANTIATE, (1, 2, 3))
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span>            : #undef DIM
+<span class="lineNum">      79 </span>            : #undef INSTANTIATE
+<span class="lineNum">      80 </span>            : /// \endcond
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span>            : }  // namespace intrp
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

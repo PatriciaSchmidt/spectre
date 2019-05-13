@@ -1,0 +1,196 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - PointwiseFunctions/AnalyticSolutions/WaveEquation/RegularSphericalWave.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">PointwiseFunctions/AnalyticSolutions/WaveEquation</a> - RegularSphericalWave.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;PointwiseFunctions/AnalyticSolutions/WaveEquation/RegularSphericalWave.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;algorithm&gt;
+<span class="lineNum">       7 </span>            : #include &lt;array&gt;
+<span class="lineNum">       8 </span>            : #include &lt;cmath&gt;
+<span class="lineNum">       9 </span>            : #include &lt;limits&gt;
+<span class="lineNum">      10 </span>            : #include &lt;pup.h&gt;
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : #include &quot;DataStructures/DataBox/Prefixes.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      13 </span>            : #include &quot;DataStructures/DataVector.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;DataStructures/Tensor/EagerMath/Magnitude.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;DataStructures/Tensor/Tensor.hpp&quot;
+<span class="lineNum">      16 </span>            : #include &quot;DataStructures/Variables.hpp&quot;           // IWYU pragma: keep
+<span class="lineNum">      17 </span>            : #include &quot;Evolution/Systems/ScalarWave/Tags.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      18 </span>            : #include &quot;Parallel/PupStlCpp11.hpp&quot;               // IWYU pragma: keep
+<span class="lineNum">      19 </span>            : #include &quot;Utilities/ConstantExpressions.hpp&quot;
+<span class="lineNum">      20 </span>            : #include &quot;Utilities/EqualWithinRoundoff.hpp&quot;
+<span class="lineNum">      21 </span>            : // IWYU pragma: no_forward_declare Tensor
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : namespace ScalarWave {
+<span class="lineNum">      24 </span>            : namespace Solutions {
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            : RegularSphericalWave::RegularSphericalWave(
+<span class="lineNum">      27 </span>            :     std::unique_ptr&lt;MathFunction&lt;1&gt;&gt; profile) noexcept
+<span class="lineNum">      28 </span>            :     : profile_(std::move(profile)) {}
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span>            : tuples::TaggedTuple&lt;ScalarWave::Pi, ScalarWave::Phi&lt;3&gt;, ScalarWave::Psi&gt;
+<span class="lineNum">      31 </span>            : RegularSphericalWave::variables(
+<span class="lineNum">      32 </span>            :     const tnsr::I&lt;DataVector, 3&gt;&amp; x, double t,
+<span class="lineNum">      33 </span>            :     const tmpl::list&lt;ScalarWave::Pi, ScalarWave::Phi&lt;3&gt;,
+<span class="lineNum">      34 </span>            :                      ScalarWave::Psi&gt; /*meta*/) const noexcept {
+<span class="lineNum">      35 </span>            :   const DataVector r = get(magnitude(x));
+<span class="lineNum">      36 </span>            :   // See class documentation for choice of cutoff
+<span class="lineNum">      37 </span>            :   const double r_cutoff = cbrt(std::numeric_limits&lt;double&gt;::epsilon());
+<span class="lineNum">      38 </span>            :   Scalar&lt;DataVector&gt; psi{r.size()};
+<span class="lineNum">      39 </span>            :   Scalar&lt;DataVector&gt; dpsi_dt{r.size()};
+<span class="lineNum">      40 </span>            :   tnsr::i&lt;DataVector, 3&gt; dpsi_dx{r.size()};
+<span class="lineNum">      41 </span>            :   for (size_t i = 0; i &lt; r.size(); i++) {
+<span class="lineNum">      42 </span>            :     // Testing for r=0 here assumes a scale of order unity
+<span class="lineNum">      43 </span>            :     if (equal_within_roundoff(r[i], 0., r_cutoff, 1.)) {
+<span class="lineNum">      44 </span>            :       get(psi)[i] = 2. * profile_-&gt;first_deriv(-t);
+<span class="lineNum">      45 </span>            :       get(dpsi_dt)[i] = -2. * profile_-&gt;second_deriv(-t);
+<span class="lineNum">      46 </span>            :       for (size_t d = 0; d &lt; 3; d++) {
+<span class="lineNum">      47 </span>            :         dpsi_dx.get(d)[i] = 0.;
+<span class="lineNum">      48 </span>            :       }
+<span class="lineNum">      49 </span>            :     } else {
+<span class="lineNum">      50 </span>            :       const auto F_out = profile_-&gt;operator()(r[i] - t);
+<span class="lineNum">      51 </span>            :       const auto F_in = profile_-&gt;operator()(-r[i] - t);
+<span class="lineNum">      52 </span>            :       const auto dF_out = profile_-&gt;first_deriv(r[i] - t);
+<span class="lineNum">      53 </span>            :       const auto dF_in = profile_-&gt;first_deriv(-r[i] - t);
+<span class="lineNum">      54 </span>            :       get(psi)[i] = (F_out - F_in) / r[i];
+<span class="lineNum">      55 </span>            :       get(dpsi_dt)[i] = (-dF_out + dF_in) / r[i];
+<span class="lineNum">      56 </span>            :       const double dpsi_dx_isotropic =
+<span class="lineNum">      57 </span>            :           (dF_out + dF_in - get(psi)[i]) / square(r[i]);
+<span class="lineNum">      58 </span>            :       for (size_t d = 0; d &lt; 3; d++) {
+<span class="lineNum">      59 </span>            :         dpsi_dx.get(d)[i] = dpsi_dx_isotropic * x.get(d)[i];
+<span class="lineNum">      60 </span>            :       }
+<span class="lineNum">      61 </span>            :     }
+<span class="lineNum">      62 </span>            :   }
+<span class="lineNum">      63 </span>            :   tuples::TaggedTuple&lt;ScalarWave::Pi, ScalarWave::Phi&lt;3&gt;, ScalarWave::Psi&gt;
+<span class="lineNum">      64 </span>            :       variables{std::move(dpsi_dt), std::move(dpsi_dx), std::move(psi)};
+<span class="lineNum">      65 </span>            :   get&lt;ScalarWave::Pi&gt;(variables).get() *= -1.0;
+<span class="lineNum">      66 </span>            :   return variables;
+<span class="lineNum">      67 </span>            : }
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span>            : tuples::TaggedTuple&lt;Tags::dt&lt;ScalarWave::Pi&gt;, Tags::dt&lt;ScalarWave::Phi&lt;3&gt;&gt;,
+<span class="lineNum">      70 </span>            :                     Tags::dt&lt;ScalarWave::Psi&gt;&gt;
+<span class="lineNum">      71 </span>            : RegularSphericalWave::variables(
+<span class="lineNum">      72 </span>            :     const tnsr::I&lt;DataVector, 3&gt;&amp; x, double t,
+<span class="lineNum">      73 </span>            :     const tmpl::list&lt;Tags::dt&lt;ScalarWave::Pi&gt;, Tags::dt&lt;ScalarWave::Phi&lt;3&gt;&gt;,
+<span class="lineNum">      74 </span>            :                      Tags::dt&lt;ScalarWave::Psi&gt;&gt; /*meta*/) const noexcept {
+<span class="lineNum">      75 </span>            :   const DataVector r = get(magnitude(x));
+<span class="lineNum">      76 </span>            :   // See class documentation for choice of cutoff
+<span class="lineNum">      77 </span>            :   const double r_cutoff = cbrt(std::numeric_limits&lt;double&gt;::epsilon());
+<span class="lineNum">      78 </span>            :   Scalar&lt;DataVector&gt; dpsi_dt{r.size()};
+<span class="lineNum">      79 </span>            :   Scalar&lt;DataVector&gt; d2psi_dt2{r.size()};
+<span class="lineNum">      80 </span>            :   tnsr::i&lt;DataVector, 3&gt; d2psi_dtdx{r.size()};
+<span class="lineNum">      81 </span>            :   for (size_t i = 0; i &lt; r.size(); i++) {
+<span class="lineNum">      82 </span>            :     // Testing for r=0 here assumes a scale of order unity
+<span class="lineNum">      83 </span>            :     if (equal_within_roundoff(r[i], 0., r_cutoff, 1.)) {
+<span class="lineNum">      84 </span>            :       get(dpsi_dt)[i] = -2. * profile_-&gt;second_deriv(-t);
+<span class="lineNum">      85 </span>            :       get(d2psi_dt2)[i] = 2. * profile_-&gt;third_deriv(-t);
+<span class="lineNum">      86 </span>            :       for (size_t d = 0; d &lt; 3; d++) {
+<span class="lineNum">      87 </span>            :         d2psi_dtdx.get(d)[i] = 0.;
+<span class="lineNum">      88 </span>            :       }
+<span class="lineNum">      89 </span>            :     } else {
+<span class="lineNum">      90 </span>            :       const auto dF_out = profile_-&gt;first_deriv(r[i] - t);
+<span class="lineNum">      91 </span>            :       const auto dF_in = profile_-&gt;first_deriv(-r[i] - t);
+<span class="lineNum">      92 </span>            :       const auto d2F_out = profile_-&gt;second_deriv(r[i] - t);
+<span class="lineNum">      93 </span>            :       const auto d2F_in = profile_-&gt;second_deriv(-r[i] - t);
+<span class="lineNum">      94 </span>            :       get(dpsi_dt)[i] = (-dF_out + dF_in) / r[i];
+<span class="lineNum">      95 </span>            :       get(d2psi_dt2)[i] = (d2F_out - d2F_in) / r[i];
+<span class="lineNum">      96 </span>            :       const double d2psi_dtdx_isotropic =
+<span class="lineNum">      97 </span>            :           -(d2F_out + d2F_in + get(dpsi_dt)[i]) / square(r[i]);
+<span class="lineNum">      98 </span>            :       for (size_t d = 0; d &lt; 3; d++) {
+<span class="lineNum">      99 </span>            :         d2psi_dtdx.get(d)[i] = d2psi_dtdx_isotropic * x.get(d)[i];
+<span class="lineNum">     100 </span>            :       }
+<span class="lineNum">     101 </span>            :     }
+<span class="lineNum">     102 </span>            :   }
+<span class="lineNum">     103 </span>            :   tuples::TaggedTuple&lt;Tags::dt&lt;ScalarWave::Pi&gt;, Tags::dt&lt;ScalarWave::Phi&lt;3&gt;&gt;,
+<span class="lineNum">     104 </span>            :                       Tags::dt&lt;ScalarWave::Psi&gt;&gt;
+<span class="lineNum">     105 </span>            :       dt_variables{std::move(d2psi_dt2), std::move(d2psi_dtdx),
+<span class="lineNum">     106 </span>            :                    std::move(dpsi_dt)};
+<span class="lineNum">     107 </span>            :   get&lt;Tags::dt&lt;ScalarWave::Pi&gt;&gt;(dt_variables).get() *= -1.0;
+<span class="lineNum">     108 </span>            :   return dt_variables;
+<span class="lineNum">     109 </span>            : }
+<span class="lineNum">     110 </span>            : 
+<span class="lineNum">     111 </span>            : void RegularSphericalWave::pup(PUP::er&amp; p) noexcept {
+<span class="lineNum">     112 </span>            :   p | profile_;
+<span class="lineNum">     113 </span>            : }
+<span class="lineNum">     114 </span>            : 
+<span class="lineNum">     115 </span>            : }  // namespace Solutions
+<span class="lineNum">     116 </span>            : }  // namespace ScalarWave
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

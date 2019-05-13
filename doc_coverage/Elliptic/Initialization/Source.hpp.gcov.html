@@ -1,0 +1,163 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Elliptic/Initialization/Source.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">Elliptic/Initialization</a> - Source.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">7</td>
+            <td class="headerCovTableEntryLo">14.3 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       7 </span>            : #include &lt;utility&gt;
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : #include &quot;DataStructures/DataBox/DataBox.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;DataStructures/DataBox/DataBoxTag.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;DataStructures/DataBox/Prefixes.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;DataStructures/Variables.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;Domain/Mesh.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;NumericalAlgorithms/LinearSolver/Tags.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;Parallel/ConstGlobalCache.hpp&quot;
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            : /// \cond
+<span class="lineNum">      18 </span>            : namespace Frame {
+<span class="lineNum">      19 </span>            : struct Inertial;
+<span class="lineNum">      20 </span>            : }  // namespace Frame
+<span class="lineNum">      21 </span>            : /// \endcond
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : namespace Elliptic {
+<span class="lineNum">      24 </span>            : namespace Initialization {
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            : /*!
+<span class="lineNum">      27 </span>            :  * \brief Computes the sources of the elliptic equations and adds them to the
+<span class="lineNum">      28 </span>            :  * DataBox
+<span class="lineNum">      29 </span>            :  *
+<span class="lineNum">      30 </span>            :  * \note Currently the sources are always retrieved from an analytic solution.
+<span class="lineNum">      31 </span>            :  *
+<span class="lineNum">      32 </span>            :  * With:
+<span class="lineNum">      33 </span>            :  * - `sources_tag` = `db::add_tag_prefix&lt;Tags::Source, system::fields_tag&gt;`
+<span class="lineNum">      34 </span>            :  *
+<span class="lineNum">      35 </span>            :  * Uses:
+<span class="lineNum">      36 </span>            :  * - Metavariables:
+<span class="lineNum">      37 </span>            :  *   - `analytic_solution_tag`
+<span class="lineNum">      38 </span>            :  * - ConstGlobalCache:
+<span class="lineNum">      39 </span>            :  *   - `analytic_solution_tag`
+<span class="lineNum">      40 </span>            :  * - System:
+<span class="lineNum">      41 </span>            :  *   - `volume_dim`
+<span class="lineNum">      42 </span>            :  *   - `fields_tag`
+<span class="lineNum">      43 </span>            :  * - DataBox:
+<span class="lineNum">      44 </span>            :  *   - `Tags::Mesh&lt;volume_dim&gt;`
+<span class="lineNum">      45 </span>            :  *   - `Tags::Coordinates&lt;volume_dim, Frame::Inertial&gt;`
+<span class="lineNum">      46 </span>            :  *
+<span class="lineNum">      47 </span>            :  * DataBox:
+<span class="lineNum">      48 </span>            :  * - Adds:
+<span class="lineNum">      49 </span>            :  *   - `sources_tag`
+<span class="lineNum">      50 </span>            :  */
+<span class="lineNum">      51 </span>            : template &lt;typename Metavariables&gt;
+<span class="lineNum">      52 </span><span class="lineCov">          1 : struct Source {</span>
+<span class="lineNum">      53 </span><span class="lineNoCov">          0 :   using system = typename Metavariables::system;</span>
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span><span class="lineNoCov">          0 :   using sources_tag =</span>
+<span class="lineNum">      56 </span>            :       db::add_tag_prefix&lt;Tags::Source, typename system::fields_tag&gt;;
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span><span class="lineNoCov">          0 :   using simple_tags = db::AddSimpleTags&lt;sources_tag&gt;;</span>
+<span class="lineNum">      59 </span><span class="lineNoCov">          0 :   using compute_tags = db::AddComputeTags&lt;&gt;;</span>
+<span class="lineNum">      60 </span>            : 
+<span class="lineNum">      61 </span>            :   template &lt;typename TagsList&gt;
+<span class="lineNum">      62 </span><span class="lineNoCov">          0 :   static auto initialize(</span>
+<span class="lineNum">      63 </span>            :       db::DataBox&lt;TagsList&gt;&amp;&amp; box,
+<span class="lineNum">      64 </span>            :       const Parallel::ConstGlobalCache&lt;Metavariables&gt;&amp; cache) noexcept {
+<span class="lineNum">      65 </span>            :     const auto&amp; inertial_coords =
+<span class="lineNum">      66 </span>            :         get&lt;Tags::Coordinates&lt;system::volume_dim, Frame::Inertial&gt;&gt;(box);
+<span class="lineNum">      67 </span>            :     const auto num_grid_points =
+<span class="lineNum">      68 </span>            :         get&lt;Tags::Mesh&lt;system::volume_dim&gt;&gt;(box).number_of_grid_points();
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span>            :     db::item_type&lt;sources_tag&gt; sources(num_grid_points, 0.);
+<span class="lineNum">      71 </span>            :     // This actually sets the complete set of tags in the Variables, but there
+<span class="lineNum">      72 </span>            :     // is no Variables constructor from a TaggedTuple (yet)
+<span class="lineNum">      73 </span>            :     sources.assign_subset(
+<span class="lineNum">      74 </span>            :         Parallel::get&lt;typename Metavariables::analytic_solution_tag&gt;(cache)
+<span class="lineNum">      75 </span>            :             .variables(inertial_coords,
+<span class="lineNum">      76 </span>            :                        db::get_variables_tags_list&lt;sources_tag&gt;{}));
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span>            :     return db::create_from&lt;db::RemoveTags&lt;&gt;, simple_tags, compute_tags&gt;(
+<span class="lineNum">      79 </span>            :         std::move(box), std::move(sources));
+<span class="lineNum">      80 </span>            :   }
+<span class="lineNum">      81 </span>            : };
+<span class="lineNum">      82 </span>            : }  // namespace Initialization
+<span class="lineNum">      83 </span>            : }  // namespace Elliptic
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

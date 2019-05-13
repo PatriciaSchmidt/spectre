@@ -1,0 +1,234 @@
+<!-- HTML header for doxygen 1.8.10-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=9"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="SXS Collaboration">
+    <meta name="generator" content="Doxygen 1.8.13"/>
+    <style>
+        /*!
+         * IE10 viewport hack for Surface/desktop Windows 8 bug
+         * Copyright 2014-2015 Twitter, Inc.
+         * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+         */
+        @-webkit-viewport { width: device-width; }
+        @-moz-viewport    { width: device-width; }
+        @-ms-viewport     { width: device-width; }
+        @-o-viewport      { width: device-width; }
+        @viewport         { width: device-width; }
+      </style>
+  <title>SpECTRE: src/ApparentHorizons/ComputeItems.hpp Source File</title>
+  <link href="tabs.css" rel="stylesheet" type="text/css"/>
+  <script type="text/javascript" src="jquery.js"></script>
+  <script type="text/javascript" src="dynsections.js"></script>
+  <link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js", "color.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+});
+MathJax.Hub.Config({
+    TeX: { equationNumbers: { autoNumber: "AMS" } }
+});
+MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['^^','^^'], ['\\(', '\\)']]}
+});
+</script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js"></script>
+  <link href="octicons.css" rel="stylesheet">
+  <link href="bootstrap.min.css" rel="stylesheet">
+  <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <script type="text/javascript" src="jquery.js"></script>
+  <script type="text/javascript" src="popper.min.js"></script>
+  <script type="text/javascript" src="bootstrap.min.js"></script>
+  <script type="text/javascript" src="spectre.js"></script>
+  </head>
+  <body>
+  <div id="top" class="navbar-fixed-top"><!-- do not remove this div, it is closed by doxygen! -->
+  <!-- BEGIN TITLEAREA -->
+  <div id="titlearea">
+  <script type="text/javascript">
+  var searchBox = new SearchBox("searchBox", "search",false,'Search');
+  </script>
+  <div id="main-nav">
+    <ul class="sm sm-dox" id="main-menu">
+      <li>
+      <a href="index.html">
+      SpECTRE &#160;
+        <span id="projectnumber">v0.0.0</span>
+      </a>
+      </li>
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="selected">
+          <span id="selected">
+            <i class="octicon octicon-book"></i><span>Documentation</span>
+          </span>
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li style="min-width: 135px;">
+            <a href="index.html">
+            <i class="octicon octicon-book"></i><span>Introduction</span></a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="installation.html">
+              <i class="octicon octicon-desktop-download"></i><span>Installation</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="tutorials.html">
+              <i class="octicon octicon-mortar-board"></i><span>User Tutorials</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="dev_guide.html">
+              <i class="octicon octicon-gist-secret"></i><span>Dev Guide</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="code_of_conduct.html">
+              <i class="octicon octicon-comment-discussion"></i><span>Code of Conduct</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="contributing_to_spectre.html">
+              <i class="octicon octicon-git-pull-request"></i><span>Contributing Guide</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="selected">
+          <span id="selected">
+            <i class="octicon octicon-code"></i>
+              <span>Code Reference</span>
+          </span>
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li style="min-width: 130px;">
+            <a href="modules.html">
+              <i class="octicon octicon-code"></i>
+              <span>Topics</span>
+            </a>
+          </li>
+          <li style="min-width: 130px;">
+            <a href="namespaces.html">
+              <i class="octicon octicon-gist"></i>
+              <span>Namespaces</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <a href="files.html">
+          <i class="octicon octicon-file-directory"></i><span>Files</span>
+        </a>
+      </li>
+      <li>
+        <a href="citelist.html">
+          <i class="octicon octicon-file-text"></i><span>Bibliography</span>
+        </a>
+      </li>
+      <li>
+        <a href="https://github.com/sxs-collaboration/spectre" target="_blank">
+          <i class="octicon octicon-mark-github"></i><span>View on GitHub</span>
+        </a>
+      </li>
+      <!--The Search <li> is added by doxygen later-->
+    </ul>
+  </div><!-- main-nav -->
+  </div><!-- titlearea -->
+  <!-- window showing the filter options -->
+  <div id="MSearchSelectWindow"  style="position: fixed;"
+       onmouseover="return searchBox.OnSearchSelectShow()"
+       onmouseout="return searchBox.OnSearchSelectHide()"
+       onkeydown="return searchBox.OnSearchSelectKey(event)">
+  </div>
+  <!-- iframe showing the search results (closed by default) -->
+  <div id="MSearchResultsWindow"  style="position: fixed;">
+  <iframe src="javascript:void(0)" frameborder="0"
+          name="MSearchResults" id="MSearchResults">
+  </iframe>
+  </div>
+<!-- Generated by Doxygen 1.8.13 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search",false,'Search');
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_22cd119e9135d55404da822cc2bf42d2.html">src</a></li><li class="navelem"><a class="el" href="dir_cc39583d3fa0fd8d363310ab7601923c.html">ApparentHorizons</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="headertitle">
+<div class="title">ComputeItems.hpp</div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">// Distributed under the MIT License.</span></div><div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">// See LICENSE.txt for details.</span></div><div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;</div><div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#pragma once</span></div><div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;</div><div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;<a class="codeRef" doxygen="/work/spectre/docs/config/cppreference-doxygen-web.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/header/cstddef.html">cstddef</a>&gt;</span></div><div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"></span></div><div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment">/// \cond</span></div><div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"></span><span class="keyword">class </span><a class="code" href="classDataVector.html">DataVector</a>;<span class="comment"></span></div><div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment">/// \endcond</span></div><div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment"></span></div><div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="DataBoxTag_8hpp.html">DataStructures/DataBox/DataBoxTag.hpp</a>&quot;</span></div><div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="DeterminantAndInverse_8hpp.html">DataStructures/Tensor/EagerMath/DeterminantAndInverse.hpp</a>&quot;</span></div><div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="TypeAliases_8hpp.html">DataStructures/Tensor/TypeAliases.hpp</a>&quot;</span></div><div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &quot;Evolution/Systems/GeneralizedHarmonic/Tags.hpp&quot;</span></div><div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Christoffel_8hpp.html">PointwiseFunctions/GeneralRelativity/Christoffel.hpp</a>&quot;</span></div><div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="ComputeGhQuantities_8hpp.html">PointwiseFunctions/GeneralRelativity/ComputeGhQuantities.hpp</a>&quot;</span></div><div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="ComputeSpacetimeQuantities_8hpp.html">PointwiseFunctions/GeneralRelativity/ComputeSpacetimeQuantities.hpp</a>&quot;</span></div><div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &quot;PointwiseFunctions/GeneralRelativity/IndexManipulation.hpp&quot;</span></div><div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &quot;PointwiseFunctions/GeneralRelativity/Tags.hpp&quot;</span></div><div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="TMPL_8hpp.html">Utilities/TMPL.hpp</a>&quot;</span></div><div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;</div><div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceah.html">ah</a> {</div><div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceTags.html">Tags</a> {</div><div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment">// @{</span><span class="comment"></span></div><div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment">/// These ComputeItems are different from those used in</span></div><div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment">/// GeneralizedHarmonic evolution because these live only on the</span></div><div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment">/// intrp::Actions::ApparentHorizon DataBox, not in the volume</span></div><div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment">/// DataBox.  And these ComputeItems can do fewer allocations than the</span></div><div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment">/// volume ones, because (for example) Lapse, SpaceTimeNormalVector,</span></div><div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment">/// etc.  can be inlined instead of being allocated as a separate</span></div><div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment">/// ComputeItem.</span></div><div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> Dim, <span class="keyword">typename</span> Frame&gt;</div><div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="structah_1_1Tags_1_1InverseSpatialMetricCompute.html">   34</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structah_1_1Tags_1_1InverseSpatialMetricCompute.html">InverseSpatialMetricCompute</a> : <a class="code" href="structgr_1_1Tags_1_1InverseSpatialMetric.html">gr::Tags::InverseSpatialMetric</a>&lt;Dim, Frame&gt;,</div><div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;                                     <a class="code" href="structdb_1_1ComputeTag.html">db::ComputeTag</a> {</div><div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  <span class="keyword">static</span> tnsr::II&lt;DataVector, Dim, Frame&gt; <span class="keyword">function</span>(</div><div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;      <span class="keyword">const</span> tnsr::aa&lt;DataVector, Dim, Frame&gt;&amp; psi) noexcept {</div><div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="group__TensorGroup.html#ga483fc075c909d22d2d9b4dbfd1ac5bc2">determinant_and_inverse</a>(<a class="code" href="group__GeneralRelativityGroup.html#ga1fa35ac13f2e85e60984268789426209">gr::spatial_metric</a>(psi)).second;</div><div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  };</div><div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  <span class="keyword">using</span> argument_tags = tmpl::list&lt;gr::Tags::SpacetimeMetric&lt;Dim, Frame&gt;&gt;;</div><div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;};</div><div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> Dim, <span class="keyword">typename</span> Frame&gt;</div><div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="structah_1_1Tags_1_1ExtrinsicCurvatureCompute.html">   43</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structah_1_1Tags_1_1ExtrinsicCurvatureCompute.html">ExtrinsicCurvatureCompute</a> : <a class="code" href="structgr_1_1Tags_1_1ExtrinsicCurvature.html">gr::Tags::ExtrinsicCurvature</a>&lt;Dim, Frame&gt;,</div><div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;                                   <a class="code" href="structdb_1_1ComputeTag.html">db::ComputeTag</a> {</div><div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  <span class="keyword">static</span> tnsr::ii&lt;DataVector, Dim, Frame&gt; <span class="keyword">function</span>(</div><div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;      <span class="keyword">const</span> tnsr::aa&lt;DataVector, Dim, Frame&gt;&amp; psi,</div><div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;      <span class="keyword">const</span> tnsr::aa&lt;DataVector, Dim, Frame&gt;&amp; <a class="code" href="group__GeneralRelativityGroup.html#ga8651e2e4edee163253e3b74c95926768">pi</a>,</div><div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;      <span class="keyword">const</span> tnsr::iaa&lt;DataVector, Dim, Frame&gt;&amp; <a class="code" href="group__GeneralRelativityGroup.html#ga503cdec7966f04e56519480c8a2b2cbe">phi</a>,</div><div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;      <span class="keyword">const</span> tnsr::II&lt;DataVector, Dim, Frame&gt;&amp; inv_g) noexcept {</div><div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keyword">const</span> <span class="keyword">auto</span> <a class="code" href="group__GeneralRelativityGroup.html#ga193f058861f7fbe61dd01e89ee9cbda0">shift</a> = <a class="code" href="group__GeneralRelativityGroup.html#ga193f058861f7fbe61dd01e89ee9cbda0">gr::shift</a>(psi, inv_g);</div><div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="group__GeneralRelativityGroup.html#ga2e5cee1422996402294e6883e47d1c3a">GeneralizedHarmonic::extrinsic_curvature</a>(</div><div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        <a class="code" href="group__GeneralRelativityGroup.html#ga6a7ef9f51dd90764071557d7420ab95b">gr::spacetime_normal_vector</a>(<a class="code" href="group__GeneralRelativityGroup.html#gaca46ba0ea79929164495b2f587d40288">gr::lapse</a>(<a class="code" href="group__GeneralRelativityGroup.html#ga193f058861f7fbe61dd01e89ee9cbda0">shift</a>, psi), <a class="code" href="group__GeneralRelativityGroup.html#ga193f058861f7fbe61dd01e89ee9cbda0">shift</a>), pi, phi);</div><div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  }</div><div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  <span class="keyword">using</span> argument_tags = tmpl::list&lt;gr::Tags::SpacetimeMetric&lt;Dim, Frame&gt;,</div><div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;                                   <a class="code" href="structGeneralizedHarmonic_1_1Tags_1_1Pi.html">GeneralizedHarmonic::Tags::Pi&lt;Dim, Frame&gt;</a>,</div><div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;                                   <a class="code" href="structGeneralizedHarmonic_1_1Tags_1_1Phi.html">GeneralizedHarmonic::Tags::Phi&lt;Dim, Frame&gt;</a>,</div><div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;                                   <a class="code" href="structgr_1_1Tags_1_1InverseSpatialMetric.html">gr::Tags::InverseSpatialMetric&lt;Dim, Frame&gt;</a>&gt;;</div><div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;};</div><div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">size_t</span> Dim, <span class="keyword">typename</span> Frame&gt;</div><div class="line"><a name="l00060"></a><span class="lineno"><a class="line" href="structah_1_1Tags_1_1SpatialChristoffelSecondKindCompute.html">   60</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structah_1_1Tags_1_1SpatialChristoffelSecondKindCompute.html">SpatialChristoffelSecondKindCompute</a></div><div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    : <a class="code" href="structgr_1_1Tags_1_1SpatialChristoffelSecondKind.html">::gr::Tags::SpatialChristoffelSecondKind</a>&lt;Dim, Frame&gt;,</div><div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;      <a class="code" href="structdb_1_1ComputeTag.html">db::ComputeTag</a> {</div><div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  <span class="keyword">static</span> tnsr::Ijj&lt;DataVector, Dim, Frame&gt; <span class="keyword">function</span>(</div><div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;      <span class="keyword">const</span> tnsr::iaa&lt;DataVector, Dim, Frame&gt;&amp; <a class="code" href="group__GeneralRelativityGroup.html#ga503cdec7966f04e56519480c8a2b2cbe">phi</a>,</div><div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;      <span class="keyword">const</span> tnsr::II&lt;DataVector, Dim, Frame&gt;&amp; inv_g) noexcept {</div><div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="group__GeneralRelativityGroup.html#ga2ee14a816417bb94f933cb52e058d5b1">raise_or_lower_first_index</a>(</div><div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        gr::christoffel_first_kind(</div><div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;            GeneralizedHarmonic::deriv_spatial_metric(phi)),</div><div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        inv_g);</div><div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;  }</div><div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;  <span class="keyword">using</span> argument_tags = tmpl::list&lt;GeneralizedHarmonic::Tags::Phi&lt;Dim, Frame&gt;,</div><div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;                                   <a class="code" href="structgr_1_1Tags_1_1InverseSpatialMetric.html">gr::Tags::InverseSpatialMetric&lt;Dim, Frame&gt;</a>&gt;;</div><div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;};</div><div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment">// }@</span></div><div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;}  <span class="comment">// namespace Tags</span></div><div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;}  <span class="comment">// namespace ah</span></div><div class="ttc" id="structGeneralizedHarmonic_1_1Tags_1_1Phi_html"><div class="ttname"><a href="structGeneralizedHarmonic_1_1Tags_1_1Phi.html">GeneralizedHarmonic::Tags::Phi</a></div><div class="ttdoc">Auxiliary variable which is analytically the spatial derivative of the spacetime metric. </div><div class="ttdef"><b>Definition:</b> Tags.hpp:40</div></div>
+<div class="ttc" id="cstddef_html"><div class="ttname"><a href="http://en.cppreference.com/w/cpp/header/cstddef.html">cstddef</a></div></div>
+<div class="ttc" id="DeterminantAndInverse_8hpp_html"><div class="ttname"><a href="DeterminantAndInverse_8hpp.html">DeterminantAndInverse.hpp</a></div><div class="ttdoc">Defines function computing the determinant and inverse of a tensor. </div></div>
+<div class="ttc" id="structGeneralizedHarmonic_1_1Tags_1_1Pi_html"><div class="ttname"><a href="structGeneralizedHarmonic_1_1Tags_1_1Pi.html">GeneralizedHarmonic::Tags::Pi</a></div><div class="ttdoc">Conjugate momentum to the spacetime metric. </div><div class="ttdef"><b>Definition:</b> Tags.hpp:28</div></div>
+<div class="ttc" id="structah_1_1Tags_1_1ExtrinsicCurvatureCompute_html"><div class="ttname"><a href="structah_1_1Tags_1_1ExtrinsicCurvatureCompute.html">ah::Tags::ExtrinsicCurvatureCompute</a></div><div class="ttdef"><b>Definition:</b> ComputeItems.hpp:43</div></div>
+<div class="ttc" id="structah_1_1Tags_1_1SpatialChristoffelSecondKindCompute_html"><div class="ttname"><a href="structah_1_1Tags_1_1SpatialChristoffelSecondKindCompute.html">ah::Tags::SpatialChristoffelSecondKindCompute</a></div><div class="ttdef"><b>Definition:</b> ComputeItems.hpp:60</div></div>
+<div class="ttc" id="structdb_1_1ComputeTag_html"><div class="ttname"><a href="structdb_1_1ComputeTag.html">db::ComputeTag</a></div><div class="ttdoc">Marks a DataBoxTag as being a compute item that executes a function. </div><div class="ttdef"><b>Definition:</b> DataBoxTag.hpp:155</div></div>
+<div class="ttc" id="group__GeneralRelativityGroup_html_ga6a7ef9f51dd90764071557d7420ab95b"><div class="ttname"><a href="group__GeneralRelativityGroup.html#ga6a7ef9f51dd90764071557d7420ab95b">gr::spacetime_normal_vector</a></div><div class="ttdeci">tnsr::A&lt; DataType, SpatialDim, Frame &gt; spacetime_normal_vector(const Scalar&lt; DataType &gt; &amp;lapse, const tnsr::I&lt; DataType, SpatialDim, Frame &gt; &amp;shift) noexcept</div><div class="ttdoc">Computes spacetime normal vector from lapse and shift. </div><div class="ttdef"><b>Definition:</b> ComputeSpacetimeQuantities.cpp:204</div></div>
+<div class="ttc" id="structgr_1_1Tags_1_1InverseSpatialMetric_html"><div class="ttname"><a href="structgr_1_1Tags_1_1InverseSpatialMetric.html">gr::Tags::InverseSpatialMetric</a></div><div class="ttdef"><b>Definition:</b> Tags.hpp:31</div></div>
+<div class="ttc" id="ComputeGhQuantities_8hpp_html"><div class="ttname"><a href="ComputeGhQuantities_8hpp.html">ComputeGhQuantities.hpp</a></div><div class="ttdoc">Defines Functions for calculating spacetime tensors from 3+1 quantities. </div></div>
+<div class="ttc" id="group__GeneralRelativityGroup_html_ga1fa35ac13f2e85e60984268789426209"><div class="ttname"><a href="group__GeneralRelativityGroup.html#ga1fa35ac13f2e85e60984268789426209">gr::spatial_metric</a></div><div class="ttdeci">tnsr::ii&lt; DataType, SpatialDim, Frame &gt; spatial_metric(const tnsr::aa&lt; DataType, SpatialDim, Frame &gt; &amp;spacetime_metric) noexcept</div><div class="ttdoc">Compute spatial metric from spacetime metric. </div><div class="ttdef"><b>Definition:</b> ComputeSpacetimeQuantities.cpp:62</div></div>
+<div class="ttc" id="group__GeneralRelativityGroup_html_ga8651e2e4edee163253e3b74c95926768"><div class="ttname"><a href="group__GeneralRelativityGroup.html#ga8651e2e4edee163253e3b74c95926768">GeneralizedHarmonic::pi</a></div><div class="ttdeci">tnsr::aa&lt; DataType, SpatialDim, Frame &gt; pi(const Scalar&lt; DataType &gt; &amp;lapse, const Scalar&lt; DataType &gt; &amp;dt_lapse, const tnsr::I&lt; DataType, SpatialDim, Frame &gt; &amp;shift, const tnsr::I&lt; DataType, SpatialDim, Frame &gt; &amp;dt_shift, const tnsr::ii&lt; DataType, SpatialDim, Frame &gt; &amp;spatial_metric, const tnsr::ii&lt; DataType, SpatialDim, Frame &gt; &amp;dt_spatial_metric, const tnsr::iaa&lt; DataType, SpatialDim, Frame &gt; &amp;phi) noexcept</div><div class="ttdoc">Computes the conjugate momentum  of the spacetime metric . </div><div class="ttdef"><b>Definition:</b> ComputeGhQuantities.cpp:120</div></div>
+<div class="ttc" id="group__TensorGroup_html_ga483fc075c909d22d2d9b4dbfd1ac5bc2"><div class="ttname"><a href="group__TensorGroup.html#ga483fc075c909d22d2d9b4dbfd1ac5bc2">determinant_and_inverse</a></div><div class="ttdeci">auto determinant_and_inverse(const Tensor&lt; T, Symm, tmpl::list&lt; Index0, Index1 &gt;&gt; &amp;tensor) noexcept -&gt; std::pair&lt; Scalar&lt; T &gt;, Tensor&lt; T, Symm, tmpl::list&lt; change_index_up_lo&lt; Index1 &gt;, change_index_up_lo&lt; Index0 &gt;&gt;&gt;&gt;</div><div class="ttdoc">Computes the determinant and inverse of a rank-2 Tensor. </div><div class="ttdef"><b>Definition:</b> DeterminantAndInverse.hpp:356</div></div>
+<div class="ttc" id="group__GeneralRelativityGroup_html_ga503cdec7966f04e56519480c8a2b2cbe"><div class="ttname"><a href="group__GeneralRelativityGroup.html#ga503cdec7966f04e56519480c8a2b2cbe">GeneralizedHarmonic::phi</a></div><div class="ttdeci">tnsr::iaa&lt; DataType, SpatialDim, Frame &gt; phi(const Scalar&lt; DataType &gt; &amp;lapse, const tnsr::i&lt; DataType, SpatialDim, Frame &gt; &amp;deriv_lapse, const tnsr::I&lt; DataType, SpatialDim, Frame &gt; &amp;shift, const tnsr::iJ&lt; DataType, SpatialDim, Frame &gt; &amp;deriv_shift, const tnsr::ii&lt; DataType, SpatialDim, Frame &gt; &amp;spatial_metric, const tnsr::ijj&lt; DataType, SpatialDim, Frame &gt; &amp;deriv_spatial_metric) noexcept</div><div class="ttdoc">Computes the auxiliary variable  used by the generalized harmonic formulation of Einstein&amp;#39;s equations...</div><div class="ttdef"><b>Definition:</b> ComputeGhQuantities.cpp:59</div></div>
+<div class="ttc" id="namespaceTags_html"><div class="ttname"><a href="namespaceTags.html">Tags</a></div><div class="ttdef"><b>Definition:</b> DataBoxTag.hpp:29</div></div>
+<div class="ttc" id="group__GeneralRelativityGroup_html_gaca46ba0ea79929164495b2f587d40288"><div class="ttname"><a href="group__GeneralRelativityGroup.html#gaca46ba0ea79929164495b2f587d40288">gr::lapse</a></div><div class="ttdeci">Scalar&lt; DataType &gt; lapse(const tnsr::I&lt; DataType, SpatialDim, Frame &gt; &amp;shift, const tnsr::aa&lt; DataType, SpatialDim, Frame &gt; &amp;spacetime_metric) noexcept</div><div class="ttdoc">Compute lapse from shift and spacetime metric. </div><div class="ttdef"><b>Definition:</b> ComputeSpacetimeQuantities.cpp:117</div></div>
+<div class="ttc" id="structgr_1_1Tags_1_1SpatialChristoffelSecondKind_html"><div class="ttname"><a href="structgr_1_1Tags_1_1SpatialChristoffelSecondKind.html">gr::Tags::SpatialChristoffelSecondKind</a></div><div class="ttdef"><b>Definition:</b> Tags.hpp:67</div></div>
+<div class="ttc" id="TypeAliases_8hpp_html"><div class="ttname"><a href="TypeAliases_8hpp.html">TypeAliases.hpp</a></div><div class="ttdoc">Defines a list of useful type aliases for tensors. </div></div>
+<div class="ttc" id="group__GeneralRelativityGroup_html_ga2ee14a816417bb94f933cb52e058d5b1"><div class="ttname"><a href="group__GeneralRelativityGroup.html#ga2ee14a816417bb94f933cb52e058d5b1">raise_or_lower_first_index</a></div><div class="ttdeci">void raise_or_lower_first_index(gsl::not_null&lt; Tensor&lt; DataType, Symmetry&lt; 2, 1, 1 &gt;, index_list&lt; change_index_up_lo&lt; Index0 &gt;, Index1, Index1 &gt;&gt; *&gt; result, const Tensor&lt; DataType, Symmetry&lt; 2, 1, 1 &gt;, index_list&lt; Index0, Index1, Index1 &gt;&gt; &amp;tensor, const Tensor&lt; DataType, Symmetry&lt; 1, 1 &gt;, index_list&lt; change_index_up_lo&lt; Index0 &gt;, change_index_up_lo&lt; Index0 &gt;&gt;&gt; &amp;metric) noexcept</div><div class="ttdoc">Raises or lowers the first index of a rank 3 tensor which is symmetric in the last two indices...</div></div>
+<div class="ttc" id="group__GeneralRelativityGroup_html_ga193f058861f7fbe61dd01e89ee9cbda0"><div class="ttname"><a href="group__GeneralRelativityGroup.html#ga193f058861f7fbe61dd01e89ee9cbda0">gr::shift</a></div><div class="ttdeci">tnsr::I&lt; DataType, SpatialDim, Frame &gt; shift(const tnsr::aa&lt; DataType, SpatialDim, Frame &gt; &amp;spacetime_metric, const tnsr::II&lt; DataType, SpatialDim, Frame &gt; &amp;inverse_spatial_metric) noexcept</div><div class="ttdoc">Compute shift from spacetime metric and inverse spatial metric. </div><div class="ttdef"><b>Definition:</b> ComputeSpacetimeQuantities.cpp:101</div></div>
+<div class="ttc" id="namespaceah_html"><div class="ttname"><a href="namespaceah.html">ah</a></div><div class="ttdef"><b>Definition:</b> ComputeItems.hpp:23</div></div>
+<div class="ttc" id="classDataVector_html"><div class="ttname"><a href="classDataVector.html">DataVector</a></div><div class="ttdoc">Stores a collection of function values. </div><div class="ttdef"><b>Definition:</b> DataVector.hpp:42</div></div>
+<div class="ttc" id="TMPL_8hpp_html"><div class="ttname"><a href="TMPL_8hpp.html">TMPL.hpp</a></div><div class="ttdoc">Wraps the template metaprogramming library used (brigand) </div></div>
+<div class="ttc" id="DataBoxTag_8hpp_html"><div class="ttname"><a href="DataBoxTag_8hpp.html">DataBoxTag.hpp</a></div><div class="ttdoc">Defines classes SimpleTag, PrefixTag, ComputeTag and several functions for retrieving tag info...</div></div>
+<div class="ttc" id="ComputeSpacetimeQuantities_8hpp_html"><div class="ttname"><a href="ComputeSpacetimeQuantities_8hpp.html">ComputeSpacetimeQuantities.hpp</a></div><div class="ttdoc">Defines Functions for calculating spacetime tensors from 3+1 quantities. </div></div>
+<div class="ttc" id="group__GeneralRelativityGroup_html_ga2e5cee1422996402294e6883e47d1c3a"><div class="ttname"><a href="group__GeneralRelativityGroup.html#ga2e5cee1422996402294e6883e47d1c3a">GeneralizedHarmonic::extrinsic_curvature</a></div><div class="ttdeci">tnsr::ii&lt; DataType, SpatialDim, Frame &gt; extrinsic_curvature(const tnsr::A&lt; DataType, SpatialDim, Frame &gt; &amp;spacetime_normal_vector, const tnsr::aa&lt; DataType, SpatialDim, Frame &gt; &amp;pi, const tnsr::iaa&lt; DataType, SpatialDim, Frame &gt; &amp;phi) noexcept</div><div class="ttdoc">Computes extrinsic curvature from generalized harmonic variables and the spacetime normal vector...</div><div class="ttdef"><b>Definition:</b> ComputeGhQuantities.cpp:181</div></div>
+<div class="ttc" id="Christoffel_8hpp_html"><div class="ttname"><a href="Christoffel_8hpp.html">Christoffel.hpp</a></div><div class="ttdoc">Defines functions to calculate Christoffel symbols. </div></div>
+<div class="ttc" id="structah_1_1Tags_1_1InverseSpatialMetricCompute_html"><div class="ttname"><a href="structah_1_1Tags_1_1InverseSpatialMetricCompute.html">ah::Tags::InverseSpatialMetricCompute</a></div><div class="ttdoc">These ComputeItems are different from those used in GeneralizedHarmonic evolution because these live ...</div><div class="ttdef"><b>Definition:</b> ComputeItems.hpp:34</div></div>
+<div class="ttc" id="structgr_1_1Tags_1_1ExtrinsicCurvature_html"><div class="ttname"><a href="structgr_1_1Tags_1_1ExtrinsicCurvature.html">gr::Tags::ExtrinsicCurvature</a></div><div class="ttdef"><b>Definition:</b> Tags.hpp:96</div></div>
+</div><!-- fragment --></div><!-- contents -->
+<!-- HTML footer for doxygen 1.8.10-->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+&copy; Copyright 2017 - 2019
+<a href="https://black-holes.org">SXS Collaboration</a>,
+<a href="LICENSE.txt" target="_blank">
+<span class="hidden-xs">Distributed under the</span>
+MIT License</a>
+</small></address>
+</body>
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - /work/spectre/docs/Tutorials/Visualization.md</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">work/spectre/docs/Tutorials</a> - Visualization.md</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : \cond NEVER</span>
+<span class="lineNum">       2 </span>            : Distributed under the MIT License.
+<span class="lineNum">       3 </span>            : See LICENSE.txt for details.
+<span class="lineNum">       4 </span>            : \endcond
+<span class="lineNum">       5 </span>            : # Running and Visualizing {#tutorial_visualization}
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            : ### Building an Executable from an Existing Source File
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : SpECTRE source files for evolution executables are located in
+<span class="lineNum">      10 </span>            : `src/Evolution/Executables`. Executables can be compiled by running the command
+<span class="lineNum">      11 </span>            : `make EXECUTABLE_NAME` where `EXECUTABLE_NAME` is the name of the executable
+<span class="lineNum">      12 </span>            : as defined in the `CMakeLists.txt` file located in the same directory as the
+<span class="lineNum">      13 </span>            : source file. For example, to compile the executable that evolves a scalar wave
+<span class="lineNum">      14 </span>            : using a three-dimensional domain, one runs the command:
+<span class="lineNum">      15 </span>            : `make EvolveScalarWave3D`, which then results in an executable of the same name
+<span class="lineNum">      16 </span>            : in the `bin` directory of the user's build directory.
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            : ### Running an Evolution Executable
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : Each SpECTRE executable reads a user-provided YAML file that specifies the
+<span class="lineNum">      21 </span>            : runtime settings of the evolution. This is where options such as the Domain,
+<span class="lineNum">      22 </span>            : AnalyticSolution, TimeStepper, etc are supplied. Example input files are kept
+<span class="lineNum">      23 </span>            : in `tests/InputFiles`, and are written to provide a functional base input file
+<span class="lineNum">      24 </span>            : which the user can then modify as desired. Copy the executable and YAML file
+<span class="lineNum">      25 </span>            : to a directory of your choice. The YAML file is then passed as an argument to
+<span class="lineNum">      26 </span>            : the executable using the flag `--input-file`. For example, for a scalar wave
+<span class="lineNum">      27 </span>            : evolution, run the command:
+<span class="lineNum">      28 </span>            : `./EvolveScalarWave3D --input-file Input3DPeriodic.yaml`.
+<span class="lineNum">      29 </span>            : By default, the example input files do not produce any output. This can be
+<span class="lineNum">      30 </span>            : changed by modifying the options passed to `EventsAndTriggers`:
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span>            : \snippet ObserveExample.yaml observe_event_trigger
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            : This will observe the norms of the errors in the system every three
+<span class="lineNum">      35 </span>            : slabs starting with slab five and the volume data of Psi at the start
+<span class="lineNum">      36 </span>            : of slabs 0 and 100.  A successful observation will result in the
+<span class="lineNum">      37 </span>            : creation of H5 files whose names can be specified in the YAML file
+<span class="lineNum">      38 </span>            : under the options `VolumeFileName` and `ReductionFileName`. One volume
+<span class="lineNum">      39 </span>            : data file will be produced from each Charm++ node that is used to run
+<span class="lineNum">      40 </span>            : the executable. Each volume data file will have its corresponding node
+<span class="lineNum">      41 </span>            : number appended to its file name.  Visualization of the volume data
+<span class="lineNum">      42 </span>            : will be described in the next section.
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span>            : ### 3D %Data Volume %Data In ParaView
+<span class="lineNum">      45 </span>            : 
+<span class="lineNum">      46 </span>            : A SpECTRE executable with observers produces volume and/or reduced data h5
+<span class="lineNum">      47 </span>            : files. An XDMF file must be created from the volume data in order to do
+<span class="lineNum">      48 </span>            : visualization using ParaView. To this end we provide the python executable
+<span class="lineNum">      49 </span>            : `GenerateXdmf.py` in the `tools` directory. `GenerateXdmf.py` takes two
+<span class="lineNum">      50 </span>            : arguments which are passed to `--file-prefix` and `--output`. The argument
+<span class="lineNum">      51 </span>            : passed to `--file-prefix` is the name of the H5 volume data, leaving out the
+<span class="lineNum">      52 </span>            : node number and extension. The argument passed to `--output` is the desired
+<span class="lineNum">      53 </span>            : .xmf file name, also without filename extension. Use `--help` to see a further
+<span class="lineNum">      54 </span>            : description of possible arguments. Open the .xmf file in ParaView and select
+<span class="lineNum">      55 </span>            : the `Xdmf Reader`, *not* the version 3 readers. On the left hand side of the
+<span class="lineNum">      56 </span>            : main ParaView window is a section named `Properties`, here you must click the
+<span class="lineNum">      57 </span>            : highlighted `Apply` button. ParaView will now render your volume data. If you
+<span class="lineNum">      58 </span>            : only wish to visualize a few datasets out of a large set, we recommended
+<span class="lineNum">      59 </span>            : unchecking the boxes for the datasets you wish to ignore under `Point Arrays`
+<span class="lineNum">      60 </span>            : before clicking `Apply`.
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span>            : ### Helpful ParaView Filters
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span>            : Here we describe the usage of filters we've found to better visualize our data.
+<span class="lineNum">      65 </span>            : Feel free to contribute to this section!
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span>            : #### Removing Mesh Imprinting
+<span class="lineNum">      68 </span>            : You may notice what appears to be mesh imprinting on the data. The imprinting
+<span class="lineNum">      69 </span>            : effect can be removed by applying the `Tetrahedralize` filter. To apply the
+<span class="lineNum">      70 </span>            : filter select the `Filters` menu item, then `Alphabetical` and finally
+<span class="lineNum">      71 </span>            : `Tetrahedralize`.
+<span class="lineNum">      72 </span>            : 
+<span class="lineNum">      73 </span>            : #### Creating Derived Volume Data
+<span class="lineNum">      74 </span>            : New volume data can be created from the existing volume data using the
+<span class="lineNum">      75 </span>            : `Calculator` filter. In the `Calculator`'s text box, input a numerical
+<span class="lineNum">      76 </span>            : expression in terms of existing datasets evaluating to the desired
+<span class="lineNum">      77 </span>            : quantity. For example, a vector-valued velocity dataset can be created
+<span class="lineNum">      78 </span>            : from three scalar velocity component datasets using the expression
+<span class="lineNum">      79 </span>            : `velocity_x * iHat + velocity_y * jHat + velocity_z * kHat` and hitting
+<span class="lineNum">      80 </span>            : the `Apply` button. By default, this will create a new dataset `Result`.
+<span class="lineNum">      81 </span>            : The name of the new dataset can be changed by changing the name provided
+<span class="lineNum">      82 </span>            : to `Result Array Name` above the `Calculator` text box.
+<span class="lineNum">      83 </span>            : 
+<span class="lineNum">      84 </span>            : #### Visualizing Vector Fields Derived From Scalar Fields
+<span class="lineNum">      85 </span>            : Use the `Calculator` filter described above in &quot;Creating Derived Volume Data&quot;
+<span class="lineNum">      86 </span>            : to create a new vector-valued dataset. Once this is created, use the `Glyph`
+<span class="lineNum">      87 </span>            : filter and set the `Active Attributes` to the vector you wish to visualize.
+<span class="lineNum">      88 </span>            : Make sure that `Scale Mode` is set to `vector`.
+<span class="lineNum">      89 </span>            : 
+<span class="lineNum">      90 </span>            : ### Reproducibility of Results
+<span class="lineNum">      91 </span>            : 
+<span class="lineNum">      92 </span>            : Being able to reproduce the results of simulations is important for scientific
+<span class="lineNum">      93 </span>            : integrity and accuracy. To this end, SpECTRE encodes the source tree,
+<span class="lineNum">      94 </span>            : environment variables, and a record of the third party library versions into the
+<span class="lineNum">      95 </span>            : executables. From most executables these can be retrieved using the flags
+<span class="lineNum">      96 </span>            : `--dump-source-as filename_without_extension`, `--dump-paths`,
+<span class="lineNum">      97 </span>            : `--dump-library-version`, and `--dump-environment`. The flag `--dump-only` will
+<span class="lineNum">      98 </span>            : cause the program to exit after the information has been dumped. You can use the
+<span class="lineNum">      99 </span>            : `--help` flag to get more details on what flags are available. The flag
+<span class="lineNum">     100 </span>            : `--dump-paths` will print to screen the environment variables `PATH`, `CPATH`,
+<span class="lineNum">     101 </span>            : `LD_LIBRARY_PATH`, `LIBRARY_PATH`, and `CMAKE_PREFIX_PATH` at link time. The
+<span class="lineNum">     102 </span>            : flag `--dump-library-versions` will print to screen the contents of the
+<span class="lineNum">     103 </span>            : `LibraryVersions.txt` file generated by CMake. The flag `--dump-environment`
+<span class="lineNum">     104 </span>            : will print to screen the output of `printenv` at link time. Finally, the flag
+<span class="lineNum">     105 </span>            : `--dump-source-as filename_without_extension` will dump the archive
+<span class="lineNum">     106 </span>            : `filename_without_extension.tar.gz`, which contains the entire source tree at
+<span class="lineNum">     107 </span>            : link time. The combined above information should be enough to reproduce
+<span class="lineNum">     108 </span>            : simulations results to roundoff error as long as the third party libraries
+<span class="lineNum">     109 </span>            : used to build the executable have not changed on the system the simulation was
+<span class="lineNum">     110 </span>            : run on.
+<span class="lineNum">     111 </span>            : 
+<span class="lineNum">     112 </span>            : Often only data from the simulation is retained, not the entire executable. In
+<span class="lineNum">     113 </span>            : order to make simulations reproducible from only the HDF5 output, any HDF5 files
+<span class="lineNum">     114 </span>            : written with SpECTRE's HDF5 wrappers contain the info about the run, output of
+<span class="lineNum">     115 </span>            : `printenv` at link time, the contents of `LibraryVersions.txt`, and an archive
+<span class="lineNum">     116 </span>            : of the source tree. These are inside the `header.hdr` group with names
+<span class="lineNum">     117 </span>            : `SimulationInfo`, `EnvironmentVariablesAtCompilation`, `LibraryVersions`, and
+<span class="lineNum">     118 </span>            : `src.tar.gz`. The source archive can be extracted by running the command
+<span class="lineNum">     119 </span>            : ```
+<span class="lineNum">     120 </span>            : h5dump -d /src.tar.gz -b LE -o src.tar.gz /path/to/hdf5/file.h5
+<span class="lineNum">     121 </span>            : ```
+<span class="lineNum">     122 </span>            : You will need to make sure the argument to `-b` is the same endianness as your
+<span class="lineNum">     123 </span>            : computer. In the above example little endian is used.
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

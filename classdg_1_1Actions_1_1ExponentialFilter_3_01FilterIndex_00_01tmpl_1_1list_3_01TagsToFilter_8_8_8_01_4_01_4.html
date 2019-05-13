@@ -1,0 +1,313 @@
+<!-- HTML header for doxygen 1.8.10-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=9"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="SXS Collaboration">
+    <meta name="generator" content="Doxygen 1.8.13"/>
+    <style>
+        /*!
+         * IE10 viewport hack for Surface/desktop Windows 8 bug
+         * Copyright 2014-2015 Twitter, Inc.
+         * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+         */
+        @-webkit-viewport { width: device-width; }
+        @-moz-viewport    { width: device-width; }
+        @-ms-viewport     { width: device-width; }
+        @-o-viewport      { width: device-width; }
+        @viewport         { width: device-width; }
+      </style>
+  <title>SpECTRE: dg::Actions::ExponentialFilter&lt; FilterIndex, tmpl::list&lt; TagsToFilter... &gt; &gt; Class Template Reference</title>
+  <link href="tabs.css" rel="stylesheet" type="text/css"/>
+  <script type="text/javascript" src="jquery.js"></script>
+  <script type="text/javascript" src="dynsections.js"></script>
+  <link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js", "color.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+});
+MathJax.Hub.Config({
+    TeX: { equationNumbers: { autoNumber: "AMS" } }
+});
+MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['^^','^^'], ['\\(', '\\)']]}
+});
+</script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js"></script>
+  <link href="octicons.css" rel="stylesheet">
+  <link href="bootstrap.min.css" rel="stylesheet">
+  <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <script type="text/javascript" src="jquery.js"></script>
+  <script type="text/javascript" src="popper.min.js"></script>
+  <script type="text/javascript" src="bootstrap.min.js"></script>
+  <script type="text/javascript" src="spectre.js"></script>
+  </head>
+  <body>
+  <div id="top" class="navbar-fixed-top"><!-- do not remove this div, it is closed by doxygen! -->
+  <!-- BEGIN TITLEAREA -->
+  <div id="titlearea">
+  <script type="text/javascript">
+  var searchBox = new SearchBox("searchBox", "search",false,'Search');
+  </script>
+  <div id="main-nav">
+    <ul class="sm sm-dox" id="main-menu">
+      <li>
+      <a href="index.html">
+      SpECTRE &#160;
+        <span id="projectnumber">v0.0.0</span>
+      </a>
+      </li>
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="selected">
+          <span id="selected">
+            <i class="octicon octicon-book"></i><span>Documentation</span>
+          </span>
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li style="min-width: 135px;">
+            <a href="index.html">
+            <i class="octicon octicon-book"></i><span>Introduction</span></a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="installation.html">
+              <i class="octicon octicon-desktop-download"></i><span>Installation</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="tutorials.html">
+              <i class="octicon octicon-mortar-board"></i><span>User Tutorials</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="dev_guide.html">
+              <i class="octicon octicon-gist-secret"></i><span>Dev Guide</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="code_of_conduct.html">
+              <i class="octicon octicon-comment-discussion"></i><span>Code of Conduct</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="contributing_to_spectre.html">
+              <i class="octicon octicon-git-pull-request"></i><span>Contributing Guide</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="selected">
+          <span id="selected">
+            <i class="octicon octicon-code"></i>
+              <span>Code Reference</span>
+          </span>
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li style="min-width: 130px;">
+            <a href="modules.html">
+              <i class="octicon octicon-code"></i>
+              <span>Topics</span>
+            </a>
+          </li>
+          <li style="min-width: 130px;">
+            <a href="namespaces.html">
+              <i class="octicon octicon-gist"></i>
+              <span>Namespaces</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <a href="files.html">
+          <i class="octicon octicon-file-directory"></i><span>Files</span>
+        </a>
+      </li>
+      <li>
+        <a href="citelist.html">
+          <i class="octicon octicon-file-text"></i><span>Bibliography</span>
+        </a>
+      </li>
+      <li>
+        <a href="https://github.com/sxs-collaboration/spectre" target="_blank">
+          <i class="octicon octicon-mark-github"></i><span>View on GitHub</span>
+        </a>
+      </li>
+      <!--The Search <li> is added by doxygen later-->
+    </ul>
+  </div><!-- main-nav -->
+  </div><!-- titlearea -->
+  <!-- window showing the filter options -->
+  <div id="MSearchSelectWindow"  style="position: fixed;"
+       onmouseover="return searchBox.OnSearchSelectShow()"
+       onmouseout="return searchBox.OnSearchSelectHide()"
+       onkeydown="return searchBox.OnSearchSelectKey(event)">
+  </div>
+  <!-- iframe showing the search results (closed by default) -->
+  <div id="MSearchResultsWindow"  style="position: fixed;">
+  <iframe src="javascript:void(0)" frameborder="0"
+          name="MSearchResults" id="MSearchResults">
+  </iframe>
+  </div>
+<!-- Generated by Doxygen 1.8.13 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search",false,'Search');
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><b>dg</b></li><li class="navelem"><b>Actions</b></li><li class="navelem"><a class="el" href="classdg_1_1Actions_1_1ExponentialFilter_3_01FilterIndex_00_01tmpl_1_1list_3_01TagsToFilter_8_8_8_01_4_01_4.html">ExponentialFilter&lt; FilterIndex, tmpl::list&lt; TagsToFilter... &gt; &gt;</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#pub-types">Public Types</a> &#124;
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
+<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
+<a href="classdg_1_1Actions_1_1ExponentialFilter_3_01FilterIndex_00_01tmpl_1_1list_3_01TagsToFilter_8_8_8_01_4_01_4-members.html">List of all members</a>  </div>
+  <div class="headertitle">
+<div class="title">dg::Actions::ExponentialFilter&lt; FilterIndex, tmpl::list&lt; TagsToFilter... &gt; &gt; Class Template Reference<div class="ingroups"><a class="el" href="group__DiscontinuousGalerkinGroup.html">Discontinuous Galerkin</a></div></div>  </div>
+</div><!--header-->
+<div class="contents">
+
+<p>Applies an exponential filter to the specified tags.  
+ <a href="classdg_1_1Actions_1_1ExponentialFilter_3_01FilterIndex_00_01tmpl_1_1list_3_01TagsToFilter_8_8_8_01_4_01_4.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="Evolution_2DiscontinuousGalerkin_2Filtering_8hpp_source.html">Filtering.hpp</a>&gt;</code></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structdg_1_1Actions_1_1ExponentialFilter_3_01FilterIndex_00_01tmpl_1_1list_3_01TagsToFilter_8_8_8_01_4_01_4_1_1Alpha.html">Alpha</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The value of <code>exp(-alpha)</code> is what the highest modal coefficient is rescaled by.  <a href="structdg_1_1Actions_1_1ExponentialFilter_3_01FilterIndex_00_01tmpl_1_1list_3_01TagsToFilter_8_8_8_01_4_01_4_1_1Alpha.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structdg_1_1Actions_1_1ExponentialFilter_3_01FilterIndex_00_01tmpl_1_1list_3_01TagsToFilter_8_8_1c195a2b482b311f7ac5b169da6f59ac.html">DisableForDebugging</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Turn the filter off.  <a href="structdg_1_1Actions_1_1ExponentialFilter_3_01FilterIndex_00_01tmpl_1_1list_3_01TagsToFilter_8_8_1c195a2b482b311f7ac5b169da6f59ac.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structdg_1_1Actions_1_1ExponentialFilter_3_01FilterIndex_00_01tmpl_1_1list_3_01TagsToFilter_8_8_8_01_4_01_4_1_1HalfPower.html">HalfPower</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Half of the exponent in the exponential.  <a href="structdg_1_1Actions_1_1ExponentialFilter_3_01FilterIndex_00_01tmpl_1_1list_3_01TagsToFilter_8_8_8_01_4_01_4_1_1HalfPower.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:ace0250a9b51717bb5afa48b4ad69d900"><td class="memItemLeft" align="right" valign="top"><a id="ace0250a9b51717bb5afa48b4ad69d900"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>const_global_cache_tags</b> = tmpl::list&lt; ExponentialFilter &gt;</td></tr>
+<tr class="separator:ace0250a9b51717bb5afa48b4ad69d900"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38df1e39b0b3938dc52e941a535e8a2c"><td class="memItemLeft" align="right" valign="top"><a id="a38df1e39b0b3938dc52e941a535e8a2c"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>type</b> = ExponentialFilter</td></tr>
+<tr class="separator:a38df1e39b0b3938dc52e941a535e8a2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a988e2deb2463f9c6547f578bf98b9677"><td class="memItemLeft" align="right" valign="top"><a id="a988e2deb2463f9c6547f578bf98b9677"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>options</b> = tmpl::list&lt; Alpha, HalfPower, DisableForDebugging &gt;</td></tr>
+<tr class="separator:a988e2deb2463f9c6547f578bf98b9677"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a69d38d3d08a8e72c82529191168ccb88"><td class="memItemLeft" align="right" valign="top"><a id="a69d38d3d08a8e72c82529191168ccb88"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>ExponentialFilter</b> (double alpha, unsigned half_power, bool disable_for_debugging) noexcept</td></tr>
+<tr class="separator:a69d38d3d08a8e72c82529191168ccb88"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac4ae88f908f57c0a7618088604f2facd"><td class="memItemLeft" align="right" valign="top"><a id="ac4ae88f908f57c0a7618088604f2facd"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>pup</b> (PUP::er &amp;p) noexcept</td></tr>
+<tr class="separator:ac4ae88f908f57c0a7618088604f2facd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8cb42c873d978ba20d8401856598a754"><td class="memItemLeft" align="right" valign="top"><a id="a8cb42c873d978ba20d8401856598a754"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator==</b> (const ExponentialFilter &amp;rhs) const noexcept</td></tr>
+<tr class="separator:a8cb42c873d978ba20d8401856598a754"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a78bc331e3120fade3f6fa9f834a13c1c"><td class="memItemLeft" align="right" valign="top"><a id="a78bc331e3120fade3f6fa9f834a13c1c"></a>
+static <a class="elRef" doxygen="/work/spectre/docs/config/cppreference-doxygen-web.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/string/basic_string.html">std::string</a>&#160;</td><td class="memItemRight" valign="bottom"><b>name</b> () noexcept</td></tr>
+<tr class="separator:a78bc331e3120fade3f6fa9f834a13c1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4aaf027274435c49d50c6f642c7e2a8e"><td class="memTemplParams" colspan="2"><a id="a4aaf027274435c49d50c6f642c7e2a8e"></a>
+template&lt;typename DbTags , typename... InboxTags, typename ArrayIndex , typename ActionList , typename ParallelComponent , typename Metavariables &gt; </td></tr>
+<tr class="memitem:a4aaf027274435c49d50c6f642c7e2a8e"><td class="memTemplItemLeft" align="right" valign="top">static <a class="elRef" doxygen="/work/spectre/docs/config/cppreference-doxygen-web.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/utility/tuple.html">std::tuple</a>&lt; <a class="el" href="classdb_1_1DataBox.html">db::DataBox</a>&lt; DbTags &gt; &amp;&amp; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>apply</b> (<a class="el" href="classdb_1_1DataBox.html">db::DataBox</a>&lt; DbTags &gt; &amp;box, const <a class="el" href="classtuples_1_1TaggedTuple.html">tuples::TaggedTuple</a>&lt; InboxTags... &gt; &amp;, const <a class="el" href="classParallel_1_1ConstGlobalCache.html">Parallel::ConstGlobalCache</a>&lt; <a class="el" href="structMetavariables.html">Metavariables</a> &gt; &amp;cache, const ArrayIndex &amp;, const ActionList, const ParallelComponent *const) noexcept</td></tr>
+<tr class="separator:a4aaf027274435c49d50c6f642c7e2a8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:a0161a31e42689904e41902138e5c976e"><td class="memItemLeft" align="right" valign="top"><a id="a0161a31e42689904e41902138e5c976e"></a>
+static constexpr <a class="el" href="Options_8hpp.html#ac6df7d1b74fbddedd85b06a0087d93f6">OptionString</a>&#160;</td><td class="memItemRight" valign="bottom"><b>help</b> = {&quot;An exponential filter.&quot;}</td></tr>
+<tr class="separator:a0161a31e42689904e41902138e5c976e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;size_t FilterIndex, typename... TagsToFilter&gt;<br />
+class dg::Actions::ExponentialFilter&lt; FilterIndex, tmpl::list&lt; TagsToFilter... &gt; &gt;</h3>
+
+<p>Applies an exponential filter to the specified tags. </p>
+<p>Applies an exponential filter in each logical direction to each component of the tensors <code>TagsToFilter</code>. The exponential filter rescales the 1d modal coefficients \(c_i\) as:</p>
+<p class="formulaDsp">
+\begin{align*} c_i\to c_i \exp\left[-\alpha_{\mathrm{ef}} \left(\frac{i}{N}\right)^{2\beta_{\mathrm{ef}}}\right] \end{align*}
+</p>
+<p>where \(N\) is the basis order, \(\alpha_{\mathrm{ef}}\) determines how much the coefficients are rescaled, and \(\beta_{\mathrm{ef}}\) (given by the <code><a class="el" href="structdg_1_1Actions_1_1ExponentialFilter_3_01FilterIndex_00_01tmpl_1_1list_3_01TagsToFilter_8_8_8_01_4_01_4_1_1HalfPower.html" title="Half of the exponent in the exponential. ">HalfPower</a></code> option) determines how aggressive/broad the filter is (lower values means filtering more coefficients). Setting \(\alpha_{\mathrm{ef}}=36\) results in effectively zeroing the highest coefficient (in practice it gets rescaled by machine epsilon). The same \(\alpha_{\mathrm{ef}}\) and \(\beta_{\mathrm{ef}}\) are used in each logical direction. For a discussion of filtering see section 5.3 of <a class="el" href="citelist.html#CITEREF_HesthavenWarburton">[17]</a>.</p>
+<p>If different <code><a class="el" href="structdg_1_1Actions_1_1ExponentialFilter_3_01FilterIndex_00_01tmpl_1_1list_3_01TagsToFilter_8_8_8_01_4_01_4_1_1Alpha.html" title="The value of exp(-alpha) is what the highest modal coefficient is rescaled by. ">Alpha</a></code> or <code><a class="el" href="structdg_1_1Actions_1_1ExponentialFilter_3_01FilterIndex_00_01tmpl_1_1list_3_01TagsToFilter_8_8_8_01_4_01_4_1_1HalfPower.html" title="Half of the exponent in the exponential. ">HalfPower</a></code> parameters are desired for different tags then multiple <code>ExponentialFilter</code> actions must be inserted into the action list with different <code>FilterIndex</code> values. In the input file these will be specified as <code>ExpFilterFILTER_INDEX</code>, e.g. <code>ExpFilter0</code> and <code>ExpFilter1</code>. Below is an example of an action list with two different exponential filters:</p>
+<div class="fragment"><div class="line">  <span class="keyword">using</span> action_list = tmpl::conditional_t&lt;</div><div class="line">      metavariables::filter_individually,</div><div class="line">      tmpl::list&lt;</div><div class="line">          dg::Actions::ExponentialFilter&lt;0, tmpl::list&lt;Tags::ScalarVar&gt;&gt;,</div><div class="line">          dg::Actions::ExponentialFilter&lt;1, tmpl::list&lt;Tags::VectorVar&lt;dim&gt;&gt;&gt;&gt;,</div><div class="line">      tmpl::list&lt;dg::Actions::ExponentialFilter&lt;</div><div class="line">          0, tmpl::list&lt;Tags::VectorVar&lt;dim&gt;, Tags::ScalarVar&gt;&gt;&gt;&gt;;</div></div><!-- fragment --> <h4>Action properties</h4>
+<p>Uses:</p><ul>
+<li>ConstGlobalCache:<ul>
+<li><code>ExponentialFilter</code></li>
+</ul>
+</li>
+<li>DataBox:<ul>
+<li><code><a class="el" href="structTags_1_1Mesh.html" title="The computational grid of the Element in the DataBox. ">Tags::Mesh</a></code></li>
+</ul>
+</li>
+<li>DataBox changes:<ul>
+<li>Adds: nothing</li>
+<li>Removes: nothing</li>
+<li>Modifies:<ul>
+<li><code>TagsToFilter</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>System:<ul>
+<li><code>volume_dim</code></li>
+<li><code>variables_tag</code></li>
+</ul>
+</li>
+</ul>
+<h4>Design decision:</h4>
+<ul>
+<li>The reason for the <code>size_t</code> template parameter is to allow for different <code><a class="el" href="structdg_1_1Actions_1_1ExponentialFilter_3_01FilterIndex_00_01tmpl_1_1list_3_01TagsToFilter_8_8_8_01_4_01_4_1_1Alpha.html" title="The value of exp(-alpha) is what the highest modal coefficient is rescaled by. ">Alpha</a></code> and <code><a class="el" href="structdg_1_1Actions_1_1ExponentialFilter_3_01FilterIndex_00_01tmpl_1_1list_3_01TagsToFilter_8_8_8_01_4_01_4_1_1HalfPower.html" title="Half of the exponent in the exponential. ">HalfPower</a></code> parameters for different tensors while still being able to cache the matrices. </li>
+</ul>
+</div><hr/>The documentation for this class was generated from the following file:<ul>
+<li>src/Evolution/DiscontinuousGalerkin/<a class="el" href="Evolution_2DiscontinuousGalerkin_2Filtering_8hpp_source.html">Filtering.hpp</a></li>
+</ul>
+</div><!-- contents -->
+<!-- HTML footer for doxygen 1.8.10-->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+&copy; Copyright 2017 - 2019
+<a href="https://black-holes.org">SXS Collaboration</a>,
+<a href="LICENSE.txt" target="_blank">
+<span class="hidden-xs">Distributed under the</span>
+MIT License</a>
+</small></address>
+</body>
+</html>

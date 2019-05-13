@@ -1,0 +1,132 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - /work/build_Debug_clang/docs/xml/travis_guide.xml</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">work/build_Debug_clang/docs/xml</a> - travis_guide.xml</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineCov">          1 : &lt;?xml version='1.0' encoding='UTF-8' standalone='no'?&gt;</span>
+<span class="lineNum">       2 </span>            : &lt;doxygen xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:noNamespaceSchemaLocation=&quot;compound.xsd&quot; version=&quot;1.8.13&quot;&gt;
+<span class="lineNum">       3 </span>            :   &lt;compounddef id=&quot;travis_guide&quot; kind=&quot;page&quot;&gt;
+<span class="lineNum">       4 </span>            :     &lt;compoundname&gt;travis_guide&lt;/compoundname&gt;
+<span class="lineNum">       5 </span>            :     &lt;title&gt;Travis CI&lt;/title&gt;
+<span class="lineNum">       6 </span>            :     &lt;detaileddescription&gt;
+<span class="lineNum">       7 </span>            : &lt;sect1 id=&quot;travis_guide_1travis_ci&quot;&gt;
+<span class="lineNum">       8 </span>            : &lt;title&gt;Testing SpECTRE with Travis CI&lt;/title&gt;
+<span class="lineNum">       9 </span>            : &lt;para&gt;SpECTRE uses &lt;ulink url=&quot;https://travis-ci.org/sxs-collaboration/spectre&quot;&gt;TravisCI&lt;/ulink&gt; for testing the code. Multiple build jobs (described below) are launched each time a pull request is submitted or updated. In addition, a daily cron job is run. Travis will also launch these build jobs each time you push to a branch on your fork of SpECTRE if you enable it. (Go to Travis, click on your name in the upper right corner, and then towards the bottom, enable testing on your fork of SpECTRE.)&lt;/para&gt;&lt;para&gt;For pull requests, you can view the Travis CI build by clicking on &lt;computeroutput&gt;Details&lt;/computeroutput&gt; next to the &lt;computeroutput&gt;Travis build failed&lt;/computeroutput&gt; or &lt;computeroutput&gt;Travis build succeeded&lt;/computeroutput&gt; in the section for &lt;computeroutput&gt;All checks have failed&lt;/computeroutput&gt; or &lt;computeroutput&gt;All checks have passed&lt;/computeroutput&gt; towards the bottom of the pull request. You can login to Travis using your GitHub credentials in order to cancel your builds, and you should do so if you update your pull request while it is building.&lt;/para&gt;&lt;sect2 id=&quot;travis_guide_1what-is-tested&quot;&gt;
+<span class="lineNum">      10 </span>            : &lt;title&gt;What is tested&lt;/title&gt;
+<span class="lineNum">      11 </span>            : &lt;para&gt;The Travis report lists the build jobs which will each have either a green check mark if it passes, a red &lt;computeroutput&gt;X&lt;/computeroutput&gt; if it has failed, or a yellow binary if the build is in progress. Clicking on a build job will display the log of the build.&lt;/para&gt;&lt;para&gt;The following build jobs are launched:&lt;itemizedlist&gt;
+<span class="lineNum">      12 </span>            : &lt;listitem&gt;&lt;para&gt;CHECK_COMMITS runs the script &lt;computeroutput&gt;tools/CheckCommits.sh&lt;/computeroutput&gt; and fails the build if any casing of the words in the list below is the first word of the commit message. This allows developers to flag their commits with these keywords to indicate that a pull request should not be merged in its current state.&lt;itemizedlist&gt;
+<span class="lineNum">      13 </span>            : &lt;listitem&gt;&lt;para&gt;fixup&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;wip (for work in progress)&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;fixme&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;deleteme&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;rebaseme&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;testing&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;rebase&lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      14 </span>            : &lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;CHECK_FILES runs the script &lt;computeroutput&gt;tools/CheckFiles.sh&lt;/computeroutput&gt; (which also runs the script &lt;computeroutput&gt;tools/FileTestDefs.sh&lt;/computeroutput&gt;) and fails the build if any of the following checks are true:&lt;itemizedlist&gt;
+<span class="lineNum">      15 </span>            : &lt;listitem&gt;&lt;para&gt;A &lt;computeroutput&gt;c++&lt;/computeroutput&gt; file (i.e. &lt;computeroutput&gt;*.hpp&lt;/computeroutput&gt;, &lt;computeroutput&gt;*.cpp&lt;/computeroutput&gt;, or &lt;computeroutput&gt;*.tpp&lt;/computeroutput&gt; file) contains a line over 80 characters&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;A file contains a tab character&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;A file has white space at the end of the line&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;A file has a carriage return character&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;A file is missing the license line&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;A &lt;computeroutput&gt;*.hpp&lt;/computeroutput&gt; file is missing &lt;computeroutput&gt;pragma once&lt;/computeroutput&gt;&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;A file does not end with a newline&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;A &lt;computeroutput&gt;c++&lt;/computeroutput&gt; file includes any of the following headers&lt;itemizedlist&gt;
+<span class="lineNum">      16 </span>            : &lt;listitem&gt;&lt;para&gt;&lt;computeroutput&gt;&amp;lt;iostream&amp;gt;&lt;/computeroutput&gt; (useless when running in parallel)&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;&lt;computeroutput&gt;&lt;ref refid=&quot;TmplDebugging_8hpp&quot; kindref=&quot;compound&quot;&gt;Utilities/TmplDebugging.hpp&lt;/ref&gt;&lt;/computeroutput&gt; (used only for debugging)&lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      17 </span>            : &lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;A &lt;computeroutput&gt;c++&lt;/computeroutput&gt; file contains a &lt;computeroutput&gt;namespace&lt;/computeroutput&gt; ending in &lt;computeroutput&gt;_details&lt;/computeroutput&gt; (use &lt;computeroutput&gt;_detail&lt;/computeroutput&gt;)&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;A &lt;computeroutput&gt;c++&lt;/computeroutput&gt; file contains a &lt;computeroutput&gt;struct TD&lt;/computeroutput&gt; or &lt;computeroutput&gt;class TD&lt;/computeroutput&gt; (used only for debugging)&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;A &lt;computeroutput&gt;c++&lt;/computeroutput&gt; file contains &lt;computeroutput&gt;&lt;ref refid=&quot;cpp/types/enable_if&quot; kindref=&quot;compound&quot; external=&quot;/work/spectre/docs/config/cppreference-doxygen-web.tag.xml&quot;&gt;std::enable_if&lt;/ref&gt;&lt;/computeroutput&gt; (use &lt;computeroutput&gt;Requires&lt;/computeroutput&gt; instead)&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;A &lt;computeroutput&gt;c++&lt;/computeroutput&gt; file contains additional text after &lt;computeroutput&gt;/*!&lt;/computeroutput&gt; (does not render correctly in doxygen)&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;A &lt;computeroutput&gt;c++&lt;/computeroutput&gt; file contains &lt;computeroutput&gt;Ls&lt;/computeroutput&gt; (use &lt;computeroutput&gt;List&lt;/computeroutput&gt; instead)&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;A &lt;computeroutput&gt;c++&lt;/computeroutput&gt; test uses either:&lt;itemizedlist&gt;
+<span class="lineNum">      18 </span>            : &lt;listitem&gt;&lt;para&gt;&lt;computeroutput&gt;TEST_CASE&lt;/computeroutput&gt; (use &lt;computeroutput&gt;SPECTRE_TEST_CASE&lt;/computeroutput&gt; instead)&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;&lt;computeroutput&gt;Approx&lt;/computeroutput&gt; (use &lt;computeroutput&gt;approx&lt;/computeroutput&gt; instead)&lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      19 </span>            : &lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      20 </span>            : &lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;RUN_CLANG_TIDY runs the script &lt;computeroutput&gt;.travis/RunClangTidy.sh&lt;/computeroutput&gt; which runs &lt;computeroutput&gt;clang-tidy&lt;/computeroutput&gt; on all files which were modified. This is done for both &lt;computeroutput&gt;Release&lt;/computeroutput&gt; and &lt;computeroutput&gt;Debug&lt;/computeroutput&gt; builds.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;TEST_CHECK_FILES runs &lt;computeroutput&gt;tools/CheckFiles.sh --test&lt;/computeroutput&gt; which tests the checks performed in the CHECK_FILES build.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;The other builds compile the code and run the tests for both &lt;computeroutput&gt;Release&lt;/computeroutput&gt; and &lt;computeroutput&gt;Debug&lt;/computeroutput&gt; builds, for the &lt;computeroutput&gt;gcc&lt;/computeroutput&gt; and &lt;computeroutput&gt;clang&lt;/computeroutput&gt; compilers using a Linux OS, and the &lt;computeroutput&gt;AppleClang&lt;/computeroutput&gt; compiler for &lt;computeroutput&gt;OS X&lt;/computeroutput&gt;.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;The &lt;computeroutput&gt;gcc Debug&lt;/computeroutput&gt; build will fail if there are &lt;computeroutput&gt;doxygen&lt;/computeroutput&gt; warnings.&lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      21 </span>            : &lt;/para&gt;&lt;/sect2&gt;
+<span class="lineNum">      22 </span>            : &lt;sect2 id=&quot;travis_guide_1perform-checks-locally&quot;&gt;
+<span class="lineNum">      23 </span>            : &lt;title&gt;How to perform the checks locally&lt;/title&gt;
+<span class="lineNum">      24 </span>            : &lt;para&gt;Before pushing to GitHub and waiting for Travis to perform the checks it is useful to perform at least the following tests locally:&lt;itemizedlist&gt;
+<span class="lineNum">      25 </span>            : &lt;listitem&gt;&lt;para&gt;&lt;bold&gt;Unit tests:&lt;/bold&gt; Perform a &lt;computeroutput&gt;make test-executables&lt;/computeroutput&gt; and then execute &lt;computeroutput&gt;ctest&lt;/computeroutput&gt; to run all unit tests. As for &lt;computeroutput&gt;make&lt;/computeroutput&gt; you can append a &lt;computeroutput&gt;-jN&lt;/computeroutput&gt; flag to &lt;computeroutput&gt;ctest&lt;/computeroutput&gt; to run in parallel on &lt;computeroutput&gt;N&lt;/computeroutput&gt; cores. To run only a subset of the tests you can use one of the other keywords that the tests are labeled with, such as &lt;computeroutput&gt;ctest -L datastructures&lt;/computeroutput&gt;. To run only particular tests you can also execute &lt;computeroutput&gt;ctest -R TEST_NAME&lt;/computeroutput&gt; instead, where &lt;computeroutput&gt;TEST_NAME&lt;/computeroutput&gt; is a regular expression matching the test identifiers such as &lt;computeroutput&gt;Unit.DataStructures.Mesh&lt;/computeroutput&gt;. Pass the flag &lt;computeroutput&gt;--output-on-failure&lt;/computeroutput&gt; to get output from failed tests. Consult &lt;computeroutput&gt;ctest -h&lt;/computeroutput&gt; for further options.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;&lt;bold&gt;clang-tidy:&lt;/bold&gt; In a clang build directory, run &lt;computeroutput&gt;make clang-tidy FILE=SOURCE_FILE&lt;/computeroutput&gt; where &lt;computeroutput&gt;SOURCE_FILE&lt;/computeroutput&gt; is a relative or absolute path to a &lt;computeroutput&gt;.cpp&lt;/computeroutput&gt; file. To perform this check for all source files that changed in your pull request, &lt;computeroutput&gt;make clang-tidy-hash HASH=UPSTREAM_HEAD&lt;/computeroutput&gt; where &lt;computeroutput&gt;UPSTREAM_HEAD&lt;/computeroutput&gt; is the hash of the commit that your pull request is based on, usually the &lt;computeroutput&gt;HEAD&lt;/computeroutput&gt; of the &lt;computeroutput&gt;upstream/develop&lt;/computeroutput&gt; branch.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;&lt;bold&gt;IWYU:&lt;/bold&gt; Also just for the changed files in a pull request run &lt;computeroutput&gt;make iwyu-hash HASH=UPSTREAM_HEAD&lt;/computeroutput&gt;. Since IWYU requires &lt;computeroutput&gt;USE_PCH=OFF&lt;/computeroutput&gt; you can create a separate build directory and append &lt;computeroutput&gt;-D USE_PCH=OFF&lt;/computeroutput&gt; to the usual &lt;computeroutput&gt;cmake&lt;/computeroutput&gt; call. Note that it is very easy to incorrectly install IWYU (if not using the Docker container) and generate nonsense errors.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;&lt;bold&gt;Documentation:&lt;/bold&gt; To render the documentation for the current state of the source tree the command &lt;computeroutput&gt;make doc&lt;/computeroutput&gt; (or &lt;computeroutput&gt;make doc-check&lt;/computeroutput&gt; to highlight warnings) can be used, placing its result in the &lt;computeroutput&gt;docs&lt;/computeroutput&gt; directory in the build tree. Once code has been made into a pull request to GitHub, the documentation can be rendered locally using the &lt;computeroutput&gt;tools/pr-docs&lt;/computeroutput&gt; script. To view the documentation, simply open the &lt;computeroutput&gt;index.html&lt;/computeroutput&gt; file in the &lt;computeroutput&gt;html&lt;/computeroutput&gt; subdirectory in a browser. Some functionality requires a web server (e.g. citation popovers), so just run a &lt;computeroutput&gt;python3 -m http.server&lt;/computeroutput&gt; in the &lt;computeroutput&gt;html&lt;/computeroutput&gt; directory to enable this.&lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      26 </span>            : &lt;/para&gt;&lt;/sect2&gt;
+<span class="lineNum">      27 </span>            : &lt;sect2 id=&quot;travis_guide_1travis-setup&quot;&gt;
+<span class="lineNum">      28 </span>            : &lt;title&gt;Travis setup&lt;/title&gt;
+<span class="lineNum">      29 </span>            : &lt;para&gt;&lt;itemizedlist&gt;
+<span class="lineNum">      30 </span>            : &lt;listitem&gt;&lt;para&gt;The &lt;computeroutput&gt;gcc Debug&lt;/computeroutput&gt; build runs code coverage for each Travis build.&lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      31 </span>            : &lt;/para&gt;&lt;/sect2&gt;
+<span class="lineNum">      32 </span>            : &lt;sect2 id=&quot;travis_guide_1travis-troubleshooting&quot;&gt;
+<span class="lineNum">      33 </span>            : &lt;title&gt;Troubleshooting&lt;/title&gt;
+<span class="lineNum">      34 </span>            : &lt;para&gt;&lt;itemizedlist&gt;
+<span class="lineNum">      35 </span>            : &lt;listitem&gt;&lt;para&gt;Occasionally, a build job will fail because of a problem with Travis (e.g. it times out). Clicking on the circular arrow icon on the far right of the build job will restart it. All build jobs can be restarted by clicking on the &lt;computeroutput&gt;Restart build&lt;/computeroutput&gt; button to the right of the pull request description.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;Travis caches some things between builds. Occasionally this may cause a problem leading to strange build failures. If you suspect this may be the case, get a SpECTRE owner to click on the &lt;computeroutput&gt;More options&lt;/computeroutput&gt; button in the top right, choose &lt;computeroutput&gt;Caches&lt;/computeroutput&gt; and delete the cache for your pull request.&lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      36 </span>            : &lt;/para&gt;&lt;/sect2&gt;
+<span class="lineNum">      37 </span>            : &lt;sect2 id=&quot;travis_guide_1precompiled-headers-ccache&quot;&gt;
+<span class="lineNum">      38 </span>            : &lt;title&gt;Precompiled Headers and ccache&lt;/title&gt;
+<span class="lineNum">      39 </span>            : &lt;para&gt;Getting ccache to work with precompiled headers on TravisCI is a little challenging. The header to be precompiled is &lt;computeroutput&gt;${SPECTRE_SOURCE_DIR}/tools/SpectrePch.hpp&lt;/computeroutput&gt; and is symbolically linked to &lt;computeroutput&gt;${SPECTRE_BUILD_DIR}/SpectrePch.hpp&lt;/computeroutput&gt;. The configuration that seems to work is specifying the environment variables:&lt;/para&gt;&lt;para&gt;&lt;programlisting&gt;&lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;CCACHE_COMPILERCHECK=content&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      40 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;CCACHE_EXTRAFILES=&amp;quot;${SPECTRE_SOURCE_DIR}/tools/SpectrePch.hpp&amp;quot;&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      41 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;CCACHE_IGNOREHEADERS=&amp;quot;${SPECTRE_BUILD_DIR}/SpectrePch.hpp:${SPECTRE_BUILD_DIR}/SpectrePch.hpp.gch&amp;quot;&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      42 </span>            : &lt;/programlisting&gt;&lt;/para&gt;&lt;para&gt;On macOS builds we haven&amp;apos;t yet had success with using &lt;computeroutput&gt;ccache&lt;/computeroutput&gt; with a precompiled header. We disable the precompiled header and build in debug mode only to have reasonable build times.&lt;/para&gt;&lt;/sect2&gt;
+<span class="lineNum">      43 </span>            : &lt;sect2 id=&quot;travis_guide_1travis-build-stages&quot;&gt;
+<span class="lineNum">      44 </span>            : &lt;title&gt;Build Stages&lt;/title&gt;
+<span class="lineNum">      45 </span>            : &lt;para&gt;In order to avoid timeouts we build SpECTRE in various stages, carrying over the ccache from one stage to the next. This allows us to avoid recompiling the code in the next stage (there is some small overhead from running ccache instead of not doing anything at all). The first stage builds all the SpECTRE libraries but none of the executables or testing libraries. The second stage builds builds the test executables, runs the tests, and also runs ClangTidy, include-what-you-use, and various other checks. Another stage could be added that builds some of the test libraries if necessary.&lt;/para&gt;&lt;/sect2&gt;
+<span class="lineNum">      46 </span>            : &lt;sect2 id=&quot;travis_guide_1caching-mac-os&quot;&gt;
+<span class="lineNum">      47 </span>            : &lt;title&gt;Caching Dependencies on macOS Builds&lt;/title&gt;
+<span class="lineNum">      48 </span>            : &lt;para&gt;On macOS builds we cache all of our dependencies, like LIBXSMM and Charm++. These are cached in &lt;computeroutput&gt;$HOME/mac_cache&lt;/computeroutput&gt;. Ultimately this saves about 10-12 minutes even when compared to using ccache to cache the object files from building the dependencies. We also cache &lt;computeroutput&gt;$HOME/Library/Caches/Homebrew&lt;/computeroutput&gt;, which is where Homebrew keeps the downloaded formulas. By caching the Homebrew bottles we are able to avoid brew formulas building from source because a tarball of the package was not available at the time. &lt;/para&gt;&lt;/sect2&gt;
+<span class="lineNum">      49 </span>            : &lt;/sect1&gt;
+<span class="lineNum">      50 </span>            :     &lt;/detaileddescription&gt;
+<span class="lineNum">      51 </span>            :   &lt;/compounddef&gt;
+<span class="lineNum">      52 </span>            : &lt;/doxygen&gt;
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

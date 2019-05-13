@@ -1,0 +1,362 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - NumericalAlgorithms/Interpolation/InterpolationTargetWedgeSectionTorus.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">NumericalAlgorithms/Interpolation</a> - InterpolationTargetWedgeSectionTorus.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntry">66</td>
+            <td class="headerCovTableEntryLo">6.1 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;cmath&gt;
+<span class="lineNum">       7 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : #include &quot;DataStructures/DataVector.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;DataStructures/Tensor/TypeAliases.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;NumericalAlgorithms/Interpolation/SendPointsToInterpolator.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;NumericalAlgorithms/Spectral/Spectral.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;Options/Options.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;Parallel/ConstGlobalCache.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;Utilities/Requires.hpp&quot;
+<span class="lineNum">      16 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">      17 </span>            : #include &quot;Utilities/TaggedTuple.hpp&quot;
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : namespace PUP {
+<span class="lineNum">      20 </span>            : class er;
+<span class="lineNum">      21 </span>            : }  // namespace PUP
+<span class="lineNum">      22 </span>            : namespace db {
+<span class="lineNum">      23 </span>            : template &lt;typename TagsList&gt;
+<span class="lineNum">      24 </span><span class="lineNoCov">          0 : class DataBox;</span>
+<span class="lineNum">      25 </span>            : }  // namespace db
+<span class="lineNum">      26 </span>            : namespace intrp {
+<span class="lineNum">      27 </span><span class="lineCov">          1 : namespace Tags {</span>
+<span class="lineNum">      28 </span>            : template &lt;typename Metavariables&gt;
+<span class="lineNum">      29 </span><span class="lineCov">          1 : struct TemporalIds;</span>
+<span class="lineNum">      30 </span>            : }  // namespace Tags
+<span class="lineNum">      31 </span>            : }  // namespace intrp
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span>            : namespace intrp {
+<span class="lineNum">      34 </span>            : 
+<span class="lineNum">      35 </span>            : namespace OptionHolders {
+<span class="lineNum">      36 </span>            : /// \brief A solid torus of points, useful, e.g., when measuring data from an
+<span class="lineNum">      37 </span>            : /// accretion disc.
+<span class="lineNum">      38 </span>            : ///
+<span class="lineNum">      39 </span>            : /// The torus's cross section (e.g., a cut at \f$\phi=0\f$) is a wedge-like
+<span class="lineNum">      40 </span>            : /// shape bounded by \f$r_{\text{min}} \le r \le r_{\text{max}}\f$ and
+<span class="lineNum">      41 </span>            : /// \f$\theta_{\text{min}} \le \theta \le \theta_{\text{max}}\f$.
+<span class="lineNum">      42 </span>            : ///
+<span class="lineNum">      43 </span>            : /// The grid points are located on surfaces of constant \f$r\f$, \f$\theta\f$,
+<span class="lineNum">      44 </span>            : /// and \f$\phi\f$. There are `NumberRadialPoints` points in the radial
+<span class="lineNum">      45 </span>            : /// direction between `MinRadius` and `MaxRadius` (including these endpoints);
+<span class="lineNum">      46 </span>            : /// `NumberThetaPoints` points in the \f$\theta\f$ direction between `MinTheta`
+<span class="lineNum">      47 </span>            : /// and `MaxTheta` (including these endpoints); `NumberPhiPoints` points in the
+<span class="lineNum">      48 </span>            : /// \f$\phi\f$ direction (with one point always at \f$\phi=0\f$).
+<span class="lineNum">      49 </span>            : ///
+<span class="lineNum">      50 </span>            : /// By default, the points follow a Legendre Gauss-Lobatto distribution in the
+<span class="lineNum">      51 </span>            : /// \f$r\f$ and \f$\theta\f$ directions, and a uniform distribution in the
+<span class="lineNum">      52 </span>            : /// \f$\phi\f$ direction. The distribution in the \f$r\f$ (and/or \f$\theta\f$)
+<span class="lineNum">      53 </span>            : /// direction can be made uniform using the `UniformRadialGrid` (and/or
+<span class="lineNum">      54 </span>            : /// `UniformThetaGrid`) option.
+<span class="lineNum">      55 </span>            : ///
+<span class="lineNum">      56 </span>            : /// The `target_points` form a 3D mesh ordered with \f$r\f$ varying fastest,
+<span class="lineNum">      57 </span>            : /// then \f$\theta\f$, and finally \f$\phi\f$ varying slowest.
+<span class="lineNum">      58 </span>            : ///
+<span class="lineNum">      59 </span>            : /// \note Input coordinates (radii, angles) are interpreted in the frame given
+<span class="lineNum">      60 </span>            : /// by `Metavariables::domain_frame`
+<span class="lineNum">      61 </span><span class="lineCov">          1 : struct WedgeSectionTorus {</span>
+<span class="lineNum">      62 </span><span class="lineNoCov">          0 :   struct MinRadius {</span>
+<span class="lineNum">      63 </span><span class="lineNoCov">          0 :     using type = double;</span>
+<span class="lineNum">      64 </span><span class="lineNoCov">          0 :     static constexpr OptionString help = {&quot;Inner radius of torus&quot;};</span>
+<span class="lineNum">      65 </span><span class="lineNoCov">          0 :     static type lower_bound() noexcept { return 0.0; }</span>
+<span class="lineNum">      66 </span>            :   };
+<span class="lineNum">      67 </span><span class="lineNoCov">          0 :   struct MaxRadius {</span>
+<span class="lineNum">      68 </span><span class="lineNoCov">          0 :     using type = double;</span>
+<span class="lineNum">      69 </span><span class="lineNoCov">          0 :     static constexpr OptionString help = {&quot;Outer radius of torus&quot;};</span>
+<span class="lineNum">      70 </span><span class="lineNoCov">          0 :     static type lower_bound() noexcept { return 0.0; }</span>
+<span class="lineNum">      71 </span>            :   };
+<span class="lineNum">      72 </span><span class="lineNoCov">          0 :   struct MinTheta {</span>
+<span class="lineNum">      73 </span><span class="lineNoCov">          0 :     using type = double;</span>
+<span class="lineNum">      74 </span><span class="lineNoCov">          0 :     static constexpr OptionString help = {&quot;Angle of top of wedge (radians)&quot;};</span>
+<span class="lineNum">      75 </span><span class="lineNoCov">          0 :     static type lower_bound() noexcept { return 0.0; }</span>
+<span class="lineNum">      76 </span><span class="lineNoCov">          0 :     static type upper_bound() noexcept { return M_PI; }</span>
+<span class="lineNum">      77 </span>            :   };
+<span class="lineNum">      78 </span><span class="lineNoCov">          0 :   struct MaxTheta {</span>
+<span class="lineNum">      79 </span><span class="lineNoCov">          0 :     using type = double;</span>
+<span class="lineNum">      80 </span><span class="lineNoCov">          0 :     static constexpr OptionString help = {&quot;Angle of bottom of wedge (radians)&quot;};</span>
+<span class="lineNum">      81 </span><span class="lineNoCov">          0 :     static type lower_bound() noexcept { return 0.0; }</span>
+<span class="lineNum">      82 </span><span class="lineNoCov">          0 :     static type upper_bound() noexcept { return M_PI; }</span>
+<span class="lineNum">      83 </span>            :   };
+<span class="lineNum">      84 </span><span class="lineNoCov">          0 :   struct NumberRadialPoints {</span>
+<span class="lineNum">      85 </span><span class="lineNoCov">          0 :     using type = size_t;</span>
+<span class="lineNum">      86 </span><span class="lineNoCov">          0 :     static constexpr OptionString help = {</span>
+<span class="lineNum">      87 </span>            :         &quot;Number of radial points, including endpoints&quot;};
+<span class="lineNum">      88 </span><span class="lineNoCov">          0 :     static type lower_bound() noexcept { return 2; }</span>
+<span class="lineNum">      89 </span>            :   };
+<span class="lineNum">      90 </span><span class="lineNoCov">          0 :   struct NumberThetaPoints {</span>
+<span class="lineNum">      91 </span><span class="lineNoCov">          0 :     using type = size_t;</span>
+<span class="lineNum">      92 </span><span class="lineNoCov">          0 :     static constexpr OptionString help = {</span>
+<span class="lineNum">      93 </span>            :         &quot;Number of theta points, including endpoints&quot;};
+<span class="lineNum">      94 </span><span class="lineNoCov">          0 :     static type lower_bound() noexcept { return 2; }</span>
+<span class="lineNum">      95 </span>            :   };
+<span class="lineNum">      96 </span><span class="lineNoCov">          0 :   struct NumberPhiPoints {</span>
+<span class="lineNum">      97 </span><span class="lineNoCov">          0 :     using type = size_t;</span>
+<span class="lineNum">      98 </span><span class="lineNoCov">          0 :     static constexpr OptionString help = {&quot;Number of phi points&quot;};</span>
+<span class="lineNum">      99 </span><span class="lineNoCov">          0 :     static type lower_bound() noexcept { return 1; }</span>
+<span class="lineNum">     100 </span>            :   };
+<span class="lineNum">     101 </span><span class="lineNoCov">          0 :   struct UniformRadialGrid {</span>
+<span class="lineNum">     102 </span><span class="lineNoCov">          0 :     using type = bool;</span>
+<span class="lineNum">     103 </span><span class="lineNoCov">          0 :     static constexpr OptionString help = {</span>
+<span class="lineNum">     104 </span>            :         &quot;Use uniform radial grid [default: LGL grid]&quot;};
+<span class="lineNum">     105 </span><span class="lineNoCov">          0 :     static type default_value() noexcept { return false; }</span>
+<span class="lineNum">     106 </span>            :   };
+<span class="lineNum">     107 </span><span class="lineNoCov">          0 :   struct UniformThetaGrid {</span>
+<span class="lineNum">     108 </span><span class="lineNoCov">          0 :     using type = bool;</span>
+<span class="lineNum">     109 </span><span class="lineNoCov">          0 :     static constexpr OptionString help = {</span>
+<span class="lineNum">     110 </span>            :         &quot;Use uniform theta grid [default: LGL grid]&quot;};
+<span class="lineNum">     111 </span><span class="lineNoCov">          0 :     static type default_value() noexcept { return false; }</span>
+<span class="lineNum">     112 </span>            :   };
+<span class="lineNum">     113 </span>            : 
+<span class="lineNum">     114 </span><span class="lineNoCov">          0 :   using options =</span>
+<span class="lineNum">     115 </span>            :       tmpl::list&lt;MinRadius, MaxRadius, MinTheta, MaxTheta, NumberRadialPoints,
+<span class="lineNum">     116 </span>            :                  NumberThetaPoints, NumberPhiPoints, UniformRadialGrid,
+<span class="lineNum">     117 </span>            :                  UniformThetaGrid&gt;;
+<span class="lineNum">     118 </span><span class="lineNoCov">          0 :   static constexpr OptionString help = {</span>
+<span class="lineNum">     119 </span>            :       &quot;A torus extending from MinRadius to MaxRadius in r, MinTheta to MaxTheta&quot;
+<span class="lineNum">     120 </span>            :       &quot; in theta, and 2pi in phi.&quot;};
+<span class="lineNum">     121 </span>            : 
+<span class="lineNum">     122 </span><span class="lineNoCov">          0 :   WedgeSectionTorus(double min_radius_in, double max_radius_in,</span>
+<span class="lineNum">     123 </span>            :                     double min_theta_in, double max_theta_in,
+<span class="lineNum">     124 </span>            :                     size_t number_of_radial_points_in,
+<span class="lineNum">     125 </span>            :                     size_t number_of_theta_points_in,
+<span class="lineNum">     126 </span>            :                     size_t number_of_phi_points_in,
+<span class="lineNum">     127 </span>            :                     bool use_uniform_radial_grid_in,
+<span class="lineNum">     128 </span>            :                     bool use_uniform_theta_grid_in,
+<span class="lineNum">     129 </span>            :                     const OptionContext&amp; context = {});
+<span class="lineNum">     130 </span>            : 
+<span class="lineNum">     131 </span><span class="lineNoCov">          0 :   WedgeSectionTorus() = default;</span>
+<span class="lineNum">     132 </span><span class="lineNoCov">          0 :   WedgeSectionTorus(const WedgeSectionTorus&amp; /*rhs*/) = delete;</span>
+<span class="lineNum">     133 </span><span class="lineNoCov">          0 :   WedgeSectionTorus&amp; operator=(const WedgeSectionTorus&amp; /*rhs*/) = delete;</span>
+<span class="lineNum">     134 </span><span class="lineNoCov">          0 :   WedgeSectionTorus(WedgeSectionTorus&amp;&amp; /*rhs*/) noexcept = default;</span>
+<span class="lineNum">     135 </span><span class="lineNoCov">          0 :   WedgeSectionTorus&amp; operator=(WedgeSectionTorus&amp;&amp; /*rhs*/) noexcept = default;</span>
+<span class="lineNum">     136 </span><span class="lineNoCov">          0 :   ~WedgeSectionTorus() = default;</span>
+<span class="lineNum">     137 </span>            : 
+<span class="lineNum">     138 </span>            :   // clang-tidy non-const reference pointer
+<span class="lineNum">     139 </span><span class="lineNoCov">          0 :   void pup(PUP::er&amp; p) noexcept;  // NOLINT</span>
+<span class="lineNum">     140 </span>            : 
+<span class="lineNum">     141 </span><span class="lineNoCov">          0 :   double min_radius;</span>
+<span class="lineNum">     142 </span><span class="lineNoCov">          0 :   double max_radius;</span>
+<span class="lineNum">     143 </span><span class="lineNoCov">          0 :   double min_theta;</span>
+<span class="lineNum">     144 </span><span class="lineNoCov">          0 :   double max_theta;</span>
+<span class="lineNum">     145 </span><span class="lineNoCov">          0 :   size_t number_of_radial_points;</span>
+<span class="lineNum">     146 </span><span class="lineNoCov">          0 :   size_t number_of_theta_points;</span>
+<span class="lineNum">     147 </span><span class="lineNoCov">          0 :   size_t number_of_phi_points;</span>
+<span class="lineNum">     148 </span><span class="lineNoCov">          0 :   bool use_uniform_radial_grid;</span>
+<span class="lineNum">     149 </span><span class="lineNoCov">          0 :   bool use_uniform_theta_grid;</span>
+<span class="lineNum">     150 </span>            : };
+<span class="lineNum">     151 </span>            : 
+<span class="lineNum">     152 </span>            : bool operator==(const WedgeSectionTorus&amp; lhs,
+<span class="lineNum">     153 </span>            :                 const WedgeSectionTorus&amp; rhs) noexcept;
+<span class="lineNum">     154 </span>            : bool operator!=(const WedgeSectionTorus&amp; lhs,
+<span class="lineNum">     155 </span>            :                 const WedgeSectionTorus&amp; rhs) noexcept;
+<span class="lineNum">     156 </span>            : 
+<span class="lineNum">     157 </span>            : }  // namespace OptionHolders
+<span class="lineNum">     158 </span>            : 
+<span class="lineNum">     159 </span>            : namespace Actions {
+<span class="lineNum">     160 </span>            : /// \ingroup ActionsGroup
+<span class="lineNum">     161 </span>            : /// \brief Sends points in a wedge-sectioned torus to an `Interpolator`.
+<span class="lineNum">     162 </span>            : ///
+<span class="lineNum">     163 </span>            : /// Uses:
+<span class="lineNum">     164 </span>            : /// - DataBox:
+<span class="lineNum">     165 </span>            : ///   - `::Tags::Domain&lt;3, Frame&gt;`
+<span class="lineNum">     166 </span>            : ///   - `::Tags::Variables&lt;typename
+<span class="lineNum">     167 </span>            : ///                   InterpolationTargetTag::vars_to_interpolate_to_target&gt;`
+<span class="lineNum">     168 </span>            : ///
+<span class="lineNum">     169 </span>            : /// DataBox changes:
+<span class="lineNum">     170 </span>            : /// - Adds: nothing
+<span class="lineNum">     171 </span>            : /// - Removes: nothing
+<span class="lineNum">     172 </span>            : /// - Modifies:
+<span class="lineNum">     173 </span>            : ///   - `Tags::IndicesOfFilledInterpPoints`
+<span class="lineNum">     174 </span>            : ///   - `::Tags::Variables&lt;typename
+<span class="lineNum">     175 </span>            : ///                   InterpolationTargetTag::vars_to_interpolate_to_target&gt;`
+<span class="lineNum">     176 </span>            : ///
+<span class="lineNum">     177 </span>            : /// For requirements on InterpolationTargetTag, see InterpolationTarget
+<span class="lineNum">     178 </span>            : template &lt;typename InterpolationTargetTag&gt;
+<span class="lineNum">     179 </span><span class="lineCov">          1 : struct WedgeSectionTorus {</span>
+<span class="lineNum">     180 </span><span class="lineNoCov">          0 :   using options_type = OptionHolders::WedgeSectionTorus;</span>
+<span class="lineNum">     181 </span><span class="lineNoCov">          0 :   using const_global_cache_tags = tmpl::list&lt;InterpolationTargetTag&gt;;</span>
+<span class="lineNum">     182 </span>            :   template &lt;typename DbTags, typename... InboxTags, typename Metavariables,
+<span class="lineNum">     183 </span>            :             typename ArrayIndex, typename ActionList,
+<span class="lineNum">     184 </span>            :             typename ParallelComponent,
+<span class="lineNum">     185 </span>            :             Requires&lt;tmpl::list_contains_v&lt;
+<span class="lineNum">     186 </span>            :                 DbTags, typename Tags::TemporalIds&lt;Metavariables&gt;&gt;&gt; = nullptr&gt;
+<span class="lineNum">     187 </span><span class="lineNoCov">          0 :   static void apply(</span>
+<span class="lineNum">     188 </span>            :       db::DataBox&lt;DbTags&gt;&amp; box,
+<span class="lineNum">     189 </span>            :       const tuples::TaggedTuple&lt;InboxTags...&gt;&amp; /*inboxes*/,
+<span class="lineNum">     190 </span>            :       Parallel::ConstGlobalCache&lt;Metavariables&gt;&amp; cache,
+<span class="lineNum">     191 </span>            :       const ArrayIndex&amp; /*array_index*/, const ActionList /*meta*/,
+<span class="lineNum">     192 </span>            :       const ParallelComponent* const /*meta*/,
+<span class="lineNum">     193 </span>            :       const typename Metavariables::temporal_id::type&amp; temporal_id) noexcept {
+<span class="lineNum">     194 </span>            :     const auto&amp; options = Parallel::get&lt;InterpolationTargetTag&gt;(cache);
+<span class="lineNum">     195 </span>            : 
+<span class="lineNum">     196 </span>            :     // Compute locations of constant r/theta/phi surfaces
+<span class="lineNum">     197 </span>            :     const size_t num_radial = options.number_of_radial_points;
+<span class="lineNum">     198 </span>            :     const DataVector radii_1d = [&amp;num_radial, &amp;options ]() noexcept {
+<span class="lineNum">     199 </span>            :       DataVector result(num_radial);
+<span class="lineNum">     200 </span>            :       if (options.use_uniform_radial_grid) {
+<span class="lineNum">     201 </span>            :         // uniform point distribution
+<span class="lineNum">     202 </span>            :         for (size_t r = 0; r &lt; num_radial; ++r) {
+<span class="lineNum">     203 </span>            :           result[r] =
+<span class="lineNum">     204 </span>            :               options.min_radius + (options.max_radius - options.min_radius) *
+<span class="lineNum">     205 </span>            :                                        r / (num_radial - 1.0);
+<span class="lineNum">     206 </span>            :         }
+<span class="lineNum">     207 </span>            :       } else {
+<span class="lineNum">     208 </span>            :         // Legendre Gauss-Lobatto point distribution
+<span class="lineNum">     209 </span>            :         const double mean = 0.5 * (options.max_radius + options.min_radius);
+<span class="lineNum">     210 </span>            :         const double diff = 0.5 * (options.max_radius - options.min_radius);
+<span class="lineNum">     211 </span>            :         result =
+<span class="lineNum">     212 </span>            :             mean + diff * Spectral::collocation_points&lt;
+<span class="lineNum">     213 </span>            :                               Spectral::Basis::Legendre,
+<span class="lineNum">     214 </span>            :                               Spectral::Quadrature::GaussLobatto&gt;(num_radial);
+<span class="lineNum">     215 </span>            :       }
+<span class="lineNum">     216 </span>            :       return result;
+<span class="lineNum">     217 </span>            :     }
+<span class="lineNum">     218 </span>            :     ();
+<span class="lineNum">     219 </span>            :     const size_t num_theta = options.number_of_theta_points;
+<span class="lineNum">     220 </span>            :     const DataVector thetas_1d = [&amp;num_theta, &amp;options ]() noexcept {
+<span class="lineNum">     221 </span>            :       DataVector result(num_theta);
+<span class="lineNum">     222 </span>            :       if (options.use_uniform_theta_grid) {
+<span class="lineNum">     223 </span>            :         // uniform point distribution
+<span class="lineNum">     224 </span>            :         for (size_t theta = 0; theta &lt; num_theta; ++theta) {
+<span class="lineNum">     225 </span>            :           result[theta] =
+<span class="lineNum">     226 </span>            :               options.min_theta + (options.max_theta - options.min_theta) *
+<span class="lineNum">     227 </span>            :                                       theta / (num_theta - 1.0);
+<span class="lineNum">     228 </span>            :         }
+<span class="lineNum">     229 </span>            :       } else {
+<span class="lineNum">     230 </span>            :         // Legendre Gauss-Lobatto point distribution
+<span class="lineNum">     231 </span>            :         const double mean = 0.5 * (options.max_theta + options.min_theta);
+<span class="lineNum">     232 </span>            :         const double diff = 0.5 * (options.max_theta - options.min_theta);
+<span class="lineNum">     233 </span>            :         result =
+<span class="lineNum">     234 </span>            :             mean + diff * Spectral::collocation_points&lt;
+<span class="lineNum">     235 </span>            :                               Spectral::Basis::Legendre,
+<span class="lineNum">     236 </span>            :                               Spectral::Quadrature::GaussLobatto&gt;(num_theta);
+<span class="lineNum">     237 </span>            :       }
+<span class="lineNum">     238 </span>            :       return result;
+<span class="lineNum">     239 </span>            :     }
+<span class="lineNum">     240 </span>            :     ();
+<span class="lineNum">     241 </span>            :     const size_t num_phi = options.number_of_phi_points;
+<span class="lineNum">     242 </span>            :     const DataVector phis_1d = [&amp;num_phi]() noexcept {
+<span class="lineNum">     243 </span>            :       DataVector result(num_phi);
+<span class="lineNum">     244 </span>            :       for (size_t phi = 0; phi &lt; num_phi; ++phi) {
+<span class="lineNum">     245 </span>            :         // We do NOT want a grid point at phi = 2pi, as this would duplicate the
+<span class="lineNum">     246 </span>            :         // phi = 0 data. So, divide by num_phi rather than (n-1) as elsewhere.
+<span class="lineNum">     247 </span>            :         result[phi] = 2.0 * M_PI * phi / num_phi;
+<span class="lineNum">     248 </span>            :       }
+<span class="lineNum">     249 </span>            :       return result;
+<span class="lineNum">     250 </span>            :     }
+<span class="lineNum">     251 </span>            :     ();
+<span class="lineNum">     252 </span>            : 
+<span class="lineNum">     253 </span>            :     // Take tensor product to get full 3D r/theta/phi points
+<span class="lineNum">     254 </span>            :     const size_t num_total = num_radial * num_theta * num_phi;
+<span class="lineNum">     255 </span>            :     DataVector radii(num_total), thetas(num_total), phis(num_total);
+<span class="lineNum">     256 </span>            :     for (size_t phi = 0; phi &lt; num_phi; ++phi) {
+<span class="lineNum">     257 </span>            :       for (size_t theta = 0; theta &lt; num_theta; ++theta) {
+<span class="lineNum">     258 </span>            :         for (size_t r = 0; r &lt; num_radial; ++r) {
+<span class="lineNum">     259 </span>            :           const size_t i =
+<span class="lineNum">     260 </span>            :               r + theta * num_radial + phi * num_theta * num_radial;
+<span class="lineNum">     261 </span>            :           radii[i] = radii_1d[r];
+<span class="lineNum">     262 </span>            :           thetas[i] = thetas_1d[theta];
+<span class="lineNum">     263 </span>            :           phis[i] = phis_1d[phi];
+<span class="lineNum">     264 </span>            :         }
+<span class="lineNum">     265 </span>            :       }
+<span class="lineNum">     266 </span>            :     }
+<span class="lineNum">     267 </span>            : 
+<span class="lineNum">     268 </span>            :     // Compute x/y/z coordinates
+<span class="lineNum">     269 </span>            :     // Note: theta measured from +z axis, phi measured from +x axis
+<span class="lineNum">     270 </span>            :     tnsr::I&lt;DataVector, 3, typename Metavariables::domain_frame&gt; target_points(
+<span class="lineNum">     271 </span>            :         num_total);
+<span class="lineNum">     272 </span>            :     get&lt;0&gt;(target_points) = radii * sin(thetas) * cos(phis);
+<span class="lineNum">     273 </span>            :     get&lt;1&gt;(target_points) = radii * sin(thetas) * sin(phis);
+<span class="lineNum">     274 </span>            :     get&lt;2&gt;(target_points) = radii * cos(thetas);
+<span class="lineNum">     275 </span>            : 
+<span class="lineNum">     276 </span>            :     send_points_to_interpolator&lt;InterpolationTargetTag&gt;(
+<span class="lineNum">     277 </span>            :         box, cache, target_points, temporal_id);
+<span class="lineNum">     278 </span>            :   }
+<span class="lineNum">     279 </span>            : };
+<span class="lineNum">     280 </span>            : 
+<span class="lineNum">     281 </span>            : }  // namespace Actions
+<span class="lineNum">     282 </span>            : }  // namespace intrp
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

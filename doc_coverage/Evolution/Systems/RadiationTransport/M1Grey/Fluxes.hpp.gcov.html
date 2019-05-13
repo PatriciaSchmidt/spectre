@@ -1,0 +1,181 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Evolution/Systems/RadiationTransport/M1Grey/Fluxes.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">Evolution/Systems/RadiationTransport/M1Grey</a> - Fluxes.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntryLo">20.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;array&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : #include &quot;DataStructures/DataBox/DataBoxTag.hpp&quot;  // for item_type
+<span class="lineNum">       9 </span>            : #include &quot;DataStructures/DataBox/Prefixes.hpp&quot;    // IWYU pragma: keep
+<span class="lineNum">      10 </span>            : #include &quot;DataStructures/DataVector.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;DataStructures/Tensor/Tensor.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;DataStructures/Tensor/TypeAliases.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      13 </span>            : #include &quot;Evolution/Systems/GrMhd/ValenciaDivClean/TagsDeclarations.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      14 </span>            : #include &quot;Evolution/Systems/RadiationTransport/M1Grey/Tags.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      15 </span>            : #include &quot;PointwiseFunctions/GeneralRelativity/TagsDeclarations.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      16 </span>            : #include &quot;Utilities/Gsl.hpp&quot;   // for not_null
+<span class="lineNum">      17 </span>            : #include &quot;Utilities/TMPL.hpp&quot;  // for EXPAND_PACK_LEFT_TO...
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : // IWYU pragma: no_include &quot;PointwiseFunctions/GeneralRelativity/Tags.hpp&quot;
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : // IWYU pragma: no_forward_declare Tags::Flux
+<span class="lineNum">      22 </span>            : // IWYU pragma: no_forward_declare Tensor
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : namespace RadiationTransport {
+<span class="lineNum">      25 </span>            : namespace M1Grey {
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span>            : // Implementation of the M1 fluxes for individual neutrino species
+<span class="lineNum">      28 </span>            : namespace detail {
+<span class="lineNum">      29 </span>            : void compute_fluxes_impl(
+<span class="lineNum">      30 </span>            :     gsl::not_null&lt;tnsr::I&lt;DataVector, 3, Frame::Inertial&gt;*&gt; tilde_e_flux,
+<span class="lineNum">      31 </span>            :     gsl::not_null&lt;tnsr::Ij&lt;DataVector, 3, Frame::Inertial&gt;*&gt; tilde_s_flux,
+<span class="lineNum">      32 </span>            :     gsl::not_null&lt;tnsr::I&lt;DataVector, 3, Frame::Inertial&gt;*&gt; tilde_s_M,
+<span class="lineNum">      33 </span>            :     const Scalar&lt;DataVector&gt;&amp; tilde_e,
+<span class="lineNum">      34 </span>            :     const tnsr::i&lt;DataVector, 3, Frame::Inertial&gt;&amp; tilde_s,
+<span class="lineNum">      35 </span>            :     const tnsr::II&lt;DataVector, 3, Frame::Inertial&gt;&amp; tilde_p,
+<span class="lineNum">      36 </span>            :     const Scalar&lt;DataVector&gt;&amp; lapse,
+<span class="lineNum">      37 </span>            :     const tnsr::I&lt;DataVector, 3, Frame::Inertial&gt;&amp; shift,
+<span class="lineNum">      38 </span>            :     const tnsr::ii&lt;DataVector, 3, Frame::Inertial&gt;&amp; spatial_metric,
+<span class="lineNum">      39 </span>            :     const tnsr::II&lt;DataVector, 3, Frame::Inertial&gt;&amp;
+<span class="lineNum">      40 </span>            :         inv_spatial_metric) noexcept;
+<span class="lineNum">      41 </span>            : }  // namespace detail
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span>            : /*!
+<span class="lineNum">      44 </span>            :  * \brief The fluxes of the conservative variables in the M1 scheme
+<span class="lineNum">      45 </span>            :  *
+<span class="lineNum">      46 </span>            :  * \f{align*}
+<span class="lineNum">      47 </span>            :  * F^i({\tilde E}) = &amp;~ \alpha \gamma^{ij} {\tilde S}_j - \beta^j {\tilde E} \\
+<span class="lineNum">      48 </span>            :  * F^i({\tilde S}_j) = &amp;~ \alpha {\tilde P}^{ik} \gamma_{kj} - \beta^i {\tilde
+<span class="lineNum">      49 </span>            :  * S}_j \f}
+<span class="lineNum">      50 </span>            :  *
+<span class="lineNum">      51 </span>            :  * where the conserved variables \f${\tilde E}\f$, \f${\tilde S}_i\f$,
+<span class="lineNum">      52 </span>            :  * are a generalized mass-energy density and momentum density.
+<span class="lineNum">      53 </span>            :  * Furthermore, \f${\tilde P^{ij}}\f$ is the pressure tensor density of the
+<span class="lineNum">      54 </span>            :  * radiation field, \f$\alpha\f$ is the lapse, \f$\beta^i\f$ is the shift,
+<span class="lineNum">      55 </span>            :  * \f$\gamma_{ij}\f$ the 3-metric, and \f$\gamma^{ij}\f$ its inverse.
+<span class="lineNum">      56 </span>            :  *
+<span class="lineNum">      57 </span>            :  * In the main function, we loop over all neutrino species, and then call
+<span class="lineNum">      58 </span>            :  * the actual implementation of the fluxes.
+<span class="lineNum">      59 </span>            :  */
+<span class="lineNum">      60 </span>            : template &lt;typename... NeutrinoSpecies&gt;
+<span class="lineNum">      61 </span><span class="lineCov">          1 : struct ComputeFluxes {</span>
+<span class="lineNum">      62 </span><span class="lineNoCov">          0 :   using return_tags =</span>
+<span class="lineNum">      63 </span>            :       tmpl::list&lt;::Tags::Flux&lt;Tags::TildeE&lt;Frame::Inertial, NeutrinoSpecies&gt;,
+<span class="lineNum">      64 </span>            :                               tmpl::size_t&lt;3&gt;, Frame::Inertial&gt;...,
+<span class="lineNum">      65 </span>            :                  ::Tags::Flux&lt;Tags::TildeS&lt;Frame::Inertial, NeutrinoSpecies&gt;,
+<span class="lineNum">      66 </span>            :                               tmpl::size_t&lt;3&gt;, Frame::Inertial&gt;...&gt;;
+<span class="lineNum">      67 </span>            : 
+<span class="lineNum">      68 </span><span class="lineNoCov">          0 :   using argument_tags =</span>
+<span class="lineNum">      69 </span>            :       tmpl::list&lt;Tags::TildeE&lt;Frame::Inertial, NeutrinoSpecies&gt;...,
+<span class="lineNum">      70 </span>            :                  Tags::TildeS&lt;Frame::Inertial, NeutrinoSpecies&gt;...,
+<span class="lineNum">      71 </span>            :                  Tags::TildeP&lt;Frame::Inertial, NeutrinoSpecies&gt;...,
+<span class="lineNum">      72 </span>            :                  gr::Tags::Lapse&lt;&gt;, gr::Tags::Shift&lt;3&gt;,
+<span class="lineNum">      73 </span>            :                  gr::Tags::SpatialMetric&lt;3&gt;, gr::Tags::InverseSpatialMetric&lt;3&gt;&gt;;
+<span class="lineNum">      74 </span>            : 
+<span class="lineNum">      75 </span><span class="lineNoCov">          0 :   static void apply(</span>
+<span class="lineNum">      76 </span>            :       const gsl::not_null&lt;db::item_type&lt;
+<span class="lineNum">      77 </span>            :           ::Tags::Flux&lt;Tags::TildeE&lt;Frame::Inertial, NeutrinoSpecies&gt;,
+<span class="lineNum">      78 </span>            :                        tmpl::size_t&lt;3&gt;, Frame::Inertial&gt;&gt;*&gt;... tilde_e_flux,
+<span class="lineNum">      79 </span>            :       const gsl::not_null&lt;db::item_type&lt;
+<span class="lineNum">      80 </span>            :           ::Tags::Flux&lt;Tags::TildeS&lt;Frame::Inertial, NeutrinoSpecies&gt;,
+<span class="lineNum">      81 </span>            :                        tmpl::size_t&lt;3&gt;, Frame::Inertial&gt;&gt;*&gt;... tilde_s_flux,
+<span class="lineNum">      82 </span>            :       const db::item_type&lt;
+<span class="lineNum">      83 </span>            :           Tags::TildeE&lt;Frame::Inertial, NeutrinoSpecies&gt;&gt;&amp;... tilde_e,
+<span class="lineNum">      84 </span>            :       const db::item_type&lt;
+<span class="lineNum">      85 </span>            :           Tags::TildeS&lt;Frame::Inertial, NeutrinoSpecies&gt;&gt;&amp;... tilde_s,
+<span class="lineNum">      86 </span>            :       const db::item_type&lt;
+<span class="lineNum">      87 </span>            :           Tags::TildeP&lt;Frame::Inertial, NeutrinoSpecies&gt;&gt;&amp;... tilde_p,
+<span class="lineNum">      88 </span>            :       const Scalar&lt;DataVector&gt;&amp; lapse,
+<span class="lineNum">      89 </span>            :       const tnsr::I&lt;DataVector, 3, Frame::Inertial&gt;&amp; shift,
+<span class="lineNum">      90 </span>            :       const tnsr::ii&lt;DataVector, 3, Frame::Inertial&gt;&amp; spatial_metric,
+<span class="lineNum">      91 </span>            :       const tnsr::II&lt;DataVector, 3, Frame::Inertial&gt;&amp;
+<span class="lineNum">      92 </span>            :           inv_spatial_metric) noexcept {
+<span class="lineNum">      93 </span>            :     // Allocate memory for tildeS^i
+<span class="lineNum">      94 </span>            :     tnsr::I&lt;DataVector, 3, Frame::Inertial&gt; tilde_s_M(get(lapse).size());
+<span class="lineNum">      95 </span>            :     EXPAND_PACK_LEFT_TO_RIGHT(detail::compute_fluxes_impl(
+<span class="lineNum">      96 </span>            :         tilde_e_flux, tilde_s_flux, &amp;tilde_s_M, tilde_e, tilde_s, tilde_p,
+<span class="lineNum">      97 </span>            :         lapse, shift, spatial_metric, inv_spatial_metric));
+<span class="lineNum">      98 </span>            :   }
+<span class="lineNum">      99 </span>            : };
+<span class="lineNum">     100 </span>            : }  // namespace M1Grey
+<span class="lineNum">     101 </span>            : }  // namespace RadiationTransport
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

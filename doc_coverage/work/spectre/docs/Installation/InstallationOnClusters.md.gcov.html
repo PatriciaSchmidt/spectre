@@ -1,0 +1,173 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - /work/spectre/docs/Installation/InstallationOnClusters.md</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">work/spectre/docs/Installation</a> - InstallationOnClusters.md</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : \cond NEVER</span>
+<span class="lineNum">       2 </span>            : Distributed under the MIT License.
+<span class="lineNum">       3 </span>            : See LICENSE.txt for details.
+<span class="lineNum">       4 </span>            : \endcond
+<span class="lineNum">       5 </span>            : # Installation on Clusters {#installation_on_clusters}
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            : The installation instructions are the same for most systems because we use shell
+<span class="lineNum">       8 </span>            : scripts to set up the environment for each supercomputer. We describe the
+<span class="lineNum">       9 </span>            : generic installation instructions once, and only note special instructions if
+<span class="lineNum">      10 </span>            : necessary for the particular system. If you have already built SpECTRE and just
+<span class="lineNum">      11 </span>            : want to load the modules, source the shell file for your system and run
+<span class="lineNum">      12 </span>            : `spectre_load_modules`.
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            : \note Sample submit scripts for some systems are available in
+<span class="lineNum">      15 </span>            : `support/SubmitScripts`.
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            : ## General Instructions
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : 1. Run `export SPECTRE_HOME=/path/to/where/you/want/to/clone`
+<span class="lineNum">      20 </span>            : 2. Clone SpECTRE using `git clone SPECTRE_URL $SPECTRE_HOME`
+<span class="lineNum">      21 </span>            : 3. Run `cd $SPECTRE_HOME &amp;&amp; mkdir build &amp;&amp; cd build`
+<span class="lineNum">      22 </span>            : 4. Run `. $SPECTRE_HOME/support/Environments/SYSTEM_TO_RUN_ON_gcc.sh`, where
+<span class="lineNum">      23 </span>            :    `SYSTEM_TO_RUN_ON` is replaced by the name of the system as described in the
+<span class="lineNum">      24 </span>            :    relevant section below.
+<span class="lineNum">      25 </span>            : 5. If you haven't already installed the dependencies, run
+<span class="lineNum">      26 </span>            :    `export SPECTRE_DEPS=/path/to/where/you/want/the/deps`
+<span class="lineNum">      27 </span>            :    Then run `spectre_setup_modules $SPECTRE_DEPS`. This
+<span class="lineNum">      28 </span>            :    will take a while to finish. Near the end the command will tell you how to
+<span class="lineNum">      29 </span>            :    make the modules available by providing a `module use` command. Make
+<span class="lineNum">      30 </span>            :    sure you are providing an absolute path to `spectre_setup_modules`.
+<span class="lineNum">      31 </span>            : 6. Run `module use $SPECTRE_DEPS/modules`
+<span class="lineNum">      32 </span>            : 7. Run `spectre_run_cmake`, if you get module loading errors run
+<span class="lineNum">      33 </span>            :    `spectre_unload_modules` and try running `spectre_run_cmake` again. CMake
+<span class="lineNum">      34 </span>            :    should set up successfully.
+<span class="lineNum">      35 </span>            : 8. Build the targets you are interested in by running, e.g.
+<span class="lineNum">      36 </span>            :    `make -j4 test-executables`
+<span class="lineNum">      37 </span>            : 
+<span class="lineNum">      38 </span>            : ## BlueWaters at the National Center for Supercomputing Applications
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span>            : First run `module load bwpy &amp;&amp; bwpy-environ`, then follow the general
+<span class="lineNum">      41 </span>            : instructions using `bluewaters` as the `SYSTEM_TO_RUN_ON`. Note that once the
+<span class="lineNum">      42 </span>            : installation is completed, you will still need to run
+<span class="lineNum">      43 </span>            : `module load bwpy &amp;&amp; bwpy-environ` in order to run SpECTRE. Also note that
+<span class="lineNum">      44 </span>            : adding this command to your `.bashrc` may cause BlueWaters to hang; you must
+<span class="lineNum">      45 </span>            : run this command from the command line.
+<span class="lineNum">      46 </span>            : 
+<span class="lineNum">      47 </span>            : #### Running tests on BlueWaters
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span>            : You cannot just run `make test` or `ctest` on BlueWaters.
+<span class="lineNum">      50 </span>            : To run the tests:
+<span class="lineNum">      51 </span>            : 1. Get an interactive node using, e.g. `qsub -q debug -I -l nodes=1:ppn=16:xe -l
+<span class="lineNum">      52 </span>            :    walltime=00:30:00` or see the [BlueWaters documentation]
+<span class="lineNum">      53 </span>            :    (https://bluewaters.ncsa.illinois.edu/interactive-jobs)
+<span class="lineNum">      54 </span>            : 2. Setup the bwpy environment `module load bwpy &amp;&amp; bwpy-environ`
+<span class="lineNum">      55 </span>            : 3. Run the `module use` command you did earlier
+<span class="lineNum">      56 </span>            : 4. Load the module using the `spectre_load_modules` command
+<span class="lineNum">      57 </span>            : 5. Run
+<span class="lineNum">      58 </span>            :    ```
+<span class="lineNum">      59 </span>            :    aprun -n1 -d1 -- bwpy-environ -- \
+<span class="lineNum">      60 </span>            :      $SPECTRE_HOME/build/bin/NonFailureTestsRunTests.sh
+<span class="lineNum">      61 </span>            :    ```
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span>            : ## Cedar, Graham, and Niagara at ComputeCanada
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span>            : Use `compute_canada` as the `SYSTEM_TO_RUN_ON` in the general instructions.
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span>            : ## Wheeler at Caltech
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span>            : Follow the general instructions using `wheeler` for `SYSTEM_TO_RUN_ON`, except
+<span class="lineNum">      70 </span>            : you do not need to install any dependencies, so you can skip steps 5 and 6. You
+<span class="lineNum">      71 </span>            : can optionally compile using LLVM/Clang by sourcing `wheeler_clang.sh` instead
+<span class="lineNum">      72 </span>            : of `wheeler_gcc.sh`
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span>            : ## Ocean at Fullerton
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span>            : Follow the general instructions, using `ocean` for `SYSTEM_TO_RUN_ON`,
+<span class="lineNum">      77 </span>            : you do not need to install any dependencies, so you can skip steps 5 and 6.
+<span class="lineNum">      78 </span>            : 
+<span class="lineNum">      79 </span>            : ## Orca at Fullerton
+<span class="lineNum">      80 </span>            : 
+<span class="lineNum">      81 </span>            : Follow the general instructions, using `orca` for `SYSTEM_TO_RUN_ON`,
+<span class="lineNum">      82 </span>            : you do not need to install any dependencies, so you can skip steps 5 and 6.
+<span class="lineNum">      83 </span>            : 
+<span class="lineNum">      84 </span>            : ## Zwicky at Fullerton
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span>            : Follow the general instructions using `zwicky` for `SYSTEM_TO_RUN_ON`, except
+<span class="lineNum">      87 </span>            : you do not need to install any dependencies, so you can skip steps 5 and 6.
+<span class="lineNum">      88 </span>            : Only gcc is supported (use `zwicky_gcc.sh`).
+<span class="lineNum">      89 </span>            : 
+<span class="lineNum">      90 </span>            : Note that this is a very old machine, so you'll need to load many modules to
+<span class="lineNum">      91 </span>            : do common things (e.g. load modules for openssh and git operations). Do
+<span class="lineNum">      92 </span>            : `module avail` for a list of available modules, and look at
+<span class="lineNum">      93 </span>            : `/home/geoffrey/.bash_profile` for an example list of modules to load.
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

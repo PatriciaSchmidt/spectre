@@ -1,0 +1,1077 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Evolution/DiscontinuousGalerkin/SlopeLimiters/Krivodonova.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">Evolution/DiscontinuousGalerkin/SlopeLimiters</a> - Krivodonova.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntry">42</td>
+            <td class="headerCovTableEntryLo">11.9 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;array&gt;
+<span class="lineNum">       7 </span>            : #include &lt;boost/functional/hash.hpp&gt;  // IWYU pragma: keep
+<span class="lineNum">       8 </span>            : #include &lt;cmath&gt;
+<span class="lineNum">       9 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">      10 </span>            : #include &lt;limits&gt;
+<span class="lineNum">      11 </span>            : #include &lt;ostream&gt;
+<span class="lineNum">      12 </span>            : #include &lt;pup.h&gt;  // IWYU pragma: keep
+<span class="lineNum">      13 </span>            : #include &lt;type_traits&gt;
+<span class="lineNum">      14 </span>            : #include &lt;unordered_map&gt;
+<span class="lineNum">      15 </span>            : #include &lt;utility&gt;  // for pair
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            : #include &quot;DataStructures/DataBox/DataBoxTag.hpp&quot;
+<span class="lineNum">      18 </span>            : #include &quot;DataStructures/DataVector.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      19 </span>            : #include &quot;DataStructures/Index.hpp&quot;
+<span class="lineNum">      20 </span>            : #include &quot;DataStructures/ModalVector.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      21 </span>            : #include &quot;DataStructures/Tags.hpp&quot;
+<span class="lineNum">      22 </span>            : #include &quot;DataStructures/Tensor/Metafunctions.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      23 </span>            : #include &quot;DataStructures/Tensor/Tensor.hpp&quot;         // IWYU pragma: keep
+<span class="lineNum">      24 </span>            : #include &quot;DataStructures/Variables.hpp&quot;             // IWYU pragma: keep
+<span class="lineNum">      25 </span>            : #include &quot;DataStructures/VariablesHelpers.hpp&quot;
+<span class="lineNum">      26 </span>            : #include &quot;Domain/Direction.hpp&quot;
+<span class="lineNum">      27 </span>            : #include &quot;Domain/Element.hpp&quot;    // IWYU pragma: keep
+<span class="lineNum">      28 </span>            : #include &quot;Domain/ElementId.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      29 </span>            : #include &quot;Domain/Mesh.hpp&quot;
+<span class="lineNum">      30 </span>            : #include &quot;Domain/OrientationMap.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      31 </span>            : #include &quot;Domain/Tags.hpp&quot;            // IWYU pragma: keep
+<span class="lineNum">      32 </span>            : #include &quot;ErrorHandling/Error.hpp&quot;
+<span class="lineNum">      33 </span>            : #include &quot;NumericalAlgorithms/LinearOperators/CoefficientTransforms.hpp&quot;
+<span class="lineNum">      34 </span>            : #include &quot;NumericalAlgorithms/Spectral/Spectral.hpp&quot;
+<span class="lineNum">      35 </span>            : #include &quot;Options/Options.hpp&quot;
+<span class="lineNum">      36 </span>            : #include &quot;Utilities/Algorithm.hpp&quot;
+<span class="lineNum">      37 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      38 </span>            : #include &quot;Utilities/MakeArray.hpp&quot;
+<span class="lineNum">      39 </span>            : #include &quot;Utilities/Math.hpp&quot;
+<span class="lineNum">      40 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">      41 </span>            : 
+<span class="lineNum">      42 </span>            : // IWYU pragma: no_include &lt;algorithm&gt;
+<span class="lineNum">      43 </span>            : // IWYU pragma: no_forward_declare Variables
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span>            : /// \cond
+<span class="lineNum">      46 </span>            : namespace SlopeLimiters {
+<span class="lineNum">      47 </span>            : template &lt;size_t VolumeDim, typename TagsToLimit&gt;
+<span class="lineNum">      48 </span>            : class Krivodonova;
+<span class="lineNum">      49 </span>            : }  // namespace SlopeLimiters
+<span class="lineNum">      50 </span>            : /// \endcond
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span><span class="lineCov">          1 : namespace SlopeLimiters {</span>
+<span class="lineNum">      53 </span>            : /*!
+<span class="lineNum">      54 </span>            :  * \ingroup SlopeLimitersGroup
+<span class="lineNum">      55 </span>            :  * \brief An implementation of the Krivodonova slope limiter.
+<span class="lineNum">      56 </span>            :  *
+<span class="lineNum">      57 </span>            :  * The slope limiter is described in \cite Krivodonova2007. The Krivodonova
+<span class="lineNum">      58 </span>            :  * limiter works by limiting the highest derivatives/modal coefficients using an
+<span class="lineNum">      59 </span>            :  * aggressive minmod approach, decreasing in derivative/modal coefficient order
+<span class="lineNum">      60 </span>            :  * until no more limiting is necessary. In 3d, the function being limited is
+<span class="lineNum">      61 </span>            :  * expanded as:
+<span class="lineNum">      62 </span>            :  *
+<span class="lineNum">      63 </span>            :  * \f{align}{
+<span class="lineNum">      64 </span>            :  * u^{l,m,n}=\sum_{i,j,k=0,0,0}^{N_i,N_j,N_k}c^{l,m,n}_{i,j,k}
+<span class="lineNum">      65 </span>            :  *  P_{i}(\xi)P_{j}(\eta)P_{k}(\zeta)
+<span class="lineNum">      66 </span>            :  * \f}
+<span class="lineNum">      67 </span>            :  *
+<span class="lineNum">      68 </span>            :  * where \f$\left\{\xi, \eta, \zeta\right\}\f$ are the logical coordinates,
+<span class="lineNum">      69 </span>            :  * \f$P_{i}\f$ are the Legendre polynomials, the superscript \f$\{l,m,n\}\f$
+<span class="lineNum">      70 </span>            :  * represents the element indexed by \f$l,m,n\f$, and \f$N_i,N_j\f$ and
+<span class="lineNum">      71 </span>            :  * \f$N_k\f$ are the number of collocation points minus one in the
+<span class="lineNum">      72 </span>            :  * \f$\xi,\eta,\f$ and \f$\zeta\f$ direction, respectively. The coefficients are
+<span class="lineNum">      73 </span>            :  * limited according to:
+<span class="lineNum">      74 </span>            :  *
+<span class="lineNum">      75 </span>            :  * \f{align}{
+<span class="lineNum">      76 </span>            :  * \tilde{c}^{l,m,n}_{i,j,k}=\mathrm{minmod}
+<span class="lineNum">      77 </span>            :  *   &amp;\left(c_{i,j,k}^{l,m,n},
+<span class="lineNum">      78 </span>            :  *          \alpha_i\left(c^{l+1,m,n}_{i-1,j,k}-c^{l,m,n}_{i-1,j,k}\right),
+<span class="lineNum">      79 </span>            :  *          \alpha_i\left(c^{l,m,n}_{i-1,j,k}-c^{l-1,m,n}_{i-1,j,k}\right),
+<span class="lineNum">      80 </span>            :  *     \right.\notag \\
+<span class="lineNum">      81 </span>            :  *   &amp;\;\;\;\;
+<span class="lineNum">      82 </span>            :  *          \alpha_j\left(c^{l,m+1,n}_{i,j-1,k}-c^{l,m,n}_{i,j-1,k}\right),
+<span class="lineNum">      83 </span>            :  *          \alpha_j\left(c^{l,m,n}_{i,j-1,k}-c^{l,m-1,n}_{i,j-1,k}\right),
+<span class="lineNum">      84 </span>            :  *     \notag \\
+<span class="lineNum">      85 </span>            :  *   &amp;\;\;\;\;\left.
+<span class="lineNum">      86 </span>            :  *          \alpha_k\left(c^{l,m,n+1}_{i,j,k-1}-c^{l,m,n}_{i,j,k-1}\right),
+<span class="lineNum">      87 </span>            :  *          \alpha_k\left(c^{l,m,n}_{i,j,k-1}-c^{l,m,n-1}_{i,j,k-1}\right)
+<span class="lineNum">      88 </span>            :  *     \right),
+<span class="lineNum">      89 </span>            :  * \label{eq:krivodonova 3d minmod}
+<span class="lineNum">      90 </span>            :  * \f}
+<span class="lineNum">      91 </span>            :  *
+<span class="lineNum">      92 </span>            :  * where \f$\mathrm{minmod}\f$ is the minmod function defined as
+<span class="lineNum">      93 </span>            :  *
+<span class="lineNum">      94 </span>            :  * \f{align}{
+<span class="lineNum">      95 </span>            :  *  \mathrm{minmod}(a,b,c,\ldots)=
+<span class="lineNum">      96 </span>            :  *  \left\{
+<span class="lineNum">      97 </span>            :  *  \begin{array}{ll}
+<span class="lineNum">      98 </span>            :  *    \mathrm{sgn}(a)\min(\lvert a\rvert, \lvert b\rvert,
+<span class="lineNum">      99 </span>            :  *    \lvert c\rvert, \ldots) &amp; \mathrm{if} \;
+<span class="lineNum">     100 </span>            :  *    \mathrm{sgn}(a)=\mathrm{sgn}(b)=\mathrm{sgn}(c)=\mathrm{sgn}(\ldots) \\
+<span class="lineNum">     101 </span>            :  *    0 &amp; \mathrm{otherwise}
+<span class="lineNum">     102 </span>            :  *  \end{array}\right.
+<span class="lineNum">     103 </span>            :  * \f}
+<span class="lineNum">     104 </span>            :  *
+<span class="lineNum">     105 </span>            :  * Krivodonova \cite Krivodonova2007 requires \f$\alpha_i\f$ to be in the range
+<span class="lineNum">     106 </span>            :  *
+<span class="lineNum">     107 </span>            :  * \f{align*}{
+<span class="lineNum">     108 </span>            :  * \frac{1}{2(2i-1)}\le \alpha_i \le 1
+<span class="lineNum">     109 </span>            :  * \f}
+<span class="lineNum">     110 </span>            :  *
+<span class="lineNum">     111 </span>            :  * where the lower bound comes from finite differencing the coefficients between
+<span class="lineNum">     112 </span>            :  * neighbor elements when using Legendre polynomials (see \cite Krivodonova2007
+<span class="lineNum">     113 </span>            :  * for details). Note that we normalize our Legendre polynomials by \f$P_i(1) =
+<span class="lineNum">     114 </span>            :  * 1\f$; this is the normalization \cite Krivodonova2007 uses in 1D, (but not in
+<span class="lineNum">     115 </span>            :  * 2D), which is why our bounds on \f$\alpha_i\f$ match Eq. 14 of
+<span class="lineNum">     116 </span>            :  * \cite Krivodonova2007 (but not Eq. 23). We relax the lower bound:
+<span class="lineNum">     117 </span>            :  *
+<span class="lineNum">     118 </span>            :  * \f{align*}{
+<span class="lineNum">     119 </span>            :  * 0 \le \alpha_i \le 1
+<span class="lineNum">     120 </span>            :  * \f}
+<span class="lineNum">     121 </span>            :  *
+<span class="lineNum">     122 </span>            :  * to allow different basis functions (e.g. Chebyshev polynomials) and to allow
+<span class="lineNum">     123 </span>            :  * the limiter to be more dissipative if necessary. The same \f$\alpha_i\f$s are
+<span class="lineNum">     124 </span>            :  * used in all dimensions.
+<span class="lineNum">     125 </span>            :  *
+<span class="lineNum">     126 </span>            :  * \note The only place where the specific choice of 1d basis
+<span class="lineNum">     127 </span>            :  * comes in is the lower bound for the \f$\alpha_i\f$s, and so in general the
+<span class="lineNum">     128 </span>            :  * limiter can be applied to any 1d or tensor product of 1d basis functions.
+<span class="lineNum">     129 </span>            :  *
+<span class="lineNum">     130 </span>            :  * The limiting procedure must be applied from the highest derivatives to the
+<span class="lineNum">     131 </span>            :  * lowest, i.e. the highest coefficients to the lowest. Let us consider a 3d
+<span class="lineNum">     132 </span>            :  * element with \f$N+1\f$ coefficients in each dimension and denote the
+<span class="lineNum">     133 </span>            :  * coefficients as \f$c_{i,j,k}\f$. Then the limiting procedure starts at
+<span class="lineNum">     134 </span>            :  * \f$c_{N,N,N}\f$, followed by \f$c_{N,N,N-1}\f$, \f$c_{N,N-1,N}\f$, and
+<span class="lineNum">     135 </span>            :  * \f$c_{N-1,N,N}\f$. A detailed example is given below. Limiting is stopped if
+<span class="lineNum">     136 </span>            :  * all symmetric pairs of coefficients are left unchanged, i.e.
+<span class="lineNum">     137 </span>            :  * \f$c_{i,j,k}=\tilde{c}_{i,j,k}\f$. By all symmetric coefficients we mean
+<span class="lineNum">     138 </span>            :  * that, for example, \f$c_{N-i,N-j,N-k}\f$, \f$c_{N-j,N-i,N-k}\f$,
+<span class="lineNum">     139 </span>            :  * \f$c_{N-k,N-j,N-i}\f$, \f$c_{N-j,N-k,N-i}\f$, \f$c_{N-i,N-k,N-j}\f$, and
+<span class="lineNum">     140 </span>            :  * \f$c_{N-k,N-i,N-j}\f$ are not limited. As a concrete example, consider a 3d
+<span class="lineNum">     141 </span>            :  * element with 3 collocation points per dimension. Each limited coefficient is
+<span class="lineNum">     142 </span>            :  * defined as (though only computed if needed):
+<span class="lineNum">     143 </span>            :  *
+<span class="lineNum">     144 </span>            :  * \f{align*}{
+<span class="lineNum">     145 </span>            :  * \tilde{c}^{l,m,n}_{2,2,2}=\mathrm{minmod}
+<span class="lineNum">     146 </span>            :  *   &amp;\left(c_{2,2,2}^{l,m,n},
+<span class="lineNum">     147 </span>            :  *          \alpha_2\left(c^{l+1,m,n}_{1,2,2}-c^{l,m,n}_{1,2,2}\right),
+<span class="lineNum">     148 </span>            :  *          \alpha_2\left(c^{l,m,n}_{1,2,2}-c^{l-1,m,n}_{1,2,2}\right),
+<span class="lineNum">     149 </span>            :  *     \right.\\
+<span class="lineNum">     150 </span>            :  *   &amp;\;\;\;\;
+<span class="lineNum">     151 </span>            :  *          \alpha_2\left(c^{l,m+1,n}_{2,1,2}-c^{l,m,n}_{2,1,2}\right),
+<span class="lineNum">     152 </span>            :  *          \alpha_2\left(c^{l,m,n}_{2,1,2}-c^{l,m-1,n}_{2,1,2}\right),\\
+<span class="lineNum">     153 </span>            :  *   &amp;\;\;\;\;\left.
+<span class="lineNum">     154 </span>            :  *          \alpha_2\left(c^{l,m,n+1}_{2,2,1}-c^{l,m,n}_{2,2,1}\right),
+<span class="lineNum">     155 </span>            :  *          \alpha_2\left(c^{l,m,n}_{2,2,1}-c^{l,m,n-1}_{2,2,1}\right)
+<span class="lineNum">     156 </span>            :  *     \right),\\
+<span class="lineNum">     157 </span>            :  * \tilde{c}^{l,m,n}_{2,2,1}=\mathrm{minmod}
+<span class="lineNum">     158 </span>            :  *   &amp;\left(c_{2,2,1}^{l,m,n},
+<span class="lineNum">     159 </span>            :  *          \alpha_2\left(c^{l+1,m,n}_{1,2,1}-c^{l,m,n}_{1,2,1}\right),
+<span class="lineNum">     160 </span>            :  *          \alpha_2\left(c^{l,m,n}_{1,2,1}-c^{l-1,m,n}_{1,2,1}\right),
+<span class="lineNum">     161 </span>            :  *     \right.\\
+<span class="lineNum">     162 </span>            :  *   &amp;\;\;\;\;
+<span class="lineNum">     163 </span>            :  *          \alpha_2\left(c^{l,m+1,n}_{2,1,1}-c^{l,m,n}_{2,1,1}\right),
+<span class="lineNum">     164 </span>            :  *          \alpha_2\left(c^{l,m,n}_{2,1,1}-c^{l,m-1,n}_{2,1,1}\right),\\
+<span class="lineNum">     165 </span>            :  *   &amp;\;\;\;\;\left.
+<span class="lineNum">     166 </span>            :  *          \alpha_1\left(c^{l,m,n+1}_{2,2,0}-c^{l,m,n}_{2,2,0}\right),
+<span class="lineNum">     167 </span>            :  *          \alpha_1\left(c^{l,m,n}_{2,2,0}-c^{l,m,n-1}_{2,2,0}\right)
+<span class="lineNum">     168 </span>            :  *     \right),\\
+<span class="lineNum">     169 </span>            :  * \tilde{c}^{l,m,n}_{2,1,2}=\mathrm{minmod}
+<span class="lineNum">     170 </span>            :  *   &amp;\left(c_{2,1,2}^{l,m,n},
+<span class="lineNum">     171 </span>            :  *          \alpha_2\left(c^{l+1,m,n}_{1,1,2}-c^{l,m,n}_{1,1,2}\right),
+<span class="lineNum">     172 </span>            :  *          \alpha_2\left(c^{l,m,n}_{1,1,2}-c^{l-1,m,n}_{1,1,2}\right),
+<span class="lineNum">     173 </span>            :  *     \right.\\
+<span class="lineNum">     174 </span>            :  *   &amp;\;\;\;\;
+<span class="lineNum">     175 </span>            :  *          \alpha_1\left(c^{l,m+1,n}_{2,0,2}-c^{l,m,n}_{2,0,2}\right),
+<span class="lineNum">     176 </span>            :  *          \alpha_1\left(c^{l,m,n}_{2,0,2}-c^{l,m-1,n}_{2,0,2}\right),\\
+<span class="lineNum">     177 </span>            :  *   &amp;\;\;\;\;\left.
+<span class="lineNum">     178 </span>            :  *          \alpha_2\left(c^{l,m,n+1}_{2,1,1}-c^{l,m,n}_{2,1,1}\right),
+<span class="lineNum">     179 </span>            :  *          \alpha_2\left(c^{l,m,n}_{2,1,1}-c^{l,m,n-1}_{2,1,1}\right)
+<span class="lineNum">     180 </span>            :  *     \right),\\
+<span class="lineNum">     181 </span>            :  * \tilde{c}^{l,m,n}_{1,2,2}=\mathrm{minmod}
+<span class="lineNum">     182 </span>            :  *   &amp;\left(c_{1,2,2}^{l,m,n},
+<span class="lineNum">     183 </span>            :  *          \alpha_1\left(c^{l+1,m,n}_{0,2,2}-c^{l,m,n}_{0,2,2}\right),
+<span class="lineNum">     184 </span>            :  *          \alpha_1\left(c^{l,m,n}_{0,2,2}-c^{l-1,m,n}_{0,2,2}\right),
+<span class="lineNum">     185 </span>            :  *     \right.\\
+<span class="lineNum">     186 </span>            :  *   &amp;\;\;\;\;
+<span class="lineNum">     187 </span>            :  *          \alpha_2\left(c^{l,m+1,n}_{1,1,2}-c^{l,m,n}_{1,1,2}\right),
+<span class="lineNum">     188 </span>            :  *          \alpha_2\left(c^{l,m,n}_{1,1,2}-c^{l,m-1,n}_{1,1,2}\right),\\
+<span class="lineNum">     189 </span>            :  *   &amp;\;\;\;\;\left.
+<span class="lineNum">     190 </span>            :  *          \alpha_2\left(c^{l,m,n+1}_{1,2,1}-c^{l,m,n}_{1,2,1}\right),
+<span class="lineNum">     191 </span>            :  *          \alpha_2\left(c^{l,m,n}_{1,2,1}-c^{l,m,n-1}_{1,2,1}\right)
+<span class="lineNum">     192 </span>            :  *     \right),\\
+<span class="lineNum">     193 </span>            :  * \tilde{c}^{l,m,n}_{2,2,0}=\mathrm{minmod}
+<span class="lineNum">     194 </span>            :  *   &amp;\left(c_{2,2,0}^{l,m,n},
+<span class="lineNum">     195 </span>            :  *          \alpha_2\left(c^{l+1,m,n}_{1,2,0}-c^{l,m,n}_{1,2,0}\right),
+<span class="lineNum">     196 </span>            :  *          \alpha_2\left(c^{l,m,n}_{1,2,0}-c^{l-1,m,n}_{1,2,0}\right),
+<span class="lineNum">     197 </span>            :  *     \right.\\
+<span class="lineNum">     198 </span>            :  *   &amp;\;\;\;\;\left.
+<span class="lineNum">     199 </span>            :  *          \alpha_2\left(c^{l,m+1,n}_{2,1,0}-c^{l,m,n}_{2,1,0}\right),
+<span class="lineNum">     200 </span>            :  *          \alpha_2\left(c^{l,m,n}_{2,1,0}-c^{l,m-1,n}_{2,1,0}\right)
+<span class="lineNum">     201 </span>            :  *     \right),\\
+<span class="lineNum">     202 </span>            :  * \tilde{c}^{l,m,n}_{2,0,2}=\mathrm{minmod}
+<span class="lineNum">     203 </span>            :  *   &amp;\left(c_{2,0,2}^{l,m,n},
+<span class="lineNum">     204 </span>            :  *          \alpha_2\left(c^{l+1,m,n}_{1,0,2}-c^{l,m,n}_{1,0,2}\right),
+<span class="lineNum">     205 </span>            :  *          \alpha_2\left(c^{l,m,n}_{1,0,2}-c^{l-1,m,n}_{1,0,2}\right),
+<span class="lineNum">     206 </span>            :  *     \right.\\
+<span class="lineNum">     207 </span>            :  *   &amp;\;\;\;\;\left.
+<span class="lineNum">     208 </span>            :  *          \alpha_2\left(c^{l,m,n+1}_{2,0,1}-c^{l,m,n}_{2,0,1}\right),
+<span class="lineNum">     209 </span>            :  *          \alpha_2\left(c^{l,m,n}_{2,0,1}-c^{l,m,n-1}_{2,0,1}\right)
+<span class="lineNum">     210 </span>            :  *     \right),\\
+<span class="lineNum">     211 </span>            :  * \tilde{c}^{l,m,n}_{0,2,2}=\mathrm{minmod}
+<span class="lineNum">     212 </span>            :  *   &amp;\left(c_{0,2,2}^{l,m,n},
+<span class="lineNum">     213 </span>            :  *          \alpha_2\left(c^{l,m+1,n}_{0,1,2}-c^{l,m,n}_{0,1,2}\right),
+<span class="lineNum">     214 </span>            :  *          \alpha_2\left(c^{l,m,n}_{0,1,2}-c^{l,m-1,n}_{0,1,2}\right),
+<span class="lineNum">     215 </span>            :  *     \right.\\
+<span class="lineNum">     216 </span>            :  *   &amp;\;\;\;\;\left.
+<span class="lineNum">     217 </span>            :  *          \alpha_2\left(c^{l,m,n+1}_{0,2,1}-c^{l,m,n}_{0,2,1}\right),
+<span class="lineNum">     218 </span>            :  *          \alpha_2\left(c^{l,m,n}_{0,2,1}-c^{l,m,n-1}_{0,2,1}\right)
+<span class="lineNum">     219 </span>            :  *     \right),\\
+<span class="lineNum">     220 </span>            :  * \tilde{c}^{l,m,n}_{2,1,1}=\mathrm{minmod}
+<span class="lineNum">     221 </span>            :  *   &amp;\left(c_{2,1,1}^{l,m,n},
+<span class="lineNum">     222 </span>            :  *          \alpha_2\left(c^{l+1,m,n}_{1,1,1}-c^{l,m,n}_{1,1,1}\right),
+<span class="lineNum">     223 </span>            :  *          \alpha_2\left(c^{l,m,n}_{1,1,1}-c^{l-1,m,n}_{1,1,1}\right),
+<span class="lineNum">     224 </span>            :  *     \right.\\
+<span class="lineNum">     225 </span>            :  *   &amp;\;\;\;\;
+<span class="lineNum">     226 </span>            :  *          \alpha_1\left(c^{l,m+1,n}_{2,0,1}-c^{l,m,n}_{2,0,1}\right),
+<span class="lineNum">     227 </span>            :  *          \alpha_1\left(c^{l,m,n}_{2,0,1}-c^{l,m-1,n}_{2,0,1}\right),\\
+<span class="lineNum">     228 </span>            :  *   &amp;\;\;\;\;\left.
+<span class="lineNum">     229 </span>            :  *          \alpha_1\left(c^{l,m,n+1}_{2,1,0}-c^{l,m,n}_{2,1,0}\right),
+<span class="lineNum">     230 </span>            :  *          \alpha_1\left(c^{l,m,n}_{2,1,0}-c^{l,m,n-1}_{2,1,0}\right)
+<span class="lineNum">     231 </span>            :  *     \right),\\
+<span class="lineNum">     232 </span>            :  * \tilde{c}^{l,m,n}_{1,2,1}=\mathrm{minmod}
+<span class="lineNum">     233 </span>            :  *   &amp;\left(c_{1,2,1}^{l,m,n},
+<span class="lineNum">     234 </span>            :  *          \alpha_1\left(c^{l+1,m,n}_{0,2,1}-c^{l,m,n}_{0,2,1}\right),
+<span class="lineNum">     235 </span>            :  *          \alpha_1\left(c^{l,m,n}_{0,2,1}-c^{l-1,m,n}_{0,2,1}\right),
+<span class="lineNum">     236 </span>            :  *     \right.\\
+<span class="lineNum">     237 </span>            :  *   &amp;\;\;\;\;
+<span class="lineNum">     238 </span>            :  *          \alpha_2\left(c^{l,m+1,n}_{1,1,1}-c^{l,m,n}_{1,1,1}\right),
+<span class="lineNum">     239 </span>            :  *          \alpha_2\left(c^{l,m,n}_{1,1,1}-c^{l,m-1,n}_{1,1,1}\right),\\
+<span class="lineNum">     240 </span>            :  *   &amp;\;\;\;\;\left.
+<span class="lineNum">     241 </span>            :  *          \alpha_1\left(c^{l,m,n+1}_{1,2,0}-c^{l,m,n}_{1,2,0}\right),
+<span class="lineNum">     242 </span>            :  *          \alpha_1\left(c^{l,m,n}_{1,2,0}-c^{l,m,n-1}_{1,2,0}\right)
+<span class="lineNum">     243 </span>            :  *     \right),\\
+<span class="lineNum">     244 </span>            :  * \tilde{c}^{l,m,n}_{1,1,2}=\mathrm{minmod}
+<span class="lineNum">     245 </span>            :  *   &amp;\left(c_{1,1,2}^{l,m,n},
+<span class="lineNum">     246 </span>            :  *          \alpha_1\left(c^{l+1,m,n}_{0,1,2}-c^{l,m,n}_{0,1,2}\right),
+<span class="lineNum">     247 </span>            :  *          \alpha_1\left(c^{l,m,n}_{0,1,2}-c^{l-1,m,n}_{0,1,2}\right),
+<span class="lineNum">     248 </span>            :  *     \right.\\
+<span class="lineNum">     249 </span>            :  *   &amp;\;\;\;\;
+<span class="lineNum">     250 </span>            :  *          \alpha_1\left(c^{l,m+1,n}_{1,0,2}-c^{l,m,n}_{1,0,2}\right),
+<span class="lineNum">     251 </span>            :  *          \alpha_1\left(c^{l,m,n}_{1,0,2}-c^{l,m-1,n}_{1,0,2}\right),\\
+<span class="lineNum">     252 </span>            :  *   &amp;\;\;\;\;\left.
+<span class="lineNum">     253 </span>            :  *          \alpha_2\left(c^{l,m,n+1}_{1,1,1}-c^{l,m,n}_{1,1,1}\right),
+<span class="lineNum">     254 </span>            :  *          \alpha_2\left(c^{l,m,n}_{1,1,1}-c^{l,m,n-1}_{1,1,1}\right)
+<span class="lineNum">     255 </span>            :  *     \right),
+<span class="lineNum">     256 </span>            :  * \f}
+<span class="lineNum">     257 </span>            :  * \f{align*}{
+<span class="lineNum">     258 </span>            :  * \tilde{c}^{l,m,n}_{2,1,0}=\mathrm{minmod}
+<span class="lineNum">     259 </span>            :  *   &amp;\left(c_{2,1,0}^{l,m,n},
+<span class="lineNum">     260 </span>            :  *          \alpha_2\left(c^{l+1,m,n}_{1,1,0}-c^{l,m,n}_{1,1,0}\right),
+<span class="lineNum">     261 </span>            :  *          \alpha_2\left(c^{l,m,n}_{1,1,0}-c^{l-1,m,n}_{1,1,0}\right),
+<span class="lineNum">     262 </span>            :  *     \right.\\
+<span class="lineNum">     263 </span>            :  *   &amp;\;\;\;\;\left.
+<span class="lineNum">     264 </span>            :  *          \alpha_1\left(c^{l,m+1,n}_{2,0,0}-c^{l,m,n}_{2,0,0}\right),
+<span class="lineNum">     265 </span>            :  *          \alpha_1\left(c^{l,m,n}_{2,0,0}-c^{l,m-1,n}_{2,0,0}\right)
+<span class="lineNum">     266 </span>            :  *     \right),\\
+<span class="lineNum">     267 </span>            :  * \tilde{c}^{l,m,n}_{2,0,1}=\mathrm{minmod}
+<span class="lineNum">     268 </span>            :  *   &amp;\left(c_{2,0,1}^{l,m,n},
+<span class="lineNum">     269 </span>            :  *          \alpha_2\left(c^{l+1,m,n}_{1,0,1}-c^{l,m,n}_{1,0,1}\right),
+<span class="lineNum">     270 </span>            :  *          \alpha_2\left(c^{l,m,n}_{1,0,1}-c^{l-1,m,n}_{1,0,1}\right),
+<span class="lineNum">     271 </span>            :  *     \right.\\
+<span class="lineNum">     272 </span>            :  *   &amp;\;\;\;\;\left.
+<span class="lineNum">     273 </span>            :  *          \alpha_1\left(c^{l,m,n+1}_{2,0,0}-c^{l,m,n}_{2,0,0}\right),
+<span class="lineNum">     274 </span>            :  *          \alpha_1\left(c^{l,m,n}_{2,0,0}-c^{l,m,n-1}_{2,0,0}\right)
+<span class="lineNum">     275 </span>            :  *     \right),\\
+<span class="lineNum">     276 </span>            :  * \tilde{c}^{l,m,n}_{1,2,0}=\mathrm{minmod}
+<span class="lineNum">     277 </span>            :  *   &amp;\left(c_{1,2,0}^{l,m,n},
+<span class="lineNum">     278 </span>            :  *          \alpha_1\left(c^{l+1,m,n}_{0,2,0}-c^{l,m,n}_{0,2,0}\right),
+<span class="lineNum">     279 </span>            :  *          \alpha_1\left(c^{l,m,n}_{0,2,0}-c^{l-1,m,n}_{0,2,0}\right),
+<span class="lineNum">     280 </span>            :  *     \right.\\
+<span class="lineNum">     281 </span>            :  *   &amp;\;\;\;\;\left.
+<span class="lineNum">     282 </span>            :  *          \alpha_2\left(c^{l,m+1,n}_{1,1,0}-c^{l,m,n}_{1,1,0}\right),
+<span class="lineNum">     283 </span>            :  *          \alpha_2\left(c^{l,m,n}_{1,1,0}-c^{l,m-1,n}_{1,1,0}\right)
+<span class="lineNum">     284 </span>            :  *     \right),\\
+<span class="lineNum">     285 </span>            :  * \tilde{c}^{l,m,n}_{1,0,2}=\mathrm{minmod}
+<span class="lineNum">     286 </span>            :  *   &amp;\left(c_{1,0,2}^{l,m,n},
+<span class="lineNum">     287 </span>            :  *          \alpha_1\left(c^{l+1,m,n}_{0,0,2}-c^{l,m,n}_{0,0,2}\right),
+<span class="lineNum">     288 </span>            :  *          \alpha_1\left(c^{l,m,n}_{0,0,2}-c^{l-1,m,n}_{0,0,2}\right),
+<span class="lineNum">     289 </span>            :  *     \right.\\
+<span class="lineNum">     290 </span>            :  *   &amp;\;\;\;\;\left.
+<span class="lineNum">     291 </span>            :  *          \alpha_2\left(c^{l,m,n+1}_{1,0,1}-c^{l,m,n}_{1,0,1}\right),
+<span class="lineNum">     292 </span>            :  *          \alpha_2\left(c^{l,m,n}_{1,0,1}-c^{l,m,n-1}_{1,0,1}\right)
+<span class="lineNum">     293 </span>            :  *     \right),\\
+<span class="lineNum">     294 </span>            :  * \tilde{c}^{l,m,n}_{0,1,2}=\mathrm{minmod}
+<span class="lineNum">     295 </span>            :  *   &amp;\left(c_{0,1,2}^{l,m,n},
+<span class="lineNum">     296 </span>            :  *          \alpha_1\left(c^{l,m+1,n}_{0,0,2}-c^{l,m,n}_{0,0,2}\right),
+<span class="lineNum">     297 </span>            :  *          \alpha_1\left(c^{l,m,n}_{0,0,2}-c^{l,m-1,n}_{0,0,2}\right),
+<span class="lineNum">     298 </span>            :  *   \right. \\
+<span class="lineNum">     299 </span>            :  *   &amp;\;\;\;\;\left.
+<span class="lineNum">     300 </span>            :  *          \alpha_2\left(c^{l,m,n+1}_{0,1,1}-c^{l,m,n}_{0,1,1}\right),
+<span class="lineNum">     301 </span>            :  *          \alpha_2\left(c^{l,m,n}_{0,1,1}-c^{l,m,n-1}_{0,1,1}\right)
+<span class="lineNum">     302 </span>            :  *     \right),\\
+<span class="lineNum">     303 </span>            :  * \tilde{c}^{l,m,n}_{0,2,1}=\mathrm{minmod}
+<span class="lineNum">     304 </span>            :  *   &amp;\left(c_{0,2,1}^{l,m,n},
+<span class="lineNum">     305 </span>            :  *          \alpha_2\left(c^{l,m+1,n}_{0,1,1}-c^{l,m,n}_{0,1,1}\right),
+<span class="lineNum">     306 </span>            :  *          \alpha_2\left(c^{l,m,n}_{0,1,1}-c^{l,m-1,n}_{0,1,1}\right),
+<span class="lineNum">     307 </span>            :  *   \right.\\
+<span class="lineNum">     308 </span>            :  *   &amp;\;\;\;\;\left.
+<span class="lineNum">     309 </span>            :  *          \alpha_1\left(c^{l,m,n+1}_{0,2,0}-c^{l,m,n}_{0,2,0}\right),
+<span class="lineNum">     310 </span>            :  *          \alpha_1\left(c^{l,m,n}_{0,2,0}-c^{l,m,n-1}_{0,2,0}\right)
+<span class="lineNum">     311 </span>            :  *     \right),
+<span class="lineNum">     312 </span>            :  * \f}
+<span class="lineNum">     313 </span>            :  * \f{align*}{
+<span class="lineNum">     314 </span>            :  * \tilde{c}^{l,m,n}_{2,0,0}=\mathrm{minmod}
+<span class="lineNum">     315 </span>            :  *   &amp;\left(c_{2,0,0}^{l,m,n},
+<span class="lineNum">     316 </span>            :  *          \alpha_2\left(c^{l+1,m,n}_{1,0,0}-c^{l,m,n}_{1,0,0}\right),
+<span class="lineNum">     317 </span>            :  *          \alpha_2\left(c^{l,m,n}_{1,0,0}-c^{l-1,m,n}_{1,0,0}\right)
+<span class="lineNum">     318 </span>            :  *     \right),\\
+<span class="lineNum">     319 </span>            :  * \tilde{c}^{l,m,n}_{0,2,0}=\mathrm{minmod}
+<span class="lineNum">     320 </span>            :  *   &amp;\left(c_{0,2,0}^{l,m,n},
+<span class="lineNum">     321 </span>            :  *          \alpha_2\left(c^{l,m+1,n}_{0,1,0}-c^{l,m,n}_{0,1,0}\right),
+<span class="lineNum">     322 </span>            :  *          \alpha_2\left(c^{l,m,n}_{0,1,0}-c^{l,m-1,n}_{0,1,0}\right)
+<span class="lineNum">     323 </span>            :  *     \right),\\
+<span class="lineNum">     324 </span>            :  * \tilde{c}^{l,m,n}_{0,0,2}=\mathrm{minmod}
+<span class="lineNum">     325 </span>            :  *   &amp;\left(c_{0,0,2}^{l,m,n},
+<span class="lineNum">     326 </span>            :  *          \alpha_2\left(c^{l,m,n+1}_{0,0,1}-c^{l,m,n}_{0,0,1}\right),
+<span class="lineNum">     327 </span>            :  *          \alpha_2\left(c^{l,m,n}_{0,0,1}-c^{l,m,n-1}_{0,0,1}\right)
+<span class="lineNum">     328 </span>            :  *     \right),\\
+<span class="lineNum">     329 </span>            :  * \tilde{c}^{l,m,n}_{1,1,1}=\mathrm{minmod}
+<span class="lineNum">     330 </span>            :  *   &amp;\left(c_{1,1,1}^{l,m,n},
+<span class="lineNum">     331 </span>            :  *          \alpha_1\left(c^{l+1,m,n}_{0,1,1}-c^{l,m,n}_{0,1,1}\right),
+<span class="lineNum">     332 </span>            :  *          \alpha_1\left(c^{l,m,n}_{0,1,1}-c^{l-1,m,n}_{0,1,1}\right),
+<span class="lineNum">     333 </span>            :  *     \right.\\
+<span class="lineNum">     334 </span>            :  *   &amp;\;\;\;\;
+<span class="lineNum">     335 </span>            :  *          \alpha_1\left(c^{l,m+1,n}_{1,0,1}-c^{l,m,n}_{1,0,1}\right),
+<span class="lineNum">     336 </span>            :  *          \alpha_1\left(c^{l,m,n}_{1,0,1}-c^{l,m-1,n}_{1,0,1}\right),\\
+<span class="lineNum">     337 </span>            :  *   &amp;\;\;\;\;\left.
+<span class="lineNum">     338 </span>            :  *          \alpha_1\left(c^{l,m,n+1}_{1,1,0}-c^{l,m,n}_{1,1,0}\right),
+<span class="lineNum">     339 </span>            :  *          \alpha_1\left(c^{l,m,n}_{1,1,0}-c^{l,m,n-1}_{1,1,0}\right)
+<span class="lineNum">     340 </span>            :  *     \right),\\
+<span class="lineNum">     341 </span>            :  * \tilde{c}^{l,m,n}_{1,1,0}=\mathrm{minmod}
+<span class="lineNum">     342 </span>            :  *   &amp;\left(c_{1,1,0}^{l,m,n},
+<span class="lineNum">     343 </span>            :  *          \alpha_1\left(c^{l+1,m,n}_{0,1,0}-c^{l,m,n}_{0,1,0}\right),
+<span class="lineNum">     344 </span>            :  *          \alpha_1\left(c^{l,m,n}_{0,1,0}-c^{l-1,m,n}_{0,1,0}\right),
+<span class="lineNum">     345 </span>            :  *     \right.\\
+<span class="lineNum">     346 </span>            :  *   &amp;\;\;\;\;\left.
+<span class="lineNum">     347 </span>            :  *          \alpha_1\left(c^{l,m+1,n}_{1,0,0}-c^{l,m,n}_{1,0,0}\right),
+<span class="lineNum">     348 </span>            :  *          \alpha_1\left(c^{l,m,n}_{1,0,0}-c^{l,m-1,n}_{1,0,0}\right),
+<span class="lineNum">     349 </span>            :  *     \right),\\
+<span class="lineNum">     350 </span>            :  * \tilde{c}^{l,m,n}_{1,0,1}=\mathrm{minmod}
+<span class="lineNum">     351 </span>            :  *   &amp;\left(c_{1,0,1}^{l,m,n},
+<span class="lineNum">     352 </span>            :  *          \alpha_1\left(c^{l+1,m,n}_{0,0,1}-c^{l,m,n}_{0,0,1}\right),
+<span class="lineNum">     353 </span>            :  *          \alpha_1\left(c^{l,m,n}_{0,0,1}-c^{l-1,m,n}_{0,0,1}\right),
+<span class="lineNum">     354 </span>            :  *     \right.\\
+<span class="lineNum">     355 </span>            :  *   &amp;\;\;\;\;\left.
+<span class="lineNum">     356 </span>            :  *          \alpha_1\left(c^{l,m,n+1}_{1,0,0}-c^{l,m,n}_{1,0,0}\right),
+<span class="lineNum">     357 </span>            :  *          \alpha_1\left(c^{l,m,n}_{1,0,0}-c^{l,m,n-1}_{1,0,0}\right)
+<span class="lineNum">     358 </span>            :  *     \right),\\
+<span class="lineNum">     359 </span>            :  * \tilde{c}^{l,m,n}_{0,1,1}=\mathrm{minmod}
+<span class="lineNum">     360 </span>            :  *   &amp;\left(c_{0,1,1}^{l,m,n},
+<span class="lineNum">     361 </span>            :  *          \alpha_1\left(c^{l,m+1,n}_{0,0,1}-c^{l,m,n}_{0,0,1}\right),
+<span class="lineNum">     362 </span>            :  *          \alpha_1\left(c^{l,m,n}_{0,0,1}-c^{l,m-1,n}_{0,0,1}\right),
+<span class="lineNum">     363 </span>            :  *   \right.\\
+<span class="lineNum">     364 </span>            :  *   &amp;\;\;\;\;\left.
+<span class="lineNum">     365 </span>            :  *          \alpha_1\left(c^{l,m,n+1}_{0,1,0}-c^{l,m,n}_{0,1,0}\right),
+<span class="lineNum">     366 </span>            :  *          \alpha_1\left(c^{l,m,n}_{0,1,0}-c^{l,m,n-1}_{0,1,0}\right)
+<span class="lineNum">     367 </span>            :  *     \right),\\
+<span class="lineNum">     368 </span>            :  * \tilde{c}^{l,m,n}_{1,0,0}=\mathrm{minmod}
+<span class="lineNum">     369 </span>            :  *   &amp;\left(c_{1,0,0}^{l,m,n},
+<span class="lineNum">     370 </span>            :  *          \alpha_1\left(c^{l+1,m,n}_{0,0,0}-c^{l,m,n}_{0,0,0}\right),
+<span class="lineNum">     371 </span>            :  *          \alpha_1\left(c^{l,m,n}_{0,0,0}-c^{l-1,m,n}_{0,0,0}\right)
+<span class="lineNum">     372 </span>            :  *     \right),\\
+<span class="lineNum">     373 </span>            :  * \tilde{c}^{l,m,n}_{0,1,0}=\mathrm{minmod}
+<span class="lineNum">     374 </span>            :  *   &amp;\left(c_{0,1,0}^{l,m,n},
+<span class="lineNum">     375 </span>            :  *          \alpha_1\left(c^{l,m+1,n}_{0,0,0}-c^{l,m,n}_{0,0,0}\right),
+<span class="lineNum">     376 </span>            :  *          \alpha_1\left(c^{l,m,n}_{0,0,0}-c^{l,m-1,n}_{0,0,0}\right)
+<span class="lineNum">     377 </span>            :  *     \right),\\
+<span class="lineNum">     378 </span>            :  * \tilde{c}^{l,m,n}_{0,0,1}=\mathrm{minmod}
+<span class="lineNum">     379 </span>            :  *   &amp;\left(c_{0,0,1}^{l,m,n},
+<span class="lineNum">     380 </span>            :  *          \alpha_1\left(c^{l,m,n+1}_{0,0,0}-c^{l,m,n}_{0,0,0}\right),
+<span class="lineNum">     381 </span>            :  *          \alpha_1\left(c^{l,m,n}_{0,0,0}-c^{l,m,n-1}_{0,0,0}\right)
+<span class="lineNum">     382 </span>            :  *     \right),
+<span class="lineNum">     383 </span>            :  * \f}
+<span class="lineNum">     384 </span>            :  *
+<span class="lineNum">     385 </span>            :  *
+<span class="lineNum">     386 </span>            :  * The algorithm to perform the limiting is as follows:
+<span class="lineNum">     387 </span>            :  *
+<span class="lineNum">     388 </span>            :  * - limit \f$c_{2,2,2}\f$ (i.e. \f$c_{2,2,2}\leftarrow\tilde{c}_{2,2,2}\f$), if
+<span class="lineNum">     389 </span>            :  *   not changed, stop
+<span class="lineNum">     390 </span>            :  * - limit \f$c_{2,2,1}\f$, \f$c_{2,1,2}\f$, and \f$c_{1,2,2}\f$, if all not
+<span class="lineNum">     391 </span>            :  * changed, stop
+<span class="lineNum">     392 </span>            :  * - limit \f$c_{2,2,0}\f$, \f$c_{2,0,2}\f$, and \f$c_{0,2,2}\f$, if all not
+<span class="lineNum">     393 </span>            :  * changed, stop
+<span class="lineNum">     394 </span>            :  * - limit \f$c_{2,1,1}\f$, \f$c_{1,2,1}\f$, and \f$c_{1,1,2}\f$, if all not
+<span class="lineNum">     395 </span>            :  * changed, stop
+<span class="lineNum">     396 </span>            :  * - limit \f$c_{2,1,0}\f$, \f$c_{2,0,1}\f$, \f$c_{1,2,0}\f$, \f$c_{1,0,2}\f$,
+<span class="lineNum">     397 </span>            :  * \f$c_{0,1,2}\f$, and \f$c_{0,2,1}\f$, if all not changed, stop
+<span class="lineNum">     398 </span>            :  * - limit \f$c_{2,0,0}\f$, \f$c_{0,2,0}\f$, and \f$c_{0,0,2}\f$, if all not
+<span class="lineNum">     399 </span>            :  * changed, stop
+<span class="lineNum">     400 </span>            :  * - limit \f$c_{1,1,1}\f$, if not changed, stop
+<span class="lineNum">     401 </span>            :  * - limit \f$c_{1,1,0}\f$, \f$c_{1,0,1}\f$, and \f$c_{0,1,1}\f$, if all not
+<span class="lineNum">     402 </span>            :  * changed, stop
+<span class="lineNum">     403 </span>            :  * - limit \f$c_{1,0,0}\f$, \f$c_{0,1,0}\f$, and \f$c_{0,0,1}\f$, if all not
+<span class="lineNum">     404 </span>            :  * changed, stop
+<span class="lineNum">     405 </span>            :  *
+<span class="lineNum">     406 </span>            :  * The 1d and 2d implementations are straightforward restrictions of the
+<span class="lineNum">     407 </span>            :  * described algorithm.
+<span class="lineNum">     408 </span>            :  *
+<span class="lineNum">     409 </span>            :  * #### Limitations:
+<span class="lineNum">     410 </span>            :  *
+<span class="lineNum">     411 </span>            :  * - We currently recompute the spectral coefficients for local use, after
+<span class="lineNum">     412 </span>            :  *   having computed these same coefficients for sending to the neighbors. We
+<span class="lineNum">     413 </span>            :  *   should be able to avoid this either by storing the coefficients in the
+<span class="lineNum">     414 </span>            :  *   DataBox or by allowing the limiters' `packaged_data` function to return an
+<span class="lineNum">     415 </span>            :  *   object to be passed as an additional argument to the `operator()` (still
+<span class="lineNum">     416 </span>            :  *   would need to be stored in the DataBox).
+<span class="lineNum">     417 </span>            :  * - We cannot handle the case where neighbors have more/fewer
+<span class="lineNum">     418 </span>            :  *   coefficients. In the case that the neighbor has more coefficients we could
+<span class="lineNum">     419 </span>            :  *   just ignore the higher coefficients. In the case that the neighbor has
+<span class="lineNum">     420 </span>            :  *   fewer coefficients we have a few choices.
+<span class="lineNum">     421 </span>            :  * - Having a different number of collocation points in different directions is
+<span class="lineNum">     422 </span>            :  *   not supported. However, it is straightforward to handle this case. The
+<span class="lineNum">     423 </span>            :  *   outermost loop should be in the direction with the most collocation points,
+<span class="lineNum">     424 </span>            :  *   while the inner most loop should be over the direction with the fewest
+<span class="lineNum">     425 </span>            :  *   collocation points. The highest to lowest coefficients can then be limited
+<span class="lineNum">     426 </span>            :  *   appropriately again.
+<span class="lineNum">     427 </span>            :  * - h-refinement is not supported, but there is one reasonably straightforward
+<span class="lineNum">     428 </span>            :  *   implementation that may work. In this case we would ignore refinement that
+<span class="lineNum">     429 </span>            :  *   is not in the direction of the neighbor, treating the element as
+<span class="lineNum">     430 </span>            :  *   simply having multiple neighbors in that direction. The only change would
+<span class="lineNum">     431 </span>            :  *   be accounting for different refinement in the direction of the neighor,
+<span class="lineNum">     432 </span>            :  *   which should be easy to add since the differences in coefficients in
+<span class="lineNum">     433 </span>            :  *   Eq.\f$\ref{eq:krivodonova 3d minmod}\f$ will just be multiplied by
+<span class="lineNum">     434 </span>            :  *   non-unity factors.
+<span class="lineNum">     435 </span>            :  */
+<span class="lineNum">     436 </span>            : template &lt;size_t VolumeDim, typename... Tags&gt;
+<span class="lineNum">     437 </span><span class="lineCov">          1 : class Krivodonova&lt;VolumeDim, tmpl::list&lt;Tags...&gt;&gt; {</span>
+<span class="lineNum">     438 </span>            :  public:
+<span class="lineNum">     439 </span>            :   /*!
+<span class="lineNum">     440 </span>            :    * \brief The \f$\alpha_i\f$ values in the Krivodonova algorithm.
+<span class="lineNum">     441 </span>            :    */
+<span class="lineNum">     442 </span><span class="lineCov">          1 :   struct Alphas {</span>
+<span class="lineNum">     443 </span><span class="lineNoCov">          0 :     using type = std::array&lt;</span>
+<span class="lineNum">     444 </span>            :         double, Spectral::maximum_number_of_points&lt;Spectral::Basis::Legendre&gt;&gt;;
+<span class="lineNum">     445 </span><span class="lineNoCov">          0 :     static constexpr OptionString help = {</span>
+<span class="lineNum">     446 </span>            :         &quot;The alpha parameters of the Krivodonova limiter&quot;};
+<span class="lineNum">     447 </span><span class="lineNoCov">          0 :     static type default_value() noexcept {</span>
+<span class="lineNum">     448 </span>            :       return make_array&lt;
+<span class="lineNum">     449 </span>            :           Spectral::maximum_number_of_points&lt;Spectral::Basis::Legendre&gt;&gt;(1.0);
+<span class="lineNum">     450 </span>            :     }
+<span class="lineNum">     451 </span>            :   };
+<span class="lineNum">     452 </span>            :   /*!
+<span class="lineNum">     453 </span>            :    * \brief Turn the limiter off
+<span class="lineNum">     454 </span>            :    *
+<span class="lineNum">     455 </span>            :    * This option exists to temporarily disable the limiter for debugging
+<span class="lineNum">     456 </span>            :    * purposes. For problems where limiting is not needed, the preferred
+<span class="lineNum">     457 </span>            :    * approach is to not compile the limiter into the executable.
+<span class="lineNum">     458 </span>            :    */
+<span class="lineNum">     459 </span><span class="lineCov">          1 :   struct DisableForDebugging {</span>
+<span class="lineNum">     460 </span><span class="lineNoCov">          0 :     using type = bool;</span>
+<span class="lineNum">     461 </span><span class="lineNoCov">          0 :     static type default_value() noexcept { return false; }</span>
+<span class="lineNum">     462 </span><span class="lineNoCov">          0 :     static constexpr OptionString help = {&quot;Disable the limiter&quot;};</span>
+<span class="lineNum">     463 </span>            :   };
+<span class="lineNum">     464 </span>            : 
+<span class="lineNum">     465 </span><span class="lineNoCov">          0 :   using options = tmpl::list&lt;Alphas, DisableForDebugging&gt;;</span>
+<span class="lineNum">     466 </span><span class="lineNoCov">          0 :   static constexpr OptionString help = {</span>
+<span class="lineNum">     467 </span>            :       &quot;The hierarchical slope limiter of Krivodonova.\n\n&quot;
+<span class="lineNum">     468 </span>            :       &quot;This slope limiter works by limiting the highest modal &quot;
+<span class="lineNum">     469 </span>            :       &quot;coefficients/derivatives using an aggressive minmod approach, &quot;
+<span class="lineNum">     470 </span>            :       &quot;decreasing in modal coefficient order until no more limiting is &quot;
+<span class="lineNum">     471 </span>            :       &quot;necessary.&quot;};
+<span class="lineNum">     472 </span>            : 
+<span class="lineNum">     473 </span><span class="lineNoCov">          0 :   explicit Krivodonova(</span>
+<span class="lineNum">     474 </span>            :       std::array&lt;double,
+<span class="lineNum">     475 </span>            :                  Spectral::maximum_number_of_points&lt;Spectral::Basis::Legendre&gt;&gt;
+<span class="lineNum">     476 </span>            :           alphas,
+<span class="lineNum">     477 </span>            :       bool disable_for_debugging = false, const OptionContext&amp; context = {});
+<span class="lineNum">     478 </span>            : 
+<span class="lineNum">     479 </span><span class="lineNoCov">          0 :   Krivodonova() = default;</span>
+<span class="lineNum">     480 </span><span class="lineNoCov">          0 :   Krivodonova(const Krivodonova&amp;) = delete;</span>
+<span class="lineNum">     481 </span><span class="lineNoCov">          0 :   Krivodonova&amp; operator=(const Krivodonova&amp;) = delete;</span>
+<span class="lineNum">     482 </span><span class="lineNoCov">          0 :   Krivodonova(Krivodonova&amp;&amp;) = default;</span>
+<span class="lineNum">     483 </span><span class="lineNoCov">          0 :   Krivodonova&amp; operator=(Krivodonova&amp;&amp;) = default;</span>
+<span class="lineNum">     484 </span><span class="lineNoCov">          0 :   ~Krivodonova() = default;</span>
+<span class="lineNum">     485 </span>            : 
+<span class="lineNum">     486 </span>            :   // NOLINTNEXTLINE(google-runtime-reference)
+<span class="lineNum">     487 </span><span class="lineNoCov">          0 :   void pup(PUP::er&amp; p) noexcept;</span>
+<span class="lineNum">     488 </span>            : 
+<span class="lineNum">     489 </span><span class="lineNoCov">          0 :   bool operator==(const Krivodonova&amp; rhs) const noexcept;</span>
+<span class="lineNum">     490 </span>            : 
+<span class="lineNum">     491 </span><span class="lineNoCov">          0 :   struct PackagedData {</span>
+<span class="lineNum">     492 </span><span class="lineNoCov">          0 :     Variables&lt;tmpl::list&lt;::Tags::Modal&lt;Tags&gt;...&gt;&gt; modal_volume_data;</span>
+<span class="lineNum">     493 </span><span class="lineNoCov">          0 :     Mesh&lt;VolumeDim&gt; mesh;</span>
+<span class="lineNum">     494 </span>            : 
+<span class="lineNum">     495 </span>            :     // clang-tidy: google-runtime-references
+<span class="lineNum">     496 </span><span class="lineNoCov">          0 :     void pup(PUP::er&amp; p) noexcept {  // NOLINT</span>
+<span class="lineNum">     497 </span>            :       p | modal_volume_data;
+<span class="lineNum">     498 </span>            :       p | mesh;
+<span class="lineNum">     499 </span>            :     }
+<span class="lineNum">     500 </span>            :   };
+<span class="lineNum">     501 </span>            : 
+<span class="lineNum">     502 </span><span class="lineNoCov">          0 :   using package_argument_tags = tmpl::list&lt;Tags..., ::Tags::Mesh&lt;VolumeDim&gt;&gt;;</span>
+<span class="lineNum">     503 </span>            : 
+<span class="lineNum">     504 </span>            :   /// \brief Package data for sending to neighbor elements.
+<span class="lineNum">     505 </span><span class="lineCov">          1 :   void package_data(gsl::not_null&lt;PackagedData*&gt; packaged_data,</span>
+<span class="lineNum">     506 </span>            :                     const db::item_type&lt;Tags&gt;&amp;... tensors,
+<span class="lineNum">     507 </span>            :                     const Mesh&lt;VolumeDim&gt;&amp; mesh,
+<span class="lineNum">     508 </span>            :                     const OrientationMap&lt;VolumeDim&gt;&amp; orientation_map) const
+<span class="lineNum">     509 </span>            :       noexcept;
+<span class="lineNum">     510 </span>            : 
+<span class="lineNum">     511 </span><span class="lineNoCov">          0 :   using limit_tags = tmpl::list&lt;Tags...&gt;;</span>
+<span class="lineNum">     512 </span><span class="lineNoCov">          0 :   using limit_argument_tags =</span>
+<span class="lineNum">     513 </span>            :       tmpl::list&lt;::Tags::Element&lt;VolumeDim&gt;, ::Tags::Mesh&lt;VolumeDim&gt;&gt;;
+<span class="lineNum">     514 </span>            : 
+<span class="lineNum">     515 </span><span class="lineNoCov">          0 :   bool operator()(</span>
+<span class="lineNum">     516 </span>            :       const gsl::not_null&lt;std::add_pointer_t&lt;db::item_type&lt;Tags&gt;&gt;&gt;... tensors,
+<span class="lineNum">     517 </span>            :       const Element&lt;VolumeDim&gt;&amp; element, const Mesh&lt;VolumeDim&gt;&amp; mesh,
+<span class="lineNum">     518 </span>            :       const std::unordered_map&lt;
+<span class="lineNum">     519 </span>            :           std::pair&lt;Direction&lt;VolumeDim&gt;, ElementId&lt;VolumeDim&gt;&gt;, PackagedData,
+<span class="lineNum">     520 </span>            :           boost::hash&lt;std::pair&lt;Direction&lt;VolumeDim&gt;, ElementId&lt;VolumeDim&gt;&gt;&gt;&gt;&amp;
+<span class="lineNum">     521 </span>            :           neighbor_data) const noexcept;
+<span class="lineNum">     522 </span>            : 
+<span class="lineNum">     523 </span>            :  private:
+<span class="lineNum">     524 </span>            :   template &lt;typename Tag&gt;
+<span class="lineNum">     525 </span><span class="lineNoCov">          0 :   char limit_one_tensor(</span>
+<span class="lineNum">     526 </span>            :       gsl::not_null&lt;Variables&lt;tmpl::list&lt;::Tags::Modal&lt;Tags&gt;...&gt;&gt;*&gt; coeffs_self,
+<span class="lineNum">     527 </span>            :       gsl::not_null&lt;bool*&gt; limited_any_component, const Mesh&lt;1&gt;&amp; mesh,
+<span class="lineNum">     528 </span>            :       const std::unordered_map&lt;
+<span class="lineNum">     529 </span>            :           std::pair&lt;Direction&lt;1&gt;, ElementId&lt;1&gt;&gt;, PackagedData,
+<span class="lineNum">     530 </span>            :           boost::hash&lt;std::pair&lt;Direction&lt;1&gt;, ElementId&lt;1&gt;&gt;&gt;&gt;&amp; neighbor_data)
+<span class="lineNum">     531 </span>            :       const noexcept;
+<span class="lineNum">     532 </span>            :   template &lt;typename Tag&gt;
+<span class="lineNum">     533 </span><span class="lineNoCov">          0 :   char limit_one_tensor(</span>
+<span class="lineNum">     534 </span>            :       gsl::not_null&lt;Variables&lt;tmpl::list&lt;::Tags::Modal&lt;Tags&gt;...&gt;&gt;*&gt; coeffs_self,
+<span class="lineNum">     535 </span>            :       gsl::not_null&lt;bool*&gt; limited_any_component, const Mesh&lt;2&gt;&amp; mesh,
+<span class="lineNum">     536 </span>            :       const std::unordered_map&lt;
+<span class="lineNum">     537 </span>            :           std::pair&lt;Direction&lt;2&gt;, ElementId&lt;2&gt;&gt;, PackagedData,
+<span class="lineNum">     538 </span>            :           boost::hash&lt;std::pair&lt;Direction&lt;2&gt;, ElementId&lt;2&gt;&gt;&gt;&gt;&amp; neighbor_data)
+<span class="lineNum">     539 </span>            :       const noexcept;
+<span class="lineNum">     540 </span>            :   template &lt;typename Tag&gt;
+<span class="lineNum">     541 </span><span class="lineNoCov">          0 :   char limit_one_tensor(</span>
+<span class="lineNum">     542 </span>            :       gsl::not_null&lt;Variables&lt;tmpl::list&lt;::Tags::Modal&lt;Tags&gt;...&gt;&gt;*&gt; coeffs_self,
+<span class="lineNum">     543 </span>            :       gsl::not_null&lt;bool*&gt; limited_any_component, const Mesh&lt;3&gt;&amp; mesh,
+<span class="lineNum">     544 </span>            :       const std::unordered_map&lt;
+<span class="lineNum">     545 </span>            :           std::pair&lt;Direction&lt;3&gt;, ElementId&lt;3&gt;&gt;, PackagedData,
+<span class="lineNum">     546 </span>            :           boost::hash&lt;std::pair&lt;Direction&lt;3&gt;, ElementId&lt;3&gt;&gt;&gt;&gt;&amp; neighbor_data)
+<span class="lineNum">     547 </span>            :       const noexcept;
+<span class="lineNum">     548 </span>            : 
+<span class="lineNum">     549 </span>            :   template &lt;typename Tag, size_t Dim&gt;
+<span class="lineNum">     550 </span><span class="lineNoCov">          0 :   char fill_variables_tag_with_spectral_coeffs(</span>
+<span class="lineNum">     551 </span>            :       gsl::not_null&lt;Variables&lt;tmpl::list&lt;::Tags::Modal&lt;Tags&gt;...&gt;&gt;*&gt;
+<span class="lineNum">     552 </span>            :           modal_coeffs,
+<span class="lineNum">     553 </span>            :       const db::item_type&lt;Tag&gt;&amp; nodal_tensor, const Mesh&lt;Dim&gt;&amp; mesh) const
+<span class="lineNum">     554 </span>            :       noexcept;
+<span class="lineNum">     555 </span>            : 
+<span class="lineNum">     556 </span>            :   std::array&lt;double,
+<span class="lineNum">     557 </span>            :              Spectral::maximum_number_of_points&lt;Spectral::Basis::Legendre&gt;&gt;
+<span class="lineNum">     558 </span><span class="lineNoCov">          0 :       alphas_ = make_array&lt;</span>
+<span class="lineNum">     559 </span>            :           Spectral::maximum_number_of_points&lt;Spectral::Basis::Legendre&gt;&gt;(1.0);
+<span class="lineNum">     560 </span><span class="lineNoCov">          0 :   bool disable_for_debugging_{false};</span>
+<span class="lineNum">     561 </span>            : };
+<span class="lineNum">     562 </span>            : 
+<span class="lineNum">     563 </span>            : template &lt;size_t VolumeDim, typename... Tags&gt;
+<span class="lineNum">     564 </span>            : Krivodonova&lt;VolumeDim, tmpl::list&lt;Tags...&gt;&gt;::Krivodonova(
+<span class="lineNum">     565 </span>            :     std::array&lt;double,
+<span class="lineNum">     566 </span>            :                Spectral::maximum_number_of_points&lt;Spectral::Basis::Legendre&gt;&gt;
+<span class="lineNum">     567 </span>            :         alphas,
+<span class="lineNum">     568 </span>            :     bool disable_for_debugging, const OptionContext&amp; context)
+<span class="lineNum">     569 </span>            :     : alphas_(alphas), disable_for_debugging_(disable_for_debugging) {
+<span class="lineNum">     570 </span>            :   // See the main documentation for an explanation of why these bounds are
+<span class="lineNum">     571 </span>            :   // different from those of Krivodonova 2007
+<span class="lineNum">     572 </span>            :   if (alg::any_of(alphas_, [](const double t) noexcept {
+<span class="lineNum">     573 </span>            :         return t &gt; 1.0 or t &lt;= 0.0;
+<span class="lineNum">     574 </span>            :       })) {
+<span class="lineNum">     575 </span>            :     PARSE_ERROR(context,
+<span class="lineNum">     576 </span>            :                 &quot;The alphas in the Krivodonova limiter must be in the range &quot;
+<span class="lineNum">     577 </span>            :                 &quot;(0,1].&quot;);
+<span class="lineNum">     578 </span>            :   }
+<span class="lineNum">     579 </span>            : }
+<span class="lineNum">     580 </span>            : 
+<span class="lineNum">     581 </span>            : template &lt;size_t VolumeDim, typename... Tags&gt;
+<span class="lineNum">     582 </span>            : void Krivodonova&lt;VolumeDim, tmpl::list&lt;Tags...&gt;&gt;::package_data(
+<span class="lineNum">     583 </span>            :     const gsl::not_null&lt;PackagedData*&gt; packaged_data,
+<span class="lineNum">     584 </span>            :     const db::item_type&lt;Tags&gt;&amp;... tensors, const Mesh&lt;VolumeDim&gt;&amp; mesh,
+<span class="lineNum">     585 </span>            :     const OrientationMap&lt;VolumeDim&gt;&amp; orientation_map) const noexcept {
+<span class="lineNum">     586 </span>            :   if (UNLIKELY(disable_for_debugging_)) {
+<span class="lineNum">     587 </span>            :     // Do not initialize packaged_data
+<span class="lineNum">     588 </span>            :     return;
+<span class="lineNum">     589 </span>            :   }
+<span class="lineNum">     590 </span>            : 
+<span class="lineNum">     591 </span>            :   packaged_data-&gt;modal_volume_data.initialize(mesh.number_of_grid_points());
+<span class="lineNum">     592 </span>            :   // perform nodal coefficients to modal coefficients transformation on each
+<span class="lineNum">     593 </span>            :   // tensor component
+<span class="lineNum">     594 </span>            :   expand_pack(fill_variables_tag_with_spectral_coeffs&lt;Tags&gt;(
+<span class="lineNum">     595 </span>            :       &amp;(packaged_data-&gt;modal_volume_data), tensors, mesh)...);
+<span class="lineNum">     596 </span>            : 
+<span class="lineNum">     597 </span>            :   packaged_data-&gt;modal_volume_data = orient_variables(
+<span class="lineNum">     598 </span>            :       packaged_data-&gt;modal_volume_data, mesh.extents(), orientation_map);
+<span class="lineNum">     599 </span>            : 
+<span class="lineNum">     600 </span>            :   packaged_data-&gt;mesh = orientation_map(mesh);
+<span class="lineNum">     601 </span>            : }
+<span class="lineNum">     602 </span>            : 
+<span class="lineNum">     603 </span>            : template &lt;size_t VolumeDim, typename... Tags&gt;
+<span class="lineNum">     604 </span>            : bool Krivodonova&lt;VolumeDim, tmpl::list&lt;Tags...&gt;&gt;::operator()(
+<span class="lineNum">     605 </span>            :     const gsl::not_null&lt;std::add_pointer_t&lt;db::item_type&lt;Tags&gt;&gt;&gt;... tensors,
+<span class="lineNum">     606 </span>            :     const Element&lt;VolumeDim&gt;&amp; element, const Mesh&lt;VolumeDim&gt;&amp; mesh,
+<span class="lineNum">     607 </span>            :     const std::unordered_map&lt;
+<span class="lineNum">     608 </span>            :         std::pair&lt;Direction&lt;VolumeDim&gt;, ElementId&lt;VolumeDim&gt;&gt;, PackagedData,
+<span class="lineNum">     609 </span>            :         boost::hash&lt;std::pair&lt;Direction&lt;VolumeDim&gt;, ElementId&lt;VolumeDim&gt;&gt;&gt;&gt;&amp;
+<span class="lineNum">     610 </span>            :         neighbor_data) const noexcept {
+<span class="lineNum">     611 </span>            :   if (UNLIKELY(disable_for_debugging_)) {
+<span class="lineNum">     612 </span>            :     // Do not modify input tensors
+<span class="lineNum">     613 </span>            :     return false;
+<span class="lineNum">     614 </span>            :   }
+<span class="lineNum">     615 </span>            :   if (UNLIKELY(mesh != Mesh&lt;VolumeDim&gt;(mesh.extents()[0], mesh.basis()[0],
+<span class="lineNum">     616 </span>            :                                        mesh.quadrature()[0]))) {
+<span class="lineNum">     617 </span>            :     ERROR(
+<span class="lineNum">     618 </span>            :         &quot;The Krivodonova limiter does not yet support non-uniform number of &quot;
+<span class="lineNum">     619 </span>            :         &quot;collocation points, bases, and quadrature in each direction. The &quot;
+<span class="lineNum">     620 </span>            :         &quot;mesh is: &quot;
+<span class="lineNum">     621 </span>            :         &lt;&lt; mesh);
+<span class="lineNum">     622 </span>            :   }
+<span class="lineNum">     623 </span>            :   if (UNLIKELY(alg::any_of(element.neighbors(),
+<span class="lineNum">     624 </span>            :                            [](const auto&amp; direction_neighbors) noexcept {
+<span class="lineNum">     625 </span>            :                              return direction_neighbors.second.size() != 1;
+<span class="lineNum">     626 </span>            :                            }))) {
+<span class="lineNum">     627 </span>            :     ERROR(&quot;The Krivodonova limiter does not yet support h-refinement&quot;);
+<span class="lineNum">     628 </span>            :   }
+<span class="lineNum">     629 </span>            :   alg::for_each(neighbor_data, [&amp;mesh](const auto&amp; id_packaged_data) noexcept {
+<span class="lineNum">     630 </span>            :     if (UNLIKELY(id_packaged_data.second.mesh != mesh)) {
+<span class="lineNum">     631 </span>            :       ERROR(
+<span class="lineNum">     632 </span>            :           &quot;The Krivodonova limiter does not yet support differing meshes &quot;
+<span class="lineNum">     633 </span>            :           &quot;between neighbors. Self mesh is: &quot;
+<span class="lineNum">     634 </span>            :           &lt;&lt; mesh &lt;&lt; &quot; neighbor mesh is: &quot; &lt;&lt; id_packaged_data.second.mesh);
+<span class="lineNum">     635 </span>            :     }
+<span class="lineNum">     636 </span>            :   });
+<span class="lineNum">     637 </span>            : 
+<span class="lineNum">     638 </span>            :   // Compute local modal coefficients
+<span class="lineNum">     639 </span>            :   Variables&lt;tmpl::list&lt;::Tags::Modal&lt;Tags&gt;...&gt;&gt; coeffs_self(
+<span class="lineNum">     640 </span>            :       mesh.number_of_grid_points(), 0.0);
+<span class="lineNum">     641 </span>            :   expand_pack(fill_variables_tag_with_spectral_coeffs&lt;Tags&gt;(&amp;coeffs_self,
+<span class="lineNum">     642 </span>            :                                                             *tensors, mesh)...);
+<span class="lineNum">     643 </span>            : 
+<span class="lineNum">     644 </span>            :   // Perform the limiting on the modal coefficients
+<span class="lineNum">     645 </span>            :   bool limited_any_component = false;
+<span class="lineNum">     646 </span>            :   expand_pack(limit_one_tensor&lt;::Tags::Modal&lt;Tags&gt;&gt;(
+<span class="lineNum">     647 </span>            :       make_not_null(&amp;coeffs_self), make_not_null(&amp;limited_any_component), mesh,
+<span class="lineNum">     648 </span>            :       neighbor_data)...);
+<span class="lineNum">     649 </span>            : 
+<span class="lineNum">     650 </span>            :   // transform back to nodal coefficients
+<span class="lineNum">     651 </span>            :   const auto wrap_copy_nodal_coeffs =
+<span class="lineNum">     652 </span>            :       [&amp;mesh, &amp;coeffs_self ](auto tag, const auto tensor) noexcept {
+<span class="lineNum">     653 </span>            :     auto&amp; coeffs_tensor = get&lt;decltype(tag)&gt;(coeffs_self);
+<span class="lineNum">     654 </span>            :     auto tensor_it = tensor-&gt;begin();
+<span class="lineNum">     655 </span>            :     for (auto coeffs_it = coeffs_tensor.begin();
+<span class="lineNum">     656 </span>            :          coeffs_it != coeffs_tensor.end();
+<span class="lineNum">     657 </span>            :          (void)++coeffs_it, (void)++tensor_it) {
+<span class="lineNum">     658 </span>            :       to_nodal_coefficients(make_not_null(&amp;*tensor_it), *coeffs_it, mesh);
+<span class="lineNum">     659 </span>            :     }
+<span class="lineNum">     660 </span>            :     return '0';
+<span class="lineNum">     661 </span>            :   };
+<span class="lineNum">     662 </span>            :   expand_pack(wrap_copy_nodal_coeffs(::Tags::Modal&lt;Tags&gt;{}, tensors)...);
+<span class="lineNum">     663 </span>            : 
+<span class="lineNum">     664 </span>            :   return limited_any_component;
+<span class="lineNum">     665 </span>            : }
+<span class="lineNum">     666 </span>            : 
+<span class="lineNum">     667 </span>            : template &lt;size_t VolumeDim, typename... Tags&gt;
+<span class="lineNum">     668 </span>            : template &lt;typename Tag&gt;
+<span class="lineNum">     669 </span><span class="lineNoCov">          0 : char Krivodonova&lt;VolumeDim, tmpl::list&lt;Tags...&gt;&gt;::limit_one_tensor(</span>
+<span class="lineNum">     670 </span>            :     const gsl::not_null&lt;Variables&lt;tmpl::list&lt;::Tags::Modal&lt;Tags&gt;...&gt;&gt;*&gt;
+<span class="lineNum">     671 </span>            :         coeffs_self,
+<span class="lineNum">     672 </span>            :     const gsl::not_null&lt;bool*&gt; limited_any_component, const Mesh&lt;1&gt;&amp; mesh,
+<span class="lineNum">     673 </span>            :     const std::unordered_map&lt;
+<span class="lineNum">     674 </span>            :         std::pair&lt;Direction&lt;1&gt;, ElementId&lt;1&gt;&gt;, PackagedData,
+<span class="lineNum">     675 </span>            :         boost::hash&lt;std::pair&lt;Direction&lt;1&gt;, ElementId&lt;1&gt;&gt;&gt;&gt;&amp; neighbor_data)
+<span class="lineNum">     676 </span>            :     const noexcept {
+<span class="lineNum">     677 </span>            :   using tensor_type = typename Tag::type;
+<span class="lineNum">     678 </span>            :   for (size_t storage_index = 0; storage_index &lt; tensor_type::size();
+<span class="lineNum">     679 </span>            :        ++storage_index) {
+<span class="lineNum">     680 </span>            :     // for each coefficient...
+<span class="lineNum">     681 </span>            :     for (size_t i = mesh.extents()[0] - 1; i &gt; 0; --i) {
+<span class="lineNum">     682 </span>            :       auto&amp; self_coeffs = get&lt;Tag&gt;(*coeffs_self)[storage_index];
+<span class="lineNum">     683 </span>            :       double min_abs_coeff = std::abs(self_coeffs[i]);
+<span class="lineNum">     684 </span>            :       const double sgn_of_coeff = sgn(self_coeffs[i]);
+<span class="lineNum">     685 </span>            :       bool sgns_all_equal = true;
+<span class="lineNum">     686 </span>            :       for (const auto&amp; kv : neighbor_data) {
+<span class="lineNum">     687 </span>            :         const auto&amp; neighbor_coeffs =
+<span class="lineNum">     688 </span>            :             get&lt;Tag&gt;(kv.second.modal_volume_data)[storage_index];
+<span class="lineNum">     689 </span>            :         const double tmp = kv.first.first.sign() * gsl::at(alphas_, i) *
+<span class="lineNum">     690 </span>            :                            (neighbor_coeffs[i - 1] - self_coeffs[i - 1]);
+<span class="lineNum">     691 </span>            : 
+<span class="lineNum">     692 </span>            :         min_abs_coeff = std::min(min_abs_coeff, std::abs(tmp));
+<span class="lineNum">     693 </span>            :         sgns_all_equal &amp;= sgn(tmp) == sgn_of_coeff;
+<span class="lineNum">     694 </span>            :         if (not sgns_all_equal) {
+<span class="lineNum">     695 </span>            :           self_coeffs[i] = 0.0;
+<span class="lineNum">     696 </span>            :           break;
+<span class="lineNum">     697 </span>            :         }
+<span class="lineNum">     698 </span>            :       }
+<span class="lineNum">     699 </span>            :       if (sgns_all_equal) {
+<span class="lineNum">     700 </span>            :         const double tmp = sgn_of_coeff * min_abs_coeff;
+<span class="lineNum">     701 </span>            :         if (tmp == self_coeffs[i]) {
+<span class="lineNum">     702 </span>            :           break;
+<span class="lineNum">     703 </span>            :         }
+<span class="lineNum">     704 </span>            :         *limited_any_component |= true;
+<span class="lineNum">     705 </span>            :         self_coeffs[i] = tmp;
+<span class="lineNum">     706 </span>            :       }
+<span class="lineNum">     707 </span>            :     }
+<span class="lineNum">     708 </span>            :   }
+<span class="lineNum">     709 </span>            :   return '0';
+<span class="lineNum">     710 </span>            : }
+<span class="lineNum">     711 </span>            : 
+<span class="lineNum">     712 </span>            : template &lt;size_t VolumeDim, typename... Tags&gt;
+<span class="lineNum">     713 </span>            : template &lt;typename Tag&gt;
+<span class="lineNum">     714 </span><span class="lineNoCov">          0 : char Krivodonova&lt;VolumeDim, tmpl::list&lt;Tags...&gt;&gt;::limit_one_tensor(</span>
+<span class="lineNum">     715 </span>            :     const gsl::not_null&lt;Variables&lt;tmpl::list&lt;::Tags::Modal&lt;Tags&gt;...&gt;&gt;*&gt;
+<span class="lineNum">     716 </span>            :         coeffs_self,
+<span class="lineNum">     717 </span>            :     const gsl::not_null&lt;bool*&gt; limited_any_component, const Mesh&lt;2&gt;&amp; mesh,
+<span class="lineNum">     718 </span>            :     const std::unordered_map&lt;
+<span class="lineNum">     719 </span>            :         std::pair&lt;Direction&lt;2&gt;, ElementId&lt;2&gt;&gt;, PackagedData,
+<span class="lineNum">     720 </span>            :         boost::hash&lt;std::pair&lt;Direction&lt;2&gt;, ElementId&lt;2&gt;&gt;&gt;&gt;&amp; neighbor_data)
+<span class="lineNum">     721 </span>            :     const noexcept {
+<span class="lineNum">     722 </span>            :   using tensor_type = typename Tag::type;
+<span class="lineNum">     723 </span>            :   const auto minmod = [&amp;coeffs_self, &amp;mesh, &amp;neighbor_data, this ](
+<span class="lineNum">     724 </span>            :       const size_t local_i, const size_t local_j,
+<span class="lineNum">     725 </span>            :       const size_t local_tensor_storage_index) noexcept {
+<span class="lineNum">     726 </span>            :     const auto&amp; self_coeffs =
+<span class="lineNum">     727 </span>            :         get&lt;Tag&gt;(*coeffs_self)[local_tensor_storage_index];
+<span class="lineNum">     728 </span>            :     double min_abs_coeff = std::abs(
+<span class="lineNum">     729 </span>            :         self_coeffs[mesh.storage_index(Index&lt;VolumeDim&gt;{local_i, local_j})]);
+<span class="lineNum">     730 </span>            :     const double sgn_of_coeff = sgn(
+<span class="lineNum">     731 </span>            :         self_coeffs[mesh.storage_index(Index&lt;VolumeDim&gt;{local_i, local_j})]);
+<span class="lineNum">     732 </span>            :     for (const auto&amp; kv : neighbor_data) {
+<span class="lineNum">     733 </span>            :       const Direction&lt;2&gt;&amp; dir = kv.first.first;
+<span class="lineNum">     734 </span>            :       const auto&amp; neighbor_coeffs =
+<span class="lineNum">     735 </span>            :           get&lt;Tag&gt;(kv.second.modal_volume_data)[local_tensor_storage_index];
+<span class="lineNum">     736 </span>            :       const size_t index_i =
+<span class="lineNum">     737 </span>            :           dir.axis() == Direction&lt;VolumeDim&gt;::Axis::Xi ? local_i - 1 : local_i;
+<span class="lineNum">     738 </span>            :       const size_t index_j =
+<span class="lineNum">     739 </span>            :           dir.axis() == Direction&lt;VolumeDim&gt;::Axis::Eta ? local_j - 1 : local_j;
+<span class="lineNum">     740 </span>            :       // skip neighbors where we cannot compute a finite difference in that
+<span class="lineNum">     741 </span>            :       // direction because we are already at the lowest coefficient.
+<span class="lineNum">     742 </span>            :       if (index_i == std::numeric_limits&lt;size_t&gt;::max() or
+<span class="lineNum">     743 </span>            :           index_j == std::numeric_limits&lt;size_t&gt;::max()) {
+<span class="lineNum">     744 </span>            :         continue;
+<span class="lineNum">     745 </span>            :       }
+<span class="lineNum">     746 </span>            :       const size_t alpha_index =
+<span class="lineNum">     747 </span>            :           dir.axis() == Direction&lt;VolumeDim&gt;::Axis::Xi ? local_i : local_j;
+<span class="lineNum">     748 </span>            :       const double tmp =
+<span class="lineNum">     749 </span>            :           dir.sign() * gsl::at(alphas_, alpha_index) *
+<span class="lineNum">     750 </span>            :           (neighbor_coeffs[mesh.storage_index(
+<span class="lineNum">     751 </span>            :                Index&lt;VolumeDim&gt;{index_i, index_j})] -
+<span class="lineNum">     752 </span>            :            self_coeffs[mesh.storage_index(Index&lt;VolumeDim&gt;{index_i, index_j})]);
+<span class="lineNum">     753 </span>            : 
+<span class="lineNum">     754 </span>            :       min_abs_coeff = std::min(min_abs_coeff, std::abs(tmp));
+<span class="lineNum">     755 </span>            :       if (sgn(tmp) != sgn_of_coeff) {
+<span class="lineNum">     756 </span>            :         return 0.0;
+<span class="lineNum">     757 </span>            :       }
+<span class="lineNum">     758 </span>            :     }
+<span class="lineNum">     759 </span>            :     return sgn_of_coeff * min_abs_coeff;
+<span class="lineNum">     760 </span>            :   };
+<span class="lineNum">     761 </span>            : 
+<span class="lineNum">     762 </span>            :   for (size_t tensor_storage_index = 0;
+<span class="lineNum">     763 </span>            :        tensor_storage_index &lt; tensor_type::size(); ++tensor_storage_index) {
+<span class="lineNum">     764 </span>            :     // for each coefficient...
+<span class="lineNum">     765 </span>            :     for (size_t i = mesh.extents()[0] - 1; i &gt; 0; --i) {
+<span class="lineNum">     766 </span>            :       for (size_t j = i; j &lt; mesh.extents()[1]; --j) {
+<span class="lineNum">     767 </span>            :         // Check if we are done limiting, and if so we move on to the next
+<span class="lineNum">     768 </span>            :         // tensor component.
+<span class="lineNum">     769 </span>            :         auto&amp; self_coeffs = get&lt;Tag&gt;(*coeffs_self)[tensor_storage_index];
+<span class="lineNum">     770 </span>            :         // We treat the different cases separately to reduce the number of
+<span class="lineNum">     771 </span>            :         // times we call minmod, not because it is required for correctness.
+<span class="lineNum">     772 </span>            :         if (UNLIKELY(i == j)) {
+<span class="lineNum">     773 </span>            :           const double tmp = minmod(i, j, tensor_storage_index);
+<span class="lineNum">     774 </span>            :           if (tmp == self_coeffs[mesh.storage_index(Index&lt;VolumeDim&gt;{i, j})]) {
+<span class="lineNum">     775 </span>            :             goto next_tensor_index;
+<span class="lineNum">     776 </span>            :           }
+<span class="lineNum">     777 </span>            :           *limited_any_component |= true;
+<span class="lineNum">     778 </span>            :           self_coeffs[mesh.storage_index(Index&lt;VolumeDim&gt;{i, j})] = tmp;
+<span class="lineNum">     779 </span>            :         } else {
+<span class="lineNum">     780 </span>            :           const double tmp_ij = minmod(i, j, tensor_storage_index);
+<span class="lineNum">     781 </span>            :           const double tmp_ji = minmod(j, i, tensor_storage_index);
+<span class="lineNum">     782 </span>            :           if (tmp_ij ==
+<span class="lineNum">     783 </span>            :                   self_coeffs[mesh.storage_index(Index&lt;VolumeDim&gt;{i, j})] and
+<span class="lineNum">     784 </span>            :               tmp_ji ==
+<span class="lineNum">     785 </span>            :                   self_coeffs[mesh.storage_index(Index&lt;VolumeDim&gt;{j, i})]) {
+<span class="lineNum">     786 </span>            :             goto next_tensor_index;
+<span class="lineNum">     787 </span>            :           }
+<span class="lineNum">     788 </span>            :           *limited_any_component |= true;
+<span class="lineNum">     789 </span>            :           self_coeffs[mesh.storage_index(Index&lt;VolumeDim&gt;{i, j})] = tmp_ij;
+<span class="lineNum">     790 </span>            :           self_coeffs[mesh.storage_index(Index&lt;VolumeDim&gt;{j, i})] = tmp_ji;
+<span class="lineNum">     791 </span>            :         }
+<span class="lineNum">     792 </span>            :       }
+<span class="lineNum">     793 </span>            :     }
+<span class="lineNum">     794 </span>            :   next_tensor_index:
+<span class="lineNum">     795 </span>            :     continue;
+<span class="lineNum">     796 </span>            :   }
+<span class="lineNum">     797 </span>            :   return '0';
+<span class="lineNum">     798 </span>            : }
+<span class="lineNum">     799 </span>            : 
+<span class="lineNum">     800 </span>            : template &lt;size_t VolumeDim, typename... Tags&gt;
+<span class="lineNum">     801 </span>            : template &lt;typename Tag&gt;
+<span class="lineNum">     802 </span><span class="lineNoCov">          0 : char Krivodonova&lt;VolumeDim, tmpl::list&lt;Tags...&gt;&gt;::limit_one_tensor(</span>
+<span class="lineNum">     803 </span>            :     const gsl::not_null&lt;Variables&lt;tmpl::list&lt;::Tags::Modal&lt;Tags&gt;...&gt;&gt;*&gt;
+<span class="lineNum">     804 </span>            :         coeffs_self,
+<span class="lineNum">     805 </span>            :     const gsl::not_null&lt;bool*&gt; limited_any_component, const Mesh&lt;3&gt;&amp; mesh,
+<span class="lineNum">     806 </span>            :     const std::unordered_map&lt;
+<span class="lineNum">     807 </span>            :         std::pair&lt;Direction&lt;3&gt;, ElementId&lt;3&gt;&gt;, PackagedData,
+<span class="lineNum">     808 </span>            :         boost::hash&lt;std::pair&lt;Direction&lt;3&gt;, ElementId&lt;3&gt;&gt;&gt;&gt;&amp; neighbor_data)
+<span class="lineNum">     809 </span>            :     const noexcept {
+<span class="lineNum">     810 </span>            :   using tensor_type = typename Tag::type;
+<span class="lineNum">     811 </span>            :   const auto minmod = [&amp;coeffs_self, &amp;mesh, &amp;neighbor_data, this ](
+<span class="lineNum">     812 </span>            :       const size_t local_i, const size_t local_j, const size_t local_k,
+<span class="lineNum">     813 </span>            :       const size_t local_tensor_storage_index) noexcept {
+<span class="lineNum">     814 </span>            :     const auto&amp; self_coeffs =
+<span class="lineNum">     815 </span>            :         get&lt;Tag&gt;(*coeffs_self)[local_tensor_storage_index];
+<span class="lineNum">     816 </span>            :     double min_abs_coeff = std::abs(self_coeffs[mesh.storage_index(
+<span class="lineNum">     817 </span>            :         Index&lt;VolumeDim&gt;{local_i, local_j, local_k})]);
+<span class="lineNum">     818 </span>            :     const double sgn_of_coeff = sgn(self_coeffs[mesh.storage_index(
+<span class="lineNum">     819 </span>            :         Index&lt;VolumeDim&gt;{local_i, local_j, local_k})]);
+<span class="lineNum">     820 </span>            :     for (const auto&amp; kv : neighbor_data) {
+<span class="lineNum">     821 </span>            :       const Direction&lt;3&gt;&amp; dir = kv.first.first;
+<span class="lineNum">     822 </span>            :       const auto&amp; neighbor_coeffs =
+<span class="lineNum">     823 </span>            :           get&lt;Tag&gt;(kv.second.modal_volume_data)[local_tensor_storage_index];
+<span class="lineNum">     824 </span>            :       const size_t index_i =
+<span class="lineNum">     825 </span>            :           dir.axis() == Direction&lt;VolumeDim&gt;::Axis::Xi ? local_i - 1 : local_i;
+<span class="lineNum">     826 </span>            :       const size_t index_j =
+<span class="lineNum">     827 </span>            :           dir.axis() == Direction&lt;VolumeDim&gt;::Axis::Eta ? local_j - 1 : local_j;
+<span class="lineNum">     828 </span>            :       const size_t index_k = dir.axis() == Direction&lt;VolumeDim&gt;::Axis::Zeta
+<span class="lineNum">     829 </span>            :                                  ? local_k - 1
+<span class="lineNum">     830 </span>            :                                  : local_k;
+<span class="lineNum">     831 </span>            :       // skip neighbors where we cannot compute a finite difference in that
+<span class="lineNum">     832 </span>            :       // direction because we are already at the lowest coefficient.
+<span class="lineNum">     833 </span>            :       if (index_i == std::numeric_limits&lt;size_t&gt;::max() or
+<span class="lineNum">     834 </span>            :           index_j == std::numeric_limits&lt;size_t&gt;::max() or
+<span class="lineNum">     835 </span>            :           index_k == std::numeric_limits&lt;size_t&gt;::max()) {
+<span class="lineNum">     836 </span>            :         continue;
+<span class="lineNum">     837 </span>            :       }
+<span class="lineNum">     838 </span>            :       const size_t alpha_index =
+<span class="lineNum">     839 </span>            :           dir.axis() == Direction&lt;VolumeDim&gt;::Axis::Xi
+<span class="lineNum">     840 </span>            :               ? local_i
+<span class="lineNum">     841 </span>            :               : dir.axis() == Direction&lt;VolumeDim&gt;::Axis::Eta ? local_j
+<span class="lineNum">     842 </span>            :                                                               : local_k;
+<span class="lineNum">     843 </span>            :       const double tmp = dir.sign() * gsl::at(alphas_, alpha_index) *
+<span class="lineNum">     844 </span>            :                          (neighbor_coeffs[mesh.storage_index(
+<span class="lineNum">     845 </span>            :                               Index&lt;VolumeDim&gt;{index_i, index_j, index_k})] -
+<span class="lineNum">     846 </span>            :                           self_coeffs[mesh.storage_index(
+<span class="lineNum">     847 </span>            :                               Index&lt;VolumeDim&gt;{index_i, index_j, index_k})]);
+<span class="lineNum">     848 </span>            : 
+<span class="lineNum">     849 </span>            :       min_abs_coeff = std::min(min_abs_coeff, std::abs(tmp));
+<span class="lineNum">     850 </span>            :       if (sgn(tmp) != sgn_of_coeff) {
+<span class="lineNum">     851 </span>            :         return 0.0;
+<span class="lineNum">     852 </span>            :       }
+<span class="lineNum">     853 </span>            :     }
+<span class="lineNum">     854 </span>            :     return sgn_of_coeff * min_abs_coeff;
+<span class="lineNum">     855 </span>            :   };
+<span class="lineNum">     856 </span>            : 
+<span class="lineNum">     857 </span>            :   for (size_t tensor_storage_index = 0;
+<span class="lineNum">     858 </span>            :        tensor_storage_index &lt; tensor_type::size(); ++tensor_storage_index) {
+<span class="lineNum">     859 </span>            :     // for each coefficient...
+<span class="lineNum">     860 </span>            :     for (size_t i = mesh.extents()[0] - 1; i &gt; 0; --i) {
+<span class="lineNum">     861 </span>            :       for (size_t j = i; j &lt; mesh.extents()[1]; --j) {
+<span class="lineNum">     862 </span>            :         for (size_t k = j; k &lt; mesh.extents()[2]; --k) {
+<span class="lineNum">     863 </span>            :           // Check if we are done limiting, and if so we move on to the next
+<span class="lineNum">     864 </span>            :           // tensor component.
+<span class="lineNum">     865 </span>            :           auto&amp; self_coeffs = get&lt;Tag&gt;(*coeffs_self)[tensor_storage_index];
+<span class="lineNum">     866 </span>            :           // We treat the different cases separately to reduce the number of
+<span class="lineNum">     867 </span>            :           // times we call minmod, not because it is required for correctness.
+<span class="lineNum">     868 </span>            :           //
+<span class="lineNum">     869 </span>            :           // Note that the case `i == k and i != j` cannot be encountered since
+<span class="lineNum">     870 </span>            :           // the loop bounds are `i &gt;= j &gt;= k`.
+<span class="lineNum">     871 </span>            :           if (UNLIKELY(i == j and i == k)) {
+<span class="lineNum">     872 </span>            :             const double tmp = minmod(i, j, k, tensor_storage_index);
+<span class="lineNum">     873 </span>            :             if (tmp ==
+<span class="lineNum">     874 </span>            :                 self_coeffs[mesh.storage_index(Index&lt;VolumeDim&gt;{i, j, k})]) {
+<span class="lineNum">     875 </span>            :               goto next_tensor_index;
+<span class="lineNum">     876 </span>            :             }
+<span class="lineNum">     877 </span>            :             *limited_any_component |= true;
+<span class="lineNum">     878 </span>            :             self_coeffs[mesh.storage_index(Index&lt;VolumeDim&gt;{i, j, k})] = tmp;
+<span class="lineNum">     879 </span>            :           } else if (i == j and i != k) {
+<span class="lineNum">     880 </span>            :             const double tmp_ijk = minmod(i, j, k, tensor_storage_index);
+<span class="lineNum">     881 </span>            :             const double tmp_ikj = minmod(i, k, j, tensor_storage_index);
+<span class="lineNum">     882 </span>            :             const double tmp_kij = minmod(k, i, j, tensor_storage_index);
+<span class="lineNum">     883 </span>            :             if (tmp_ijk == self_coeffs[mesh.storage_index(
+<span class="lineNum">     884 </span>            :                                Index&lt;VolumeDim&gt;{i, j, k})] and
+<span class="lineNum">     885 </span>            :                 tmp_ikj == self_coeffs[mesh.storage_index(
+<span class="lineNum">     886 </span>            :                                Index&lt;VolumeDim&gt;{i, k, j})] and
+<span class="lineNum">     887 </span>            :                 tmp_kij == self_coeffs[mesh.storage_index(
+<span class="lineNum">     888 </span>            :                                Index&lt;VolumeDim&gt;{k, i, j})]) {
+<span class="lineNum">     889 </span>            :               goto next_tensor_index;
+<span class="lineNum">     890 </span>            :             }
+<span class="lineNum">     891 </span>            :             *limited_any_component |= true;
+<span class="lineNum">     892 </span>            :             self_coeffs[mesh.storage_index(Index&lt;VolumeDim&gt;{i, j, k})] =
+<span class="lineNum">     893 </span>            :                 tmp_ijk;
+<span class="lineNum">     894 </span>            :             self_coeffs[mesh.storage_index(Index&lt;VolumeDim&gt;{i, k, j})] =
+<span class="lineNum">     895 </span>            :                 tmp_ikj;
+<span class="lineNum">     896 </span>            :             self_coeffs[mesh.storage_index(Index&lt;VolumeDim&gt;{k, i, j})] =
+<span class="lineNum">     897 </span>            :                 tmp_kij;
+<span class="lineNum">     898 </span>            :           } else if (i != j and j == k) {
+<span class="lineNum">     899 </span>            :             const double tmp_ijk = minmod(i, j, k, tensor_storage_index);
+<span class="lineNum">     900 </span>            :             const double tmp_kij = minmod(k, i, j, tensor_storage_index);
+<span class="lineNum">     901 </span>            :             const double tmp_kji = minmod(k, j, i, tensor_storage_index);
+<span class="lineNum">     902 </span>            :             if (tmp_ijk == self_coeffs[mesh.storage_index(
+<span class="lineNum">     903 </span>            :                                Index&lt;VolumeDim&gt;{i, j, k})] and
+<span class="lineNum">     904 </span>            :                 tmp_kij == self_coeffs[mesh.storage_index(
+<span class="lineNum">     905 </span>            :                                Index&lt;VolumeDim&gt;{k, i, j})] and
+<span class="lineNum">     906 </span>            :                 tmp_kji == self_coeffs[mesh.storage_index(
+<span class="lineNum">     907 </span>            :                                Index&lt;VolumeDim&gt;{k, j, i})]) {
+<span class="lineNum">     908 </span>            :               goto next_tensor_index;
+<span class="lineNum">     909 </span>            :             }
+<span class="lineNum">     910 </span>            :             *limited_any_component |= true;
+<span class="lineNum">     911 </span>            :             self_coeffs[mesh.storage_index(Index&lt;VolumeDim&gt;{i, j, k})] =
+<span class="lineNum">     912 </span>            :                 tmp_ijk;
+<span class="lineNum">     913 </span>            :             self_coeffs[mesh.storage_index(Index&lt;VolumeDim&gt;{k, i, j})] =
+<span class="lineNum">     914 </span>            :                 tmp_kij;
+<span class="lineNum">     915 </span>            :             self_coeffs[mesh.storage_index(Index&lt;VolumeDim&gt;{k, j, i})] =
+<span class="lineNum">     916 </span>            :                 tmp_kji;
+<span class="lineNum">     917 </span>            :           } else {
+<span class="lineNum">     918 </span>            :             const double tmp_ijk = minmod(i, j, k, tensor_storage_index);
+<span class="lineNum">     919 </span>            :             const double tmp_jik = minmod(j, i, k, tensor_storage_index);
+<span class="lineNum">     920 </span>            :             const double tmp_ikj = minmod(i, k, j, tensor_storage_index);
+<span class="lineNum">     921 </span>            :             const double tmp_jki = minmod(j, k, i, tensor_storage_index);
+<span class="lineNum">     922 </span>            :             const double tmp_kij = minmod(k, i, j, tensor_storage_index);
+<span class="lineNum">     923 </span>            :             const double tmp_kji = minmod(k, j, i, tensor_storage_index);
+<span class="lineNum">     924 </span>            :             if (tmp_ijk == self_coeffs[mesh.storage_index(
+<span class="lineNum">     925 </span>            :                                Index&lt;VolumeDim&gt;{i, j, k})] and
+<span class="lineNum">     926 </span>            :                 tmp_jik == self_coeffs[mesh.storage_index(
+<span class="lineNum">     927 </span>            :                                Index&lt;VolumeDim&gt;{j, i, k})] and
+<span class="lineNum">     928 </span>            :                 tmp_ikj == self_coeffs[mesh.storage_index(
+<span class="lineNum">     929 </span>            :                                Index&lt;VolumeDim&gt;{i, k, j})] and
+<span class="lineNum">     930 </span>            :                 tmp_jki == self_coeffs[mesh.storage_index(
+<span class="lineNum">     931 </span>            :                                Index&lt;VolumeDim&gt;{j, k, i})] and
+<span class="lineNum">     932 </span>            :                 tmp_kij == self_coeffs[mesh.storage_index(
+<span class="lineNum">     933 </span>            :                                Index&lt;VolumeDim&gt;{k, i, j})] and
+<span class="lineNum">     934 </span>            :                 tmp_kji == self_coeffs[mesh.storage_index(
+<span class="lineNum">     935 </span>            :                                Index&lt;VolumeDim&gt;{k, j, i})]) {
+<span class="lineNum">     936 </span>            :               goto next_tensor_index;
+<span class="lineNum">     937 </span>            :             }
+<span class="lineNum">     938 </span>            :             *limited_any_component |= true;
+<span class="lineNum">     939 </span>            :             self_coeffs[mesh.storage_index(Index&lt;VolumeDim&gt;{i, j, k})] =
+<span class="lineNum">     940 </span>            :                 tmp_ijk;
+<span class="lineNum">     941 </span>            :             self_coeffs[mesh.storage_index(Index&lt;VolumeDim&gt;{j, i, k})] =
+<span class="lineNum">     942 </span>            :                 tmp_jik;
+<span class="lineNum">     943 </span>            :             self_coeffs[mesh.storage_index(Index&lt;VolumeDim&gt;{i, k, j})] =
+<span class="lineNum">     944 </span>            :                 tmp_ikj;
+<span class="lineNum">     945 </span>            :             self_coeffs[mesh.storage_index(Index&lt;VolumeDim&gt;{j, k, i})] =
+<span class="lineNum">     946 </span>            :                 tmp_jki;
+<span class="lineNum">     947 </span>            :             self_coeffs[mesh.storage_index(Index&lt;VolumeDim&gt;{k, i, j})] =
+<span class="lineNum">     948 </span>            :                 tmp_kij;
+<span class="lineNum">     949 </span>            :             self_coeffs[mesh.storage_index(Index&lt;VolumeDim&gt;{k, j, i})] =
+<span class="lineNum">     950 </span>            :                 tmp_kji;
+<span class="lineNum">     951 </span>            :           }
+<span class="lineNum">     952 </span>            :         }
+<span class="lineNum">     953 </span>            :       }
+<span class="lineNum">     954 </span>            :     }
+<span class="lineNum">     955 </span>            :   next_tensor_index:
+<span class="lineNum">     956 </span>            :     continue;
+<span class="lineNum">     957 </span>            :   }
+<span class="lineNum">     958 </span>            :   return '0';
+<span class="lineNum">     959 </span>            : }
+<span class="lineNum">     960 </span>            : 
+<span class="lineNum">     961 </span>            : template &lt;size_t VolumeDim, typename... Tags&gt;
+<span class="lineNum">     962 </span>            : template &lt;typename Tag, size_t Dim&gt;
+<span class="lineNum">     963 </span><span class="lineNoCov">          0 : char Krivodonova&lt;VolumeDim, tmpl::list&lt;Tags...&gt;&gt;::</span>
+<span class="lineNum">     964 </span>            :     fill_variables_tag_with_spectral_coeffs(
+<span class="lineNum">     965 </span>            :         const gsl::not_null&lt;Variables&lt;tmpl::list&lt;::Tags::Modal&lt;Tags&gt;...&gt;&gt;*&gt;
+<span class="lineNum">     966 </span>            :             modal_coeffs,
+<span class="lineNum">     967 </span>            :         const db::item_type&lt;Tag&gt;&amp; nodal_tensor, const Mesh&lt;Dim&gt;&amp; mesh) const
+<span class="lineNum">     968 </span>            :     noexcept {
+<span class="lineNum">     969 </span>            :   auto&amp; coeffs_tensor = get&lt;::Tags::Modal&lt;Tag&gt;&gt;(*modal_coeffs);
+<span class="lineNum">     970 </span>            :   auto tensor_it = nodal_tensor.begin();
+<span class="lineNum">     971 </span>            :   for (auto coeffs_it = coeffs_tensor.begin(); coeffs_it != coeffs_tensor.end();
+<span class="lineNum">     972 </span>            :        (void)++coeffs_it, (void)++tensor_it) {
+<span class="lineNum">     973 </span>            :     to_modal_coefficients(make_not_null(&amp;*coeffs_it), *tensor_it, mesh);
+<span class="lineNum">     974 </span>            :   }
+<span class="lineNum">     975 </span>            :   return '0';
+<span class="lineNum">     976 </span>            : }
+<span class="lineNum">     977 </span>            : 
+<span class="lineNum">     978 </span>            : template &lt;size_t VolumeDim, typename... Tags&gt;
+<span class="lineNum">     979 </span>            : void Krivodonova&lt;VolumeDim, tmpl::list&lt;Tags...&gt;&gt;::pup(PUP::er&amp; p) noexcept {
+<span class="lineNum">     980 </span>            :   p | alphas_;
+<span class="lineNum">     981 </span>            :   p | disable_for_debugging_;
+<span class="lineNum">     982 </span>            : }
+<span class="lineNum">     983 </span>            : 
+<span class="lineNum">     984 </span>            : template &lt;size_t VolumeDim, typename... Tags&gt;
+<span class="lineNum">     985 </span>            : bool Krivodonova&lt;VolumeDim, tmpl::list&lt;Tags...&gt;&gt;::operator==(
+<span class="lineNum">     986 </span>            :     const Krivodonova&lt;VolumeDim, tmpl::list&lt;Tags...&gt;&gt;&amp; rhs) const noexcept {
+<span class="lineNum">     987 </span>            :   return alphas_ == rhs.alphas_ and
+<span class="lineNum">     988 </span>            :          disable_for_debugging_ == rhs.disable_for_debugging_;
+<span class="lineNum">     989 </span>            : }
+<span class="lineNum">     990 </span>            : 
+<span class="lineNum">     991 </span>            : template &lt;size_t VolumeDim, typename... Tags&gt;
+<span class="lineNum">     992 </span><span class="lineNoCov">          0 : bool operator!=(</span>
+<span class="lineNum">     993 </span>            :     const Krivodonova&lt;VolumeDim, tmpl::list&lt;Tags...&gt;&gt;&amp; lhs,
+<span class="lineNum">     994 </span>            :     const Krivodonova&lt;VolumeDim, tmpl::list&lt;Tags...&gt;&gt;&amp; rhs) noexcept {
+<span class="lineNum">     995 </span>            :   return not(lhs == rhs);
+<span class="lineNum">     996 </span>            : }
+<span class="lineNum">     997 </span>            : }  // namespace SlopeLimiters
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

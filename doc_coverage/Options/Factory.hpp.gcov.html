@@ -1,0 +1,209 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Options/Factory.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">Options</a> - Factory.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineCov">          1 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : /// \file
+<span class="lineNum">       5 </span>            : /// Defines class template Factory.
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            : #pragma once
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : #include &lt;algorithm&gt;
+<span class="lineNum">      10 </span>            : #include &lt;iomanip&gt;
+<span class="lineNum">      11 </span>            : #include &lt;memory&gt;
+<span class="lineNum">      12 </span>            : #include &lt;sstream&gt;
+<span class="lineNum">      13 </span>            : #include &lt;string&gt;
+<span class="lineNum">      14 </span>            : #include &lt;utility&gt;
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : #include &quot;ErrorHandling/Assert.hpp&quot;
+<span class="lineNum">      17 </span>            : #include &quot;Options/Options.hpp&quot;
+<span class="lineNum">      18 </span>            : #include &quot;Utilities/PrettyType.hpp&quot;
+<span class="lineNum">      19 </span>            : #include &quot;Utilities/Requires.hpp&quot;
+<span class="lineNum">      20 </span>            : #include &quot;Utilities/StdHelpers.hpp&quot;
+<span class="lineNum">      21 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : namespace Factory_detail {
+<span class="lineNum">      24 </span>            : template &lt;typename BaseClass, typename CreateList, typename Metavariables,
+<span class="lineNum">      25 </span>            :           Requires&lt;(tmpl::size&lt;CreateList&gt;::value == 0)&gt; = nullptr&gt;
+<span class="lineNum">      26 </span>            : std::unique_ptr&lt;BaseClass&gt; create_derived(const std::string&amp; /*id*/,
+<span class="lineNum">      27 </span>            :                                           const Option&amp; /*opts*/) noexcept {
+<span class="lineNum">      28 </span>            :   return std::unique_ptr&lt;BaseClass&gt;{};
+<span class="lineNum">      29 </span>            : }
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span>            : template &lt;typename BaseClass, typename CreateList, typename Metavariables,
+<span class="lineNum">      32 </span>            :           Requires&lt;(tmpl::size&lt;CreateList&gt;::value != 0)&gt; = nullptr&gt;
+<span class="lineNum">      33 </span>            : std::unique_ptr&lt;BaseClass&gt; create_derived(const std::string&amp; id,
+<span class="lineNum">      34 </span>            :                                           const Option&amp; opts) {
+<span class="lineNum">      35 </span>            :   using derived = tmpl::front&lt;CreateList&gt;;
+<span class="lineNum">      36 </span>            : 
+<span class="lineNum">      37 </span>            :   if (pretty_type::short_name&lt;derived&gt;() != id) {
+<span class="lineNum">      38 </span>            :     return create_derived&lt;BaseClass, tmpl::pop_front&lt;CreateList&gt;,
+<span class="lineNum">      39 </span>            :                           Metavariables&gt;(id, opts);
+<span class="lineNum">      40 </span>            :   }
+<span class="lineNum">      41 </span>            : 
+<span class="lineNum">      42 </span>            :   ASSERT((not create_derived&lt;BaseClass, tmpl::pop_front&lt;CreateList&gt;,
+<span class="lineNum">      43 </span>            :                              Metavariables&gt;(id, opts)),
+<span class="lineNum">      44 </span>            :          &quot;Duplicate factory id: &quot; &lt;&lt; id);
+<span class="lineNum">      45 </span>            : 
+<span class="lineNum">      46 </span>            :   return std::make_unique&lt;derived&gt;(opts.parse_as&lt;derived, Metavariables&gt;());
+<span class="lineNum">      47 </span>            : }
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span>            : struct print_derived {
+<span class="lineNum">      50 </span>            :   // Not a stream because brigand requires the functor to be copyable.
+<span class="lineNum">      51 </span>            :   std::string value;
+<span class="lineNum">      52 </span>            :   template &lt;typename T&gt;
+<span class="lineNum">      53 </span>            :   void operator()(tmpl::type_&lt;T&gt; /*meta*/) noexcept {
+<span class="lineNum">      54 </span>            :     // These are zero-based
+<span class="lineNum">      55 </span>            :     const size_t name_col = 2;
+<span class="lineNum">      56 </span>            :     const size_t help_col = 22;
+<span class="lineNum">      57 </span>            :     const size_t end_col = 80;
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span>            :     std::ostringstream ss;
+<span class="lineNum">      60 </span>            :     ss &lt;&lt; std::left
+<span class="lineNum">      61 </span>            :        &lt;&lt; std::setw(name_col) &lt;&lt; &quot;&quot;
+<span class="lineNum">      62 </span>            :        &lt;&lt; std::setw(help_col - name_col - 1) &lt;&lt; pretty_type::short_name&lt;T&gt;();
+<span class="lineNum">      63 </span>            :     if (ss.str().size() &gt;= help_col) {
+<span class="lineNum">      64 </span>            :       ss &lt;&lt; &quot;\n&quot; &lt;&lt; std::setw(help_col - 1) &lt;&lt; &quot;&quot;;
+<span class="lineNum">      65 </span>            :     }
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span>            :     std::string help_snippet(T::help);
+<span class="lineNum">      68 </span>            :     if (help_snippet.size() &gt; end_col - help_col) {
+<span class="lineNum">      69 </span>            :       help_snippet.resize(end_col - help_col - 3);
+<span class="lineNum">      70 </span>            :       help_snippet += &quot;...&quot;;
+<span class="lineNum">      71 </span>            :     }
+<span class="lineNum">      72 </span>            :     std::replace(help_snippet.begin(), help_snippet.end(), '\n', ' ');
+<span class="lineNum">      73 </span>            :     ss &lt;&lt; &quot; &quot; &lt;&lt; help_snippet &lt;&lt; &quot;\n&quot;;
+<span class="lineNum">      74 </span>            : 
+<span class="lineNum">      75 </span>            :     value += ss.str();
+<span class="lineNum">      76 </span>            :   }
+<span class="lineNum">      77 </span>            : };
+<span class="lineNum">      78 </span>            : 
+<span class="lineNum">      79 </span>            : template &lt;typename BaseClass&gt;
+<span class="lineNum">      80 </span>            : std::string help_derived() noexcept {
+<span class="lineNum">      81 </span>            :   return &quot;Known Ids:\n&quot; +
+<span class="lineNum">      82 </span>            :          tmpl::for_each&lt;typename BaseClass::creatable_classes&gt;(
+<span class="lineNum">      83 </span>            :              Factory_detail::print_derived{})
+<span class="lineNum">      84 </span>            :              .value;
+<span class="lineNum">      85 </span>            : }
+<span class="lineNum">      86 </span>            : 
+<span class="lineNum">      87 </span>            : template &lt;typename BaseClass, typename Metavariables&gt;
+<span class="lineNum">      88 </span>            : std::unique_ptr&lt;BaseClass&gt; create(const Option&amp; options) {
+<span class="lineNum">      89 </span>            :   const auto&amp; node = options.node();
+<span class="lineNum">      90 </span>            :   Option derived_opts(options.context());
+<span class="lineNum">      91 </span>            :   derived_opts.append_context(&quot;While operating factory for &quot; +
+<span class="lineNum">      92 </span>            :                               pretty_type::short_name&lt;BaseClass&gt;());
+<span class="lineNum">      93 </span>            :   std::string id;
+<span class="lineNum">      94 </span>            :   if (node.IsScalar()) {
+<span class="lineNum">      95 </span>            :     id = node.as&lt;std::string&gt;();
+<span class="lineNum">      96 </span>            :   } else if (node.IsMap()) {
+<span class="lineNum">      97 </span>            :     if (node.size() != 1) {
+<span class="lineNum">      98 </span>            :       PARSE_ERROR(derived_opts.context(),
+<span class="lineNum">      99 </span>            :                   &quot;Expected a single class to create, got &quot;
+<span class="lineNum">     100 </span>            :                   &lt;&lt; node.size() &lt;&lt; &quot;:\n&quot; &lt;&lt; node);
+<span class="lineNum">     101 </span>            :     }
+<span class="lineNum">     102 </span>            :     id = node.begin()-&gt;first.as&lt;std::string&gt;();
+<span class="lineNum">     103 </span>            :     derived_opts.set_node(node.begin()-&gt;second);
+<span class="lineNum">     104 </span>            :   } else if (node.IsNull()) {
+<span class="lineNum">     105 </span>            :     PARSE_ERROR(derived_opts.context(),
+<span class="lineNum">     106 </span>            :                 &quot;Expected a class to create:\n&quot; &lt;&lt; help_derived&lt;BaseClass&gt;());
+<span class="lineNum">     107 </span>            :   } else {
+<span class="lineNum">     108 </span>            :     PARSE_ERROR(derived_opts.context(),
+<span class="lineNum">     109 </span>            :                 &quot;Expected a class or a class with options, got:\n&quot;
+<span class="lineNum">     110 </span>            :                 &lt;&lt; node);
+<span class="lineNum">     111 </span>            :   }
+<span class="lineNum">     112 </span>            :   auto derived =
+<span class="lineNum">     113 </span>            :       create_derived&lt;BaseClass, typename BaseClass::creatable_classes,
+<span class="lineNum">     114 </span>            :                      Metavariables&gt;(id, derived_opts);
+<span class="lineNum">     115 </span>            :   if (derived != nullptr) {
+<span class="lineNum">     116 </span>            :     return derived;
+<span class="lineNum">     117 </span>            :   }
+<span class="lineNum">     118 </span>            :   PARSE_ERROR(derived_opts.context(),
+<span class="lineNum">     119 </span>            :               &quot;Unknown Id '&quot; &lt;&lt; id &lt;&lt; &quot;'\n&quot; &lt;&lt; help_derived&lt;BaseClass&gt;());
+<span class="lineNum">     120 </span>            : }
+<span class="lineNum">     121 </span>            : }  // namespace Factory_detail
+<span class="lineNum">     122 </span>            : 
+<span class="lineNum">     123 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     124 </span>            : struct create_from_yaml&lt;std::unique_ptr&lt;T&gt;&gt; {
+<span class="lineNum">     125 </span>            :   template &lt;typename Metavariables&gt;
+<span class="lineNum">     126 </span>            :   static std::unique_ptr&lt;T&gt; create(const Option&amp; options) {
+<span class="lineNum">     127 </span>            :     return Factory_detail::create&lt;T, Metavariables&gt;(options);
+<span class="lineNum">     128 </span>            :   }
+<span class="lineNum">     129 </span>            : };
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

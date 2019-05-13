@@ -1,0 +1,142 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - DataStructures/DataVector.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">DataStructures</a> - DataVector.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntryLo">20.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;cmath&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : #include &quot;DataStructures/VectorImpl.hpp&quot;
+<span class="lineNum">       9 </span>            : #include &quot;Utilities/ForceInline.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;Utilities/PointerVector.hpp&quot;
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : // IWYU pragma: no_include &lt;blaze/math/expressions/DVecMapExpr.h&gt;
+<span class="lineNum">      13 </span>            : // IWYU pragma: no_include &lt;blaze/math/typetraits/IsVector.h&gt;
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : /*!
+<span class="lineNum">      16 </span>            :  * \ingroup DataStructuresGroup
+<span class="lineNum">      17 </span>            :  * \brief Stores a collection of function values.
+<span class="lineNum">      18 </span>            :  *
+<span class="lineNum">      19 </span>            :  * \details Use DataVector to represent function values on the computational
+<span class="lineNum">      20 </span>            :  * domain. Note that interpreting the data also requires knowledge of the points
+<span class="lineNum">      21 </span>            :  * that these function values correspond to.
+<span class="lineNum">      22 </span>            :  *
+<span class="lineNum">      23 </span>            :  * A DataVector holds an array of contiguous data. The DataVector can be owning,
+<span class="lineNum">      24 </span>            :  * meaning the array is deleted when the DataVector goes out of scope, or
+<span class="lineNum">      25 </span>            :  * non-owning, meaning it just has a pointer to an array.
+<span class="lineNum">      26 </span>            :  *
+<span class="lineNum">      27 </span>            :  * Refer to the \ref DataStructuresGroup documentation for a list of other
+<span class="lineNum">      28 </span>            :  * available types. In particular, to represent a generic vector that supports
+<span class="lineNum">      29 </span>            :  * common vector and matrix operations and whose meaning may not be of function
+<span class="lineNum">      30 </span>            :  * values at points, use DenseVector instead.
+<span class="lineNum">      31 </span>            :  *
+<span class="lineNum">      32 </span>            :  * DataVectors support a variety of mathematical operations that are applicable
+<span class="lineNum">      33 </span>            :  * to nodal coefficients. In addition to common arithmetic operations such as
+<span class="lineNum">      34 </span>            :  * elementwise addition, subtraction, multiplication and division, the
+<span class="lineNum">      35 </span>            :  * elementwise operations on blaze vectors of doubles are supported. See
+<span class="lineNum">      36 </span>            :  * [blaze-wiki/Vector_Operations]
+<span class="lineNum">      37 </span>            :  * (https://bitbucket.org/blaze-lib/blaze/wiki/Vector%20Operations).
+<span class="lineNum">      38 </span>            :  *
+<span class="lineNum">      39 </span>            :  * In addition, the Heaviside step function `step_function` is supported for
+<span class="lineNum">      40 </span>            :  * DataVectors.
+<span class="lineNum">      41 </span>            :  */
+<span class="lineNum">      42 </span><span class="lineCov">          1 : class DataVector : public VectorImpl&lt;double, DataVector&gt; {</span>
+<span class="lineNum">      43 </span>            :  public:
+<span class="lineNum">      44 </span>            :   using VectorImpl&lt;double, DataVector&gt;::operator=;
+<span class="lineNum">      45 </span>            :   using VectorImpl&lt;double, DataVector&gt;::VectorImpl;
+<span class="lineNum">      46 </span>            : 
+<span class="lineNum">      47 </span>            :   MAKE_MATH_ASSIGN_EXPRESSION_ARITHMETIC(DataVector)
+<span class="lineNum">      48 </span>            : };
+<span class="lineNum">      49 </span>            : 
+<span class="lineNum">      50 </span>            : // Specialize the Blaze type traits to correctly handle DataVector
+<span class="lineNum">      51 </span>            : namespace blaze {
+<span class="lineNum">      52 </span><span class="lineNoCov">          0 : VECTOR_BLAZE_TRAIT_SPECIALIZE_ARITHMETIC_TRAITS(DataVector);</span>
+<span class="lineNum">      53 </span><span class="lineNoCov">          0 : VECTOR_BLAZE_TRAIT_SPECIALIZE_ALL_MAP_TRAITS(DataVector);</span>
+<span class="lineNum">      54 </span>            : }  // namespace blaze
+<span class="lineNum">      55 </span>            : 
+<span class="lineNum">      56 </span><span class="lineNoCov">          0 : SPECTRE_ALWAYS_INLINE decltype(auto) fabs(const DataVector&amp; t) noexcept {</span>
+<span class="lineNum">      57 </span>            :   return abs(~t);
+<span class="lineNum">      58 </span>            : }
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span>            : MAKE_STD_ARRAY_VECTOR_BINOPS(DataVector)
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span>            : MAKE_WITH_VALUE_IMPL_DEFINITION_FOR(DataVector)
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

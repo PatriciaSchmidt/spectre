@@ -1,0 +1,130 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - /work/spectre/docs/DevGuide/DevGuide.md</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">work/spectre/docs/DevGuide</a> - DevGuide.md</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : \cond NEVER</span>
+<span class="lineNum">       2 </span>            : Distributed under the MIT License.
+<span class="lineNum">       3 </span>            : See LICENSE.txt for details.
+<span class="lineNum">       4 </span>            : \endcond
+<span class="lineNum">       5 </span>            : # Developer's Guide {#dev_guide}
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            : ### Developing and Improving Executables
+<span class="lineNum">       8 </span>            : - \ref spectre_build_system &quot;Build system&quot; and how to add dependencies,
+<span class="lineNum">       9 </span>            :   unit tests, and executables.
+<span class="lineNum">      10 </span>            : - \ref dev_guide_creating_executables &quot;Executables and how to add them&quot;
+<span class="lineNum">      11 </span>            : - \ref dev_guide_option_parsing &quot;Option parsing&quot; to get options from input files
+<span class="lineNum">      12 </span>            : - \ref profiling_with_projections &quot;Profiling With Charm++ Projections&quot; and PAPI
+<span class="lineNum">      13 </span>            :   for optimizing performance
+<span class="lineNum">      14 </span>            : - \ref spectre_writing_python_bindings &quot;Writing Python Bindings&quot; to use
+<span class="lineNum">      15 </span>            :   SpECTRE C++ classes and functions from within python.
+<span class="lineNum">      16 </span>            : - \ref implementing_vectors &quot;Implementing SpECTRE vectors&quot; a quick how-to for
+<span class="lineNum">      17 </span>            :   making new generalizations of DataVectors
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : ### Having your Contributions Merged into SpECTRE
+<span class="lineNum">      20 </span>            : - \ref writing_good_dox &quot;Writing good documentation&quot; is key for long term
+<span class="lineNum">      21 </span>            :   maintainability of the project.
+<span class="lineNum">      22 </span>            : - \ref writing_unit_tests &quot;Writing Unit Tests&quot; to catch bugs and to make
+<span class="lineNum">      23 </span>            :   sure future changes don't cause your code to regress.
+<span class="lineNum">      24 </span>            : - \ref travis_guide &quot;Travis CI&quot; is used to test every pull request.
+<span class="lineNum">      25 </span>            : - \ref code_review_guide &quot;Code review guidelines.&quot; All code merged into
+<span class="lineNum">      26 </span>            :   develop must follow these requirements.
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            : ### General SpECTRE Terminology
+<span class="lineNum">      29 </span>            : Terms with SpECTRE-specific meanings are defined here.
+<span class="lineNum">      30 </span>            : - \ref domain_concepts &quot;Domain Concepts&quot; used throughout the code are defined
+<span class="lineNum">      31 </span>            :   here for reference.
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span>            : ### Template Metaprogramming (TMP)
+<span class="lineNum">      34 </span>            : Explanations for TMP concepts and patterns known to the greater C++ community
+<span class="lineNum">      35 </span>            : can be found here.
+<span class="lineNum">      36 </span>            : - \ref sfinae &quot;SFINAE&quot;
+<span class="lineNum">      37 </span>            : 
+<span class="lineNum">      38 </span>            : ### Foundational Concepts in SpECTRE
+<span class="lineNum">      39 </span>            : Designed to give the reader an introduction to SpECTRE's most recurring
+<span class="lineNum">      40 </span>            : concepts and patterns.
+<span class="lineNum">      41 </span>            : - \ref databox_foundations &quot;Towards SpECTRE's DataBox&quot;
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span>            : ### Technical Documentation for Fluent Developers
+<span class="lineNum">      44 </span>            : Assumes a thorough familiarity and fluency in SpECTRE's usage of TMP.
+<span class="lineNum">      45 </span>            : - \ref DataBoxGroup &quot;DataBox&quot;
+<span class="lineNum">      46 </span>            : - \ref ParallelGroup &quot;Parallelization infrastructure&quot; components and usage
+<span class="lineNum">      47 </span>            : 
+<span class="lineNum">      48 </span>            : ### CoordinateMap Guide
+<span class="lineNum">      49 </span>            : Methods for creating custom coordinate maps are discussed here.
+<span class="lineNum">      50 </span>            : - \ref redistributing_gridpoints &quot;Methods for redistributing gridpoints&quot;
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,268 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - NumericalAlgorithms/LinearSolver/ConjugateGradient/ResidualMonitorActions.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">NumericalAlgorithms/LinearSolver/ConjugateGradient</a> - ResidualMonitorActions.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &quot;DataStructures/DataBox/DataBox.hpp&quot;
+<span class="lineNum">       7 </span>            : #include &quot;DataStructures/DataBox/Prefixes.hpp&quot;
+<span class="lineNum">       8 </span>            : #include &quot;Informer/Tags.hpp&quot;
+<span class="lineNum">       9 </span>            : #include &quot;Informer/Verbosity.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;NumericalAlgorithms/LinearSolver/Observe.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;NumericalAlgorithms/LinearSolver/Tags.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;Parallel/ConstGlobalCache.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;Parallel/Info.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;Parallel/Invoke.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;Parallel/Printf.hpp&quot;
+<span class="lineNum">      16 </span>            : #include &quot;Utilities/EqualWithinRoundoff.hpp&quot;
+<span class="lineNum">      17 </span>            : #include &quot;Utilities/Functional.hpp&quot;
+<span class="lineNum">      18 </span>            : #include &quot;Utilities/Requires.hpp&quot;
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : /// \cond
+<span class="lineNum">      21 </span>            : namespace tuples {
+<span class="lineNum">      22 </span>            : template &lt;typename...&gt;
+<span class="lineNum">      23 </span>            : class TaggedTuple;
+<span class="lineNum">      24 </span>            : }  // namespace tuples
+<span class="lineNum">      25 </span>            : namespace LinearSolver {
+<span class="lineNum">      26 </span>            : namespace cg_detail {
+<span class="lineNum">      27 </span>            : struct InitializeHasConverged;
+<span class="lineNum">      28 </span>            : struct UpdateFieldValues;
+<span class="lineNum">      29 </span>            : struct UpdateOperand;
+<span class="lineNum">      30 </span>            : }  // namespace cg_detail
+<span class="lineNum">      31 </span>            : }  // namespace LinearSolver
+<span class="lineNum">      32 </span>            : /// \endcond
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            : namespace LinearSolver {
+<span class="lineNum">      35 </span>            : namespace cg_detail {
+<span class="lineNum">      36 </span>            : 
+<span class="lineNum">      37 </span>            : template &lt;typename BroadcastTarget&gt;
+<span class="lineNum">      38 </span>            : struct InitializeResidual {
+<span class="lineNum">      39 </span>            :   template &lt;typename... DbTags, typename... InboxTags, typename Metavariables,
+<span class="lineNum">      40 </span>            :             typename ArrayIndex, typename ActionList,
+<span class="lineNum">      41 </span>            :             typename ParallelComponent,
+<span class="lineNum">      42 </span>            :             Requires&lt;sizeof...(DbTags) != 0&gt; = nullptr&gt;
+<span class="lineNum">      43 </span>            :   static auto apply(db::DataBox&lt;tmpl::list&lt;DbTags...&gt;&gt;&amp; box,
+<span class="lineNum">      44 </span>            :                     tuples::TaggedTuple&lt;InboxTags...&gt;&amp; /*inboxes*/,
+<span class="lineNum">      45 </span>            :                     Parallel::ConstGlobalCache&lt;Metavariables&gt;&amp; cache,
+<span class="lineNum">      46 </span>            :                     const ArrayIndex&amp; /*array_index*/,
+<span class="lineNum">      47 </span>            :                     const ActionList /*meta*/,
+<span class="lineNum">      48 </span>            :                     const ParallelComponent* const /*meta*/,
+<span class="lineNum">      49 </span>            :                     const double residual_square) noexcept {
+<span class="lineNum">      50 </span>            :     using fields_tag = typename Metavariables::system::fields_tag;
+<span class="lineNum">      51 </span>            :     using residual_square_tag = db::add_tag_prefix&lt;
+<span class="lineNum">      52 </span>            :         LinearSolver::Tags::MagnitudeSquare,
+<span class="lineNum">      53 </span>            :         db::add_tag_prefix&lt;LinearSolver::Tags::Residual, fields_tag&gt;&gt;;
+<span class="lineNum">      54 </span>            :     using residual_magnitude_tag = db::add_tag_prefix&lt;
+<span class="lineNum">      55 </span>            :         LinearSolver::Tags::Magnitude,
+<span class="lineNum">      56 </span>            :         db::add_tag_prefix&lt;LinearSolver::Tags::Residual, fields_tag&gt;&gt;;
+<span class="lineNum">      57 </span>            :     using initial_residual_magnitude_tag =
+<span class="lineNum">      58 </span>            :         db::add_tag_prefix&lt;LinearSolver::Tags::Initial, residual_magnitude_tag&gt;;
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span>            :     db::mutate&lt;residual_square_tag&gt;(
+<span class="lineNum">      61 </span>            :         make_not_null(&amp;box), [residual_square](
+<span class="lineNum">      62 </span>            :                                  const gsl::not_null&lt;double*&gt;
+<span class="lineNum">      63 </span>            :                                      local_residual_square) noexcept {
+<span class="lineNum">      64 </span>            :           *local_residual_square = residual_square;
+<span class="lineNum">      65 </span>            :         });
+<span class="lineNum">      66 </span>            :     // Perform a separate `db::mutate` so that we can retrieve the
+<span class="lineNum">      67 </span>            :     // `residual_magnitude_tag` from the compute item
+<span class="lineNum">      68 </span>            :     db::mutate&lt;initial_residual_magnitude_tag&gt;(
+<span class="lineNum">      69 </span>            :         make_not_null(&amp;box),
+<span class="lineNum">      70 </span>            :         [](const gsl::not_null&lt;double*&gt; local_initial_residual_magnitude,
+<span class="lineNum">      71 </span>            :            const double&amp; initial_residual_magnitude) noexcept {
+<span class="lineNum">      72 </span>            :           *local_initial_residual_magnitude = initial_residual_magnitude;
+<span class="lineNum">      73 </span>            :         },
+<span class="lineNum">      74 </span>            :         get&lt;residual_magnitude_tag&gt;(box));
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span>            :     LinearSolver::observe_detail::contribute_to_reduction_observer(box, cache);
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span>            :     // Determine whether the linear solver has converged. This invokes the
+<span class="lineNum">      79 </span>            :     // compute item.
+<span class="lineNum">      80 </span>            :     const auto&amp; has_converged = db::get&lt;LinearSolver::Tags::HasConverged&gt;(box);
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span>            :     if (UNLIKELY(has_converged and
+<span class="lineNum">      83 </span>            :                  static_cast&lt;int&gt;(get&lt;::Tags::Verbosity&gt;(box)) &gt;=
+<span class="lineNum">      84 </span>            :                      static_cast&lt;int&gt;(::Verbosity::Quiet))) {
+<span class="lineNum">      85 </span>            :       Parallel::printf(
+<span class="lineNum">      86 </span>            :           &quot;The linear solver has converged without any iterations: %s&quot;,
+<span class="lineNum">      87 </span>            :           has_converged);
+<span class="lineNum">      88 </span>            :     }
+<span class="lineNum">      89 </span>            : 
+<span class="lineNum">      90 </span>            :     Parallel::simple_action&lt;InitializeHasConverged&gt;(
+<span class="lineNum">      91 </span>            :         Parallel::get_parallel_component&lt;BroadcastTarget&gt;(cache),
+<span class="lineNum">      92 </span>            :         has_converged);
+<span class="lineNum">      93 </span>            :   }
+<span class="lineNum">      94 </span>            : };
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span>            : template &lt;typename BroadcastTarget&gt;
+<span class="lineNum">      97 </span>            : struct ComputeAlpha {
+<span class="lineNum">      98 </span>            :   template &lt;typename... DbTags, typename... InboxTags, typename Metavariables,
+<span class="lineNum">      99 </span>            :             typename ArrayIndex, typename ActionList,
+<span class="lineNum">     100 </span>            :             typename ParallelComponent,
+<span class="lineNum">     101 </span>            :             Requires&lt;sizeof...(DbTags) != 0&gt; = nullptr&gt;
+<span class="lineNum">     102 </span>            :   static auto apply(db::DataBox&lt;tmpl::list&lt;DbTags...&gt;&gt;&amp; box,
+<span class="lineNum">     103 </span>            :                     tuples::TaggedTuple&lt;InboxTags...&gt;&amp; /*inboxes*/,
+<span class="lineNum">     104 </span>            :                     Parallel::ConstGlobalCache&lt;Metavariables&gt;&amp; cache,
+<span class="lineNum">     105 </span>            :                     const ArrayIndex&amp; /*array_index*/,
+<span class="lineNum">     106 </span>            :                     const ActionList /*meta*/,
+<span class="lineNum">     107 </span>            :                     const ParallelComponent* const /*meta*/,
+<span class="lineNum">     108 </span>            :                     const double conj_grad_inner_product) noexcept {
+<span class="lineNum">     109 </span>            :     using fields_tag = typename Metavariables::system::fields_tag;
+<span class="lineNum">     110 </span>            :     using residual_square_tag = db::add_tag_prefix&lt;
+<span class="lineNum">     111 </span>            :         LinearSolver::Tags::MagnitudeSquare,
+<span class="lineNum">     112 </span>            :         db::add_tag_prefix&lt;LinearSolver::Tags::Residual, fields_tag&gt;&gt;;
+<span class="lineNum">     113 </span>            : 
+<span class="lineNum">     114 </span>            :     Parallel::simple_action&lt;UpdateFieldValues&gt;(
+<span class="lineNum">     115 </span>            :         Parallel::get_parallel_component&lt;BroadcastTarget&gt;(cache),
+<span class="lineNum">     116 </span>            :         get&lt;residual_square_tag&gt;(box) / conj_grad_inner_product);
+<span class="lineNum">     117 </span>            :   }
+<span class="lineNum">     118 </span>            : };
+<span class="lineNum">     119 </span>            : 
+<span class="lineNum">     120 </span>            : template &lt;typename BroadcastTarget&gt;
+<span class="lineNum">     121 </span>            : struct UpdateResidual {
+<span class="lineNum">     122 </span>            :   template &lt;typename... DbTags, typename... InboxTags, typename Metavariables,
+<span class="lineNum">     123 </span>            :             typename ArrayIndex, typename ActionList,
+<span class="lineNum">     124 </span>            :             typename ParallelComponent,
+<span class="lineNum">     125 </span>            :             Requires&lt;sizeof...(DbTags) != 0&gt; = nullptr&gt;
+<span class="lineNum">     126 </span>            :   static auto apply(db::DataBox&lt;tmpl::list&lt;DbTags...&gt;&gt;&amp; box,
+<span class="lineNum">     127 </span>            :                     tuples::TaggedTuple&lt;InboxTags...&gt;&amp; /*inboxes*/,
+<span class="lineNum">     128 </span>            :                     Parallel::ConstGlobalCache&lt;Metavariables&gt;&amp; cache,
+<span class="lineNum">     129 </span>            :                     const ArrayIndex&amp; /*array_index*/,
+<span class="lineNum">     130 </span>            :                     const ActionList /*meta*/,
+<span class="lineNum">     131 </span>            :                     const ParallelComponent* const /*meta*/,
+<span class="lineNum">     132 </span>            :                     const double residual_square) noexcept {
+<span class="lineNum">     133 </span>            :     using fields_tag = typename Metavariables::system::fields_tag;
+<span class="lineNum">     134 </span>            :     using residual_square_tag = db::add_tag_prefix&lt;
+<span class="lineNum">     135 </span>            :         LinearSolver::Tags::MagnitudeSquare,
+<span class="lineNum">     136 </span>            :         db::add_tag_prefix&lt;LinearSolver::Tags::Residual, fields_tag&gt;&gt;;
+<span class="lineNum">     137 </span>            :     using residual_magnitude_tag = db::add_tag_prefix&lt;
+<span class="lineNum">     138 </span>            :         LinearSolver::Tags::Magnitude,
+<span class="lineNum">     139 </span>            :         db::add_tag_prefix&lt;LinearSolver::Tags::Residual, fields_tag&gt;&gt;;
+<span class="lineNum">     140 </span>            : 
+<span class="lineNum">     141 </span>            :     // Compute the residual ratio before mutating the DataBox
+<span class="lineNum">     142 </span>            :     const double res_ratio = residual_square / get&lt;residual_square_tag&gt;(box);
+<span class="lineNum">     143 </span>            : 
+<span class="lineNum">     144 </span>            :     db::mutate&lt;residual_square_tag, LinearSolver::Tags::IterationId&gt;(
+<span class="lineNum">     145 </span>            :         make_not_null(&amp;box),
+<span class="lineNum">     146 </span>            :         [residual_square](
+<span class="lineNum">     147 </span>            :             const gsl::not_null&lt;double*&gt; local_residual_square,
+<span class="lineNum">     148 </span>            :             const gsl::not_null&lt;db::item_type&lt;LinearSolver::Tags::IterationId&gt;*&gt;
+<span class="lineNum">     149 </span>            :                 iteration_id) noexcept {
+<span class="lineNum">     150 </span>            :           *local_residual_square = residual_square;
+<span class="lineNum">     151 </span>            :           // Prepare for the next iteration
+<span class="lineNum">     152 </span>            :           (*iteration_id)++;
+<span class="lineNum">     153 </span>            :         });
+<span class="lineNum">     154 </span>            : 
+<span class="lineNum">     155 </span>            :     // At this point, the iteration is complete. We proceed with observing,
+<span class="lineNum">     156 </span>            :     // logging and checking convergence before broadcasting back to the
+<span class="lineNum">     157 </span>            :     // elements.
+<span class="lineNum">     158 </span>            : 
+<span class="lineNum">     159 </span>            :     LinearSolver::observe_detail::contribute_to_reduction_observer(box, cache);
+<span class="lineNum">     160 </span>            : 
+<span class="lineNum">     161 </span>            :     // Determine whether the linear solver has converged. This invokes the
+<span class="lineNum">     162 </span>            :     // compute item.
+<span class="lineNum">     163 </span>            :     const auto&amp; has_converged = get&lt;LinearSolver::Tags::HasConverged&gt;(box);
+<span class="lineNum">     164 </span>            : 
+<span class="lineNum">     165 </span>            :     // Do some logging
+<span class="lineNum">     166 </span>            :     if (UNLIKELY(static_cast&lt;int&gt;(get&lt;::Tags::Verbosity&gt;(box)) &gt;=
+<span class="lineNum">     167 </span>            :                  static_cast&lt;int&gt;(::Verbosity::Verbose))) {
+<span class="lineNum">     168 </span>            :       Parallel::printf(
+<span class="lineNum">     169 </span>            :           &quot;Linear solver iteration %zu done. Remaining residual: %e\n&quot;,
+<span class="lineNum">     170 </span>            :           get&lt;LinearSolver::Tags::IterationId&gt;(box),
+<span class="lineNum">     171 </span>            :           get&lt;residual_magnitude_tag&gt;(box));
+<span class="lineNum">     172 </span>            :     }
+<span class="lineNum">     173 </span>            :     if (UNLIKELY(has_converged and
+<span class="lineNum">     174 </span>            :                  static_cast&lt;int&gt;(get&lt;::Tags::Verbosity&gt;(box)) &gt;=
+<span class="lineNum">     175 </span>            :                      static_cast&lt;int&gt;(::Verbosity::Quiet))) {
+<span class="lineNum">     176 </span>            :       Parallel::printf(&quot;The linear solver has converged in %zu iterations: %s&quot;,
+<span class="lineNum">     177 </span>            :                        get&lt;LinearSolver::Tags::IterationId&gt;(box),
+<span class="lineNum">     178 </span>            :                        has_converged);
+<span class="lineNum">     179 </span>            :     }
+<span class="lineNum">     180 </span>            : 
+<span class="lineNum">     181 </span>            :     Parallel::simple_action&lt;UpdateOperand&gt;(
+<span class="lineNum">     182 </span>            :         Parallel::get_parallel_component&lt;BroadcastTarget&gt;(cache), res_ratio,
+<span class="lineNum">     183 </span>            :         has_converged);
+<span class="lineNum">     184 </span>            :   }
+<span class="lineNum">     185 </span>            : };
+<span class="lineNum">     186 </span>            : 
+<span class="lineNum">     187 </span>            : }  // namespace cg_detail
+<span class="lineNum">     188 </span>            : }  // namespace LinearSolver
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

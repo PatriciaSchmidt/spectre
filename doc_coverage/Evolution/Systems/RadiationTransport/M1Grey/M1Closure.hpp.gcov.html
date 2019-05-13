@@ -1,0 +1,189 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Evolution/Systems/RadiationTransport/M1Grey/M1Closure.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">Evolution/Systems/RadiationTransport/M1Grey</a> - M1Closure.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineCov">          1 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : ///\file
+<span class="lineNum">       5 </span>            : /// Defines functions to compute the M1 closure
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            : #pragma once
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : #include &quot;DataStructures/Tensor/TypeAliases.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : // IWYU pragma: no_forward_declare Tensor
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            : /// \cond
+<span class="lineNum">      14 </span>            : class DataVector;
+<span class="lineNum">      15 </span>            : namespace gsl {
+<span class="lineNum">      16 </span>            : template &lt;class&gt;
+<span class="lineNum">      17 </span>            : class not_null;
+<span class="lineNum">      18 </span>            : }  // namespace gsl
+<span class="lineNum">      19 </span>            : /// \endcond
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : namespace RadiationTransport {
+<span class="lineNum">      22 </span>            : namespace M1Grey {
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : /*!
+<span class="lineNum">      25 </span>            :  * Compute the 2nd moment of the neutrino distribution function
+<span class="lineNum">      26 </span>            :  * in the inertial frame (pressure tensor) from the 0th (energy density)
+<span class="lineNum">      27 </span>            :  * and 1st (momentum density) moments. The M1 closure sets
+<span class="lineNum">      28 </span>            :  * \f{align}{
+<span class="lineNum">      29 </span>            :  * P_{ij} = d_{\rm thin} P_{ij,\rm thin} + d_{\rm thick} P_{ij,\rm thick}
+<span class="lineNum">      30 </span>            :  * \f}
+<span class="lineNum">      31 </span>            :  * with \f$P_{ij}\f$ the pressure tensor in the inertial frame, and
+<span class="lineNum">      32 </span>            :  * \f$P_{ij,thin/thick}\f$ its value assuming an optically thick / optically
+<span class="lineNum">      33 </span>            :  * thin medium.
+<span class="lineNum">      34 </span>            :  *
+<span class="lineNum">      35 </span>            :  * Following the algorithm described in Appendix A of \cite Foucart2015vpa,
+<span class="lineNum">      36 </span>            :  * we choose the Minerbo closure (\cite Minerbo1978) which sets
+<span class="lineNum">      37 </span>            :  * \f{align}{
+<span class="lineNum">      38 </span>            :  * d_{\rm thin} = &amp; 1.5\chi-0.5\\
+<span class="lineNum">      39 </span>            :  * d_{\rm thick} = &amp; 1.5-1.5\chi \\
+<span class="lineNum">      40 </span>            :  * \chi = &amp; \frac{1}{3} + \xi^2 \frac{6-2\xi+6\xi^2}{15} \\
+<span class="lineNum">      41 </span>            :  * \xi = &amp; H^aH_a/J^2
+<span class="lineNum">      42 </span>            :  * \f}
+<span class="lineNum">      43 </span>            :  * with \f$J\f$ the energy density in the
+<span class="lineNum">      44 </span>            :  * frame comoving with the fluid, and \f$H^a\f$ the momentum density
+<span class="lineNum">      45 </span>            :  * in that frame.
+<span class="lineNum">      46 </span>            :  * The optically thick closure is
+<span class="lineNum">      47 </span>            :  * \f{align}{
+<span class="lineNum">      48 </span>            :  * K^{ab,\rm thick} = \frac{J_{\rm thick}}{3} (g^{ab}+u^a u^b)
+<span class="lineNum">      49 </span>            :  * \f}
+<span class="lineNum">      50 </span>            :  * with \f$ K^{ab,\rm thick} \f$ the pressure tensor in the frame comoving with
+<span class="lineNum">      51 </span>            :  * the fluid, and \f$ u^a \f$ the fluid 4-velocity, while the optically thin
+<span class="lineNum">      52 </span>            :  * closure is
+<span class="lineNum">      53 </span>            :  * \f{align}{
+<span class="lineNum">      54 </span>            :  * P^{ij,\rm thin} = \frac{S^i S^j}{S^k S_k} E
+<span class="lineNum">      55 </span>            :  * \f}
+<span class="lineNum">      56 </span>            :  * with \f$ E \f$, \f$ S^{i}
+<span class="lineNum">      57 </span>            :  * \f$ the 0th and 1st moments in the inertial frame (see paper for the
+<span class="lineNum">      58 </span>            :  * computation of \f$P_{ij,thick}\f$ from the other moments).
+<span class="lineNum">      59 </span>            :  *
+<span class="lineNum">      60 </span>            :  * The main step of this function is to solve the equation
+<span class="lineNum">      61 </span>            :  * \f{align}{
+<span class="lineNum">      62 </span>            :  *  \frac{\xi^2 J^2 - H^aH_a}{E^2} = 0
+<span class="lineNum">      63 </span>            :  * \f}
+<span class="lineNum">      64 </span>            :  * for \f$\xi\f$, with \f$J\f$ and \f$H^a\f$ being functions
+<span class="lineNum">      65 </span>            :  * of \f$\xi\f$ and of the input variables (the 0th and 1st moments
+<span class="lineNum">      66 </span>            :  * in the inertial frame). This is done by separating \f$H^a\f$ as
+<span class="lineNum">      67 </span>            :  * \f{align}{
+<span class="lineNum">      68 </span>            :  * H_a = - H_t t_a - H_v v_a - H_f F_a
+<span class="lineNum">      69 </span>            :  * \f}
+<span class="lineNum">      70 </span>            :  * (with \f$v^a\f$ the fluid 3-velocity and \f$t^a\f$ the unit normal
+<span class="lineNum">      71 </span>            :  * to the slice) and then writing each of the
+<span class="lineNum">      72 </span>            :  * variables \f$J\f$, \f$H_n\f$, \f$H_v\f$, \f$H_f\f$ as
+<span class="lineNum">      73 </span>            :  * \f{align}{
+<span class="lineNum">      74 </span>            :  * X = X_0 + d_{\rm thin} X_{\rm thin} + d_{\rm thick} X_{\rm thick}
+<span class="lineNum">      75 </span>            :  * \f}
+<span class="lineNum">      76 </span>            :  * so that evaluating
+<span class="lineNum">      77 </span>            :  * \f{align}{
+<span class="lineNum">      78 </span>            :  * \frac{\xi^2 J^2 - H^aH_a}{E^2} = 0
+<span class="lineNum">      79 </span>            :  * \f}
+<span class="lineNum">      80 </span>            :  * for a given \f$\xi\f$ only requires recomputing \f$d_{\rm thin,thick}\f$
+<span class="lineNum">      81 </span>            :  * and their derivatives with respect to \f$\xi\f$.
+<span class="lineNum">      82 </span>            :  * We perform the root-finding using a Newton-Raphson algorithm, with the
+<span class="lineNum">      83 </span>            :  * accuracy set by the variable root_find_number_of_digits (6 significant digits
+<span class="lineNum">      84 </span>            :  * at the moment).
+<span class="lineNum">      85 </span>            :  *
+<span class="lineNum">      86 </span>            :  * The function returns the closure factors \f$\xi\f$ (to be used as initial
+<span class="lineNum">      87 </span>            :  * guess for this function at the next step), the pressure tensor \f$P_{ij}\f$,
+<span class="lineNum">      88 </span>            :  * and the neutrino moments in the frame comoving with the fluid.
+<span class="lineNum">      89 </span>            :  * The momentum density in the frame comoving with the fluid
+<span class="lineNum">      90 </span>            :  * is decomposed into its normal component \f$ H^a t_a\f$, and its spatial
+<span class="lineNum">      91 </span>            :  * components \f$ \gamma_{ia} H^a\f$.
+<span class="lineNum">      92 </span>            :  */
+<span class="lineNum">      93 </span><span class="lineCov">          1 : void M1Closure(</span>
+<span class="lineNum">      94 </span>            :     gsl::not_null&lt;Scalar&lt;DataVector&gt;*&gt; closure_factor,
+<span class="lineNum">      95 </span>            :     gsl::not_null&lt;tnsr::II&lt;DataVector, 3, Frame::Inertial&gt;*&gt; pressure_tensor,
+<span class="lineNum">      96 </span>            :     gsl::not_null&lt;Scalar&lt;DataVector&gt;*&gt; comoving_energy_density,
+<span class="lineNum">      97 </span>            :     gsl::not_null&lt;Scalar&lt;DataVector&gt;*&gt; comoving_momentum_density_normal,
+<span class="lineNum">      98 </span>            :     gsl::not_null&lt;tnsr::i&lt;DataVector, 3, Frame::Inertial&gt;*&gt;
+<span class="lineNum">      99 </span>            :         comoving_momentum_density_spatial,
+<span class="lineNum">     100 </span>            :     const Scalar&lt;DataVector&gt;&amp; energy_density,
+<span class="lineNum">     101 </span>            :     const tnsr::i&lt;DataVector, 3, Frame::Inertial&gt;&amp; momentum_density,
+<span class="lineNum">     102 </span>            :     const tnsr::I&lt;DataVector, 3, Frame::Inertial&gt;&amp; fluid_velocity,
+<span class="lineNum">     103 </span>            :     const Scalar&lt;DataVector&gt;&amp; fluid_lorentz_factor,
+<span class="lineNum">     104 </span>            :     const tnsr::ii&lt;DataVector, 3, Frame::Inertial&gt;&amp; spatial_metric,
+<span class="lineNum">     105 </span>            :     const tnsr::II&lt;DataVector, 3, Frame::Inertial&gt;&amp;
+<span class="lineNum">     106 </span>            :         inv_spatial_metric) noexcept;
+<span class="lineNum">     107 </span>            : 
+<span class="lineNum">     108 </span>            : }  // namespace M1Grey
+<span class="lineNum">     109 </span>            : }  // namespace RadiationTransport
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

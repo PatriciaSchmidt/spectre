@@ -1,0 +1,202 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Evolution/Systems/GrMhd/ValenciaDivClean/Fluxes.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">Evolution/Systems/GrMhd/ValenciaDivClean</a> - Fluxes.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;Evolution/Systems/GrMhd/ValenciaDivClean/Fluxes.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : #include &quot;DataStructures/DataVector.hpp&quot;
+<span class="lineNum">       9 </span>            : #include &quot;DataStructures/Tensor/EagerMath/DotProduct.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;DataStructures/Tensor/Tensor.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;DataStructures/Variables.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;Evolution/Systems/GrMhd/ValenciaDivClean/Tags.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      13 </span>            : #include &quot;PointwiseFunctions/GeneralRelativity/IndexManipulation.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;PointwiseFunctions/GeneralRelativity/Tags.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      15 </span>            : #include &quot;PointwiseFunctions/Hydro/Tags.hpp&quot;              // IWYU pragma: keep
+<span class="lineNum">      16 </span>            : #include &quot;Utilities/ConstantExpressions.hpp&quot;
+<span class="lineNum">      17 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : // IWYU pragma: no_include &lt;array&gt;
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : // IWYU pragma: no_forward_declare Tensor
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : /// \cond
+<span class="lineNum">      24 </span>            : namespace grmhd {
+<span class="lineNum">      25 </span>            : namespace ValenciaDivClean {
+<span class="lineNum">      26 </span>            : void ComputeFluxes::apply(
+<span class="lineNum">      27 </span>            :     const gsl::not_null&lt;tnsr::I&lt;DataVector, 3, Frame::Inertial&gt;*&gt; tilde_d_flux,
+<span class="lineNum">      28 </span>            :     const gsl::not_null&lt;tnsr::I&lt;DataVector, 3, Frame::Inertial&gt;*&gt;
+<span class="lineNum">      29 </span>            :         tilde_tau_flux,
+<span class="lineNum">      30 </span>            :     const gsl::not_null&lt;tnsr::Ij&lt;DataVector, 3, Frame::Inertial&gt;*&gt; tilde_s_flux,
+<span class="lineNum">      31 </span>            :     const gsl::not_null&lt;tnsr::IJ&lt;DataVector, 3, Frame::Inertial&gt;*&gt; tilde_b_flux,
+<span class="lineNum">      32 </span>            :     const gsl::not_null&lt;tnsr::I&lt;DataVector, 3, Frame::Inertial&gt;*&gt;
+<span class="lineNum">      33 </span>            :         tilde_phi_flux,
+<span class="lineNum">      34 </span>            :     const Scalar&lt;DataVector&gt;&amp; tilde_d, const Scalar&lt;DataVector&gt;&amp; tilde_tau,
+<span class="lineNum">      35 </span>            :     const tnsr::i&lt;DataVector, 3, Frame::Inertial&gt;&amp; tilde_s,
+<span class="lineNum">      36 </span>            :     const tnsr::I&lt;DataVector, 3, Frame::Inertial&gt;&amp; tilde_b,
+<span class="lineNum">      37 </span>            :     const Scalar&lt;DataVector&gt;&amp; tilde_phi, const Scalar&lt;DataVector&gt;&amp; lapse,
+<span class="lineNum">      38 </span>            :     const tnsr::I&lt;DataVector, 3, Frame::Inertial&gt;&amp; shift,
+<span class="lineNum">      39 </span>            :     const Scalar&lt;DataVector&gt;&amp; sqrt_det_spatial_metric,
+<span class="lineNum">      40 </span>            :     const tnsr::ii&lt;DataVector, 3, Frame::Inertial&gt;&amp; spatial_metric,
+<span class="lineNum">      41 </span>            :     const tnsr::II&lt;DataVector, 3, Frame::Inertial&gt;&amp; inv_spatial_metric,
+<span class="lineNum">      42 </span>            :     const Scalar&lt;DataVector&gt;&amp; pressure,
+<span class="lineNum">      43 </span>            :     const tnsr::I&lt;DataVector, 3, Frame::Inertial&gt;&amp; spatial_velocity,
+<span class="lineNum">      44 </span>            :     const Scalar&lt;DataVector&gt;&amp; lorentz_factor,
+<span class="lineNum">      45 </span>            :     const tnsr::I&lt;DataVector, 3, Frame::Inertial&gt;&amp; magnetic_field) noexcept {
+<span class="lineNum">      46 </span>            :   Variables&lt;tmpl::list&lt;
+<span class="lineNum">      47 </span>            :       hydro::Tags::SpatialVelocityOneForm&lt;DataVector, 3, Frame::Inertial&gt;,
+<span class="lineNum">      48 </span>            :       hydro::Tags::MagneticFieldOneForm&lt;DataVector, 3, Frame::Inertial&gt;,
+<span class="lineNum">      49 </span>            :       hydro::Tags::MagneticFieldDotSpatialVelocity&lt;DataVector&gt;,
+<span class="lineNum">      50 </span>            :       hydro::Tags::MagneticFieldSquared&lt;DataVector&gt;, ::Tags::TempScalar&lt;0&gt;,
+<span class="lineNum">      51 </span>            :       ::Tags::TempScalar&lt;1&gt;, ::Tags::TempScalar&lt;2&gt;&gt;&gt;
+<span class="lineNum">      52 </span>            :       temp_tensors{get&lt;0&gt;(shift).size()};
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span>            :   auto&amp; spatial_velocity_one_form =
+<span class="lineNum">      55 </span>            :       get&lt;hydro::Tags::SpatialVelocityOneForm&lt;DataVector, 3, Frame::Inertial&gt;&gt;(
+<span class="lineNum">      56 </span>            :           temp_tensors);
+<span class="lineNum">      57 </span>            :   raise_or_lower_index(make_not_null(&amp;spatial_velocity_one_form),
+<span class="lineNum">      58 </span>            :                        spatial_velocity, spatial_metric);
+<span class="lineNum">      59 </span>            :   auto&amp; magnetic_field_one_form =
+<span class="lineNum">      60 </span>            :       get&lt;hydro::Tags::MagneticFieldOneForm&lt;DataVector, 3, Frame::Inertial&gt;&gt;(
+<span class="lineNum">      61 </span>            :           temp_tensors);
+<span class="lineNum">      62 </span>            :   raise_or_lower_index(make_not_null(&amp;magnetic_field_one_form), magnetic_field,
+<span class="lineNum">      63 </span>            :                        spatial_metric);
+<span class="lineNum">      64 </span>            :   auto&amp; magnetic_field_dot_spatial_velocity =
+<span class="lineNum">      65 </span>            :       get&lt;hydro::Tags::MagneticFieldDotSpatialVelocity&lt;DataVector&gt;&gt;(
+<span class="lineNum">      66 </span>            :           temp_tensors);
+<span class="lineNum">      67 </span>            :   dot_product(make_not_null(&amp;magnetic_field_dot_spatial_velocity),
+<span class="lineNum">      68 </span>            :               magnetic_field, spatial_velocity_one_form);
+<span class="lineNum">      69 </span>            :   auto&amp; magnetic_field_squared =
+<span class="lineNum">      70 </span>            :       get&lt;hydro::Tags::MagneticFieldSquared&lt;DataVector&gt;&gt;(temp_tensors);
+<span class="lineNum">      71 </span>            :   dot_product(make_not_null(&amp;magnetic_field_squared), magnetic_field,
+<span class="lineNum">      72 </span>            :               magnetic_field_one_form);
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span>            :   DataVector&amp; one_over_w_squared =
+<span class="lineNum">      75 </span>            :       get(get&lt;::Tags::TempScalar&lt;0&gt;&gt;(temp_tensors));
+<span class="lineNum">      76 </span>            :   one_over_w_squared = 1.0 / square(get(lorentz_factor));
+<span class="lineNum">      77 </span>            :   // p_star = p + p_m = p + b^2/2 = p + ((B^m v_m)^2 + (B^m B_m)/W^2)/2
+<span class="lineNum">      78 </span>            :   DataVector&amp; p_star_alpha_sqrt_det_g =
+<span class="lineNum">      79 </span>            :       get(get&lt;::Tags::TempScalar&lt;1&gt;&gt;(temp_tensors));
+<span class="lineNum">      80 </span>            :   p_star_alpha_sqrt_det_g =
+<span class="lineNum">      81 </span>            :       get(sqrt_det_spatial_metric) * get(lapse) *
+<span class="lineNum">      82 </span>            :       (get(pressure) + 0.5 * square(get(magnetic_field_dot_spatial_velocity)) +
+<span class="lineNum">      83 </span>            :        0.5 * get(magnetic_field_squared) * one_over_w_squared);
+<span class="lineNum">      84 </span>            : 
+<span class="lineNum">      85 </span>            :   // lapse b_i / W = lapse (B_i / W^2 + v_i (B^m v_m)
+<span class="lineNum">      86 </span>            :   tnsr::i&lt;DataVector, 3, Frame::Inertial&gt;&amp; lapse_b_over_w =
+<span class="lineNum">      87 </span>            :       get&lt;hydro::Tags::SpatialVelocityOneForm&lt;DataVector, 3, Frame::Inertial&gt;&gt;(
+<span class="lineNum">      88 </span>            :           temp_tensors);
+<span class="lineNum">      89 </span>            :   for (size_t i = 0; i &lt; 3; ++i) {
+<span class="lineNum">      90 </span>            :     lapse_b_over_w.get(i) *= get(magnetic_field_dot_spatial_velocity);
+<span class="lineNum">      91 </span>            :     lapse_b_over_w.get(i) +=
+<span class="lineNum">      92 </span>            :         one_over_w_squared * magnetic_field_one_form.get(i);
+<span class="lineNum">      93 </span>            :     lapse_b_over_w.get(i) *= get(lapse);
+<span class="lineNum">      94 </span>            :   }
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span>            :   // Outside the loop to save allocations
+<span class="lineNum">      97 </span>            :   DataVector&amp; transport_velocity_I =
+<span class="lineNum">      98 </span>            :       get(get&lt;::Tags::TempScalar&lt;2&gt;&gt;(temp_tensors));
+<span class="lineNum">      99 </span>            : 
+<span class="lineNum">     100 </span>            :   for (size_t i = 0; i &lt; 3; ++i) {
+<span class="lineNum">     101 </span>            :     transport_velocity_I = get(lapse) * spatial_velocity.get(i) - shift.get(i);
+<span class="lineNum">     102 </span>            :     tilde_d_flux-&gt;get(i) = get(tilde_d) * transport_velocity_I;
+<span class="lineNum">     103 </span>            :     tilde_tau_flux-&gt;get(i) =
+<span class="lineNum">     104 </span>            :         get(tilde_tau) * transport_velocity_I +
+<span class="lineNum">     105 </span>            :         p_star_alpha_sqrt_det_g * spatial_velocity.get(i) -
+<span class="lineNum">     106 </span>            :         get(lapse) * get(magnetic_field_dot_spatial_velocity) * tilde_b.get(i);
+<span class="lineNum">     107 </span>            :     tilde_phi_flux-&gt;get(i) =
+<span class="lineNum">     108 </span>            :         get(lapse) * tilde_b.get(i) - get(tilde_phi) * shift.get(i);
+<span class="lineNum">     109 </span>            :     for (size_t j = 0; j &lt; 3; ++j) {
+<span class="lineNum">     110 </span>            :       tilde_s_flux-&gt;get(i, j) = tilde_s.get(j) * transport_velocity_I -
+<span class="lineNum">     111 </span>            :                                 lapse_b_over_w.get(j) * tilde_b.get(i);
+<span class="lineNum">     112 </span>            :       tilde_b_flux-&gt;get(i, j) =
+<span class="lineNum">     113 </span>            :           tilde_b.get(j) * transport_velocity_I +
+<span class="lineNum">     114 </span>            :           get(lapse) * (get(tilde_phi) * inv_spatial_metric.get(i, j) -
+<span class="lineNum">     115 </span>            :                         spatial_velocity.get(j) * tilde_b.get(i));
+<span class="lineNum">     116 </span>            :     }
+<span class="lineNum">     117 </span>            :     tilde_s_flux-&gt;get(i, i) += p_star_alpha_sqrt_det_g;
+<span class="lineNum">     118 </span>            :   }
+<span class="lineNum">     119 </span>            : }
+<span class="lineNum">     120 </span>            : }  // namespace ValenciaDivClean
+<span class="lineNum">     121 </span>            : }  // namespace grmhd
+<span class="lineNum">     122 </span>            : /// \endcond
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

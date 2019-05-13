@@ -1,0 +1,263 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - NumericalAlgorithms/Spectral/SwshCoefficients.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">NumericalAlgorithms/Spectral</a> - SwshCoefficients.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryMed">75.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;cstdlib&gt;
+<span class="lineNum">       7 </span>            : #include &lt;memory&gt;
+<span class="lineNum">       8 </span>            : #include &lt;sharp_cxx.h&gt;
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : #include &quot;NumericalAlgorithms/Spectral/SwshCollocation.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;Utilities/ForceInline.hpp&quot;
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            : namespace Spectral {
+<span class="lineNum">      14 </span>            : namespace Swsh {
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : /// \ingroup SwshGroup
+<span class="lineNum">      17 </span>            : /// \brief Convenience function for determining the number of spin-weighted
+<span class="lineNum">      18 </span>            : /// spherical harmonics coefficients that are stored for a given `l_max`
+<span class="lineNum">      19 </span>            : constexpr SPECTRE_ALWAYS_INLINE size_t
+<span class="lineNum">      20 </span><span class="lineCov">          1 : number_of_swsh_coefficients(const size_t l_max) noexcept {</span>
+<span class="lineNum">      21 </span>            :   return (l_max + 1) * (l_max + 2) / 2;  // &quot;triangular&quot; representation
+<span class="lineNum">      22 </span>            : }
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : /*!
+<span class="lineNum">      25 </span>            :  * \ingroup SwshGroup
+<span class="lineNum">      26 </span>            :  * \brief Compute the relative sign change necessary to convert between the
+<span class="lineNum">      27 </span>            :  * libsharp basis for spin weight `from_spin_weight` to the basis for spin
+<span class="lineNum">      28 </span>            :  * weight `to_spin_weight`, for the real component coefficients if `real` is
+<span class="lineNum">      29 </span>            :  * true, otherwise for the imaginary component coefficients. The sign change for
+<span class="lineNum">      30 </span>            :  * a given coefficient is equivalent to the product of
+<span class="lineNum">      31 </span>            :  * `sharp_swsh_sign(from_spin, m, real) * sharp_swsh_sign(to_spin, m,
+<span class="lineNum">      32 </span>            :  * real)`. Due to the form of the signs, it does not end up depending on m (the
+<span class="lineNum">      33 </span>            :  * m's in the power of \f$-1\f$'s cancel).
+<span class="lineNum">      34 </span>            :  * For full details of the libsharp sign conventions, see the documentation for
+<span class="lineNum">      35 </span>            :  * TransformJob.
+<span class="lineNum">      36 </span>            :  *
+<span class="lineNum">      37 </span>            :  * \details The sign change is obtained by the
+<span class="lineNum">      38 </span>            :  * difference between the libsharp convention and the convention which uses:
+<span class="lineNum">      39 </span>            :  *
+<span class="lineNum">      40 </span>            :  * \f[
+<span class="lineNum">      41 </span>            :  * {}_s Y_{\ell m} (\theta, \phi) = (-1)^m \sqrt{\frac{2 l + 1}{4 \pi}}
+<span class="lineNum">      42 </span>            :  * D^{\ell}{}_{-m s}(\phi, \theta, 0).
+<span class="lineNum">      43 </span>            :  * \f]
+<span class="lineNum">      44 </span>            :  *
+<span class="lineNum">      45 </span>            :  * See \cite Goldberg1966uu
+<span class="lineNum">      46 </span>            :  */
+<span class="lineNum">      47 </span><span class="lineCov">          1 : constexpr SPECTRE_ALWAYS_INLINE double sharp_swsh_sign_change(</span>
+<span class="lineNum">      48 </span>            :     const int from_spin_weight, const int to_spin_weight,
+<span class="lineNum">      49 </span>            :     const bool real) noexcept {
+<span class="lineNum">      50 </span>            :   if (real) {
+<span class="lineNum">      51 </span>            :     return (from_spin_weight == 0 ? -1.0 : 1.0) *
+<span class="lineNum">      52 </span>            :            (from_spin_weight &gt;= 0 ? -1.0 : 1.0) *
+<span class="lineNum">      53 </span>            :            ((from_spin_weight &lt; 0 and (from_spin_weight % 2 == 0)) ? -1.0
+<span class="lineNum">      54 </span>            :                                                                    : 1.0) *
+<span class="lineNum">      55 </span>            :            (to_spin_weight == 0 ? -1.0 : 1.0) *
+<span class="lineNum">      56 </span>            :            (to_spin_weight &gt;= 0 ? -1.0 : 1.0) *
+<span class="lineNum">      57 </span>            :            ((to_spin_weight &lt; 0 and (to_spin_weight % 2 == 0)) ? -1.0 : 1.0);
+<span class="lineNum">      58 </span>            :   }
+<span class="lineNum">      59 </span>            :   return (from_spin_weight == 0 ? -1.0 : 1.0) *
+<span class="lineNum">      60 </span>            :          ((from_spin_weight &lt; 0 and (from_spin_weight % 2 == 0)) ? 1.0 : -1.0) *
+<span class="lineNum">      61 </span>            :          (to_spin_weight == 0 ? -1.0 : 1.0) *
+<span class="lineNum">      62 </span>            :          ((to_spin_weight &lt; 0 and (to_spin_weight % 2 == 0)) ? 1.0 : -1.0);
+<span class="lineNum">      63 </span>            : }
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span>            : /*!
+<span class="lineNum">      66 </span>            :  * \ingroup SwshGroup
+<span class="lineNum">      67 </span>            :  * \brief Compute the sign change between the libsharp convention and the set
+<span class="lineNum">      68 </span>            :  * of spin-weighted spherical harmonics given by the relation to the Wigner
+<span class="lineNum">      69 </span>            :  * rotation matrices.
+<span class="lineNum">      70 </span>            :  *
+<span class="lineNum">      71 </span>            :  * \details The sign change is obtained via the difference between the libsharp
+<span class="lineNum">      72 </span>            :  * convention and the convention which uses:
+<span class="lineNum">      73 </span>            :  *
+<span class="lineNum">      74 </span>            :  * \f[
+<span class="lineNum">      75 </span>            :  * {}_s Y_{\ell m} (\theta, \phi) = (-1)^m \sqrt{\frac{2 l + 1}{4 \pi}}
+<span class="lineNum">      76 </span>            :  * D^{\ell}{}_{-m s}(\phi, \theta, 0).
+<span class="lineNum">      77 </span>            :  * \f]
+<span class="lineNum">      78 </span>            :  *
+<span class="lineNum">      79 </span>            :  * See \cite Goldberg1966uu.
+<span class="lineNum">      80 </span>            :  * The sign change is computed for the real component coefficients if `real` is
+<span class="lineNum">      81 </span>            :  * true, otherwise for the imaginary component coefficients. For full details on
+<span class="lineNum">      82 </span>            :  * the sign convention used in libsharp, see the documentation for TransformJob.
+<span class="lineNum">      83 </span>            :  * This function outputs the \f$\mathrm{sign}(m, s, \mathrm{real})\f$ necessary
+<span class="lineNum">      84 </span>            :  * to produce the conversion between Goldberg moments and libsharp moments:
+<span class="lineNum">      85 </span>            :  *
+<span class="lineNum">      86 </span>            :  * \f{align*}{
+<span class="lineNum">      87 </span>            :  * {}_s Y_{\ell m}^{\mathrm{real}, \mathrm{sharp}}  =&amp; \mathrm{sign}(m, s,
+<span class="lineNum">      88 </span>            :  * \mathrm{real=true}) {}_s Y_{\ell m}^{\mathrm{Goldberg}}\\
+<span class="lineNum">      89 </span>            :  * {}_s Y_{\ell m}^{\mathrm{imag}, \mathrm{sharp}}  =&amp;
+<span class="lineNum">      90 </span>            :  * \mathrm{sign}(m, s, \mathrm{real=false}) {}_s Y_{\ell
+<span class="lineNum">      91 </span>            :  * m}^{\mathrm{Goldberg}}.
+<span class="lineNum">      92 </span>            :  * \f}
+<span class="lineNum">      93 </span>            :  *
+<span class="lineNum">      94 </span>            :  * Note that in this equation, the &quot;real&quot; and &quot;imag&quot; superscripts refer to the
+<span class="lineNum">      95 </span>            :  * set of basis functions used for the decomposition of the real and imaginary
+<span class="lineNum">      96 </span>            :  * part of the spin-weighted collocation points, not real or imaginary parts of
+<span class="lineNum">      97 </span>            :  * the basis functions themselves.
+<span class="lineNum">      98 </span>            :  */
+<span class="lineNum">      99 </span><span class="lineCov">          1 : constexpr SPECTRE_ALWAYS_INLINE double sharp_swsh_sign(</span>
+<span class="lineNum">     100 </span>            :     const int spin_weight, const int m, const bool real) noexcept {
+<span class="lineNum">     101 </span>            :   if (real) {
+<span class="lineNum">     102 </span>            :     if (m &gt;= 0) {
+<span class="lineNum">     103 </span>            :       return (spin_weight &gt; 0 ? -1.0 : 1.0) *
+<span class="lineNum">     104 </span>            :              ((spin_weight &lt; 0 and (spin_weight % 2 == 0)) ? -1.0 : 1.0);
+<span class="lineNum">     105 </span>            :     }
+<span class="lineNum">     106 </span>            :     return (spin_weight == 0 ? -1.0 : 1.0) *
+<span class="lineNum">     107 </span>            :            ((spin_weight &gt;= 0 and (m % 2 == 0)) ? -1.0 : 1.0) *
+<span class="lineNum">     108 </span>            :            (spin_weight &lt; 0 and (m + spin_weight) % 2 == 0 ? -1.0 : 1.0);
+<span class="lineNum">     109 </span>            :   }
+<span class="lineNum">     110 </span>            :   if (m &gt;= 0) {
+<span class="lineNum">     111 </span>            :     return (spin_weight == 0 ? -1.0 : 1.0) *
+<span class="lineNum">     112 </span>            :            ((spin_weight &lt; 0 and (spin_weight % 2 == 0)) ? 1.0 : -1.0);
+<span class="lineNum">     113 </span>            :   }
+<span class="lineNum">     114 </span>            :   return (spin_weight == 0 ? -1.0 : 1.0) *
+<span class="lineNum">     115 </span>            :          ((spin_weight &gt;= 0 and (m % 2 == 0)) ? -1.0 : 1.0) *
+<span class="lineNum">     116 </span>            :          ((spin_weight &lt; 0 and (m + spin_weight) % 2 != 0) ? -1.0 : 1.0);
+<span class="lineNum">     117 </span>            : }
+<span class="lineNum">     118 </span>            : 
+<span class="lineNum">     119 </span>            : namespace detail {
+<span class="lineNum">     120 </span>            : 
+<span class="lineNum">     121 </span>            : constexpr size_t coefficients_maximum_l_max = collocation_maximum_l_max;
+<span class="lineNum">     122 </span>            : 
+<span class="lineNum">     123 </span>            : struct DestroySharpAlm {
+<span class="lineNum">     124 </span>            :   void operator()(sharp_alm_info* to_delete) noexcept {
+<span class="lineNum">     125 </span>            :     sharp_destroy_alm_info(to_delete);
+<span class="lineNum">     126 </span>            :   }
+<span class="lineNum">     127 </span>            : };
+<span class="lineNum">     128 </span>            : // The Coefficients class acts largely as a memory-safe container for a
+<span class="lineNum">     129 </span>            : // `sharp_alm_info*`, required for use of libsharp transform utilities.
+<span class="lineNum">     130 </span>            : // The libsharp utilities are currently constructed to only provide user
+<span class="lineNum">     131 </span>            : // functions with collocation data for spin-weighted functions and
+<span class="lineNum">     132 </span>            : // derivatives. If and when the libsharp utilities are expanded to provide
+<span class="lineNum">     133 </span>            : // spin-weighted coefficients as output, this class should be expanded to
+<span class="lineNum">     134 </span>            : // provide information about the value and storage ordering of those
+<span class="lineNum">     135 </span>            : // coefficients to user code. This should be implemented as an iterator, as is
+<span class="lineNum">     136 </span>            : // done in SwshCollocation.hpp.
+<span class="lineNum">     137 </span>            : //
+<span class="lineNum">     138 </span>            : // Note: The libsharp representation of coefficients is altered from the
+<span class="lineNum">     139 </span>            : // standard mathematical definitions in a nontrivial way. There are a number of
+<span class="lineNum">     140 </span>            : // important features to the data storage of the coefficients.
+<span class="lineNum">     141 </span>            : // - they are stored as a set of complex values, but each vector of complex
+<span class="lineNum">     142 </span>            : //   values is the transform of only the real or imaginary part of the
+<span class="lineNum">     143 </span>            : //   collocation data
+<span class="lineNum">     144 </span>            : // - because each vector of complex coefficients is related to the transform of
+<span class="lineNum">     145 </span>            : //   a set of doubles, only (about) half of the m's are stored (m &gt;= 0), because
+<span class="lineNum">     146 </span>            : //   the remaining m modes are determinable by conjugation from the positive m
+<span class="lineNum">     147 </span>            : //   modes, given that they represent the transform of a purely real or purely
+<span class="lineNum">     148 </span>            : //   imaginary collocation quantity
+<span class="lineNum">     149 </span>            : // - they are stored in an l-varies-fastest, triangular representation. To be
+<span class="lineNum">     150 </span>            : //   concrete, for an l_max=2, the order of coefficient storage is (l, m):
+<span class="lineNum">     151 </span>            : //   [(0, 0), (1, 0), (2, 0), (1, 1), (2, 1), (2, 2)]
+<span class="lineNum">     152 </span>            : // - due to the restriction of representing only the transform of real
+<span class="lineNum">     153 </span>            : //   quantities, the m=0 modes always have vanishing imaginary component.
+<span class="lineNum">     154 </span>            : class Coefficients {
+<span class="lineNum">     155 </span>            :  public:
+<span class="lineNum">     156 </span>            :   explicit Coefficients(size_t l_max) noexcept;
+<span class="lineNum">     157 </span>            : 
+<span class="lineNum">     158 </span>            :   ~Coefficients() = default;
+<span class="lineNum">     159 </span>            :   Coefficients() = default;
+<span class="lineNum">     160 </span>            :   Coefficients(const Coefficients&amp;) = delete;
+<span class="lineNum">     161 </span>            :   Coefficients(Coefficients&amp;&amp;) = default;
+<span class="lineNum">     162 </span>            :   Coefficients&amp; operator=(const Coefficients&amp;) = delete;
+<span class="lineNum">     163 </span>            :   Coefficients&amp; operator=(Coefficients&amp;&amp;) = default;
+<span class="lineNum">     164 </span>            :   sharp_alm_info* get_sharp_alm_info() const noexcept {
+<span class="lineNum">     165 </span>            :     return alm_info_.get();
+<span class="lineNum">     166 </span>            :   }
+<span class="lineNum">     167 </span>            : 
+<span class="lineNum">     168 </span>            :   size_t l_max() const noexcept { return l_max_; }
+<span class="lineNum">     169 </span>            : 
+<span class="lineNum">     170 </span>            :  private:
+<span class="lineNum">     171 </span>            :   std::unique_ptr&lt;sharp_alm_info, DestroySharpAlm&gt; alm_info_;
+<span class="lineNum">     172 </span>            :   size_t l_max_ = 0;
+<span class="lineNum">     173 </span>            : };
+<span class="lineNum">     174 </span>            : 
+<span class="lineNum">     175 </span>            : // Function for obtaining a `Coefficients`, which is a thin wrapper around
+<span class="lineNum">     176 </span>            : // the libsharp `alm_info`, needed to perform transformations and iterate over
+<span class="lineNum">     177 </span>            : // coefficients. A lazy static cache is used to avoid repeated computation. See
+<span class="lineNum">     178 </span>            : // the similar implementation in `SwshCollocation.hpp` for details about the
+<span class="lineNum">     179 </span>            : // caching mechanism.
+<span class="lineNum">     180 </span>            : const Coefficients&amp; precomputed_coefficients(size_t l_max) noexcept;
+<span class="lineNum">     181 </span>            : }  // namespace detail
+<span class="lineNum">     182 </span>            : }  // namespace Swsh
+<span class="lineNum">     183 </span>            : }  // namespace Spectral
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

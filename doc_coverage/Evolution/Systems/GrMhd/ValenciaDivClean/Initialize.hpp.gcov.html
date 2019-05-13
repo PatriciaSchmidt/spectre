@@ -1,0 +1,318 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Evolution/Systems/GrMhd/ValenciaDivClean/Initialize.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">Evolution/Systems/GrMhd/ValenciaDivClean</a> - Initialize.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">16</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;array&gt;
+<span class="lineNum">       7 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       8 </span>            : #include &lt;tuple&gt;
+<span class="lineNum">       9 </span>            : #include &lt;utility&gt;  // IWYU pragma: keep
+<span class="lineNum">      10 </span>            : #include &lt;vector&gt;
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : #include &quot;DataStructures/DataBox/DataBox.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;DataStructures/DataBox/DataBoxTag.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;DataStructures/DataBox/Prefixes.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;DataStructures/Variables.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      16 </span>            : #include &quot;Domain/Mesh.hpp&quot;
+<span class="lineNum">      17 </span>            : #include &quot;Domain/Tags.hpp&quot;
+<span class="lineNum">      18 </span>            : #include &quot;Evolution/Initialization/ConservativeSystem.hpp&quot;
+<span class="lineNum">      19 </span>            : #include &quot;Evolution/Initialization/DiscontinuousGalerkin.hpp&quot;
+<span class="lineNum">      20 </span>            : #include &quot;Evolution/Initialization/Domain.hpp&quot;
+<span class="lineNum">      21 </span>            : #include &quot;Evolution/Initialization/Evolution.hpp&quot;
+<span class="lineNum">      22 </span>            : #include &quot;Evolution/Initialization/Interface.hpp&quot;
+<span class="lineNum">      23 </span>            : #include &quot;Evolution/Initialization/Limiter.hpp&quot;
+<span class="lineNum">      24 </span>            : #include &quot;Evolution/Systems/GrMhd/ValenciaDivClean/Tags.hpp&quot;
+<span class="lineNum">      25 </span>            : #include &quot;Evolution/VariableFixing/FixToAtmosphere.hpp&quot;
+<span class="lineNum">      26 </span>            : #include &quot;NumericalAlgorithms/LinearOperators/Divergence.tpp&quot;
+<span class="lineNum">      27 </span>            : #include &quot;Parallel/ConstGlobalCache.hpp&quot;
+<span class="lineNum">      28 </span>            : #include &quot;PointwiseFunctions/AnalyticData/Tags.hpp&quot;
+<span class="lineNum">      29 </span>            : #include &quot;PointwiseFunctions/AnalyticSolutions/Tags.hpp&quot;
+<span class="lineNum">      30 </span>            : #include &quot;PointwiseFunctions/GeneralRelativity/IndexManipulation.hpp&quot;
+<span class="lineNum">      31 </span>            : #include &quot;PointwiseFunctions/GeneralRelativity/Tags.hpp&quot;
+<span class="lineNum">      32 </span>            : #include &quot;PointwiseFunctions/Hydro/LorentzFactor.hpp&quot;
+<span class="lineNum">      33 </span>            : #include &quot;PointwiseFunctions/Hydro/SpecificEnthalpy.hpp&quot;
+<span class="lineNum">      34 </span>            : #include &quot;PointwiseFunctions/Hydro/Tags.hpp&quot;
+<span class="lineNum">      35 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      36 </span>            : #include &quot;Utilities/MakeWithValue.hpp&quot;
+<span class="lineNum">      37 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span>            : namespace grmhd {
+<span class="lineNum">      40 </span>            : namespace ValenciaDivClean {
+<span class="lineNum">      41 </span><span class="lineNoCov">          0 : namespace Actions {</span>
+<span class="lineNum">      42 </span>            : namespace detail {
+<span class="lineNum">      43 </span>            : template &lt;class T, class = cpp17::void_t&lt;&gt;&gt;
+<span class="lineNum">      44 </span>            : struct has_analytic_solution_alias : std::false_type {};
+<span class="lineNum">      45 </span>            : template &lt;class T&gt;
+<span class="lineNum">      46 </span>            : struct has_analytic_solution_alias&lt;T,
+<span class="lineNum">      47 </span>            :                                    cpp17::void_t&lt;typename T::analytic_solution&gt;&gt;
+<span class="lineNum">      48 </span>            :     : std::true_type {};
+<span class="lineNum">      49 </span>            : }  // namespace detail
+<span class="lineNum">      50 </span>            : 
+<span class="lineNum">      51 </span>            : // Note:  I've left the Dim and System template parameters until it is clear
+<span class="lineNum">      52 </span>            : // whether or not what remains is specific to this system, and what might be
+<span class="lineNum">      53 </span>            : // applicable to more than one system
+<span class="lineNum">      54 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      55 </span><span class="lineNoCov">          0 : struct Initialize {</span>
+<span class="lineNum">      56 </span>            :   template &lt;typename Metavariables&gt;
+<span class="lineNum">      57 </span><span class="lineNoCov">          0 :   struct PrimitiveTags {</span>
+<span class="lineNum">      58 </span><span class="lineNoCov">          0 :     using system = typename Metavariables::system;</span>
+<span class="lineNum">      59 </span><span class="lineNoCov">          0 :     using primitives_tag = typename system::primitive_variables_tag;</span>
+<span class="lineNum">      60 </span><span class="lineNoCov">          0 :     using simple_tags = db::AddSimpleTags&lt;</span>
+<span class="lineNum">      61 </span>            :         primitives_tag, typename Metavariables::equation_of_state_tag,
+<span class="lineNum">      62 </span>            :         grmhd::ValenciaDivClean::Tags::ConstraintDampingParameter&gt;;
+<span class="lineNum">      63 </span><span class="lineNoCov">          0 :     using compute_tags = db::AddComputeTags&lt;&gt;;</span>
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span>            :     template &lt;typename TagsList&gt;
+<span class="lineNum">      66 </span><span class="lineNoCov">          0 :     static auto initialize(</span>
+<span class="lineNum">      67 </span>            :         db::DataBox&lt;TagsList&gt;&amp;&amp; box,
+<span class="lineNum">      68 </span>            :         const Parallel::ConstGlobalCache&lt;Metavariables&gt;&amp; cache,
+<span class="lineNum">      69 </span>            :         const double initial_time) noexcept {
+<span class="lineNum">      70 </span>            :       using PrimitiveVars = typename primitives_tag::type;
+<span class="lineNum">      71 </span>            : 
+<span class="lineNum">      72 </span>            :       const size_t num_grid_points =
+<span class="lineNum">      73 </span>            :           db::get&lt;::Tags::Mesh&lt;Dim&gt;&gt;(box).number_of_grid_points();
+<span class="lineNum">      74 </span>            : 
+<span class="lineNum">      75 </span>            :       const auto&amp; inertial_coords =
+<span class="lineNum">      76 </span>            :           db::get&lt;::Tags::Coordinates&lt;Dim, Frame::Inertial&gt;&gt;(box);
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span>            :       // Set initial data from analytic solution
+<span class="lineNum">      79 </span>            :       PrimitiveVars primitive_vars{num_grid_points};
+<span class="lineNum">      80 </span>            :       auto equation_of_state = make_overloader(
+<span class="lineNum">      81 </span>            :           [ initial_time, &amp;inertial_coords ](
+<span class="lineNum">      82 </span>            :               std::true_type /*is_analytic_solution*/,
+<span class="lineNum">      83 </span>            :               const gsl::not_null&lt;PrimitiveVars*&gt; prim_vars,
+<span class="lineNum">      84 </span>            :               const auto&amp; local_cache) noexcept {
+<span class="lineNum">      85 </span>            :             using solution_tag = OptionTags::AnalyticSolutionBase;
+<span class="lineNum">      86 </span>            :             prim_vars-&gt;assign_subset(
+<span class="lineNum">      87 </span>            :                 Parallel::get&lt;solution_tag&gt;(local_cache)
+<span class="lineNum">      88 </span>            :                     .variables(
+<span class="lineNum">      89 </span>            :                         inertial_coords, initial_time,
+<span class="lineNum">      90 </span>            :                         typename Metavariables::analytic_variables_tags{}));
+<span class="lineNum">      91 </span>            :             return Parallel::get&lt;solution_tag&gt;(local_cache).equation_of_state();
+<span class="lineNum">      92 </span>            :           },
+<span class="lineNum">      93 </span>            :           [&amp;inertial_coords](std::false_type /*is_analytic_solution*/,
+<span class="lineNum">      94 </span>            :                              const gsl::not_null&lt;PrimitiveVars*&gt; prim_vars,
+<span class="lineNum">      95 </span>            :                              const auto&amp; local_cache) noexcept {
+<span class="lineNum">      96 </span>            :             using analytic_data_tag = OptionTags::AnalyticDataBase;
+<span class="lineNum">      97 </span>            :             prim_vars-&gt;assign_subset(
+<span class="lineNum">      98 </span>            :                 Parallel::get&lt;analytic_data_tag&gt;(local_cache)
+<span class="lineNum">      99 </span>            :                     .variables(
+<span class="lineNum">     100 </span>            :                         inertial_coords,
+<span class="lineNum">     101 </span>            :                         typename Metavariables::analytic_variables_tags{}));
+<span class="lineNum">     102 </span>            :             return Parallel::get&lt;analytic_data_tag&gt;(local_cache)
+<span class="lineNum">     103 </span>            :                 .equation_of_state();
+<span class="lineNum">     104 </span>            :           })(detail::has_analytic_solution_alias&lt;Metavariables&gt;{},
+<span class="lineNum">     105 </span>            :              make_not_null(&amp;primitive_vars), cache);
+<span class="lineNum">     106 </span>            : 
+<span class="lineNum">     107 </span>            :       VariableFixing::FixToAtmosphere&lt;decltype(
+<span class="lineNum">     108 </span>            :           equation_of_state)::thermodynamic_dim&gt;
+<span class="lineNum">     109 </span>            :           fixer{1.e-12, 1.e-12};
+<span class="lineNum">     110 </span>            :       fixer(
+<span class="lineNum">     111 </span>            :           &amp;get&lt;hydro::Tags::RestMassDensity&lt;DataVector&gt;&gt;(primitive_vars),
+<span class="lineNum">     112 </span>            :           &amp;get&lt;hydro::Tags::SpecificInternalEnergy&lt;DataVector&gt;&gt;(primitive_vars),
+<span class="lineNum">     113 </span>            :           &amp;get&lt;hydro::Tags::SpatialVelocity&lt;DataVector, 3&gt;&gt;(primitive_vars),
+<span class="lineNum">     114 </span>            :           &amp;get&lt;hydro::Tags::LorentzFactor&lt;DataVector&gt;&gt;(primitive_vars),
+<span class="lineNum">     115 </span>            :           &amp;get&lt;hydro::Tags::Pressure&lt;DataVector&gt;&gt;(primitive_vars),
+<span class="lineNum">     116 </span>            :           &amp;get&lt;hydro::Tags::SpecificEnthalpy&lt;DataVector&gt;&gt;(primitive_vars),
+<span class="lineNum">     117 </span>            :           equation_of_state);
+<span class="lineNum">     118 </span>            : 
+<span class="lineNum">     119 </span>            :       return db::create_from&lt;db::RemoveTags&lt;&gt;, simple_tags, compute_tags&gt;(
+<span class="lineNum">     120 </span>            :           std::move(box), std::move(primitive_vars),
+<span class="lineNum">     121 </span>            :           std::move(equation_of_state),
+<span class="lineNum">     122 </span>            :           Parallel::get&lt;OptionTags::DampingParameter&gt;(cache));
+<span class="lineNum">     123 </span>            :     }
+<span class="lineNum">     124 </span>            :   };
+<span class="lineNum">     125 </span>            : 
+<span class="lineNum">     126 </span>            :   template &lt;typename System&gt;
+<span class="lineNum">     127 </span><span class="lineNoCov">          0 :   struct GrTags {</span>
+<span class="lineNum">     128 </span><span class="lineNoCov">          0 :     using gr_tag = typename System::spacetime_variables_tag;</span>
+<span class="lineNum">     129 </span><span class="lineNoCov">          0 :     using simple_tags = db::AddSimpleTags&lt;gr_tag&gt;;</span>
+<span class="lineNum">     130 </span><span class="lineNoCov">          0 :     using compute_tags = db::AddComputeTags&lt;&gt;;</span>
+<span class="lineNum">     131 </span>            : 
+<span class="lineNum">     132 </span>            :     template &lt;typename TagsList, typename Metavariables&gt;
+<span class="lineNum">     133 </span><span class="lineNoCov">          0 :     static auto initialize(</span>
+<span class="lineNum">     134 </span>            :         db::DataBox&lt;TagsList&gt;&amp;&amp; box,
+<span class="lineNum">     135 </span>            :         const Parallel::ConstGlobalCache&lt;Metavariables&gt;&amp; cache,
+<span class="lineNum">     136 </span>            :         const double initial_time) noexcept {
+<span class="lineNum">     137 </span>            :       using GrVars = typename gr_tag::type;
+<span class="lineNum">     138 </span>            : 
+<span class="lineNum">     139 </span>            :       const size_t num_grid_points =
+<span class="lineNum">     140 </span>            :           db::get&lt;::Tags::Mesh&lt;Dim&gt;&gt;(box).number_of_grid_points();
+<span class="lineNum">     141 </span>            :       const auto&amp; inertial_coords =
+<span class="lineNum">     142 </span>            :           db::get&lt;::Tags::Coordinates&lt;Dim, Frame::Inertial&gt;&gt;(box);
+<span class="lineNum">     143 </span>            : 
+<span class="lineNum">     144 </span>            :       // Set initial data from analytic solution
+<span class="lineNum">     145 </span>            :       GrVars gr_vars{num_grid_points};
+<span class="lineNum">     146 </span>            :       make_overloader(
+<span class="lineNum">     147 </span>            :           [ initial_time, &amp;inertial_coords ](
+<span class="lineNum">     148 </span>            :               std::true_type /*is_analytic_solution*/,
+<span class="lineNum">     149 </span>            :               const gsl::not_null&lt;GrVars*&gt; local_gr_vars,
+<span class="lineNum">     150 </span>            :               const auto&amp; local_cache) noexcept {
+<span class="lineNum">     151 </span>            :             using solution_tag = OptionTags::AnalyticSolutionBase;
+<span class="lineNum">     152 </span>            :             local_gr_vars-&gt;assign_subset(
+<span class="lineNum">     153 </span>            :                 Parallel::get&lt;solution_tag&gt;(local_cache)
+<span class="lineNum">     154 </span>            :                     .variables(inertial_coords, initial_time,
+<span class="lineNum">     155 </span>            :                                typename GrVars::tags_list{}));
+<span class="lineNum">     156 </span>            :           },
+<span class="lineNum">     157 </span>            :           [&amp;inertial_coords](std::false_type /*is_analytic_solution*/,
+<span class="lineNum">     158 </span>            :                              const gsl::not_null&lt;GrVars*&gt; local_gr_vars,
+<span class="lineNum">     159 </span>            :                              const auto&amp; local_cache) noexcept {
+<span class="lineNum">     160 </span>            :             using analytic_data_tag = OptionTags::AnalyticDataBase;
+<span class="lineNum">     161 </span>            :             local_gr_vars-&gt;assign_subset(
+<span class="lineNum">     162 </span>            :                 Parallel::get&lt;analytic_data_tag&gt;(local_cache)
+<span class="lineNum">     163 </span>            :                     .variables(inertial_coords, typename GrVars::tags_list{}));
+<span class="lineNum">     164 </span>            :           })(detail::has_analytic_solution_alias&lt;Metavariables&gt;{},
+<span class="lineNum">     165 </span>            :              make_not_null(&amp;gr_vars), cache);
+<span class="lineNum">     166 </span>            : 
+<span class="lineNum">     167 </span>            :       return db::create_from&lt;db::RemoveTags&lt;&gt;, simple_tags, compute_tags&gt;(
+<span class="lineNum">     168 </span>            :           std::move(box), std::move(gr_vars));
+<span class="lineNum">     169 </span>            :     }
+<span class="lineNum">     170 </span>            :   };
+<span class="lineNum">     171 </span>            : 
+<span class="lineNum">     172 </span>            :   template &lt;class Metavariables&gt;
+<span class="lineNum">     173 </span><span class="lineNoCov">          0 :   using return_tag_list = tmpl::append&lt;</span>
+<span class="lineNum">     174 </span>            :       typename Initialization::Domain&lt;Dim&gt;::simple_tags,
+<span class="lineNum">     175 </span>            :       typename GrTags&lt;typename Metavariables::system&gt;::simple_tags,
+<span class="lineNum">     176 </span>            :       typename PrimitiveTags&lt;Metavariables&gt;::simple_tags,
+<span class="lineNum">     177 </span>            :       typename Initialization::ConservativeSystem&lt;
+<span class="lineNum">     178 </span>            :           typename Metavariables::system&gt;::simple_tags,
+<span class="lineNum">     179 </span>            :       typename Initialization::Interface&lt;
+<span class="lineNum">     180 </span>            :           typename Metavariables::system&gt;::simple_tags,
+<span class="lineNum">     181 </span>            :       typename Initialization::Evolution&lt;
+<span class="lineNum">     182 </span>            :           typename Metavariables::system&gt;::simple_tags,
+<span class="lineNum">     183 </span>            :       typename Initialization::DiscontinuousGalerkin&lt;
+<span class="lineNum">     184 </span>            :           Metavariables&gt;::simple_tags,
+<span class="lineNum">     185 </span>            :       typename Initialization::MinMod&lt;Dim&gt;::simple_tags,
+<span class="lineNum">     186 </span>            :       typename Initialization::Domain&lt;Dim&gt;::compute_tags,
+<span class="lineNum">     187 </span>            :       typename GrTags&lt;typename Metavariables::system&gt;::compute_tags,
+<span class="lineNum">     188 </span>            :       typename PrimitiveTags&lt;Metavariables&gt;::compute_tags,
+<span class="lineNum">     189 </span>            :       typename Initialization::ConservativeSystem&lt;
+<span class="lineNum">     190 </span>            :           typename Metavariables::system&gt;::compute_tags,
+<span class="lineNum">     191 </span>            :       typename Initialization::Interface&lt;
+<span class="lineNum">     192 </span>            :           typename Metavariables::system&gt;::compute_tags,
+<span class="lineNum">     193 </span>            :       typename Initialization::Evolution&lt;
+<span class="lineNum">     194 </span>            :           typename Metavariables::system&gt;::compute_tags,
+<span class="lineNum">     195 </span>            :       typename Initialization::DiscontinuousGalerkin&lt;
+<span class="lineNum">     196 </span>            :           Metavariables&gt;::compute_tags,
+<span class="lineNum">     197 </span>            :       typename Initialization::MinMod&lt;Dim&gt;::compute_tags&gt;;
+<span class="lineNum">     198 </span>            : 
+<span class="lineNum">     199 </span>            :   template &lt;typename... InboxTags, typename Metavariables, typename ActionList,
+<span class="lineNum">     200 </span>            :             typename ParallelComponent&gt;
+<span class="lineNum">     201 </span><span class="lineNoCov">          0 :   static auto apply(const db::DataBox&lt;tmpl::list&lt;&gt;&gt;&amp; /*box*/,</span>
+<span class="lineNum">     202 </span>            :                     const tuples::TaggedTuple&lt;InboxTags...&gt;&amp; /*inboxes*/,
+<span class="lineNum">     203 </span>            :                     const Parallel::ConstGlobalCache&lt;Metavariables&gt;&amp; cache,
+<span class="lineNum">     204 </span>            :                     const ElementIndex&lt;Dim&gt;&amp; array_index,
+<span class="lineNum">     205 </span>            :                     const ActionList /*meta*/,
+<span class="lineNum">     206 </span>            :                     const ParallelComponent* const /*meta*/,
+<span class="lineNum">     207 </span>            :                     std::vector&lt;std::array&lt;size_t, Dim&gt;&gt; initial_extents,
+<span class="lineNum">     208 </span>            :                     Domain&lt;Dim, Frame::Inertial&gt; domain,
+<span class="lineNum">     209 </span>            :                     const double initial_time, const double initial_dt,
+<span class="lineNum">     210 </span>            :                     const double initial_slab_size) noexcept {
+<span class="lineNum">     211 </span>            :     using system = typename Metavariables::system;
+<span class="lineNum">     212 </span>            :     auto domain_box = Initialization::Domain&lt;Dim&gt;::initialize(
+<span class="lineNum">     213 </span>            :         db::DataBox&lt;tmpl::list&lt;&gt;&gt;{}, array_index, initial_extents, domain);
+<span class="lineNum">     214 </span>            :     auto gr_box = GrTags&lt;system&gt;::initialize(std::move(domain_box), cache,
+<span class="lineNum">     215 </span>            :                                              initial_time);
+<span class="lineNum">     216 </span>            :     auto primitive_box = PrimitiveTags&lt;Metavariables&gt;::initialize(
+<span class="lineNum">     217 </span>            :         std::move(gr_box), cache, initial_time);
+<span class="lineNum">     218 </span>            :     auto system_box = Initialization::ConservativeSystem&lt;system&gt;::initialize(
+<span class="lineNum">     219 </span>            :         std::move(primitive_box));
+<span class="lineNum">     220 </span>            :     auto conservative_box =
+<span class="lineNum">     221 </span>            :         Initialization::ConservativeVars&lt;system&gt;::initialize(
+<span class="lineNum">     222 </span>            :             std::move(system_box));
+<span class="lineNum">     223 </span>            :     auto domain_interface_box = Initialization::Interface&lt;system&gt;::initialize(
+<span class="lineNum">     224 </span>            :         std::move(conservative_box));
+<span class="lineNum">     225 </span>            :     auto evolution_box = Initialization::Evolution&lt;system&gt;::initialize(
+<span class="lineNum">     226 </span>            :         std::move(domain_interface_box), cache, initial_time, initial_dt,
+<span class="lineNum">     227 </span>            :         initial_slab_size);
+<span class="lineNum">     228 </span>            :     auto dg_box =
+<span class="lineNum">     229 </span>            :         Initialization::DiscontinuousGalerkin&lt;Metavariables&gt;::initialize(
+<span class="lineNum">     230 </span>            :             std::move(evolution_box), initial_extents);
+<span class="lineNum">     231 </span>            :     auto limiter_box =
+<span class="lineNum">     232 </span>            :         Initialization::MinMod&lt;Dim&gt;::initialize(std::move(dg_box));
+<span class="lineNum">     233 </span>            :     return std::make_tuple(std::move(limiter_box));
+<span class="lineNum">     234 </span>            :   }
+<span class="lineNum">     235 </span>            : };
+<span class="lineNum">     236 </span>            : }  // namespace Actions
+<span class="lineNum">     237 </span>            : }  // namespace ValenciaDivClean
+<span class="lineNum">     238 </span>            : }  // namespace grmhd
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

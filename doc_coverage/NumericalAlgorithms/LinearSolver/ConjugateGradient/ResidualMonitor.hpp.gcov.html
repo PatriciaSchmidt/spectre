@@ -1,0 +1,203 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - NumericalAlgorithms/LinearSolver/ConjugateGradient/ResidualMonitor.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">NumericalAlgorithms/LinearSolver/ConjugateGradient</a> - ResidualMonitor.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &quot;AlgorithmSingleton.hpp&quot;
+<span class="lineNum">       7 </span>            : #include &quot;DataStructures/DataBox/DataBox.hpp&quot;
+<span class="lineNum">       8 </span>            : #include &quot;DataStructures/DataBox/Prefixes.hpp&quot;
+<span class="lineNum">       9 </span>            : #include &quot;IO/Observer/Actions.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;Informer/Tags.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;Informer/Verbosity.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;NumericalAlgorithms/LinearSolver/Observe.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;NumericalAlgorithms/LinearSolver/Tags.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;Options/Options.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;Parallel/ConstGlobalCache.hpp&quot;
+<span class="lineNum">      16 </span>            : #include &quot;Parallel/Info.hpp&quot;
+<span class="lineNum">      17 </span>            : #include &quot;Parallel/Invoke.hpp&quot;
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : /// \cond
+<span class="lineNum">      20 </span>            : namespace tuples {
+<span class="lineNum">      21 </span>            : template &lt;typename...&gt;
+<span class="lineNum">      22 </span>            : class TaggedTuple;
+<span class="lineNum">      23 </span>            : }  // namespace tuples
+<span class="lineNum">      24 </span>            : namespace LinearSolver {
+<span class="lineNum">      25 </span>            : namespace cg_detail {
+<span class="lineNum">      26 </span>            : template &lt;typename Metavariables&gt;
+<span class="lineNum">      27 </span>            : struct InitializeResidualMonitor;
+<span class="lineNum">      28 </span>            : }  // namespace cg_detail
+<span class="lineNum">      29 </span>            : }  // namespace LinearSolver
+<span class="lineNum">      30 </span>            : namespace Convergence {
+<span class="lineNum">      31 </span>            : struct Criteria;
+<span class="lineNum">      32 </span>            : }  // namespace Convergence
+<span class="lineNum">      33 </span>            : /// \endcond
+<span class="lineNum">      34 </span>            : 
+<span class="lineNum">      35 </span>            : namespace LinearSolver {
+<span class="lineNum">      36 </span>            : namespace cg_detail {
+<span class="lineNum">      37 </span>            : 
+<span class="lineNum">      38 </span>            : template &lt;typename Metavariables&gt;
+<span class="lineNum">      39 </span>            : struct ResidualMonitor {
+<span class="lineNum">      40 </span>            :   struct Verbosity {
+<span class="lineNum">      41 </span>            :     using type = ::Verbosity;
+<span class="lineNum">      42 </span>            :     static constexpr OptionString help = {&quot;Verbosity&quot;};
+<span class="lineNum">      43 </span>            :     static type default_value() noexcept { return ::Verbosity::Quiet; }
+<span class="lineNum">      44 </span>            :   };
+<span class="lineNum">      45 </span>            : 
+<span class="lineNum">      46 </span>            :   using chare_type = Parallel::Algorithms::Singleton;
+<span class="lineNum">      47 </span>            :   using const_global_cache_tag_list = tmpl::list&lt;&gt;;
+<span class="lineNum">      48 </span>            :   using options =
+<span class="lineNum">      49 </span>            :       tmpl::list&lt;Verbosity, LinearSolver::Tags::ConvergenceCriteria&gt;;
+<span class="lineNum">      50 </span>            :   using metavariables = Metavariables;
+<span class="lineNum">      51 </span>            :   using action_list = tmpl::list&lt;&gt;;
+<span class="lineNum">      52 </span>            :   using initial_databox = db::compute_databox_type&lt;tmpl::append&lt;
+<span class="lineNum">      53 </span>            :       typename InitializeResidualMonitor&lt;Metavariables&gt;::simple_tags,
+<span class="lineNum">      54 </span>            :       typename InitializeResidualMonitor&lt;Metavariables&gt;::compute_tags&gt;&gt;;
+<span class="lineNum">      55 </span>            : 
+<span class="lineNum">      56 </span>            :   static void initialize(
+<span class="lineNum">      57 </span>            :       Parallel::CProxy_ConstGlobalCache&lt;Metavariables&gt;&amp; global_cache,
+<span class="lineNum">      58 </span>            :       const ::Verbosity&amp; verbosity,
+<span class="lineNum">      59 </span>            :       const Convergence::Criteria&amp; convergence_criteria) noexcept {
+<span class="lineNum">      60 </span>            :     Parallel::simple_action&lt;InitializeResidualMonitor&lt;Metavariables&gt;&gt;(
+<span class="lineNum">      61 </span>            :         Parallel::get_parallel_component&lt;ResidualMonitor&gt;(
+<span class="lineNum">      62 </span>            :             *(global_cache.ckLocalBranch())),
+<span class="lineNum">      63 </span>            :         verbosity, convergence_criteria);
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span>            :     const auto initial_observation_id = observers::ObservationId(
+<span class="lineNum">      66 </span>            :         db::item_type&lt;LinearSolver::Tags::IterationId&gt;{0},
+<span class="lineNum">      67 </span>            :         typename LinearSolver::observe_detail::ObservationType{});
+<span class="lineNum">      68 </span>            :     Parallel::simple_action&lt;
+<span class="lineNum">      69 </span>            :         observers::Actions::RegisterSingletonWithObserverWriter&gt;(
+<span class="lineNum">      70 </span>            :         Parallel::get_parallel_component&lt;ResidualMonitor&gt;(
+<span class="lineNum">      71 </span>            :             *(global_cache.ckLocalBranch())),
+<span class="lineNum">      72 </span>            :         initial_observation_id);
+<span class="lineNum">      73 </span>            :   }
+<span class="lineNum">      74 </span>            : 
+<span class="lineNum">      75 </span>            :   static void execute_next_phase(
+<span class="lineNum">      76 </span>            :       const typename Metavariables::Phase /*next_phase*/,
+<span class="lineNum">      77 </span>            :       const Parallel::CProxy_ConstGlobalCache&lt;
+<span class="lineNum">      78 </span>            :           Metavariables&gt;&amp; /*global_cache*/) noexcept {}
+<span class="lineNum">      79 </span>            : };
+<span class="lineNum">      80 </span>            : 
+<span class="lineNum">      81 </span>            : template &lt;typename Metavariables&gt;
+<span class="lineNum">      82 </span>            : struct InitializeResidualMonitor {
+<span class="lineNum">      83 </span>            :  private:
+<span class="lineNum">      84 </span>            :   using fields_tag = typename Metavariables::system::fields_tag;
+<span class="lineNum">      85 </span>            :   using residual_square_tag = db::add_tag_prefix&lt;
+<span class="lineNum">      86 </span>            :       LinearSolver::Tags::MagnitudeSquare,
+<span class="lineNum">      87 </span>            :       db::add_tag_prefix&lt;LinearSolver::Tags::Residual, fields_tag&gt;&gt;;
+<span class="lineNum">      88 </span>            :   using initial_residual_magnitude_tag = db::add_tag_prefix&lt;
+<span class="lineNum">      89 </span>            :       LinearSolver::Tags::Initial,
+<span class="lineNum">      90 </span>            :       db::add_tag_prefix&lt;
+<span class="lineNum">      91 </span>            :           LinearSolver::Tags::Magnitude,
+<span class="lineNum">      92 </span>            :           db::add_tag_prefix&lt;LinearSolver::Tags::Residual, fields_tag&gt;&gt;&gt;;
+<span class="lineNum">      93 </span>            : 
+<span class="lineNum">      94 </span>            :  public:
+<span class="lineNum">      95 </span>            :   using simple_tags =
+<span class="lineNum">      96 </span>            :       db::AddSimpleTags&lt;::Tags::Verbosity,
+<span class="lineNum">      97 </span>            :                         LinearSolver::Tags::ConvergenceCriteria,
+<span class="lineNum">      98 </span>            :                         ::LinearSolver::Tags::IterationId, residual_square_tag,
+<span class="lineNum">      99 </span>            :                         initial_residual_magnitude_tag&gt;;
+<span class="lineNum">     100 </span>            :   using compute_tags = db::AddComputeTags&lt;
+<span class="lineNum">     101 </span>            :       LinearSolver::Tags::MagnitudeCompute&lt;residual_square_tag&gt;,
+<span class="lineNum">     102 </span>            :       LinearSolver::Tags::HasConvergedCompute&lt;fields_tag&gt;&gt;;
+<span class="lineNum">     103 </span>            : 
+<span class="lineNum">     104 </span>            :   template &lt;typename... InboxTags, typename ArrayIndex, typename ActionList,
+<span class="lineNum">     105 </span>            :             typename ParallelComponent&gt;
+<span class="lineNum">     106 </span>            :   static auto apply(
+<span class="lineNum">     107 </span>            :       const db::DataBox&lt;tmpl::list&lt;&gt;&gt;&amp; /*box*/,
+<span class="lineNum">     108 </span>            :       tuples::TaggedTuple&lt;InboxTags...&gt;&amp; /*inboxes*/,
+<span class="lineNum">     109 </span>            :       const Parallel::ConstGlobalCache&lt;Metavariables&gt;&amp; /*cache*/,
+<span class="lineNum">     110 </span>            :       const ArrayIndex&amp; /*array_index*/, const ActionList /*meta*/,
+<span class="lineNum">     111 </span>            :       const ParallelComponent* const /*meta*/, const ::Verbosity&amp; verbosity,
+<span class="lineNum">     112 </span>            :       const Convergence::Criteria&amp; convergence_criteria) noexcept {
+<span class="lineNum">     113 </span>            :     auto box = db::create&lt;simple_tags, compute_tags&gt;(
+<span class="lineNum">     114 </span>            :         verbosity, convergence_criteria,
+<span class="lineNum">     115 </span>            :         db::item_type&lt;LinearSolver::Tags::IterationId&gt;{0},
+<span class="lineNum">     116 </span>            :         std::numeric_limits&lt;double&gt;::signaling_NaN(),
+<span class="lineNum">     117 </span>            :         std::numeric_limits&lt;double&gt;::signaling_NaN());
+<span class="lineNum">     118 </span>            :     return std::make_tuple(std::move(box));
+<span class="lineNum">     119 </span>            :   }
+<span class="lineNum">     120 </span>            : };
+<span class="lineNum">     121 </span>            : 
+<span class="lineNum">     122 </span>            : }  // namespace cg_detail
+<span class="lineNum">     123 </span>            : }  // namespace LinearSolver
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

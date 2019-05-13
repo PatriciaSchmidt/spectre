@@ -1,0 +1,223 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - /work/spectre/docs/DevGuide/ProfilingWithProjections.md</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">work/spectre/docs/DevGuide</a> - ProfilingWithProjections.md</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : \cond NEVER</span>
+<span class="lineNum">       2 </span>            : Distributed under the MIT License.
+<span class="lineNum">       3 </span>            : See LICENSE.txt for details.
+<span class="lineNum">       4 </span>            : \endcond
+<span class="lineNum">       5 </span>            : # Profiling With Charm++ Projections {#profiling_with_projections}
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            : ## Basic Setup and Compilation
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : To view trace data after a profiling run you must download Charm++'s
+<span class="lineNum">      10 </span>            : Projections software from their [website](http://charm.cs.illinois.edu/).
+<span class="lineNum">      11 </span>            : If you encounter issues it may
+<span class="lineNum">      12 </span>            : be necessary to clone the git repository and build the correct version
+<span class="lineNum">      13 </span>            : from scratch. Note that the version of Charm++ used to compile SpECTRE
+<span class="lineNum">      14 </span>            : should match the version of Projections used to analyze the trace data.
+<span class="lineNum">      15 </span>            : You can collect the trace data on a different machine than the one you
+<span class="lineNum">      16 </span>            : will be analyzing the data on. For example, you can collect the data on
+<span class="lineNum">      17 </span>            : a supercomputer and analyze it on your desktop or laptop.
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : For profiling you will want to use a production build of Charm++, which
+<span class="lineNum">      20 </span>            : means compiling Charm++ with the `--with-production` flag. To enable trace
+<span class="lineNum">      21 </span>            : collecting you must build with the `--enable-tracing` flag as well. For
+<span class="lineNum">      22 </span>            : example, on a multicore 64-bit Linux machine the build command would be
+<span class="lineNum">      23 </span>            : ``` shell
+<span class="lineNum">      24 </span>            : ./build charm++ multicore-linux64 gcc -j8 --with-production --enable-tracing
+<span class="lineNum">      25 </span>            : ```
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span>            : When building SpECTRE for profiling there are several options to control
+<span class="lineNum">      28 </span>            : what is profiled. First, you'll want to compile in Release mode by specifying
+<span class="lineNum">      29 </span>            : `-D CMAKE_BUILD_TYPE=Release`. To enable tracing with Projections you must
+<span class="lineNum">      30 </span>            : specify the CMake variable `-D PROJECTIONS=ON`. By default only Charm++ entry
+<span class="lineNum">      31 </span>            : methods will be profiled, which will not provide very much insight because
+<span class="lineNum">      32 </span>            : the AlgorithmChare infrastructure has only one entry method, which happens to
+<span class="lineNum">      33 </span>            : be a function template. You must specify a typelist of which Actions you would
+<span class="lineNum">      34 </span>            : like to profile before the first time `Evolution/EvolveSystem.hpp` is included
+<span class="lineNum">      35 </span>            : in the main executable. This typically means right after the
+<span class="lineNum">      36 </span>            : `the_ordered_actions_list` list is defined in the main executable. For example,
+<span class="lineNum">      37 </span>            : 
+<span class="lineNum">      38 </span>            : ```cpp
+<span class="lineNum">      39 </span>            : using the_ordered_actions_list = tmpl::list&lt;
+<span class="lineNum">      40 </span>            :     Algorithms::CheckTriggers&lt;the_system, the_volume_dim&gt;,
+<span class="lineNum">      41 </span>            :     Algorithms::SendDataForFluxes&lt;the_system, the_volume_dim&gt;,
+<span class="lineNum">      42 </span>            :     Algorithms::ComputeVolumeDtU&lt;the_system, the_volume_dim&gt;,
+<span class="lineNum">      43 </span>            :     Algorithms::ComputeBoundaryFlux&lt;the_system, the_volume_dim&gt;,
+<span class="lineNum">      44 </span>            :     Algorithms::ImposeExternalBoundaryConditions&lt;the_system, the_volume_dim&gt;,
+<span class="lineNum">      45 </span>            :     Algorithms::ComputeU&lt;the_system, the_volume_dim&gt;,
+<span class="lineNum">      46 </span>            :     Algorithms::AdvanceSlab&lt;the_system, the_volume_dim&gt;,
+<span class="lineNum">      47 </span>            :     Algorithms::UpdateInstance&lt;the_system, the_volume_dim&gt;&gt;;
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span>            : using the_trace_actions_list = tmpl::list&lt;
+<span class="lineNum">      50 </span>            :     Algorithms::CheckTriggers&lt;the_system, the_volume_dim&gt;,
+<span class="lineNum">      51 </span>            :     Algorithms::ComputeVolumeDtU&lt;the_system, the_volume_dim&gt;,
+<span class="lineNum">      52 </span>            :     Algorithms::ComputeBoundaryFlux&lt;the_system, the_volume_dim&gt;,
+<span class="lineNum">      53 </span>            :     Algorithms::ImposeExternalBoundaryConditions&lt;the_system, the_volume_dim&gt;,
+<span class="lineNum">      54 </span>            :     Algorithms::ComputeU&lt;the_system, the_volume_dim&gt;&gt;;
+<span class="lineNum">      55 </span>            : ```
+<span class="lineNum">      56 </span>            : 
+<span class="lineNum">      57 </span>            : Actions not in `the_trace_actions_list` will not be traced but will still be
+<span class="lineNum">      58 </span>            : executed. The code also records time in the AlgorithmChare's `receive_data`
+<span class="lineNum">      59 </span>            : method that is
+<span class="lineNum">      60 </span>            : not taken up by Actions (typically checking if all data needed for the next
+<span class="lineNum">      61 </span>            : Action has been received) and also time spent saving the received data into
+<span class="lineNum">      62 </span>            : local memory.
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span>            : ## Using PAPI With Projections
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span>            : \warning Using PAPI with Projections's stat counters requires Charm++ v6.8.0
+<span class="lineNum">      67 </span>            : or newer.
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span>            : It is possible to collect information from hardware counters using PAPI
+<span class="lineNum">      70 </span>            : for the Actions by specifying
+<span class="lineNum">      71 </span>            : `-D PROJECTIONS_PAPI_COUNTERS=&quot;PAPI_L1_DCM,PAPI_L2_DCM&quot;`. That is, a comma
+<span class="lineNum">      72 </span>            : separated list of PAPI counters to record. To see the list of available counters
+<span class="lineNum">      73 </span>            : on your hardware run `papi_avail -a`. The recorded user statistics can then be
+<span class="lineNum">      74 </span>            : analyzed inside Charm++ Projections. It is also possible to record custom user
+<span class="lineNum">      75 </span>            : statistics using Charm++ by specifying `-D PROJECTIONS_USER_STATS=ON` and
+<span class="lineNum">      76 </span>            : defining the variable `user_stat_names` as
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span>            : ```cpp
+<span class="lineNum">      79 </span>            : static constexpr std::array&lt;const char*, 2&gt; user_stat_names{
+<span class="lineNum">      80 </span>            :     {&quot;name_1&quot;, &quot;name_2&quot;}};
+<span class="lineNum">      81 </span>            : ```
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span>            : The variable needs to be defined before `Evolution/EvolveSystem.hpp` is
+<span class="lineNum">      84 </span>            : included. To record statistics of PAPI counters it is recommended you disable
+<span class="lineNum">      85 </span>            : counters for Actions (you can still time profile them, though) and specify the
+<span class="lineNum">      86 </span>            : CMake variable `-D USE_PAPI=ON`. An example of how to record statistics from
+<span class="lineNum">      87 </span>            : PAPI counters is given below.
+<span class="lineNum">      88 </span>            : 
+<span class="lineNum">      89 </span>            : To provide a concrete example of tracing and analyzing hardware PMUs using PAPI
+<span class="lineNum">      90 </span>            : for only a subset of functions in an Action we will profile the function
+<span class="lineNum">      91 </span>            : `ScalarWaveEquations&lt;Dim&gt;::%compute_volume_dt_u`. There are several helper
+<span class="lineNum">      92 </span>            : functions provided in `Utilities/PAPI.hpp` that will come in useful. To start
+<span class="lineNum">      93 </span>            : the PAPI counters and record the time at the beginning of the function we call
+<span class="lineNum">      94 </span>            : 
+<span class="lineNum">      95 </span>            : ```cpp
+<span class="lineNum">      96 </span>            : start_papi_counters(std::array&lt;int, 2&gt;{{PAPI_L1_DCM, PAPI_L2_DCM}});
+<span class="lineNum">      97 </span>            : const double start_time = get_time_from_papi();
+<span class="lineNum">      98 </span>            : ```
+<span class="lineNum">      99 </span>            : 
+<span class="lineNum">     100 </span>            : and wherever we want to finish recording we run
+<span class="lineNum">     101 </span>            : 
+<span class="lineNum">     102 </span>            : ```cpp
+<span class="lineNum">     103 </span>            : const double stop_time = get_time_from_papi();
+<span class="lineNum">     104 </span>            : auto counters = stop_papi_counters&lt;2&gt;();
+<span class="lineNum">     105 </span>            : ```
+<span class="lineNum">     106 </span>            : 
+<span class="lineNum">     107 </span>            : The template parameter to `stop_papi_counters` must be the number of PAPI
+<span class="lineNum">     108 </span>            : counters being recorded, two in our example. The function `get_time_from_papi`
+<span class="lineNum">     109 </span>            : returns the time in seconds and `stop_time - start_time` gives the elapsed time
+<span class="lineNum">     110 </span>            : in seconds between the two calls. Using `get_time_from_papi` it is possible to
+<span class="lineNum">     111 </span>            : compute FLOP/s, or any other metric related to time. Finally, to store the
+<span class="lineNum">     112 </span>            : counter read outs into Projections's stat counter we use
+<span class="lineNum">     113 </span>            : 
+<span class="lineNum">     114 </span>            : ```cpp
+<span class="lineNum">     115 </span>            : updateStat(projections_user_stat_offset, counters[0]);
+<span class="lineNum">     116 </span>            : updateStat(projections_user_stat_offset + 1, counters[1]);
+<span class="lineNum">     117 </span>            : ```
+<span class="lineNum">     118 </span>            : 
+<span class="lineNum">     119 </span>            : The variable `projections_user_stat_offset` is used to ensure that the stat
+<span class="lineNum">     120 </span>            : numbers used by Charm++ internally do not collide with any used in the Actions,
+<span class="lineNum">     121 </span>            : unless you have over 9000 Actions.
+<span class="lineNum">     122 </span>            : 
+<span class="lineNum">     123 </span>            : ## Running SpECTRE With Trace Output
+<span class="lineNum">     124 </span>            : 
+<span class="lineNum">     125 </span>            : When running SpECTRE you must specify a directory to output trace data into.
+<span class="lineNum">     126 </span>            : This is done by adding the command line argument `+traceroot DIR` where `DIR` is
+<span class="lineNum">     127 </span>            : the directory to dump the trace data into. Note that `DIR` must already exist,
+<span class="lineNum">     128 </span>            : the application will not create it.
+<span class="lineNum">     129 </span>            : For example, to run the 3D scalar wave executable on a multicore build with
+<span class="lineNum">     130 </span>            : tracing enabled use
+<span class="lineNum">     131 </span>            : 
+<span class="lineNum">     132 </span>            : ```shell
+<span class="lineNum">     133 </span>            : ./Evolve3DScalarWave +p4 +traceroot ./traces
+<span class="lineNum">     134 </span>            : ```
+<span class="lineNum">     135 </span>            : 
+<span class="lineNum">     136 </span>            : For more information on runtime options to
+<span class="lineNum">     137 </span>            : control trace data see the
+<span class="lineNum">     138 </span>            : [Charm++ Projections manual](http://charm.cs.illinois.edu/manuals/html/projections/1.html).
+<span class="lineNum">     139 </span>            : 
+<span class="lineNum">     140 </span>            : ## Visualizing Trace %Data In Projections
+<span class="lineNum">     141 </span>            : 
+<span class="lineNum">     142 </span>            : See the [Charm++ Projections manual](http://charm.cs.illinois.edu/manuals/html/projections/2.html)
+<span class="lineNum">     143 </span>            : for details.
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

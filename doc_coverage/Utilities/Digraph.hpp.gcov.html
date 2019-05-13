@@ -1,0 +1,268 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Utilities/Digraph.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">Utilities</a> - Digraph.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;type_traits&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : #include &quot;Utilities/Requires.hpp&quot;
+<span class="lineNum">       9 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : namespace brigand {
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            : template &lt;typename Source, typename Destination, typename Weight = int32_t&lt;1&gt;&gt;
+<span class="lineNum">      14 </span>            : struct edge {
+<span class="lineNum">      15 </span>            :   using source = Source;
+<span class="lineNum">      16 </span>            :   using destination = Destination;
+<span class="lineNum">      17 </span>            :   using weight = Weight;
+<span class="lineNum">      18 </span>            : };
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : template &lt;int Source, int Destination, int Weight = 1&gt;
+<span class="lineNum">      21 </span>            : using edge_ = edge&lt;int32_t&lt;Source&gt;, int32_t&lt;Destination&gt;, int32_t&lt;Weight&gt;&gt;;
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      24 </span>            : struct get_source;
+<span class="lineNum">      25 </span>            : template &lt;typename Source, typename Destination, typename Weight&gt;
+<span class="lineNum">      26 </span>            : struct get_source&lt;edge&lt;Source, Destination, Weight&gt;&gt; {
+<span class="lineNum">      27 </span>            :   using type = Source;
+<span class="lineNum">      28 </span>            : };
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      31 </span>            : struct get_destination;
+<span class="lineNum">      32 </span>            : template &lt;typename Source, typename Destination, typename Weight&gt;
+<span class="lineNum">      33 </span>            : struct get_destination&lt;edge&lt;Source, Destination, Weight&gt;&gt; {
+<span class="lineNum">      34 </span>            :   using type = Destination;
+<span class="lineNum">      35 </span>            : };
+<span class="lineNum">      36 </span>            : 
+<span class="lineNum">      37 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      38 </span>            : struct get_weight;
+<span class="lineNum">      39 </span>            : template &lt;typename Source, typename Destination, typename Weight&gt;
+<span class="lineNum">      40 </span>            : struct get_weight&lt;edge&lt;Source, Destination, Weight&gt;&gt; {
+<span class="lineNum">      41 </span>            :   using type = Weight;
+<span class="lineNum">      42 </span>            : };
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span>            : template &lt;typename State, typename Element&gt;
+<span class="lineNum">      45 </span>            : struct add_unique_vertex;
+<span class="lineNum">      46 </span>            : 
+<span class="lineNum">      47 </span>            : template &lt;typename State, typename Source, typename Destination,
+<span class="lineNum">      48 </span>            :           typename Weight&gt;
+<span class="lineNum">      49 </span>            : struct add_unique_vertex&lt;State, edge&lt;Source, Destination, Weight&gt;&gt; {
+<span class="lineNum">      50 </span>            :   using source = typename if_&lt;found&lt;State, std::is_same&lt;pin&lt;Source&gt;, _1&gt;&gt;,
+<span class="lineNum">      51 </span>            :                               list&lt;&gt;, list&lt;Source&gt;&gt;::type;
+<span class="lineNum">      52 </span>            :   using destination =
+<span class="lineNum">      53 </span>            :       typename if_&lt;found&lt;State, std::is_same&lt;pin&lt;Destination&gt;, _1&gt;&gt;, list&lt;&gt;,
+<span class="lineNum">      54 </span>            :                    list&lt;Destination&gt;&gt;::type;
+<span class="lineNum">      55 </span>            :   using type = append&lt;State, source, destination&gt;;
+<span class="lineNum">      56 </span>            : };
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span>            : template &lt;class E, class S, class = std::nullptr_t&gt;
+<span class="lineNum">      59 </span>            : struct has_source : std::false_type {};
+<span class="lineNum">      60 </span>            : template &lt;class E, class S&gt;
+<span class="lineNum">      61 </span>            : struct has_source&lt;E, S, Requires&lt;std::is_same&lt;typename E::source, S&gt;::value&gt;&gt;
+<span class="lineNum">      62 </span>            :     : std::true_type {};
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span>            : template &lt;class E, class D, class = void&gt;
+<span class="lineNum">      65 </span>            : struct has_destination : std::false_type {};
+<span class="lineNum">      66 </span>            : template &lt;class E, class D&gt;
+<span class="lineNum">      67 </span>            : struct has_destination&lt;
+<span class="lineNum">      68 </span>            :     E, D, Requires&lt;std::is_same&lt;typename E::destination, D&gt;::value&gt;&gt;
+<span class="lineNum">      69 </span>            :     : std::true_type {};
+<span class="lineNum">      70 </span>            : 
+<span class="lineNum">      71 </span>            : template &lt;class E, class S, class D&gt;
+<span class="lineNum">      72 </span>            : struct has_source_and_destination : std::false_type {};
+<span class="lineNum">      73 </span>            : template &lt;template &lt;class...&gt; class E, class S, class D, class W&gt;
+<span class="lineNum">      74 </span>            : struct has_source_and_destination&lt;E&lt;S, D, W&gt;, S, D&gt; : std::true_type {};
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span>            : template &lt;class edgeList&gt;
+<span class="lineNum">      77 </span>            : struct digraph;
+<span class="lineNum">      78 </span>            : 
+<span class="lineNum">      79 </span>            : namespace detail {
+<span class="lineNum">      80 </span>            : template &lt;class Graph, class S, class D&gt;
+<span class="lineNum">      81 </span>            : struct get_edge_impl;
+<span class="lineNum">      82 </span>            : template &lt;class S, class D, class edgeList&gt;
+<span class="lineNum">      83 </span>            : struct get_edge_impl&lt;digraph&lt;edgeList&gt;, S, D&gt; {
+<span class="lineNum">      84 </span>            :   using type = find&lt;edgeList, has_source_and_destination&lt;_1, pin&lt;S&gt;, pin&lt;D&gt;&gt;&gt;;
+<span class="lineNum">      85 </span>            : };
+<span class="lineNum">      86 </span>            : }  // namespace detail
+<span class="lineNum">      87 </span>            : 
+<span class="lineNum">      88 </span>            : namespace detail {
+<span class="lineNum">      89 </span>            : template &lt;class Graph, class S, class D&gt;
+<span class="lineNum">      90 </span>            : struct has_edge_impl;
+<span class="lineNum">      91 </span>            : template &lt;class S, class D, class edgeList&gt;
+<span class="lineNum">      92 </span>            : struct has_edge_impl&lt;digraph&lt;edgeList&gt;, S, D&gt;
+<span class="lineNum">      93 </span>            :     : found&lt;edgeList, has_source_and_destination&lt;_1, pin&lt;S&gt;, pin&lt;D&gt;&gt;&gt; {};
+<span class="lineNum">      94 </span>            : }  // namespace detail
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span>            : template &lt;class Graph&gt;
+<span class="lineNum">      97 </span>            : struct outgoing_edges_impl;
+<span class="lineNum">      98 </span>            : template &lt;class edgeList&gt;
+<span class="lineNum">      99 </span>            : struct outgoing_edges_impl&lt;digraph&lt;edgeList&gt;&gt; {
+<span class="lineNum">     100 </span>            :   using type = typename digraph&lt;edgeList&gt;::adjacency_list;
+<span class="lineNum">     101 </span>            : };
+<span class="lineNum">     102 </span>            : 
+<span class="lineNum">     103 </span>            : template &lt;class Graph&gt;
+<span class="lineNum">     104 </span>            : struct ingoing_edges_impl;
+<span class="lineNum">     105 </span>            : template &lt;class edgeList&gt;
+<span class="lineNum">     106 </span>            : struct ingoing_edges_impl&lt;digraph&lt;edgeList&gt;&gt; {
+<span class="lineNum">     107 </span>            :   using type = typename digraph&lt;edgeList&gt;::ingoing_list;
+<span class="lineNum">     108 </span>            : };
+<span class="lineNum">     109 </span>            : 
+<span class="lineNum">     110 </span>            : // This is what we would like to do, but Intel cannot handle it...
+<span class="lineNum">     111 </span>            : template &lt;class T, template &lt;class...&gt; class F, class... Es&gt;
+<span class="lineNum">     112 </span>            : struct compute_adjacency_list;
+<span class="lineNum">     113 </span>            : template &lt;template &lt;class...&gt; class VertexSeq, class... Vertices, class... Es,
+<span class="lineNum">     114 </span>            :           template &lt;class...&gt; class F&gt;
+<span class="lineNum">     115 </span>            : struct compute_adjacency_list&lt;VertexSeq&lt;Vertices...&gt;, F, Es...&gt; {
+<span class="lineNum">     116 </span>            :   using type = brigand::list&lt;
+<span class="lineNum">     117 </span>            :       brigand::filter&lt;brigand::list&lt;Es...&gt;, F&lt;brigand::_1, pin&lt;Vertices&gt;&gt;&gt;...&gt;;
+<span class="lineNum">     118 </span>            : };
+<span class="lineNum">     119 </span>            : 
+<span class="lineNum">     120 </span>            : template &lt;template &lt;class...&gt; class List, class... edges&gt;
+<span class="lineNum">     121 </span>            : struct digraph&lt;List&lt;edges...&gt;&gt; {
+<span class="lineNum">     122 </span>            :  public:
+<span class="lineNum">     123 </span>            :   using edge_list = list&lt;edges...&gt;;
+<span class="lineNum">     124 </span>            :   static_assert(is_set&lt;edge_list&gt;::value,
+<span class="lineNum">     125 </span>            :                 &quot;Cannot have repeated edges in a digraph&quot;);
+<span class="lineNum">     126 </span>            :   using unique_vertex_list =
+<span class="lineNum">     127 </span>            :       fold&lt;edge_list, list&lt;&gt;, add_unique_vertex&lt;_state, _element&gt;&gt;;
+<span class="lineNum">     128 </span>            :   using vertex_count = size&lt;unique_vertex_list&gt;;
+<span class="lineNum">     129 </span>            :   using edge_count = uint32_t&lt;sizeof...(edges)&gt;;
+<span class="lineNum">     130 </span>            : 
+<span class="lineNum">     131 </span>            :   using adjacency_list =
+<span class="lineNum">     132 </span>            :       compute_adjacency_list&lt;unique_vertex_list, has_source, edges...&gt;;
+<span class="lineNum">     133 </span>            : 
+<span class="lineNum">     134 </span>            :   using ingoing_list =
+<span class="lineNum">     135 </span>            :       compute_adjacency_list&lt;unique_vertex_list, has_destination, edges...&gt;;
+<span class="lineNum">     136 </span>            : 
+<span class="lineNum">     137 </span>            :   template &lt;class E&gt;
+<span class="lineNum">     138 </span>            :   static digraph&lt;::brigand::remove&lt;
+<span class="lineNum">     139 </span>            :       list&lt;edges...&gt;,
+<span class="lineNum">     140 </span>            :       detail::get_edge_impl&lt;digraph&lt;List&lt;edges...&gt;&gt;, typename E::source,
+<span class="lineNum">     141 </span>            :                             typename E::destination&gt;&gt;&gt;
+<span class="lineNum">     142 </span>            :       erase(brigand::type_&lt;E&gt;);
+<span class="lineNum">     143 </span>            : 
+<span class="lineNum">     144 </span>            :   template &lt;class E&gt;
+<span class="lineNum">     145 </span>            :   static digraph&lt;push_back&lt;
+<span class="lineNum">     146 </span>            :       remove&lt;list&lt;edges...&gt;,
+<span class="lineNum">     147 </span>            :              detail::get_edge_impl&lt;digraph&lt;List&lt;edges...&gt;&gt;, typename E::source,
+<span class="lineNum">     148 </span>            :                                    typename E::destination&gt;&gt;,
+<span class="lineNum">     149 </span>            :       E&gt;&gt;
+<span class="lineNum">     150 </span>            :       insert(::brigand::type_&lt;E&gt;);
+<span class="lineNum">     151 </span>            : };
+<span class="lineNum">     152 </span>            : 
+<span class="lineNum">     153 </span>            : namespace lazy {
+<span class="lineNum">     154 </span>            : template &lt;class Graph, class S, class D&gt;
+<span class="lineNum">     155 </span>            : using has_edge = ::brigand::detail::has_edge_impl&lt;Graph, S, D&gt;;
+<span class="lineNum">     156 </span>            : }  // namespace lazy
+<span class="lineNum">     157 </span>            : 
+<span class="lineNum">     158 </span>            : /*!
+<span class="lineNum">     159 </span>            :  * \ingroup UtilitiesGroup
+<span class="lineNum">     160 </span>            :  * \brief Check if a digraph has an edge with source `S` and destination `D`
+<span class="lineNum">     161 </span>            :  *
+<span class="lineNum">     162 </span>            :  *
+<span class="lineNum">     163 </span>            :  */
+<span class="lineNum">     164 </span>            : template &lt;class Graph, class S, class D&gt;
+<span class="lineNum">     165 </span>            : using has_edge = typename ::brigand::lazy::has_edge&lt;Graph, S, D&gt;::type;
+<span class="lineNum">     166 </span>            : 
+<span class="lineNum">     167 </span>            : namespace lazy {
+<span class="lineNum">     168 </span>            : template &lt;class Graph, class S, class D&gt;
+<span class="lineNum">     169 </span>            : using get_edge = ::brigand::detail::get_edge_impl&lt;Graph, S, D&gt;;
+<span class="lineNum">     170 </span>            : }  // namespace lazy
+<span class="lineNum">     171 </span>            : 
+<span class="lineNum">     172 </span>            : template &lt;class Graph, class S, class D&gt;
+<span class="lineNum">     173 </span>            : using get_edge = typename ::brigand::lazy::get_edge&lt;Graph, S, D&gt;;
+<span class="lineNum">     174 </span>            : 
+<span class="lineNum">     175 </span>            : template &lt;class Graph, class Vertex&gt;
+<span class="lineNum">     176 </span>            : using outgoing_edges = at&lt;typename Graph::adjacency_list::type,
+<span class="lineNum">     177 </span>            :                           index_of&lt;typename Graph::unique_vertex_list, Vertex&gt;&gt;;
+<span class="lineNum">     178 </span>            : 
+<span class="lineNum">     179 </span>            : template &lt;class Graph, class Vertex&gt;
+<span class="lineNum">     180 </span>            : using ingoing_edges = at&lt;typename Graph::ingoing_list::type,
+<span class="lineNum">     181 </span>            :                          index_of&lt;typename Graph::unique_vertex_list, Vertex&gt;&gt;;
+<span class="lineNum">     182 </span>            : 
+<span class="lineNum">     183 </span>            : template &lt;class Graph&gt;
+<span class="lineNum">     184 </span>            : using vertex_count = size&lt;typename Graph::unique_vertex_list&gt;;
+<span class="lineNum">     185 </span>            : 
+<span class="lineNum">     186 </span>            : template &lt;class Graph&gt;
+<span class="lineNum">     187 </span>            : using edge_count = size&lt;typename Graph::edge_list&gt;;
+<span class="lineNum">     188 </span>            : }  // namespace brigand
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

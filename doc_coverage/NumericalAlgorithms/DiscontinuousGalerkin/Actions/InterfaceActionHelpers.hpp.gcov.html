@@ -1,0 +1,178 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - NumericalAlgorithms/DiscontinuousGalerkin/Actions/InterfaceActionHelpers.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">NumericalAlgorithms/DiscontinuousGalerkin/Actions</a> - InterfaceActionHelpers.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       7 </span>            : #include &lt;unordered_map&gt;
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : #include &quot;DataStructures/DataBox/DataBox.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;DataStructures/Tensor/EagerMath/Magnitude.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;Domain/Direction.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;Domain/FaceNormal.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;Domain/Mesh.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;Domain/Tags.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;NumericalAlgorithms/DiscontinuousGalerkin/FluxCommunicationTypes.hpp&quot;
+<span class="lineNum">      16 </span>            : #include &quot;NumericalAlgorithms/DiscontinuousGalerkin/MortarHelpers.hpp&quot;
+<span class="lineNum">      17 </span>            : #include &quot;NumericalAlgorithms/DiscontinuousGalerkin/Tags.hpp&quot;
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : namespace DgActions_detail {
+<span class="lineNum">      20 </span>            : template &lt;typename Metavariables, typename DataBoxType, typename DirectionsTag,
+<span class="lineNum">      21 </span>            :           typename NumericalFlux&gt;
+<span class="lineNum">      22 </span>            : auto compute_packaged_data(
+<span class="lineNum">      23 </span>            :     const DataBoxType&amp; box,
+<span class="lineNum">      24 </span>            :     const Direction&lt;Metavariables::system::volume_dim&gt;&amp; direction,
+<span class="lineNum">      25 </span>            :     const NumericalFlux&amp; normal_dot_numerical_flux_computer,
+<span class="lineNum">      26 </span>            :     const DirectionsTag /*meta*/, const Metavariables /*meta*/) noexcept -&gt;
+<span class="lineNum">      27 </span>            :     typename dg::FluxCommunicationTypes&lt;Metavariables&gt;::PackagedData {
+<span class="lineNum">      28 </span>            :   constexpr size_t volume_dim = Metavariables::system::volume_dim;
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span>            :   using flux_comm_types = dg::FluxCommunicationTypes&lt;Metavariables&gt;;
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span>            :   using package_arguments =
+<span class="lineNum">      33 </span>            :   typename Metavariables::normal_dot_numerical_flux::type::argument_tags;
+<span class="lineNum">      34 </span>            : 
+<span class="lineNum">      35 </span>            :   const auto &amp;face_mesh =
+<span class="lineNum">      36 </span>            :       db::get&lt;Tags::Interface&lt;DirectionsTag, Tags::Mesh&lt;volume_dim - 1&gt;&gt;&gt;(box)
+<span class="lineNum">      37 </span>            :           .at(direction);
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span>            :   return db::apply&lt;tmpl::transform&lt;
+<span class="lineNum">      40 </span>            :       package_arguments, tmpl::bind&lt;Tags::Interface, DirectionsTag, tmpl::_1&gt;&gt;&gt;(
+<span class="lineNum">      41 </span>            :       [&amp;face_mesh, &amp;direction,
+<span class="lineNum">      42 </span>            :        &amp;normal_dot_numerical_flux_computer ](const auto&amp;... args) noexcept {
+<span class="lineNum">      43 </span>            :         typename flux_comm_types::PackagedData ret(
+<span class="lineNum">      44 </span>            :             face_mesh.number_of_grid_points(), 0.0);
+<span class="lineNum">      45 </span>            :         normal_dot_numerical_flux_computer.package_data(make_not_null(&amp;ret),
+<span class="lineNum">      46 </span>            :                                                         args.at(direction)...);
+<span class="lineNum">      47 </span>            :         return ret;
+<span class="lineNum">      48 </span>            :       },
+<span class="lineNum">      49 </span>            :       box);
+<span class="lineNum">      50 </span>            : }
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            : template &lt;typename Metavariables, typename DataBoxType, typename DirectionsTag,
+<span class="lineNum">      53 </span>            :           typename NumericalFlux&gt;
+<span class="lineNum">      54 </span>            : auto compute_local_mortar_data(
+<span class="lineNum">      55 </span>            :     const DataBoxType&amp; box,
+<span class="lineNum">      56 </span>            :     const Direction&lt;Metavariables::system::volume_dim&gt;&amp; direction,
+<span class="lineNum">      57 </span>            :     const NumericalFlux&amp; normal_dot_numerical_flux_computer,
+<span class="lineNum">      58 </span>            :     const DirectionsTag /*meta*/, const Metavariables /*meta*/) noexcept -&gt;
+<span class="lineNum">      59 </span>            :     typename dg::FluxCommunicationTypes&lt;Metavariables&gt;::LocalData {
+<span class="lineNum">      60 </span>            :   constexpr size_t volume_dim = Metavariables::system::volume_dim;
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span>            :   using flux_comm_types = dg::FluxCommunicationTypes&lt;Metavariables&gt;;
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span>            :   using normal_dot_fluxes_tag =
+<span class="lineNum">      65 </span>            :   Tags::Interface&lt;DirectionsTag,
+<span class="lineNum">      66 </span>            :                   typename flux_comm_types::normal_dot_fluxes_tag&gt;;
+<span class="lineNum">      67 </span>            : 
+<span class="lineNum">      68 </span>            :   const auto &amp;face_mesh =
+<span class="lineNum">      69 </span>            :       db::get&lt;Tags::Interface&lt;Tags::BoundaryDirectionsInterior&lt;volume_dim&gt;,
+<span class="lineNum">      70 </span>            :                               Tags::Mesh&lt;volume_dim - 1&gt;&gt;&gt;(box)
+<span class="lineNum">      71 </span>            :           .at(direction);
+<span class="lineNum">      72 </span>            : 
+<span class="lineNum">      73 </span>            :   const auto packaged_data =
+<span class="lineNum">      74 </span>            :       compute_packaged_data(box, direction, normal_dot_numerical_flux_computer,
+<span class="lineNum">      75 </span>            :                             DirectionsTag{}, Metavariables{});
+<span class="lineNum">      76 </span>            : 
+<span class="lineNum">      77 </span>            :   typename flux_comm_types::LocalData interface_data{};
+<span class="lineNum">      78 </span>            :   interface_data.magnitude_of_face_normal = db::get&lt;Tags::Interface&lt;
+<span class="lineNum">      79 </span>            :       DirectionsTag,
+<span class="lineNum">      80 </span>            :       Tags::Magnitude&lt;Tags::UnnormalizedFaceNormal&lt;volume_dim&gt;&gt;&gt;&gt;(box)
+<span class="lineNum">      81 </span>            :       .at(direction);
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span>            :   interface_data.mortar_data.initialize(face_mesh.number_of_grid_points());
+<span class="lineNum">      84 </span>            :   interface_data.mortar_data.assign_subset(packaged_data);
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span>            :   if (tmpl::size&lt;typename flux_comm_types::LocalMortarData::tags_list&gt;::value !=
+<span class="lineNum">      87 </span>            :       tmpl::size&lt;typename flux_comm_types::PackagedData::tags_list&gt;::value) {
+<span class="lineNum">      88 </span>            :     // The local fluxes were not (all) included in the packaged
+<span class="lineNum">      89 </span>            :     // data, so we need to add them to the mortar data
+<span class="lineNum">      90 </span>            :     // explicitly.
+<span class="lineNum">      91 </span>            :     const auto &amp;normal_dot_fluxes =
+<span class="lineNum">      92 </span>            :         db::get&lt;normal_dot_fluxes_tag&gt;(box).at(direction);
+<span class="lineNum">      93 </span>            :     interface_data.mortar_data.assign_subset(normal_dot_fluxes);
+<span class="lineNum">      94 </span>            :   }
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span>            :   return interface_data;
+<span class="lineNum">      97 </span>            : }
+<span class="lineNum">      98 </span>            : }  // namespace DgActions_detail
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

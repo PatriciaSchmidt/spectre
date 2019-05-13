@@ -1,0 +1,248 @@
+<!-- HTML header for doxygen 1.8.10-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=9"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="SXS Collaboration">
+    <meta name="generator" content="Doxygen 1.8.13"/>
+    <style>
+        /*!
+         * IE10 viewport hack for Surface/desktop Windows 8 bug
+         * Copyright 2014-2015 Twitter, Inc.
+         * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+         */
+        @-webkit-viewport { width: device-width; }
+        @-moz-viewport    { width: device-width; }
+        @-ms-viewport     { width: device-width; }
+        @-o-viewport      { width: device-width; }
+        @viewport         { width: device-width; }
+      </style>
+  <title>SpECTRE: Elliptic::dg::Actions::InitializeElement&lt; Dim &gt; Struct Template Reference</title>
+  <link href="tabs.css" rel="stylesheet" type="text/css"/>
+  <script type="text/javascript" src="jquery.js"></script>
+  <script type="text/javascript" src="dynsections.js"></script>
+  <link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js", "color.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+});
+MathJax.Hub.Config({
+    TeX: { equationNumbers: { autoNumber: "AMS" } }
+});
+MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['^^','^^'], ['\\(', '\\)']]}
+});
+</script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js"></script>
+  <link href="octicons.css" rel="stylesheet">
+  <link href="bootstrap.min.css" rel="stylesheet">
+  <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <script type="text/javascript" src="jquery.js"></script>
+  <script type="text/javascript" src="popper.min.js"></script>
+  <script type="text/javascript" src="bootstrap.min.js"></script>
+  <script type="text/javascript" src="spectre.js"></script>
+  </head>
+  <body>
+  <div id="top" class="navbar-fixed-top"><!-- do not remove this div, it is closed by doxygen! -->
+  <!-- BEGIN TITLEAREA -->
+  <div id="titlearea">
+  <script type="text/javascript">
+  var searchBox = new SearchBox("searchBox", "search",false,'Search');
+  </script>
+  <div id="main-nav">
+    <ul class="sm sm-dox" id="main-menu">
+      <li>
+      <a href="index.html">
+      SpECTRE &#160;
+        <span id="projectnumber">v0.0.0</span>
+      </a>
+      </li>
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="selected">
+          <span id="selected">
+            <i class="octicon octicon-book"></i><span>Documentation</span>
+          </span>
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li style="min-width: 135px;">
+            <a href="index.html">
+            <i class="octicon octicon-book"></i><span>Introduction</span></a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="installation.html">
+              <i class="octicon octicon-desktop-download"></i><span>Installation</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="tutorials.html">
+              <i class="octicon octicon-mortar-board"></i><span>User Tutorials</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="dev_guide.html">
+              <i class="octicon octicon-gist-secret"></i><span>Dev Guide</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="code_of_conduct.html">
+              <i class="octicon octicon-comment-discussion"></i><span>Code of Conduct</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="contributing_to_spectre.html">
+              <i class="octicon octicon-git-pull-request"></i><span>Contributing Guide</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="selected">
+          <span id="selected">
+            <i class="octicon octicon-code"></i>
+              <span>Code Reference</span>
+          </span>
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li style="min-width: 130px;">
+            <a href="modules.html">
+              <i class="octicon octicon-code"></i>
+              <span>Topics</span>
+            </a>
+          </li>
+          <li style="min-width: 130px;">
+            <a href="namespaces.html">
+              <i class="octicon octicon-gist"></i>
+              <span>Namespaces</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <a href="files.html">
+          <i class="octicon octicon-file-directory"></i><span>Files</span>
+        </a>
+      </li>
+      <li>
+        <a href="citelist.html">
+          <i class="octicon octicon-file-text"></i><span>Bibliography</span>
+        </a>
+      </li>
+      <li>
+        <a href="https://github.com/sxs-collaboration/spectre" target="_blank">
+          <i class="octicon octicon-mark-github"></i><span>View on GitHub</span>
+        </a>
+      </li>
+      <!--The Search <li> is added by doxygen later-->
+    </ul>
+  </div><!-- main-nav -->
+  </div><!-- titlearea -->
+  <!-- window showing the filter options -->
+  <div id="MSearchSelectWindow"  style="position: fixed;"
+       onmouseover="return searchBox.OnSearchSelectShow()"
+       onmouseout="return searchBox.OnSearchSelectHide()"
+       onkeydown="return searchBox.OnSearchSelectKey(event)">
+  </div>
+  <!-- iframe showing the search results (closed by default) -->
+  <div id="MSearchResultsWindow"  style="position: fixed;">
+  <iframe src="javascript:void(0)" frameborder="0"
+          name="MSearchResults" id="MSearchResults">
+  </iframe>
+  </div>
+<!-- Generated by Doxygen 1.8.13 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search",false,'Search');
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><b>Elliptic</b></li><li class="navelem"><b>dg</b></li><li class="navelem"><b>Actions</b></li><li class="navelem"><a class="el" href="structElliptic_1_1dg_1_1Actions_1_1InitializeElement.html">InitializeElement</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
+<a href="structElliptic_1_1dg_1_1Actions_1_1InitializeElement-members.html">List of all members</a>  </div>
+  <div class="headertitle">
+<div class="title">Elliptic::dg::Actions::InitializeElement&lt; Dim &gt; Struct Template Reference</div>  </div>
+</div><!--header-->
+<div class="contents">
+
+<p>Initializes the DataBox of each element in the <a class="el" href="structElliptic_1_1DgElementArray.html" title="The parallel component responsible for managing the DG elements that compose the computational domain...">DgElementArray</a>.  
+ <a href="structElliptic_1_1dg_1_1Actions_1_1InitializeElement.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="Elliptic_2DiscontinuousGalerkin_2InitializeElement_8hpp_source.html">InitializeElement.hpp</a>&gt;</code></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:a5645c6111a5889e14f6b337f764eafd7"><td class="memTemplParams" colspan="2"><a id="a5645c6111a5889e14f6b337f764eafd7"></a>
+template&lt;class Metavariables &gt; </td></tr>
+<tr class="memitem:a5645c6111a5889e14f6b337f764eafd7"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>return_tag_list</b> = tmpl::append&lt; typename <a class="el" href="structElliptic_1_1Initialization_1_1Domain.html">Elliptic::Initialization::Domain</a>&lt; Dim &gt;::simple_tags, typename <a class="el" href="structElliptic_1_1Initialization_1_1System.html">Elliptic::Initialization::System</a>&lt; typename <a class="el" href="structPoisson_1_1FirstOrderSystem.html">Metavariables::system</a> &gt;::simple_tags, typename <a class="el" href="structElliptic_1_1Initialization_1_1Source.html">Elliptic::Initialization::Source</a>&lt; <a class="el" href="structMetavariables.html">Metavariables</a> &gt;::simple_tags, typename <a class="el" href="structElliptic_1_1Initialization_1_1Derivatives.html">Elliptic::Initialization::Derivatives</a>&lt; typename <a class="el" href="structPoisson_1_1FirstOrderSystem.html">Metavariables::system</a> &gt;::simple_tags, typename <a class="el" href="structElliptic_1_1Initialization_1_1Interface.html">Elliptic::Initialization::Interface</a>&lt; typename <a class="el" href="structPoisson_1_1FirstOrderSystem.html">Metavariables::system</a> &gt;::simple_tags, typename <a class="el" href="structElliptic_1_1Initialization_1_1BoundaryConditions.html">Elliptic::Initialization::BoundaryConditions</a>&lt; <a class="el" href="structMetavariables.html">Metavariables</a> &gt;::simple_tags, typename <a class="el" href="structElliptic_1_1Initialization_1_1LinearSolver.html">Elliptic::Initialization::LinearSolver</a>&lt; <a class="el" href="structMetavariables.html">Metavariables</a> &gt;::simple_tags, typename <a class="el" href="structElliptic_1_1Initialization_1_1DiscontinuousGalerkin.html">Elliptic::Initialization::DiscontinuousGalerkin</a>&lt; <a class="el" href="structMetavariables.html">Metavariables</a> &gt;::simple_tags, typename <a class="el" href="structElliptic_1_1Initialization_1_1Domain.html">Elliptic::Initialization::Domain</a>&lt; Dim &gt;::compute_tags, typename <a class="el" href="structElliptic_1_1Initialization_1_1System.html">Elliptic::Initialization::System</a>&lt; typename <a class="el" href="structPoisson_1_1FirstOrderSystem.html">Metavariables::system</a> &gt;::compute_tags, typename <a class="el" href="structElliptic_1_1Initialization_1_1Source.html">Elliptic::Initialization::Source</a>&lt; <a class="el" href="structMetavariables.html">Metavariables</a> &gt;::compute_tags, typename <a class="el" href="structElliptic_1_1Initialization_1_1Derivatives.html">Elliptic::Initialization::Derivatives</a>&lt; typename <a class="el" href="structPoisson_1_1FirstOrderSystem.html">Metavariables::system</a> &gt;::compute_tags, typename <a class="el" href="structElliptic_1_1Initialization_1_1Interface.html">Elliptic::Initialization::Interface</a>&lt; typename <a class="el" href="structPoisson_1_1FirstOrderSystem.html">Metavariables::system</a> &gt;::compute_tags, typename <a class="el" href="structElliptic_1_1Initialization_1_1BoundaryConditions.html">Elliptic::Initialization::BoundaryConditions</a>&lt; <a class="el" href="structMetavariables.html">Metavariables</a> &gt;::compute_tags, typename <a class="el" href="structElliptic_1_1Initialization_1_1LinearSolver.html">Elliptic::Initialization::LinearSolver</a>&lt; <a class="el" href="structMetavariables.html">Metavariables</a> &gt;::compute_tags, typename <a class="el" href="structElliptic_1_1Initialization_1_1DiscontinuousGalerkin.html">Elliptic::Initialization::DiscontinuousGalerkin</a>&lt; <a class="el" href="structMetavariables.html">Metavariables</a> &gt;::compute_tags &gt;</td></tr>
+<tr class="separator:a5645c6111a5889e14f6b337f764eafd7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a0ea736b979be416032d0a5c3cfe60db4"><td class="memTemplParams" colspan="2"><a id="a0ea736b979be416032d0a5c3cfe60db4"></a>
+template&lt;typename... InboxTags, typename Metavariables , typename ActionList , typename ParallelComponent &gt; </td></tr>
+<tr class="memitem:a0ea736b979be416032d0a5c3cfe60db4"><td class="memTemplItemLeft" align="right" valign="top">static auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>apply</b> (const <a class="el" href="classdb_1_1DataBox.html">db::DataBox</a>&lt; tmpl::list&lt;&gt;&gt; &amp;, const <a class="el" href="classtuples_1_1TaggedTuple.html">tuples::TaggedTuple</a>&lt; InboxTags... &gt; &amp;, const <a class="el" href="classParallel_1_1ConstGlobalCache.html">Parallel::ConstGlobalCache</a>&lt; <a class="el" href="structMetavariables.html">Metavariables</a> &gt; &amp;cache, const <a class="el" href="classElementIndex.html">ElementIndex</a>&lt; Dim &gt; &amp;array_index, const ActionList, const ParallelComponent *const parallel_component_meta, <a class="elRef" doxygen="/work/spectre/docs/config/cppreference-doxygen-web.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/container/vector.html">std::vector</a>&lt; <a class="elRef" doxygen="/work/spectre/docs/config/cppreference-doxygen-web.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/container/array.html">std::array</a>&lt; size_t, Dim &gt;&gt; initial_extents, <a class="el" href="classDomain.html">Domain</a>&lt; Dim, <a class="el" href="structFrame_1_1Inertial.html">Frame::Inertial</a> &gt; domain) noexcept</td></tr>
+<tr class="separator:a0ea736b979be416032d0a5c3cfe60db4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;size_t Dim&gt;<br />
+struct Elliptic::dg::Actions::InitializeElement&lt; Dim &gt;</h3>
+
+<p>Initializes the DataBox of each element in the <a class="el" href="structElliptic_1_1DgElementArray.html" title="The parallel component responsible for managing the DG elements that compose the computational domain...">DgElementArray</a>. </p>
+<p>The following initializers are chained together (in this order):</p>
+<ul>
+<li><code><a class="el" href="structElliptic_1_1Initialization_1_1Domain.html" title="Initializes the DataBox tag related to the computational domain. ">Elliptic::Initialization::Domain</a></code></li>
+<li><code><a class="el" href="structElliptic_1_1Initialization_1_1System.html" title="Initializes the DataBox tags related to the system. ">Elliptic::Initialization::System</a></code></li>
+<li><code><a class="el" href="structElliptic_1_1Initialization_1_1Source.html" title="Computes the sources of the elliptic equations and adds them to the DataBox. ">Elliptic::Initialization::Source</a></code></li>
+<li><code><a class="el" href="structElliptic_1_1Initialization_1_1Derivatives.html" title="Initializes the DataBox tags related to derivatives of the system variables. ">Elliptic::Initialization::Derivatives</a></code></li>
+<li><code><a class="el" href="structElliptic_1_1Initialization_1_1Interface.html" title="Initializes the DataBox tags related to data on the element faces. ">Elliptic::Initialization::Interface</a></code></li>
+<li><code><a class="el" href="structElliptic_1_1Initialization_1_1BoundaryConditions.html" title="Adds boundary contributions to the sources. ">Elliptic::Initialization::BoundaryConditions</a></code></li>
+<li><code><a class="el" href="structElliptic_1_1Initialization_1_1LinearSolver.html" title="Initializes the DataBox tag related to the linear solver. ">Elliptic::Initialization::LinearSolver</a></code></li>
+<li><code><a class="el" href="structElliptic_1_1Initialization_1_1DiscontinuousGalerkin.html" title="Initializes DataBox tags related to discontinuous Galerkin fluxes. ">Elliptic::Initialization::DiscontinuousGalerkin</a></code> </li>
+</ul>
+</div><hr/>The documentation for this struct was generated from the following file:<ul>
+<li>src/Elliptic/DiscontinuousGalerkin/<a class="el" href="Elliptic_2DiscontinuousGalerkin_2InitializeElement_8hpp_source.html">InitializeElement.hpp</a></li>
+</ul>
+</div><!-- contents -->
+<!-- HTML footer for doxygen 1.8.10-->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+&copy; Copyright 2017 - 2019
+<a href="https://black-holes.org">SXS Collaboration</a>,
+<a href="LICENSE.txt" target="_blank">
+<span class="hidden-xs">Distributed under the</span>
+MIT License</a>
+</small></address>
+</body>
+</html>

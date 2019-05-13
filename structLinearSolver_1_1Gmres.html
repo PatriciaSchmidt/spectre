@@ -1,0 +1,366 @@
+<!-- HTML header for doxygen 1.8.10-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=9"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="SXS Collaboration">
+    <meta name="generator" content="Doxygen 1.8.13"/>
+    <style>
+        /*!
+         * IE10 viewport hack for Surface/desktop Windows 8 bug
+         * Copyright 2014-2015 Twitter, Inc.
+         * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+         */
+        @-webkit-viewport { width: device-width; }
+        @-moz-viewport    { width: device-width; }
+        @-ms-viewport     { width: device-width; }
+        @-o-viewport      { width: device-width; }
+        @viewport         { width: device-width; }
+      </style>
+  <title>SpECTRE: LinearSolver::Gmres&lt; Metavariables &gt; Struct Template Reference</title>
+  <link href="tabs.css" rel="stylesheet" type="text/css"/>
+  <script type="text/javascript" src="jquery.js"></script>
+  <script type="text/javascript" src="dynsections.js"></script>
+  <link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js", "color.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+});
+MathJax.Hub.Config({
+    TeX: { equationNumbers: { autoNumber: "AMS" } }
+});
+MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['^^','^^'], ['\\(', '\\)']]}
+});
+</script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js"></script>
+  <link href="octicons.css" rel="stylesheet">
+  <link href="bootstrap.min.css" rel="stylesheet">
+  <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <script type="text/javascript" src="jquery.js"></script>
+  <script type="text/javascript" src="popper.min.js"></script>
+  <script type="text/javascript" src="bootstrap.min.js"></script>
+  <script type="text/javascript" src="spectre.js"></script>
+  </head>
+  <body>
+  <div id="top" class="navbar-fixed-top"><!-- do not remove this div, it is closed by doxygen! -->
+  <!-- BEGIN TITLEAREA -->
+  <div id="titlearea">
+  <script type="text/javascript">
+  var searchBox = new SearchBox("searchBox", "search",false,'Search');
+  </script>
+  <div id="main-nav">
+    <ul class="sm sm-dox" id="main-menu">
+      <li>
+      <a href="index.html">
+      SpECTRE &#160;
+        <span id="projectnumber">v0.0.0</span>
+      </a>
+      </li>
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="selected">
+          <span id="selected">
+            <i class="octicon octicon-book"></i><span>Documentation</span>
+          </span>
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li style="min-width: 135px;">
+            <a href="index.html">
+            <i class="octicon octicon-book"></i><span>Introduction</span></a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="installation.html">
+              <i class="octicon octicon-desktop-download"></i><span>Installation</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="tutorials.html">
+              <i class="octicon octicon-mortar-board"></i><span>User Tutorials</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="dev_guide.html">
+              <i class="octicon octicon-gist-secret"></i><span>Dev Guide</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="code_of_conduct.html">
+              <i class="octicon octicon-comment-discussion"></i><span>Code of Conduct</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="contributing_to_spectre.html">
+              <i class="octicon octicon-git-pull-request"></i><span>Contributing Guide</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="selected">
+          <span id="selected">
+            <i class="octicon octicon-code"></i>
+              <span>Code Reference</span>
+          </span>
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li style="min-width: 130px;">
+            <a href="modules.html">
+              <i class="octicon octicon-code"></i>
+              <span>Topics</span>
+            </a>
+          </li>
+          <li style="min-width: 130px;">
+            <a href="namespaces.html">
+              <i class="octicon octicon-gist"></i>
+              <span>Namespaces</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <a href="files.html">
+          <i class="octicon octicon-file-directory"></i><span>Files</span>
+        </a>
+      </li>
+      <li>
+        <a href="citelist.html">
+          <i class="octicon octicon-file-text"></i><span>Bibliography</span>
+        </a>
+      </li>
+      <li>
+        <a href="https://github.com/sxs-collaboration/spectre" target="_blank">
+          <i class="octicon octicon-mark-github"></i><span>View on GitHub</span>
+        </a>
+      </li>
+      <!--The Search <li> is added by doxygen later-->
+    </ul>
+  </div><!-- main-nav -->
+  </div><!-- titlearea -->
+  <!-- window showing the filter options -->
+  <div id="MSearchSelectWindow"  style="position: fixed;"
+       onmouseover="return searchBox.OnSearchSelectShow()"
+       onmouseout="return searchBox.OnSearchSelectHide()"
+       onkeydown="return searchBox.OnSearchSelectKey(event)">
+  </div>
+  <!-- iframe showing the search results (closed by default) -->
+  <div id="MSearchResultsWindow"  style="position: fixed;">
+  <iframe src="javascript:void(0)" frameborder="0"
+          name="MSearchResults" id="MSearchResults">
+  </iframe>
+  </div>
+<!-- Generated by Doxygen 1.8.13 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search",false,'Search');
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="namespaceLinearSolver.html">LinearSolver</a></li><li class="navelem"><a class="el" href="structLinearSolver_1_1Gmres.html">Gmres</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
+<a href="structLinearSolver_1_1Gmres-members.html">List of all members</a>  </div>
+  <div class="headertitle">
+<div class="title">LinearSolver::Gmres&lt; Metavariables &gt; Struct Template Reference<div class="ingroups"><a class="el" href="group__LinearSolverGroup.html">Linear Solver</a></div></div>  </div>
+</div><!--header-->
+<div class="contents">
+
+<p>A GMRES solver for nonsymmetric linear systems of equations \(Ax=b\).  
+ <a href="structLinearSolver_1_1Gmres.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="Gmres_8hpp_source.html">Gmres.hpp</a>&gt;</code></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:ae13b3e53f8739c421e2bba96c5ef7a2d"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structLinearSolver_1_1Gmres.html#ae13b3e53f8739c421e2bba96c5ef7a2d">component_list</a> = tmpl::list&lt; gmres_detail::ResidualMonitor&lt; <a class="el" href="structMetavariables.html">Metavariables</a> &gt; &gt;</td></tr>
+<tr class="memdesc:ae13b3e53f8739c421e2bba96c5ef7a2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The parallel components used by the GMRES linear solver.  <a href="#ae13b3e53f8739c421e2bba96c5ef7a2d">More...</a><br /></td></tr>
+<tr class="separator:ae13b3e53f8739c421e2bba96c5ef7a2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2069a3e7fb1d6a0a2e622f52995cf6ad"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structLinearSolver_1_1Gmres.html#a2069a3e7fb1d6a0a2e622f52995cf6ad">tags</a> = gmres_detail::InitializeElement&lt; <a class="el" href="structMetavariables.html">Metavariables</a> &gt;</td></tr>
+<tr class="memdesc:a2069a3e7fb1d6a0a2e622f52995cf6ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the tags used by the GMRES linear solver.  <a href="#a2069a3e7fb1d6a0a2e622f52995cf6ad">More...</a><br /></td></tr>
+<tr class="separator:a2069a3e7fb1d6a0a2e622f52995cf6ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af99ac02cd4d1af39e6533183a7844d40"><td class="memItemLeft" align="right" valign="top"><a id="af99ac02cd4d1af39e6533183a7844d40"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>observed_reduction_data_tags</b> = observers::make_reduction_data_tags&lt; tmpl::list&lt; observe_detail::reduction_data &gt; &gt;</td></tr>
+<tr class="separator:af99ac02cd4d1af39e6533183a7844d40"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a448c5e4a16082a9ef4cf19f161a97816"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structLinearSolver_1_1Gmres.html#a448c5e4a16082a9ef4cf19f161a97816">perform_step</a> = gmres_detail::PerformStep</td></tr>
+<tr class="memdesc:a448c5e4a16082a9ef4cf19f161a97816"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform an iteration of the GMRES linear solver.  <a href="#a448c5e4a16082a9ef4cf19f161a97816">More...</a><br /></td></tr>
+<tr class="separator:a448c5e4a16082a9ef4cf19f161a97816"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;typename Metavariables&gt;<br />
+struct LinearSolver::Gmres&lt; Metavariables &gt;</h3>
+
+<p>A GMRES solver for nonsymmetric linear systems of equations \(Ax=b\). </p>
+<h3>Details</h3>
+<p>The only operation we need to supply to the algorithm is the result of the operation \(A(p)\) (see <a class="el" href="group__LinearSolverGroup.html">Linear Solver</a>). Each invocation of the <code>perform_step</code> action expects that \(A(q)\) has been computed in a preceding action and stored in the DataBox as db::add_tag_prefix&lt;<a class="el" href="structLinearSolver_1_1Tags_1_1OperatorAppliedTo.html" title="The linear operator  applied to the data in Tag ">LinearSolver::Tags::OperatorAppliedTo</a>, <a class="el" href="group__DataBoxTagsGroup.html#gab3e7a8857504fa5070c052bacba656cd" title="Wrap Tag in Prefix&lt;_, Args...&gt;, also wrapping variables tags if Tag is a Tags::Variables. ">db::add_tag_prefix</a>&lt;<a class="el" href="structLinearSolver_1_1Tags_1_1Operand.html" title="The operand that the local linear operator  is applied to. ">LinearSolver::Tags::Operand</a>, typename Metavariables::system::fields_tag&gt;&gt;.</p>
+<p>Note that the operand \(q\) for which \(A(q)\) needs to be computed is not the field \(x\) we are solving for but <code><a class="el" href="group__DataBoxTagsGroup.html#gab3e7a8857504fa5070c052bacba656cd" title="Wrap Tag in Prefix&lt;_, Args...&gt;, also wrapping variables tags if Tag is a Tags::Variables. ">db::add_tag_prefix</a>&lt;<a class="el" href="structLinearSolver_1_1Tags_1_1Operand.html" title="The operand that the local linear operator  is applied to. ">LinearSolver::Tags::Operand</a>, typename Metavariables::system::fields_tag&gt;</code>. This field is initially set to the residual \(q_0 = b - A(x_0)\) where \(x_0\) is the initial value of the <code>Metavariables::system::fields_tag</code>.</p>
+<p>When the <code>perform_step</code> action is invoked after the operator action \(A(q)\) has been computed and stored in the DataBox, the GMRES algorithm implemented here will converge the field \(x\) towards the solution and update the operand \(q\) in the process. This requires reductions over all elements that are received by a <code>ResidualMonitor</code> singleton parallel component, processed, and then broadcast back to all elements. Since the reductions are performed to find a vector that is orthogonal to those used in previous steps, the number of reductions increases linearly with iterations. No restarting mechanism is currently implemented. The actions are implemented in the <code>gmres_detail</code> namespace and constitute the full algorithm in the following order:</p><ol type="1">
+<li><code>PerformStep</code> (on elements): Start an Arnoldi orthogonalization by computing the inner product between \(A(q)\) and the first of the previously determined set of orthogonal vectors.</li>
+<li><code>StoreOrthogonalization</code> (on <code>ResidualMonitor</code>): Keep track of the computed inner product in a Hessenberg matrix, then broadcast.</li>
+<li><code>OrthogonalizeOperand</code> (on elements): Proceed with the Arnoldi orthogonalization by computing inner products and reducing to <code>StoreOrthogonalization</code> on the <code>ResidualMonitor</code> until the new orthogonal vector is constructed. Then compute its magnitude and reduce.</li>
+<li><code>StoreFinalOrthogonalization</code> (on <code>ResidualMonitor</code>): Perform a QR decomposition of the Hessenberg matrix to produce a residual vector. Broadcast to <code>NormalizeOperandAndUpdateField</code> along with a termination flag if the <code><a class="el" href="structLinearSolver_1_1Tags_1_1ConvergenceCriteria.html" title="LinearSolver::ConvergenceCriteria that determine the linear solve has converged ">LinearSolver::Tags::ConvergenceCriteria</a></code> are met.</li>
+<li><code>NormalizeOperandAndUpdateField</code> (on elements): Set the operand \(q\) as the new orthogonal vector and normalize. Use the residual vector and the set of orthogonal vectors to determine the solution \(x\).</li>
+</ol>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structLinearSolver_1_1ConjugateGradient.html" title="A conjugate gradient solver for linear systems of equations  where the operator  is symmetric...">ConjugateGradient</a> for a linear solver that is more efficient when the linear operator \(A\) is symmetric. </dd></dl>
+</div><h2 class="groupheader">Member Typedef Documentation</h2>
+<a id="ae13b3e53f8739c421e2bba96c5ef7a2d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae13b3e53f8739c421e2bba96c5ef7a2d">&#9670;&nbsp;</a></span>component_list</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Metavariables &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="structLinearSolver_1_1Gmres.html">LinearSolver::Gmres</a>&lt; <a class="el" href="structMetavariables.html">Metavariables</a> &gt;::<a class="el" href="structLinearSolver_1_1Gmres.html#ae13b3e53f8739c421e2bba96c5ef7a2d">component_list</a> =  tmpl::list&lt;gmres_detail::ResidualMonitor&lt;<a class="el" href="structMetavariables.html">Metavariables</a>&gt; &gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The parallel components used by the GMRES linear solver. </p>
+<p>Uses:</p><ul>
+<li>System:<ul>
+<li><code>fields_tag</code> </li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+<a id="a448c5e4a16082a9ef4cf19f161a97816"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a448c5e4a16082a9ef4cf19f161a97816">&#9670;&nbsp;</a></span>perform_step</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Metavariables &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="structLinearSolver_1_1Gmres.html">LinearSolver::Gmres</a>&lt; <a class="el" href="structMetavariables.html">Metavariables</a> &gt;::<a class="el" href="structLinearSolver_1_1Gmres.html#a448c5e4a16082a9ef4cf19f161a97816">perform_step</a> =  gmres_detail::PerformStep</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Perform an iteration of the GMRES linear solver. </p>
+<p>Uses:</p><ul>
+<li>System:<ul>
+<li><code>fields_tag</code></li>
+</ul>
+</li>
+<li>ConstGlobalCache: nothing</li>
+</ul>
+<p>With:</p><ul>
+<li><code>operand_tag</code> = <code><a class="el" href="group__DataBoxTagsGroup.html#gab3e7a8857504fa5070c052bacba656cd" title="Wrap Tag in Prefix&lt;_, Args...&gt;, also wrapping variables tags if Tag is a Tags::Variables. ">db::add_tag_prefix</a>&lt;<a class="el" href="structLinearSolver_1_1Tags_1_1Operand.html" title="The operand that the local linear operator  is applied to. ">LinearSolver::Tags::Operand</a>, fields_tag&gt;</code></li>
+<li><code>orthogonalization_iteration_id_tag</code> = <code><a class="el" href="group__DataBoxTagsGroup.html#gab3e7a8857504fa5070c052bacba656cd" title="Wrap Tag in Prefix&lt;_, Args...&gt;, also wrapping variables tags if Tag is a Tags::Variables. ">db::add_tag_prefix</a>&lt;<a class="el" href="structLinearSolver_1_1Tags_1_1Orthogonalization.html" title="The prefix for tags related to an orthogonalization procedurce. ">LinearSolver::Tags::Orthogonalization</a>, <a class="el" href="structLinearSolver_1_1Tags_1_1IterationId.html" title="Holds an IterationId that identifies a step in the linear solver algorithm. ">LinearSolver::Tags::IterationId</a>&gt;</code></li>
+<li><code>basis_history_tag</code> = <code><a class="el" href="structLinearSolver_1_1Tags_1_1KrylovSubspaceBasis.html" title="A set of  vectors that form a basis of the -th Krylov subspace . ">LinearSolver::Tags::KrylovSubspaceBasis</a>&lt;fields_tag&gt;</code></li>
+</ul>
+<p>DataBox changes:</p><ul>
+<li>Adds: nothing</li>
+<li>Removes: nothing</li>
+<li>Modifies:<ul>
+<li><code><a class="el" href="structLinearSolver_1_1Tags_1_1IterationId.html" title="Holds an IterationId that identifies a step in the linear solver algorithm. ">LinearSolver::Tags::IterationId</a></code></li>
+<li><code><a class="el" href="structTags_1_1Next.html" title="Prefix indicating the value a quantity will take on the next iteration of the algorithm. ">Tags::Next</a>&lt;<a class="el" href="structLinearSolver_1_1Tags_1_1IterationId.html" title="Holds an IterationId that identifies a step in the linear solver algorithm. ">LinearSolver::Tags::IterationId</a>&gt;</code></li>
+<li><code>fields_tag</code></li>
+<li><code>operand_tag</code></li>
+<li><code>orthogonalization_iteration_id_tag</code></li>
+<li><code>basis_history_tag</code></li>
+<li><code><a class="el" href="structLinearSolver_1_1Tags_1_1HasConverged.html" title="Holds a Convergence::HasConverged flag that signals the linear solver has converged, along with the reason for convergence. ">LinearSolver::Tags::HasConverged</a></code> </li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+<a id="a2069a3e7fb1d6a0a2e622f52995cf6ad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2069a3e7fb1d6a0a2e622f52995cf6ad">&#9670;&nbsp;</a></span>tags</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Metavariables &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="structLinearSolver_1_1Gmres.html">LinearSolver::Gmres</a>&lt; <a class="el" href="structMetavariables.html">Metavariables</a> &gt;::<a class="el" href="structLinearSolver_1_1Gmres.html#a2069a3e7fb1d6a0a2e622f52995cf6ad">tags</a> =  gmres_detail::InitializeElement&lt;<a class="el" href="structMetavariables.html">Metavariables</a>&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialize the tags used by the GMRES linear solver. </p>
+<p>Uses:</p><ul>
+<li>System:<ul>
+<li><code>fields_tag</code></li>
+</ul>
+</li>
+<li>ConstGlobalCache: nothing</li>
+</ul>
+<p>With:</p><ul>
+<li><code>initial_fields_tag</code> = <code><a class="el" href="group__DataBoxTagsGroup.html#gab3e7a8857504fa5070c052bacba656cd" title="Wrap Tag in Prefix&lt;_, Args...&gt;, also wrapping variables tags if Tag is a Tags::Variables. ">db::add_tag_prefix</a>&lt;<a class="el" href="structLinearSolver_1_1Tags_1_1Initial.html">LinearSolver::Tags::Initial</a>, fields_tag&gt;</code></li>
+<li><code>operand_tag</code> = <code><a class="el" href="group__DataBoxTagsGroup.html#gab3e7a8857504fa5070c052bacba656cd" title="Wrap Tag in Prefix&lt;_, Args...&gt;, also wrapping variables tags if Tag is a Tags::Variables. ">db::add_tag_prefix</a>&lt;<a class="el" href="structLinearSolver_1_1Tags_1_1Operand.html" title="The operand that the local linear operator  is applied to. ">LinearSolver::Tags::Operand</a>, fields_tag&gt;</code></li>
+<li><code>operator_tag</code> = <code><a class="el" href="group__DataBoxTagsGroup.html#gab3e7a8857504fa5070c052bacba656cd" title="Wrap Tag in Prefix&lt;_, Args...&gt;, also wrapping variables tags if Tag is a Tags::Variables. ">db::add_tag_prefix</a>&lt;<a class="el" href="structLinearSolver_1_1Tags_1_1OperatorAppliedTo.html" title="The linear operator  applied to the data in Tag ">LinearSolver::Tags::OperatorAppliedTo</a>, operand_tag&gt;</code></li>
+<li><code>orthogonalization_iteration_id_tag</code> = <code><a class="el" href="group__DataBoxTagsGroup.html#gab3e7a8857504fa5070c052bacba656cd" title="Wrap Tag in Prefix&lt;_, Args...&gt;, also wrapping variables tags if Tag is a Tags::Variables. ">db::add_tag_prefix</a>&lt;<a class="el" href="structLinearSolver_1_1Tags_1_1Orthogonalization.html" title="The prefix for tags related to an orthogonalization procedurce. ">LinearSolver::Tags::Orthogonalization</a>, <a class="el" href="structLinearSolver_1_1Tags_1_1IterationId.html" title="Holds an IterationId that identifies a step in the linear solver algorithm. ">LinearSolver::Tags::IterationId</a>&gt;</code></li>
+<li><code>basis_history_tag</code> = <code><a class="el" href="structLinearSolver_1_1Tags_1_1KrylovSubspaceBasis.html" title="A set of  vectors that form a basis of the -th Krylov subspace . ">LinearSolver::Tags::KrylovSubspaceBasis</a>&lt;fields_tag&gt;</code></li>
+</ul>
+<p>DataBox changes:</p><ul>
+<li>Adds:<ul>
+<li><code><a class="el" href="structLinearSolver_1_1Tags_1_1IterationId.html" title="Holds an IterationId that identifies a step in the linear solver algorithm. ">LinearSolver::Tags::IterationId</a></code></li>
+<li><code><a class="el" href="structTags_1_1Next.html" title="Prefix indicating the value a quantity will take on the next iteration of the algorithm. ">Tags::Next</a>&lt;<a class="el" href="structLinearSolver_1_1Tags_1_1IterationId.html" title="Holds an IterationId that identifies a step in the linear solver algorithm. ">LinearSolver::Tags::IterationId</a>&gt;</code></li>
+<li><code>initial_fields_tag</code></li>
+<li><code>orthogonalization_iteration_id_tag</code></li>
+<li><code>basis_history_tag</code></li>
+<li><code><a class="el" href="structLinearSolver_1_1Tags_1_1HasConverged.html" title="Holds a Convergence::HasConverged flag that signals the linear solver has converged, along with the reason for convergence. ">LinearSolver::Tags::HasConverged</a></code></li>
+</ul>
+</li>
+<li>Removes: nothing</li>
+<li>Modifies:<ul>
+<li><code>operand_tag</code></li>
+</ul>
+</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd>The <code>operand_tag</code> must already be present in the DataBox and is set to its initial value here. It is typically added to the DataBox by the system, which uses it to compute the <code>operator_tag</code> in each step. Also the <code>operator_tag</code> is typically added to the DataBox by the system, but does not need to be initialized until it is computed for the first time in the first step of the algorithm. </dd></dl>
+
+</div>
+</div>
+<hr/>The documentation for this struct was generated from the following file:<ul>
+<li>src/NumericalAlgorithms/LinearSolver/Gmres/<a class="el" href="Gmres_8hpp_source.html">Gmres.hpp</a></li>
+</ul>
+</div><!-- contents -->
+<!-- HTML footer for doxygen 1.8.10-->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+&copy; Copyright 2017 - 2019
+<a href="https://black-holes.org">SXS Collaboration</a>,
+<a href="LICENSE.txt" target="_blank">
+<span class="hidden-xs">Distributed under the</span>
+MIT License</a>
+</small></address>
+</body>
+</html>

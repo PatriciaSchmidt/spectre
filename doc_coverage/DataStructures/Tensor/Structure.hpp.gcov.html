@@ -1,0 +1,595 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - DataStructures/Tensor/Structure.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">DataStructures/Tensor</a> - Structure.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineCov">          1 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : /// \file
+<span class="lineNum">       5 </span>            : /// Defines class TensorStructure&lt;Symmetry, Indices...&gt;
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            : #pragma once
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : #include &lt;array&gt;
+<span class="lineNum">      10 </span>            : #include &lt;limits&gt;
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : #include &quot;DataStructures/Tensor/IndexType.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;DataStructures/Tensor/Metafunctions.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;DataStructures/Tensor/Symmetry.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;ErrorHandling/Assert.hpp&quot;
+<span class="lineNum">      16 </span>            : #include &quot;Utilities/Array.hpp&quot;  // IWYU pragma: export
+<span class="lineNum">      17 </span>            : #include &quot;Utilities/ConstantExpressions.hpp&quot;
+<span class="lineNum">      18 </span>            : #include &quot;Utilities/ForceInline.hpp&quot;
+<span class="lineNum">      19 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      20 </span>            : #include &quot;Utilities/MakeArray.hpp&quot;
+<span class="lineNum">      21 </span>            : #include &quot;Utilities/Requires.hpp&quot;
+<span class="lineNum">      22 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : namespace Tensor_detail {
+<span class="lineNum">      25 </span>            : constexpr size_t number_of_independent_components(
+<span class="lineNum">      26 </span>            :     const std::array&lt;int, 0&gt;&amp; /*symm*/,
+<span class="lineNum">      27 </span>            :     const std::array&lt;size_t, 0&gt;&amp; /*dims*/) noexcept {
+<span class="lineNum">      28 </span>            :   return 1;
+<span class="lineNum">      29 </span>            : }
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span>            : constexpr size_t number_of_independent_components(
+<span class="lineNum">      32 </span>            :     const std::array&lt;int, 1&gt;&amp; /*symm*/,
+<span class="lineNum">      33 </span>            :     const std::array&lt;size_t, 1&gt;&amp; dims) noexcept {
+<span class="lineNum">      34 </span>            :   return dims[0];
+<span class="lineNum">      35 </span>            : }
+<span class="lineNum">      36 </span>            : 
+<span class="lineNum">      37 </span>            : template &lt;size_t Size&gt;
+<span class="lineNum">      38 </span>            : constexpr size_t number_of_independent_components(
+<span class="lineNum">      39 </span>            :     const std::array&lt;int, Size&gt;&amp; symm,
+<span class="lineNum">      40 </span>            :     const std::array&lt;size_t, Size&gt;&amp; dims) noexcept {
+<span class="lineNum">      41 </span>            :   size_t max_element = 0;
+<span class="lineNum">      42 </span>            :   for (size_t i = 0; i &lt; Size; ++i) {
+<span class="lineNum">      43 </span>            :     // clang-tidy: internal STL and gls::at (don't need it in constexpr)
+<span class="lineNum">      44 </span>            :     assert(symm[i] &gt; 0);  // NOLINT
+<span class="lineNum">      45 </span>            :     max_element =
+<span class="lineNum">      46 </span>            :         std::max(static_cast&lt;size_t&gt;(ce_abs(symm[i])), max_element);  // NOLINT
+<span class="lineNum">      47 </span>            :   }
+<span class="lineNum">      48 </span>            :   assert(max_element &gt; 0);  // NOLINT
+<span class="lineNum">      49 </span>            :   size_t total_independent_components = 1;
+<span class="lineNum">      50 </span>            :   for (size_t symm_index = 1; symm_index &lt;= max_element; ++symm_index) {
+<span class="lineNum">      51 </span>            :     size_t number_of_indices_with_symm = 0;
+<span class="lineNum">      52 </span>            :     size_t dim_of_index = 0;
+<span class="lineNum">      53 </span>            :     for (size_t i = 0; i &lt; Size; ++i) {
+<span class="lineNum">      54 </span>            :       if (static_cast&lt;size_t&gt;(symm[i]) == symm_index) {  // NOLINT
+<span class="lineNum">      55 </span>            :         ++number_of_indices_with_symm;
+<span class="lineNum">      56 </span>            :         dim_of_index = dims[i];  // NOLINT
+<span class="lineNum">      57 </span>            :       }
+<span class="lineNum">      58 </span>            :     }
+<span class="lineNum">      59 </span>            :     assert(dim_of_index &gt; 0);                 // NOLINT
+<span class="lineNum">      60 </span>            :     assert(number_of_indices_with_symm &gt; 0);  // NOLINT
+<span class="lineNum">      61 </span>            :     if (dim_of_index - 1 &gt; number_of_indices_with_symm) {
+<span class="lineNum">      62 </span>            :       total_independent_components *=
+<span class="lineNum">      63 </span>            :           falling_factorial(dim_of_index + number_of_indices_with_symm - 1,
+<span class="lineNum">      64 </span>            :                             number_of_indices_with_symm) /
+<span class="lineNum">      65 </span>            :           factorial(number_of_indices_with_symm);
+<span class="lineNum">      66 </span>            :     } else {
+<span class="lineNum">      67 </span>            :       total_independent_components *=
+<span class="lineNum">      68 </span>            :           falling_factorial(dim_of_index + number_of_indices_with_symm - 1,
+<span class="lineNum">      69 </span>            :                             dim_of_index - 1) /
+<span class="lineNum">      70 </span>            :           factorial(dim_of_index - 1);
+<span class="lineNum">      71 </span>            :     }
+<span class="lineNum">      72 </span>            :   }
+<span class="lineNum">      73 </span>            :   return total_independent_components;
+<span class="lineNum">      74 </span>            : }
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span>            : template &lt;size_t Size&gt;
+<span class="lineNum">      77 </span>            : constexpr size_t number_of_components(
+<span class="lineNum">      78 </span>            :     const std::array&lt;size_t, Size&gt;&amp; dims) noexcept {
+<span class="lineNum">      79 </span>            :   size_t number = 1;
+<span class="lineNum">      80 </span>            :   for (size_t i = 0; i &lt; Size; ++i) {
+<span class="lineNum">      81 </span>            :     // clang-tidy: use gsl::at
+<span class="lineNum">      82 </span>            :     number *= dims[i];  // NOLINT
+<span class="lineNum">      83 </span>            :   }
+<span class="lineNum">      84 </span>            :   return number;
+<span class="lineNum">      85 </span>            : }
+<span class="lineNum">      86 </span>            : 
+<span class="lineNum">      87 </span>            : template &lt;typename T, typename S, size_t Size&gt;
+<span class="lineNum">      88 </span>            : constexpr void increment_tensor_index(cpp17::array&lt;T, Size&gt;&amp; tensor_index,
+<span class="lineNum">      89 </span>            :                                       const cpp17::array&lt;S, Size&gt;&amp; dims) {
+<span class="lineNum">      90 </span>            :   for (size_t i = 0; i &lt; Size; ++i) {
+<span class="lineNum">      91 </span>            :     if (++tensor_index[i] &lt; static_cast&lt;T&gt;(dims[i])) {
+<span class="lineNum">      92 </span>            :       return;
+<span class="lineNum">      93 </span>            :     }
+<span class="lineNum">      94 </span>            :     tensor_index[i] = 0;
+<span class="lineNum">      95 </span>            :   }
+<span class="lineNum">      96 </span>            : }
+<span class="lineNum">      97 </span>            : 
+<span class="lineNum">      98 </span>            : // index_to_swap_with takes the last two arguments as opposed to just one of
+<span class="lineNum">      99 </span>            : // them so that when the max constexpr steps is reached on clang it is reached
+<span class="lineNum">     100 </span>            : // in this function rather than in array.
+<span class="lineNum">     101 </span>            : template &lt;size_t Rank&gt;
+<span class="lineNum">     102 </span>            : constexpr size_t index_to_swap_with(
+<span class="lineNum">     103 </span>            :     const cpp17::array&lt;size_t, Rank&gt;&amp; tensor_index,
+<span class="lineNum">     104 </span>            :     const cpp17::array&lt;int, Rank&gt;&amp; sym, size_t index_to_swap_with,
+<span class="lineNum">     105 </span>            :     const size_t current_index) noexcept {
+<span class="lineNum">     106 </span>            :   // If you encounter infinite loop compilation errors here you are
+<span class="lineNum">     107 </span>            :   // constructing very large Tensor's. If you are sure Tensor is
+<span class="lineNum">     108 </span>            :   // the correct data structure you can extend the compiler limit
+<span class="lineNum">     109 </span>            :   // by passing the flag -fconstexpr-steps=&lt;SOME LARGER VALUE&gt;
+<span class="lineNum">     110 </span>            :   while (true) {  // See source code comment on line above this one for fix
+<span class="lineNum">     111 </span>            :     if (Rank == index_to_swap_with) {
+<span class="lineNum">     112 </span>            :       return current_index;
+<span class="lineNum">     113 </span>            :     } else if (tensor_index[current_index] &lt;
+<span class="lineNum">     114 </span>            :                    tensor_index[index_to_swap_with] and
+<span class="lineNum">     115 </span>            :                sym[current_index] == sym[index_to_swap_with]) {
+<span class="lineNum">     116 </span>            :       return index_to_swap_with;
+<span class="lineNum">     117 </span>            :     }
+<span class="lineNum">     118 </span>            :     index_to_swap_with++;
+<span class="lineNum">     119 </span>            :   }
+<span class="lineNum">     120 </span>            : }
+<span class="lineNum">     121 </span>            : 
+<span class="lineNum">     122 </span>            : template &lt;size_t Size, size_t SymmSize&gt;
+<span class="lineNum">     123 </span>            : constexpr cpp17::array&lt;size_t, Size&gt; canonicalize_tensor_index(
+<span class="lineNum">     124 </span>            :     cpp17::array&lt;size_t, Size&gt; tensor_index,
+<span class="lineNum">     125 </span>            :     const cpp17::array&lt;int, SymmSize&gt;&amp; symm) noexcept {
+<span class="lineNum">     126 </span>            :   for (size_t i = 0; i &lt; Size; ++i) {
+<span class="lineNum">     127 </span>            :     const size_t temp = tensor_index[i];
+<span class="lineNum">     128 </span>            :     const size_t swap = index_to_swap_with(tensor_index, symm, i, i);
+<span class="lineNum">     129 </span>            :     tensor_index[i] = tensor_index[swap];
+<span class="lineNum">     130 </span>            :     tensor_index[swap] = temp;
+<span class="lineNum">     131 </span>            :   }
+<span class="lineNum">     132 </span>            :   return tensor_index;
+<span class="lineNum">     133 </span>            : }
+<span class="lineNum">     134 </span>            : 
+<span class="lineNum">     135 </span>            : template &lt;size_t Rank&gt;
+<span class="lineNum">     136 </span>            : constexpr size_t compute_collapsed_index(
+<span class="lineNum">     137 </span>            :     const cpp17::array&lt;size_t, Rank&gt;&amp; tensor_index,
+<span class="lineNum">     138 </span>            :     const cpp17::array&lt;size_t, Rank&gt; dims) noexcept {
+<span class="lineNum">     139 </span>            :   size_t collapsed_index = 0;
+<span class="lineNum">     140 </span>            :   for (size_t i = Rank - 1; i &lt; Rank; --i) {
+<span class="lineNum">     141 </span>            :     collapsed_index = tensor_index[i] + dims[i] * collapsed_index;
+<span class="lineNum">     142 </span>            :   }
+<span class="lineNum">     143 </span>            :   return collapsed_index;
+<span class="lineNum">     144 </span>            : }
+<span class="lineNum">     145 </span>            : 
+<span class="lineNum">     146 </span>            : template &lt;typename Symm, size_t NumberOfComponents,
+<span class="lineNum">     147 </span>            :           Requires&lt;tmpl::size&lt;Symm&gt;::value != 0&gt; = nullptr&gt;
+<span class="lineNum">     148 </span>            : constexpr cpp17::array&lt;size_t, NumberOfComponents&gt; compute_collapsed_to_storage(
+<span class="lineNum">     149 </span>            :     const cpp17::array&lt;size_t, tmpl::size&lt;Symm&gt;::value&gt;&amp;
+<span class="lineNum">     150 </span>            :         index_dimensions) noexcept {
+<span class="lineNum">     151 </span>            :   cpp17::array&lt;size_t, NumberOfComponents&gt; collapsed_to_storage{};
+<span class="lineNum">     152 </span>            :   auto tensor_index =
+<span class="lineNum">     153 </span>            :       convert_to_cpp17_array(make_array&lt;tmpl::size&lt;Symm&gt;::value&gt;(size_t{0}));
+<span class="lineNum">     154 </span>            :   size_t count{0};
+<span class="lineNum">     155 </span>            :   for (auto&amp; current_storage_index : collapsed_to_storage) {
+<span class="lineNum">     156 </span>            :     // Compute canonical tensor_index, which, for symmetric get_tensor_index is
+<span class="lineNum">     157 </span>            :     // in decreasing numerical order, e.g. (3,2) rather than (2,3).
+<span class="lineNum">     158 </span>            :     const auto canonical_tensor_index = canonicalize_tensor_index(
+<span class="lineNum">     159 </span>            :         tensor_index, make_cpp17_array_from_list&lt;Symm&gt;());
+<span class="lineNum">     160 </span>            :     // If the tensor_index was already in the canonical form, then it must be a
+<span class="lineNum">     161 </span>            :     // new unique entry  and we add it to collapsed_to_storage_ as a new
+<span class="lineNum">     162 </span>            :     // integer, thus increasing the size_. Else, the StorageIndex has already
+<span class="lineNum">     163 </span>            :     // been determined so we look it up in the existing collapsed_to_storage
+<span class="lineNum">     164 </span>            :     // table.
+<span class="lineNum">     165 </span>            :     if (tensor_index == canonical_tensor_index) {
+<span class="lineNum">     166 </span>            :       current_storage_index = count;
+<span class="lineNum">     167 </span>            :       ++count;
+<span class="lineNum">     168 </span>            :     } else {
+<span class="lineNum">     169 </span>            :       current_storage_index = collapsed_to_storage[compute_collapsed_index(
+<span class="lineNum">     170 </span>            :           canonical_tensor_index, index_dimensions)];
+<span class="lineNum">     171 </span>            :     }
+<span class="lineNum">     172 </span>            :     // Move to the next tensor_index.
+<span class="lineNum">     173 </span>            :     increment_tensor_index(tensor_index, index_dimensions);
+<span class="lineNum">     174 </span>            :   }
+<span class="lineNum">     175 </span>            :   return collapsed_to_storage;
+<span class="lineNum">     176 </span>            : }
+<span class="lineNum">     177 </span>            : 
+<span class="lineNum">     178 </span>            : template &lt;typename Symm, size_t NumberOfComponents,
+<span class="lineNum">     179 </span>            :           Requires&lt;tmpl::size&lt;Symm&gt;::value == 0&gt; = nullptr&gt;
+<span class="lineNum">     180 </span>            : constexpr cpp17::array&lt;size_t, 1&gt; compute_collapsed_to_storage(
+<span class="lineNum">     181 </span>            :     const cpp17::array&lt;
+<span class="lineNum">     182 </span>            :         size_t, tmpl::size&lt;Symm&gt;::value&gt;&amp; /*index_dimensions*/) noexcept {
+<span class="lineNum">     183 </span>            :   return cpp17::array&lt;size_t, 1&gt;{{0}};
+<span class="lineNum">     184 </span>            : }
+<span class="lineNum">     185 </span>            : 
+<span class="lineNum">     186 </span>            : template &lt;typename Symm, size_t NumIndComps, size_t NumComps,
+<span class="lineNum">     187 </span>            :           Requires&lt;(tmpl::size&lt;Symm&gt;::value &gt; 0)&gt; = nullptr&gt;
+<span class="lineNum">     188 </span>            : constexpr cpp17::array&lt;cpp17::array&lt;size_t, tmpl::size&lt;Symm&gt;::value&gt;,
+<span class="lineNum">     189 </span>            :                        NumIndComps&gt;
+<span class="lineNum">     190 </span>            : compute_storage_to_tensor(
+<span class="lineNum">     191 </span>            :     const cpp17::array&lt;size_t, NumComps&gt;&amp; collapsed_to_storage,
+<span class="lineNum">     192 </span>            :     const cpp17::array&lt;size_t, tmpl::size&lt;Symm&gt;::value&gt;&amp;
+<span class="lineNum">     193 </span>            :         index_dimensions) noexcept {
+<span class="lineNum">     194 </span>            :   constexpr size_t rank = tmpl::size&lt;Symm&gt;::value;
+<span class="lineNum">     195 </span>            :   cpp17::array&lt;cpp17::array&lt;size_t, rank&gt;, NumIndComps&gt; storage_to_tensor{};
+<span class="lineNum">     196 </span>            :   cpp17::array&lt;size_t, rank&gt; tensor_index =
+<span class="lineNum">     197 </span>            :       convert_to_cpp17_array(make_array&lt;rank&gt;(size_t{0}));
+<span class="lineNum">     198 </span>            :   for (const auto&amp; current_storage_index : collapsed_to_storage) {
+<span class="lineNum">     199 </span>            :     storage_to_tensor[current_storage_index] = canonicalize_tensor_index(
+<span class="lineNum">     200 </span>            :         tensor_index, make_cpp17_array_from_list&lt;Symm&gt;());
+<span class="lineNum">     201 </span>            :     increment_tensor_index(tensor_index, index_dimensions);
+<span class="lineNum">     202 </span>            :   }
+<span class="lineNum">     203 </span>            :   return storage_to_tensor;
+<span class="lineNum">     204 </span>            : }
+<span class="lineNum">     205 </span>            : 
+<span class="lineNum">     206 </span>            : template &lt;typename Symm, size_t NumIndComps, size_t NumComps,
+<span class="lineNum">     207 </span>            :           Requires&lt;(tmpl::size&lt;Symm&gt;::value == 0)&gt; = nullptr&gt;
+<span class="lineNum">     208 </span>            : constexpr cpp17::array&lt;cpp17::array&lt;int, 1&gt;, NumIndComps&gt;
+<span class="lineNum">     209 </span>            : compute_storage_to_tensor(
+<span class="lineNum">     210 </span>            :     const cpp17::array&lt;size_t, NumComps&gt;&amp; /*collapsed_to_storage*/,
+<span class="lineNum">     211 </span>            :     const cpp17::array&lt;size_t, tmpl::size&lt;Symm&gt;::value&gt;&amp;
+<span class="lineNum">     212 </span>            :     /*index_dimensions*/) noexcept {
+<span class="lineNum">     213 </span>            :   return cpp17::array&lt;cpp17::array&lt;int, 1&gt;, 1&gt;{{cpp17::array&lt;int, 1&gt;{{0}}}};
+<span class="lineNum">     214 </span>            : }
+<span class="lineNum">     215 </span>            : 
+<span class="lineNum">     216 </span>            : template &lt;size_t NumIndComps, typename T, size_t NumComps&gt;
+<span class="lineNum">     217 </span>            : constexpr cpp17::array&lt;size_t, NumIndComps&gt; compute_multiplicity(
+<span class="lineNum">     218 </span>            :     const cpp17::array&lt;T, NumComps&gt;&amp; collapsed_to_storage) {
+<span class="lineNum">     219 </span>            :   cpp17::array&lt;size_t, NumIndComps&gt; multiplicity =
+<span class="lineNum">     220 </span>            :       convert_to_cpp17_array(make_array&lt;NumIndComps&gt;(size_t{0}));
+<span class="lineNum">     221 </span>            :   for (const auto&amp; current_storage_index : collapsed_to_storage) {
+<span class="lineNum">     222 </span>            :     ++multiplicity[current_storage_index];
+<span class="lineNum">     223 </span>            :   }
+<span class="lineNum">     224 </span>            :   return multiplicity;
+<span class="lineNum">     225 </span>            : }
+<span class="lineNum">     226 </span>            : 
+<span class="lineNum">     227 </span>            : template &lt;size_t NumIndices&gt;
+<span class="lineNum">     228 </span>            : struct ComponentNameImpl {
+<span class="lineNum">     229 </span>            :   template &lt;typename Structure, typename T&gt;
+<span class="lineNum">     230 </span>            :   static std::string apply(
+<span class="lineNum">     231 </span>            :       const std::array&lt;T, NumIndices&gt;&amp; tensor_index,
+<span class="lineNum">     232 </span>            :       const std::array&lt;std::string, NumIndices&gt;&amp; axis_labels) {
+<span class="lineNum">     233 </span>            :     const size_t storage_index = Structure::get_storage_index(tensor_index);
+<span class="lineNum">     234 </span>            :     std::array&lt;std::string, Structure::rank()&gt; labels = axis_labels;
+<span class="lineNum">     235 </span>            :     constexpr auto index_dim = Structure::dims();
+<span class="lineNum">     236 </span>            :     for (size_t i = 0; i &lt; Structure::rank(); ++i) {
+<span class="lineNum">     237 </span>            :       if (gsl::at(labels, i).length() == 0) {
+<span class="lineNum">     238 </span>            :         if (gsl::at(Structure::index_types(), i) == IndexType::Spacetime) {
+<span class="lineNum">     239 </span>            :           switch (gsl::at(index_dim, i)) {
+<span class="lineNum">     240 </span>            :             case 2:
+<span class="lineNum">     241 </span>            :               gsl::at(labels, i) = &quot;tx&quot;;
+<span class="lineNum">     242 </span>            :               break;
+<span class="lineNum">     243 </span>            :             case 3:
+<span class="lineNum">     244 </span>            :               gsl::at(labels, i) = &quot;txy&quot;;
+<span class="lineNum">     245 </span>            :               break;
+<span class="lineNum">     246 </span>            :             case 4:
+<span class="lineNum">     247 </span>            :               gsl::at(labels, i) = &quot;txyz&quot;;
+<span class="lineNum">     248 </span>            :               break;
+<span class="lineNum">     249 </span>            :             default:
+<span class="lineNum">     250 </span>            :               ERROR(&quot;Tensor dim[&quot;
+<span class="lineNum">     251 </span>            :                     &lt;&lt; i
+<span class="lineNum">     252 </span>            :                     &lt;&lt; &quot;] must be 1,2,3, or 4 for default axis_labels. &quot;
+<span class="lineNum">     253 </span>            :                        &quot;Either pass a string or extend the function.&quot;);
+<span class="lineNum">     254 </span>            :           }
+<span class="lineNum">     255 </span>            :         } else {
+<span class="lineNum">     256 </span>            :           switch (gsl::at(index_dim, i)) {
+<span class="lineNum">     257 </span>            :             case 1:
+<span class="lineNum">     258 </span>            :               gsl::at(labels, i) = &quot;x&quot;;
+<span class="lineNum">     259 </span>            :               break;
+<span class="lineNum">     260 </span>            :             case 2:
+<span class="lineNum">     261 </span>            :               gsl::at(labels, i) = &quot;xy&quot;;
+<span class="lineNum">     262 </span>            :               break;
+<span class="lineNum">     263 </span>            :             case 3:
+<span class="lineNum">     264 </span>            :               gsl::at(labels, i) = &quot;xyz&quot;;
+<span class="lineNum">     265 </span>            :               break;
+<span class="lineNum">     266 </span>            :             default:
+<span class="lineNum">     267 </span>            :               ERROR(&quot;Tensor dim[&quot;
+<span class="lineNum">     268 </span>            :                     &lt;&lt; i
+<span class="lineNum">     269 </span>            :                     &lt;&lt; &quot;] must be 1,2, or 3 for default axis_labels. &quot;
+<span class="lineNum">     270 </span>            :                        &quot;Either pass a string or extend the function.&quot;);
+<span class="lineNum">     271 </span>            :           }
+<span class="lineNum">     272 </span>            :         }
+<span class="lineNum">     273 </span>            :       } else {
+<span class="lineNum">     274 </span>            :         if (gsl::at(axis_labels, i).length() != gsl::at(index_dim, i)) {
+<span class="lineNum">     275 </span>            :           ERROR(&quot;Dimension mismatch: Tensor has dim = &quot;
+<span class="lineNum">     276 </span>            :                 &lt;&lt; gsl::at(index_dim, i) &lt;&lt; &quot;, but you specified &quot;
+<span class="lineNum">     277 </span>            :                 &lt;&lt; gsl::at(axis_labels, i).length() &lt;&lt; &quot; different labels in &quot;
+<span class="lineNum">     278 </span>            :                 &lt;&lt; gsl::at(axis_labels, i));
+<span class="lineNum">     279 </span>            :         }
+<span class="lineNum">     280 </span>            :       }
+<span class="lineNum">     281 </span>            :     }
+<span class="lineNum">     282 </span>            :     // Create string labeling get_tensor_index
+<span class="lineNum">     283 </span>            :     std::stringstream ss;
+<span class="lineNum">     284 </span>            :     const auto&amp; canonical_tensor_index =
+<span class="lineNum">     285 </span>            :         Structure::get_canonical_tensor_index(storage_index);
+<span class="lineNum">     286 </span>            :     for (size_t r = 0; r &lt; Structure::rank(); ++r) {
+<span class="lineNum">     287 </span>            :       ss &lt;&lt; gsl::at(labels, r)[gsl::at(canonical_tensor_index, r)];
+<span class="lineNum">     288 </span>            :     }
+<span class="lineNum">     289 </span>            :     return ss.str();
+<span class="lineNum">     290 </span>            :   }
+<span class="lineNum">     291 </span>            : };
+<span class="lineNum">     292 </span>            : 
+<span class="lineNum">     293 </span>            : template &lt;&gt;
+<span class="lineNum">     294 </span>            : struct ComponentNameImpl&lt;0&gt; {
+<span class="lineNum">     295 </span>            :   template &lt;typename Structure, typename T&gt;
+<span class="lineNum">     296 </span>            :   static std::string apply(const std::array&lt;T, 0&gt;&amp; /*tensor_index*/,
+<span class="lineNum">     297 </span>            :                            const std::array&lt;std::string, 0&gt;&amp; /*axis_labels*/) {
+<span class="lineNum">     298 </span>            :     return &quot;Scalar&quot;;
+<span class="lineNum">     299 </span>            :   }
+<span class="lineNum">     300 </span>            : };
+<span class="lineNum">     301 </span>            : 
+<span class="lineNum">     302 </span>            : /// \ingroup TensorGroup
+<span class="lineNum">     303 </span>            : /// A lookup table between each tensor_index and storage_index
+<span class="lineNum">     304 </span>            : ///
+<span class="lineNum">     305 </span>            : /// 1. tensor_index: (a, b, c,...). There are Dim^rank tensor_index's
+<span class="lineNum">     306 </span>            : /// 2. collapsed_index: a + Dim * (b + Dim * (c + ...)), there are Dim^rank
+<span class="lineNum">     307 </span>            : ///                     unique collapsed indices and there is a 1-1 map between
+<span class="lineNum">     308 </span>            : ///                     a tensor_index and a collapsed_index.
+<span class="lineNum">     309 </span>            : /// 3. storage_index: index into the storage vector of the Tensor. This depends
+<span class="lineNum">     310 </span>            : ///                   on symmetries of the tensor, rank and dimensionality.
+<span class="lineNum">     311 </span>            : ///                   There are size storage_index's.
+<span class="lineNum">     312 </span>            : /// \tparam Symm the symmetry of the Tensor
+<span class="lineNum">     313 </span>            : /// \tparam Indices list of tensor_index's giving the dimensionality and frame
+<span class="lineNum">     314 </span>            : /// of the index
+<span class="lineNum">     315 </span>            : template &lt;typename Symm, typename... Indices&gt;
+<span class="lineNum">     316 </span>            : struct Structure {
+<span class="lineNum">     317 </span>            :   static_assert(
+<span class="lineNum">     318 </span>            :       TensorMetafunctions::check_index_symmetry_v&lt;Symm, Indices...&gt;,
+<span class="lineNum">     319 </span>            :       &quot;Cannot construct a Tensor with a symmetric pair that are not the same.&quot;);
+<span class="lineNum">     320 </span>            :   static_assert(tmpl::size&lt;Symm&gt;::value == sizeof...(Indices),
+<span class="lineNum">     321 </span>            :                 &quot;The number of indices in Symmetry do not match the number of &quot;
+<span class="lineNum">     322 </span>            :                 &quot;indices given to the Structure.&quot;);
+<span class="lineNum">     323 </span>            :   static_assert(
+<span class="lineNum">     324 </span>            :       tmpl2::flat_all_v&lt;tt::is_tensor_index_type&lt;Indices&gt;::value...&gt;,
+<span class="lineNum">     325 </span>            :       &quot;All Indices passed to Structure must be of type TensorIndexType.&quot;);
+<span class="lineNum">     326 </span>            : 
+<span class="lineNum">     327 </span>            :   using index_list = tmpl::list&lt;Indices...&gt;;
+<span class="lineNum">     328 </span>            : 
+<span class="lineNum">     329 </span>            :   SPECTRE_ALWAYS_INLINE static constexpr size_t rank() noexcept {
+<span class="lineNum">     330 </span>            :     return sizeof...(Indices);
+<span class="lineNum">     331 </span>            :   }
+<span class="lineNum">     332 </span>            : 
+<span class="lineNum">     333 </span>            :   SPECTRE_ALWAYS_INLINE static constexpr size_t size() noexcept {
+<span class="lineNum">     334 </span>            :     constexpr auto number_of_independent_components =
+<span class="lineNum">     335 </span>            :         ::Tensor_detail::number_of_independent_components(
+<span class="lineNum">     336 </span>            :             make_array_from_list&lt;
+<span class="lineNum">     337 </span>            :                 tmpl::conditional_t&lt;sizeof...(Indices) != 0, Symm, int&gt;&gt;(),
+<span class="lineNum">     338 </span>            :             make_array_from_list&lt;tmpl::conditional_t&lt;sizeof...(Indices) != 0,
+<span class="lineNum">     339 </span>            :                                                      index_list, size_t&gt;&gt;());
+<span class="lineNum">     340 </span>            :     return number_of_independent_components;
+<span class="lineNum">     341 </span>            :   }
+<span class="lineNum">     342 </span>            : 
+<span class="lineNum">     343 </span>            :   SPECTRE_ALWAYS_INLINE static constexpr size_t
+<span class="lineNum">     344 </span>            :   number_of_components() noexcept {
+<span class="lineNum">     345 </span>            :     constexpr auto number_of_components = ::Tensor_detail::number_of_components(
+<span class="lineNum">     346 </span>            :         make_array_from_list&lt;tmpl::conditional_t&lt;sizeof...(Indices) != 0,
+<span class="lineNum">     347 </span>            :                                                  index_list, size_t&gt;&gt;());
+<span class="lineNum">     348 </span>            :     return number_of_components;
+<span class="lineNum">     349 </span>            :   }
+<span class="lineNum">     350 </span>            : 
+<span class="lineNum">     351 </span>            :   static constexpr auto collapsed_to_storage_ =
+<span class="lineNum">     352 </span>            :       compute_collapsed_to_storage&lt;Symm, number_of_components()&gt;(
+<span class="lineNum">     353 </span>            :           make_cpp17_array_from_list&lt;tmpl::conditional_t&lt;
+<span class="lineNum">     354 </span>            :               sizeof...(Indices) == 0, size_t, index_list&gt;&gt;());
+<span class="lineNum">     355 </span>            :   static constexpr auto storage_to_tensor_ = compute_storage_to_tensor&lt;Symm,
+<span class="lineNum">     356 </span>            :                                                                        size()&gt;(
+<span class="lineNum">     357 </span>            :       collapsed_to_storage_,
+<span class="lineNum">     358 </span>            :       make_cpp17_array_from_list&lt;
+<span class="lineNum">     359 </span>            :           tmpl::conditional_t&lt;sizeof...(Indices) == 0, size_t, index_list&gt;&gt;());
+<span class="lineNum">     360 </span>            :   static constexpr auto multiplicity_ =
+<span class="lineNum">     361 </span>            :       compute_multiplicity&lt;size()&gt;(collapsed_to_storage_);
+<span class="lineNum">     362 </span>            : 
+<span class="lineNum">     363 </span>            :   // Retrieves the dimensionality of the I'th index
+<span class="lineNum">     364 </span>            :   template &lt;int I&gt;
+<span class="lineNum">     365 </span>            :   SPECTRE_ALWAYS_INLINE static constexpr size_t dim() noexcept {
+<span class="lineNum">     366 </span>            :     static_assert(sizeof...(Indices),
+<span class="lineNum">     367 </span>            :                   &quot;A scalar does not have any indices from which you can &quot;
+<span class="lineNum">     368 </span>            :                   &quot;retrieve the dimensionality.&quot;);
+<span class="lineNum">     369 </span>            :     return tmpl::at&lt;index_list, tmpl::int32_t&lt;I&gt;&gt;::value;
+<span class="lineNum">     370 </span>            :   }
+<span class="lineNum">     371 </span>            : 
+<span class="lineNum">     372 </span>            :   SPECTRE_ALWAYS_INLINE static constexpr std::array&lt;size_t, sizeof...(Indices)&gt;
+<span class="lineNum">     373 </span>            :   dims() noexcept {
+<span class="lineNum">     374 </span>            :     constexpr auto dims = make_array_from_list&lt;
+<span class="lineNum">     375 </span>            :         tmpl::conditional_t&lt;sizeof...(Indices) != 0, index_list, size_t&gt;&gt;();
+<span class="lineNum">     376 </span>            :     return dims;
+<span class="lineNum">     377 </span>            :   }
+<span class="lineNum">     378 </span>            : 
+<span class="lineNum">     379 </span>            :   SPECTRE_ALWAYS_INLINE static constexpr std::array&lt;int, sizeof...(Indices)&gt;
+<span class="lineNum">     380 </span>            :   symmetries() noexcept {
+<span class="lineNum">     381 </span>            :     return make_array_from_list&lt;
+<span class="lineNum">     382 </span>            :         tmpl::conditional_t&lt;0 != sizeof...(Indices), Symm, int&gt;&gt;();
+<span class="lineNum">     383 </span>            :   }
+<span class="lineNum">     384 </span>            : 
+<span class="lineNum">     385 </span>            :   SPECTRE_ALWAYS_INLINE static constexpr std::array&lt;IndexType,
+<span class="lineNum">     386 </span>            :                                                     sizeof...(Indices)&gt;
+<span class="lineNum">     387 </span>            :   index_types() noexcept {
+<span class="lineNum">     388 </span>            :     return std::array&lt;IndexType, sizeof...(Indices)&gt;{{Indices::index_type...}};
+<span class="lineNum">     389 </span>            :   }
+<span class="lineNum">     390 </span>            : 
+<span class="lineNum">     391 </span>            :   /// Return array of the valence of each index
+<span class="lineNum">     392 </span>            :   SPECTRE_ALWAYS_INLINE static constexpr std::array&lt;UpLo, sizeof...(Indices)&gt;
+<span class="lineNum">     393 </span>            :   index_valences() noexcept {
+<span class="lineNum">     394 </span>            :     return std::array&lt;UpLo, sizeof...(Indices)&gt;{{Indices::ul...}};
+<span class="lineNum">     395 </span>            :   }
+<span class="lineNum">     396 </span>            : 
+<span class="lineNum">     397 </span>            :   /// Return array of the frame of each index
+<span class="lineNum">     398 </span>            :   SPECTRE_ALWAYS_INLINE static constexpr auto index_frames() noexcept {
+<span class="lineNum">     399 </span>            :     return std::tuple&lt;typename Indices::Frame...&gt;{};
+<span class="lineNum">     400 </span>            :   }
+<span class="lineNum">     401 </span>            : 
+<span class="lineNum">     402 </span>            :   /*!
+<span class="lineNum">     403 </span>            :    * \brief Get the canonical tensor_index array
+<span class="lineNum">     404 </span>            :    *
+<span class="lineNum">     405 </span>            :    * \details
+<span class="lineNum">     406 </span>            :    * For a symmetric tensor \f$T_{(ab)}\f$ with an associated symmetry list
+<span class="lineNum">     407 </span>            :    * `Symmetry&lt;1, 1&gt;`, this will return, e.g. `{{3, 2}}` rather than `{{2, 3}}`
+<span class="lineNum">     408 </span>            :    * for that particular index.
+<span class="lineNum">     409 </span>            :    * Note that this ordering is implementation defined.
+<span class="lineNum">     410 </span>            :    */
+<span class="lineNum">     411 </span>            :   template &lt;size_t Rank = sizeof...(Indices),
+<span class="lineNum">     412 </span>            :             std::enable_if_t&lt;Rank != 0&gt;* = nullptr&gt;
+<span class="lineNum">     413 </span>            :   SPECTRE_ALWAYS_INLINE static constexpr std::array&lt;size_t, sizeof...(Indices)&gt;
+<span class="lineNum">     414 </span>            :   get_canonical_tensor_index(const size_t storage_index) noexcept {
+<span class="lineNum">     415 </span>            :     constexpr auto storage_to_tensor = storage_to_tensor_;
+<span class="lineNum">     416 </span>            :     return gsl::at(storage_to_tensor, storage_index);
+<span class="lineNum">     417 </span>            :   }
+<span class="lineNum">     418 </span>            :   template &lt;size_t Rank = sizeof...(Indices),
+<span class="lineNum">     419 </span>            :             std::enable_if_t&lt;Rank == 0&gt;* = nullptr&gt;
+<span class="lineNum">     420 </span>            :   SPECTRE_ALWAYS_INLINE static constexpr std::array&lt;size_t, 0&gt;
+<span class="lineNum">     421 </span>            :   get_canonical_tensor_index(const size_t /*storage_index*/) noexcept {
+<span class="lineNum">     422 </span>            :     return std::array&lt;size_t, 0&gt;{};
+<span class="lineNum">     423 </span>            :   }
+<span class="lineNum">     424 </span>            : 
+<span class="lineNum">     425 </span>            :   /// Get storage_index
+<span class="lineNum">     426 </span>            :   /// \param args comma separated list of the index to return
+<span class="lineNum">     427 </span>            :   template &lt;typename... N&gt;
+<span class="lineNum">     428 </span>            :   SPECTRE_ALWAYS_INLINE static constexpr std::size_t get_storage_index(
+<span class="lineNum">     429 </span>            :       const N... args) noexcept {
+<span class="lineNum">     430 </span>            :     static_assert(sizeof...(Indices) == sizeof...(N),
+<span class="lineNum">     431 </span>            :                   &quot;the number arguments must be equal to rank_&quot;);
+<span class="lineNum">     432 </span>            :     constexpr auto collapsed_to_storage = collapsed_to_storage_;
+<span class="lineNum">     433 </span>            :     return gsl::at(
+<span class="lineNum">     434 </span>            :         collapsed_to_storage,
+<span class="lineNum">     435 </span>            :         compute_collapsed_index(
+<span class="lineNum">     436 </span>            :             canonicalize_tensor_index(
+<span class="lineNum">     437 </span>            :                 cpp17::array&lt;size_t, sizeof...(N)&gt;{
+<span class="lineNum">     438 </span>            :                     {static_cast&lt;size_t&gt;(args)...}},
+<span class="lineNum">     439 </span>            :                 make_cpp17_array_from_list&lt;
+<span class="lineNum">     440 </span>            :                     tmpl::conditional_t&lt;0 != sizeof...(Indices), Symm, int&gt;&gt;()),
+<span class="lineNum">     441 </span>            :             make_cpp17_array_from_list&lt;tmpl::conditional_t&lt;
+<span class="lineNum">     442 </span>            :                 0 != sizeof...(Indices), index_list, size_t&gt;&gt;()));
+<span class="lineNum">     443 </span>            :   }
+<span class="lineNum">     444 </span>            :   /// Get storage_index
+<span class="lineNum">     445 </span>            :   /// \param tensor_index the tensor_index of which to get the storage_index
+<span class="lineNum">     446 </span>            :   template &lt;typename I&gt;
+<span class="lineNum">     447 </span>            :   SPECTRE_ALWAYS_INLINE static constexpr std::size_t get_storage_index(
+<span class="lineNum">     448 </span>            :       const std::array&lt;I, sizeof...(Indices)&gt;&amp; tensor_index) noexcept {
+<span class="lineNum">     449 </span>            :     constexpr auto collapsed_to_storage = collapsed_to_storage_;
+<span class="lineNum">     450 </span>            :     return gsl::at(
+<span class="lineNum">     451 </span>            :         collapsed_to_storage,
+<span class="lineNum">     452 </span>            :         compute_collapsed_index(
+<span class="lineNum">     453 </span>            :             canonicalize_tensor_index(
+<span class="lineNum">     454 </span>            :                 convert_to_cpp17_array(tensor_index),
+<span class="lineNum">     455 </span>            :                 make_cpp17_array_from_list&lt;
+<span class="lineNum">     456 </span>            :                     tmpl::conditional_t&lt;0 != sizeof...(Indices), Symm, int&gt;&gt;()),
+<span class="lineNum">     457 </span>            :             make_cpp17_array_from_list&lt;tmpl::conditional_t&lt;
+<span class="lineNum">     458 </span>            :                 0 != sizeof...(Indices), index_list, size_t&gt;&gt;()));
+<span class="lineNum">     459 </span>            :   }
+<span class="lineNum">     460 </span>            : 
+<span class="lineNum">     461 </span>            :   template &lt;int... N, Requires&lt;(sizeof...(N) &gt; 0)&gt; = nullptr&gt;
+<span class="lineNum">     462 </span>            :   SPECTRE_ALWAYS_INLINE static constexpr std::size_t
+<span class="lineNum">     463 </span>            :   get_storage_index() noexcept {
+<span class="lineNum">     464 </span>            :     static_assert(sizeof...(Indices) == sizeof...(N),
+<span class="lineNum">     465 </span>            :                   &quot;the number arguments must be equal to rank_&quot;);
+<span class="lineNum">     466 </span>            :     constexpr std::size_t storage_index =
+<span class="lineNum">     467 </span>            :         collapsed_to_storage_[compute_collapsed_index(
+<span class="lineNum">     468 </span>            :             canonicalize_tensor_index(
+<span class="lineNum">     469 </span>            :                 cpp17::array&lt;size_t, sizeof...(N)&gt;{{N...}},
+<span class="lineNum">     470 </span>            :                 make_cpp17_array_from_list&lt;Symm&gt;()),
+<span class="lineNum">     471 </span>            :             make_cpp17_array_from_list&lt;index_list&gt;())];
+<span class="lineNum">     472 </span>            :     return storage_index;
+<span class="lineNum">     473 </span>            :   }
+<span class="lineNum">     474 </span>            : 
+<span class="lineNum">     475 </span>            :   /// Get the multiplicity of the storage_index
+<span class="lineNum">     476 </span>            :   /// \param storage_index the storage_index of which to get the multiplicity
+<span class="lineNum">     477 </span>            :   SPECTRE_ALWAYS_INLINE static constexpr size_t multiplicity(
+<span class="lineNum">     478 </span>            :       const size_t storage_index) noexcept {
+<span class="lineNum">     479 </span>            :     constexpr auto multiplicity = multiplicity_;
+<span class="lineNum">     480 </span>            :     return gsl::at(multiplicity, storage_index);
+<span class="lineNum">     481 </span>            :   }
+<span class="lineNum">     482 </span>            : 
+<span class="lineNum">     483 </span>            :   /// Get the array of collapsed index to storage_index
+<span class="lineNum">     484 </span>            :   SPECTRE_ALWAYS_INLINE static constexpr std::array&lt;size_t,
+<span class="lineNum">     485 </span>            :                                                     number_of_components()&gt;
+<span class="lineNum">     486 </span>            :   collapsed_to_storage() noexcept {
+<span class="lineNum">     487 </span>            :     constexpr auto collapsed_to_storage = collapsed_to_storage_;
+<span class="lineNum">     488 </span>            :     return collapsed_to_storage;
+<span class="lineNum">     489 </span>            :   }
+<span class="lineNum">     490 </span>            : 
+<span class="lineNum">     491 </span>            :   /// Get the storage_index for the specified collapsed index
+<span class="lineNum">     492 </span>            :   SPECTRE_ALWAYS_INLINE static constexpr int collapsed_to_storage(
+<span class="lineNum">     493 </span>            :       const size_t i) noexcept {
+<span class="lineNum">     494 </span>            :     constexpr auto collapsed_to_storage = collapsed_to_storage_;
+<span class="lineNum">     495 </span>            :     return gsl::at(collapsed_to_storage, i);
+<span class="lineNum">     496 </span>            :   }
+<span class="lineNum">     497 </span>            : 
+<span class="lineNum">     498 </span>            :   /// Get the array of tensor_index's corresponding to the storage_index's.
+<span class="lineNum">     499 </span>            :   SPECTRE_ALWAYS_INLINE static constexpr const std::array&lt;
+<span class="lineNum">     500 </span>            :       std::array&lt;size_t, sizeof...(Indices) == 0 ? 1 : sizeof...(Indices)&gt;,
+<span class="lineNum">     501 </span>            :       size()&gt;&amp;
+<span class="lineNum">     502 </span>            :   storage_to_tensor_index() noexcept {
+<span class="lineNum">     503 </span>            :     constexpr auto storage_to_tensor = storage_to_tensor_;
+<span class="lineNum">     504 </span>            :     return storage_to_tensor;
+<span class="lineNum">     505 </span>            :   }
+<span class="lineNum">     506 </span>            : 
+<span class="lineNum">     507 </span>            :   template &lt;typename T&gt;
+<span class="lineNum">     508 </span>            :   SPECTRE_ALWAYS_INLINE static std::string component_name(
+<span class="lineNum">     509 </span>            :       const std::array&lt;T, rank()&gt;&amp; tensor_index,
+<span class="lineNum">     510 </span>            :       const std::array&lt;std::string, rank()&gt;&amp; axis_labels) {
+<span class="lineNum">     511 </span>            :     return ComponentNameImpl&lt;sizeof...(Indices)&gt;::template apply&lt;Structure&gt;(
+<span class="lineNum">     512 </span>            :         tensor_index, axis_labels);
+<span class="lineNum">     513 </span>            :   }
+<span class="lineNum">     514 </span>            : };
+<span class="lineNum">     515 </span>            : }  // namespace Tensor_detail
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

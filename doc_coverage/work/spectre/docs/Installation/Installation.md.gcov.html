@@ -1,0 +1,415 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - /work/spectre/docs/Installation/Installation.md</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">work/spectre/docs/Installation</a> - Installation.md</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : \cond NEVER</span>
+<span class="lineNum">       2 </span>            : Distributed under the MIT License.
+<span class="lineNum">       3 </span>            : See LICENSE.txt for details.
+<span class="lineNum">       4 </span>            : \endcond
+<span class="lineNum">       5 </span>            : # Installation {#installation}
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            : This page details the installation procedure for SpECTRE on personal computers.
+<span class="lineNum">       8 </span>            : For instructions on installing SpECTRE on clusters please refer to the \ref
+<span class="lineNum">       9 </span>            : installation_on_clusters &quot;Installation on clusters&quot; page.
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : ### Dependencies
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            : #### Required:
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : * [GCC](https://gcc.gnu.org/) 5.4 or later,
+<span class="lineNum">      16 </span>            : [Clang](https://clang.llvm.org/) 3.6 or later, or AppleClang 6.0 or later
+<span class="lineNum">      17 </span>            : * [CMake](https://cmake.org/) 3.3.2 or later
+<span class="lineNum">      18 </span>            : * [Charm++](http://charm.cs.illinois.edu/) 6.8 or newer (must be compiled from source)
+<span class="lineNum">      19 </span>            : * [Git](https://git-scm.com/)
+<span class="lineNum">      20 </span>            : * BLAS (e.g. [OpenBLAS](http://www.openblas.net))
+<span class="lineNum">      21 </span>            : * [Blaze](https://bitbucket.org/blaze-lib/blaze/overview) v3.2
+<span class="lineNum">      22 </span>            : * [Boost](http://www.boost.org/) 1.60.0 or later
+<span class="lineNum">      23 </span>            : * [Brigand](https://github.com/edouarda/brigand)
+<span class="lineNum">      24 </span>            : * [Catch](https://github.com/philsquared/Catch) 2.1.0 or later
+<span class="lineNum">      25 </span>            : * [GSL](https://www.gnu.org/software/gsl/)
+<span class="lineNum">      26 </span>            : * [HDF5](https://support.hdfgroup.org/HDF5/) (non-mpi version on macOS)
+<span class="lineNum">      27 </span>            : * [jemalloc](https://github.com/jemalloc/jemalloc)
+<span class="lineNum">      28 </span>            : * LAPACK
+<span class="lineNum">      29 </span>            : * [libsharp](https://github.com/Libsharp/libsharp) should be built with
+<span class="lineNum">      30 </span>            :   support disabled for openmp and mpi, as we want all of our parallelism to
+<span class="lineNum">      31 </span>            :   be accomplished via Charm++.
+<span class="lineNum">      32 </span>            : * [LIBXSMM](https://github.com/hfp/libxsmm)
+<span class="lineNum">      33 </span>            : * [yaml-cpp](https://github.com/jbeder/yaml-cpp) built from a commit more
+<span class="lineNum">      34 </span>            :   recent than November 2016 (versions newer than 0.5.3 should work once any
+<span class="lineNum">      35 </span>            :   are released)
+<span class="lineNum">      36 </span>            : * [Python](https://www.python.org/) 2.7, or 3.5 or later
+<span class="lineNum">      37 </span>            : * [NumPy](http://www.numpy.org/) 1.10 or later
+<span class="lineNum">      38 </span>            : * [SciPy](https://www.scipy.org)
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span>            : #### Optional:
+<span class="lineNum">      41 </span>            : * [Doxygen](http://www.stack.nl/~dimitri/doxygen/index.html) — to generate
+<span class="lineNum">      42 </span>            :   documentation
+<span class="lineNum">      43 </span>            : * [Python](https://www.python.org/) with
+<span class="lineNum">      44 </span>            :   [BeautifulSoup4](https://pypi.org/project/beautifulsoup4/) and
+<span class="lineNum">      45 </span>            :   [Pybtex](https://pybtex.org) — for documentation post-processing
+<span class="lineNum">      46 </span>            : * [Google Benchmark](https://github.com/google/benchmark) - to do
+<span class="lineNum">      47 </span>            :   microbenchmarking inside the SpECTRE framework. v1.2 or newer is required
+<span class="lineNum">      48 </span>            : * [LCOV](http://ltp.sourceforge.net/coverage/lcov.php) and
+<span class="lineNum">      49 </span>            :   [gcov](https://gcc.gnu.org/onlinedocs/gcc/Gcov.html) — to check code test
+<span class="lineNum">      50 </span>            :   coverage
+<span class="lineNum">      51 </span>            : * [coverxygen](https://github.com/psycofdj/coverxygen) — to check documentation
+<span class="lineNum">      52 </span>            :   coverage
+<span class="lineNum">      53 </span>            : * [PAPI](http://icl.utk.edu/papi/) — to access hardware performance counters
+<span class="lineNum">      54 </span>            : * [ClangFormat](https://clang.llvm.org/docs/ClangFormat.html) — to format C++
+<span class="lineNum">      55 </span>            :   code in a clear and consistent fashion
+<span class="lineNum">      56 </span>            : * [Clang-Tidy](http://clang.llvm.org/extra/clang-tidy/) — to &quot;lint&quot; C++ code
+<span class="lineNum">      57 </span>            : * [Cppcheck](http://cppcheck.sourceforge.net/) — to analyze C++ code
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span>            : ## Using Docker to obtain a SpECTRE environment
+<span class="lineNum">      60 </span>            : 
+<span class="lineNum">      61 </span>            : A [Docker](https://www.docker.com/) image is available from
+<span class="lineNum">      62 </span>            : [DockerHub](https://hub.docker.com/r/sxscollaboration/spectrebuildenv/) and can
+<span class="lineNum">      63 </span>            : be used to build SpECTRE on a personal machine.
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span>            : **Note**: The Docker image is the recommended way of using SpECTRE on a personal
+<span class="lineNum">      66 </span>            : Linux machine. Because of the wide variety of operating systems available today
+<span class="lineNum">      67 </span>            : it is not possible for us to support all configurations. However, using Spack
+<span class="lineNum">      68 </span>            : as outlined below is a supported alternative to Docker images.
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span>            : **NOTE**: If you have SELinux active
+<span class="lineNum">      71 </span>            : on your system you must figure out how to enable sharing files with the host
+<span class="lineNum">      72 </span>            : OS. If you receive errors that you do not have permission to access a shared
+<span class="lineNum">      73 </span>            : directory it is likely that your system has SELinux enabled. One option is to
+<span class="lineNum">      74 </span>            : disable SELinux at the expense of reducing the security of your system.
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span>            : To build with the docker image:
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span>            : 1. Clone SpECTRE into SPECTRE_ROOT, a directory of your choice.
+<span class="lineNum">      79 </span>            : 2. Retrieve the docker image (you may need `sudo` in front of this command)
+<span class="lineNum">      80 </span>            :    ```
+<span class="lineNum">      81 </span>            :    docker pull sxscollaboration/spectrebuildenv:latest
+<span class="lineNum">      82 </span>            :    ```
+<span class="lineNum">      83 </span>            : 3. Start the docker container (you may need `sudo`)
+<span class="lineNum">      84 </span>            :    ```
+<span class="lineNum">      85 </span>            :    docker run -v SPECTRE_ROOT:SPECTRE_ROOT --name CONTAINER_NAME -i -t sxscollaboration/spectrebuildenv:latest /bin/bash
+<span class="lineNum">      86 </span>            :    ```
+<span class="lineNum">      87 </span>            :    (The `--name CONTAINER_NAME` is optional, where CONTAINER_NAME is a name
+<span class="lineNum">      88 </span>            :    of your choice. If you don't name your container, docker will generate an
+<span class="lineNum">      89 </span>            :    arbitrary name.)
+<span class="lineNum">      90 </span>            :    You will end up in a shell in a docker container,
+<span class="lineNum">      91 </span>            :    as root (you need to be root).
+<span class="lineNum">      92 </span>            :    Within the container, SPECTRE_ROOT is available and
+<span class="lineNum">      93 </span>            :    CHARM_DIR is /work/charm. For the following steps, stay inside the docker
+<span class="lineNum">      94 </span>            :    container as root.
+<span class="lineNum">      95 </span>            : 4. Make a build directory somewhere inside the container, e.g.
+<span class="lineNum">      96 </span>            :    /work/spectre-build-gcc, and cd into it.
+<span class="lineNum">      97 </span>            : 5. Build SpECTRE with
+<span class="lineNum">      98 </span>            : ```
+<span class="lineNum">      99 </span>            :    cmake -D CMAKE_Fortran_COMPILER=gfortran-8 \
+<span class="lineNum">     100 </span>            :          -D CHARM_ROOT=/work/charm/multicore-linux64-gcc SPECTRE_ROOT
+<span class="lineNum">     101 </span>            : ```
+<span class="lineNum">     102 </span>            :    then
+<span class="lineNum">     103 </span>            :    `make -jN`
+<span class="lineNum">     104 </span>            :    to compile the code, `make test-executables -jN` to compile the test
+<span class="lineNum">     105 </span>            :    executables, and `ctest` to run the tests.
+<span class="lineNum">     106 </span>            : 
+<span class="lineNum">     107 </span>            : Notes:
+<span class="lineNum">     108 </span>            :   * Everything in your build directory is owned by root, and is
+<span class="lineNum">     109 </span>            :     accessible only within the container.
+<span class="lineNum">     110 </span>            :   * You should edit source files in SPECTRE_ROOT in a separate terminal
+<span class="lineNum">     111 </span>            :     outside the container, and use the container only for compiling and
+<span class="lineNum">     112 </span>            :     running the code.
+<span class="lineNum">     113 </span>            :   * If you exit the container (e.g. ctrl-d),
+<span class="lineNum">     114 </span>            :     your compilation directories are still saved, as is the patch
+<span class="lineNum">     115 </span>            :     that you have applied to /work/charm and any other changes to
+<span class="lineNum">     116 </span>            :     the container that you have made.
+<span class="lineNum">     117 </span>            :     To restart the container, try the following commands
+<span class="lineNum">     118 </span>            :     (you may need `sudo`):
+<span class="lineNum">     119 </span>            :     1. `docker ps -a` # lists all containers and their CONTAINER_IDs and CONTAINER_NAMEs:
+<span class="lineNum">     120 </span>            :     2. `docker start -i CONTAINER_NAME` or `docker start -i CONTAINER_ID` # Restarts your container
+<span class="lineNum">     121 </span>            :   * You can run more than one shell in the same container, for instance
+<span class="lineNum">     122 </span>            :     one shell for compiling with gcc and another for compiling
+<span class="lineNum">     123 </span>            :     with clang.
+<span class="lineNum">     124 </span>            :     To add a new shell, run `docker exec -it CONTAINER_NAME /bin/bash`
+<span class="lineNum">     125 </span>            :     (or `docker exec -it CONTAINER_ID /bin/bash`) from
+<span class="lineNum">     126 </span>            :     a terminal outside the container.
+<span class="lineNum">     127 </span>            :   * In step 3 above, the `-v SPECTRE_ROOT:SPECTRE_ROOT` maps the directory
+<span class="lineNum">     128 </span>            :     SPECTRE_ROOT outside the container to SPECTRE_ROOT inside the container.
+<span class="lineNum">     129 </span>            :     Technically docker allows you to say `-v SPECTRE_ROOT:/my/new/path`
+<span class="lineNum">     130 </span>            :     to map SPECTRE_ROOT outside the container to any path you want inside
+<span class="lineNum">     131 </span>            :     the container, but **do not do this**.  Compiling inside the container
+<span class="lineNum">     132 </span>            :     sets up git hooks in SPECTRE_ROOT that
+<span class="lineNum">     133 </span>            :     contain hardcoded pathnames to SPECTRE_ROOT *as seen from
+<span class="lineNum">     134 </span>            :     inside the container*. So if your source paths inside and outside the
+<span class="lineNum">     135 </span>            :     container are different, commands like `git commit` run *from
+<span class="lineNum">     136 </span>            :     outside the container* will die with `No such file or directory`.
+<span class="lineNum">     137 </span>            :   * To compile with clang, the cmake command is
+<span class="lineNum">     138 </span>            : ```
+<span class="lineNum">     139 </span>            :     cmake -D CMAKE_CXX_COMPILER=clang++ \
+<span class="lineNum">     140 </span>            :           -D CMAKE_C_COMPILER=clang \
+<span class="lineNum">     141 </span>            :           -D CMAKE_Fortran_COMPILER=gfortran-8 \
+<span class="lineNum">     142 </span>            :           -D CHARM_ROOT=/work/charm/multicore-linux64-clang SPECTRE_ROOT
+<span class="lineNum">     143 </span>            : ```
+<span class="lineNum">     144 </span>            : 
+<span class="lineNum">     145 </span>            : ## Using Singularity to obtain a SpECTRE environment
+<span class="lineNum">     146 </span>            : 
+<span class="lineNum">     147 </span>            : [Singularity](http://singularity.lbl.gov/index.html) is a container alternative
+<span class="lineNum">     148 </span>            : to Docker with better security and nicer integration.
+<span class="lineNum">     149 </span>            : 
+<span class="lineNum">     150 </span>            : To use Singularity you must:
+<span class="lineNum">     151 </span>            : 
+<span class="lineNum">     152 </span>            : 1. Build [Singularity](http://singularity.lbl.gov/index.html) and add it to your
+<span class="lineNum">     153 </span>            :    `$PATH`
+<span class="lineNum">     154 </span>            : 2. `cd` to the directory where you want to store the SpECTRE Singularity image,
+<span class="lineNum">     155 </span>            :    source, and build directories, let's call it WORKDIR. The WORKDIR must be
+<span class="lineNum">     156 </span>            :    somewhere in your home directory. If this does not work for you, follow the
+<span class="lineNum">     157 </span>            :    Singularity instructions on setting up additional [bind
+<span class="lineNum">     158 </span>            :    points](http://singularity.lbl.gov/docs-mount). Once inside the WORKDIR,
+<span class="lineNum">     159 </span>            :    clone SpECTRE into `WORKDIR/SPECTRE_ROOT`.
+<span class="lineNum">     160 </span>            : 3. Run `singularity build spectre.img
+<span class="lineNum">     161 </span>            :    docker://sxscollaboration/spectrebuildenv:latest`.
+<span class="lineNum">     162 </span>            : 4. To start the container run `singularity shell spectre.img` and you
+<span class="lineNum">     163 </span>            :    will be dropped into a bash shell. The first thing you will always need to do
+<span class="lineNum">     164 </span>            :    when entering the container is:
+<span class="lineNum">     165 </span>            :    `. SPECTRE_HOME/containers/SingularityLoad.sh`
+<span class="lineNum">     166 </span>            : 5. Run `cd SPECTRE_HOME &amp;&amp; mkdir build &amp;&amp; cd build` to set up a build
+<span class="lineNum">     167 </span>            :    directory.
+<span class="lineNum">     168 </span>            : 6. To build SpECTRE run
+<span class="lineNum">     169 </span>            : ```
+<span class="lineNum">     170 </span>            :    cmake -D CMAKE_Fortran_COMPILER=gfortran-8 \
+<span class="lineNum">     171 </span>            :          -D CHARM_ROOT=/work/charm/multicore-linux64-gcc SPECTRE_ROOT
+<span class="lineNum">     172 </span>            : ```
+<span class="lineNum">     173 </span>            :    followed by
+<span class="lineNum">     174 </span>            :    `make -jN` where `N` is the number of cores to build on in parallel.
+<span class="lineNum">     175 </span>            : 
+<span class="lineNum">     176 </span>            : Notes:
+<span class="lineNum">     177 </span>            : - You should edit source files in SPECTRE_ROOT in a separate terminal outside
+<span class="lineNum">     178 </span>            :   the container, and use the container only for compiling and running the code.
+<span class="lineNum">     179 </span>            : - Unlike Docker, Singularity does not keep the state between runs. However, it
+<span class="lineNum">     180 </span>            :   shares the home directory with the host OS so you should do all your work
+<span class="lineNum">     181 </span>            :   somewhere in your home directory.
+<span class="lineNum">     182 </span>            : - To run more than one container just do `singularity shell spectre.img` in
+<span class="lineNum">     183 </span>            :   another terminal.
+<span class="lineNum">     184 </span>            : - Since the data you modify lives on the host OS there is no need to worry about
+<span class="lineNum">     185 </span>            :   losing any data, needing to clean up old containers, or sharing data between
+<span class="lineNum">     186 </span>            :   containers and the host.
+<span class="lineNum">     187 </span>            : - To build with clang, the CMake command is:
+<span class="lineNum">     188 </span>            : ```
+<span class="lineNum">     189 </span>            :     cmake -D CMAKE_CXX_COMPILER=clang++ \
+<span class="lineNum">     190 </span>            :           -D CMAKE_C_COMPILER=clang \
+<span class="lineNum">     191 </span>            :           -D CMAKE_Fortran_COMPILER=gfortran-8 \
+<span class="lineNum">     192 </span>            :           -D CHARM_ROOT=/work/charm/multicore-linux64-clang SPECTRE_ROOT
+<span class="lineNum">     193 </span>            : ```
+<span class="lineNum">     194 </span>            : 
+<span class="lineNum">     195 </span>            : ## Using Spack to set up a SpECTRE environment
+<span class="lineNum">     196 </span>            : 
+<span class="lineNum">     197 </span>            : SpECTRE's dependencies can be installed with
+<span class="lineNum">     198 </span>            : [Spack](https://github.com/LLNL/spack), a package manager tailored for HPC use.
+<span class="lineNum">     199 </span>            : Install Spack by cloning it into `SPACK_DIR` (a directory of your choice),
+<span class="lineNum">     200 </span>            : then add `SPACK_DIR/bin` to your `PATH`.
+<span class="lineNum">     201 </span>            : 
+<span class="lineNum">     202 </span>            : For security, it is good practice to make Spack use the system's OpenSSL
+<span class="lineNum">     203 </span>            : rather than allow it to install a new copy — see Spack's documentation for
+<span class="lineNum">     204 </span>            : [instructions](https://spack.readthedocs.io/en/latest/getting_started.html#openssl).
+<span class="lineNum">     205 </span>            : You may need to install the development version of OpenSSL:
+<span class="lineNum">     206 </span>            : * On Ubuntu (16.04), run `sudo apt-get install libssl-dev`
+<span class="lineNum">     207 </span>            : * On Fedora (27), run `sudo dnf install openssl-devel`
+<span class="lineNum">     208 </span>            : 
+<span class="lineNum">     209 </span>            : Spack works well with a module environment. We recommend
+<span class="lineNum">     210 </span>            : [LMod](https://github.com/TACC/Lmod), which is available on many systems:
+<span class="lineNum">     211 </span>            : * On macOS, install LMod from [brew](https://brew.sh/), then source the LMod
+<span class="lineNum">     212 </span>            :   shell script by adding `. /usr/local/Cellar/lmod/YOUR_VERSION_NUMBER/init/sh`
+<span class="lineNum">     213 </span>            :   to your `.bash_profile`.
+<span class="lineNum">     214 </span>            : * On Ubuntu, run `sudo apt-get install -y lmod` and, for Ubuntu 17.04, add
+<span class="lineNum">     215 </span>            :   `. /etc/profile.d/lmod.sh` to your `.bashrc`. For Ubuntu 16.04, the correct
+<span class="lineNum">     216 </span>            :   path to add is `. /usr/share/lmod/lmod/init/bash`.
+<span class="lineNum">     217 </span>            : * On Arch Linux, run `yaourt -Sy lmod` and add `. /etc/profile.d/lmod.sh` to
+<span class="lineNum">     218 </span>            :   your `.bashrc`,
+<span class="lineNum">     219 </span>            : * On Fedora/RHEL, GNU Environment Modules comes out-of-the-box and works equally
+<span class="lineNum">     220 </span>            :   well.
+<span class="lineNum">     221 </span>            : * Instructions for other Linux distros are available online.
+<span class="lineNum">     222 </span>            : 
+<span class="lineNum">     223 </span>            : To use modules with Spack, enable Spack's shell support by adding
+<span class="lineNum">     224 </span>            : `. SPACK_DIR/share/spack/setup-env.sh` to your `.bash_profile` or `.bashrc`.
+<span class="lineNum">     225 </span>            : 
+<span class="lineNum">     226 </span>            : Once you have Spack installed and configured with OpenSSL and LMod, you can
+<span class="lineNum">     227 </span>            : install the SpECTRE dependencies using
+<span class="lineNum">     228 </span>            : ```
+<span class="lineNum">     229 </span>            : spack install blaze
+<span class="lineNum">     230 </span>            : spack install brigand@master
+<span class="lineNum">     231 </span>            : spack install libsharp -openmp -mpi
+<span class="lineNum">     232 </span>            : spack install catch
+<span class="lineNum">     233 </span>            : spack install gsl
+<span class="lineNum">     234 </span>            : spack install jemalloc # or from your package manager
+<span class="lineNum">     235 </span>            : spack install libxsmm
+<span class="lineNum">     236 </span>            : spack install yaml-cpp@develop
+<span class="lineNum">     237 </span>            : ```
+<span class="lineNum">     238 </span>            : You can also install CMake, OpenBLAS, Boost, and HDF5 from Spack.
+<span class="lineNum">     239 </span>            : To load the packages you've installed from Spack run `spack load PACKAGE`,
+<span class="lineNum">     240 </span>            : or (equivalently) use the `module load` command.
+<span class="lineNum">     241 </span>            : 
+<span class="lineNum">     242 </span>            : **Note**: Spack allows very flexible configurations and
+<span class="lineNum">     243 </span>            : it is recommended you read the [documentation](https://spack.readthedocs.io) if
+<span class="lineNum">     244 </span>            : you require features such as packages installed with different compilers.
+<span class="lineNum">     245 </span>            : 
+<span class="lineNum">     246 </span>            : **Note**: On a Mac, you may need to `spack install
+<span class="lineNum">     247 </span>            : yaml-cpp@develop~shared` (note that is a tilde and not a dash in front
+<span class="lineNum">     248 </span>            : of shared) in order to force the building of the static libraries in
+<span class="lineNum">     249 </span>            : order to avoid dynamic linking errors.
+<span class="lineNum">     250 </span>            : 
+<span class="lineNum">     251 </span>            : ### Building SpECTRE
+<span class="lineNum">     252 </span>            : 
+<span class="lineNum">     253 </span>            : After the dependencies have been installed, Charm++ and SpECTRE can be compiled.
+<span class="lineNum">     254 </span>            : Follow these steps:
+<span class="lineNum">     255 </span>            : 
+<span class="lineNum">     256 </span>            : 1.  Clone [SpECTRE](https://github.com/sxs-collaboration/spectre) into
+<span class="lineNum">     257 </span>            :     `SPECTRE_ROOT`, a directory of your choice.
+<span class="lineNum">     258 </span>            : 2.  Install Charm++:
+<span class="lineNum">     259 </span>            :   * Clone [Charm++](http://charm.cs.illinois.edu/software) into `CHARM_DIR`,
+<span class="lineNum">     260 </span>            :     again a directory of your choice.
+<span class="lineNum">     261 </span>            :   * In `CHARM_DIR`, run
+<span class="lineNum">     262 </span>            :     `git checkout v6.8.0` to switch to a supported, stable release of Charm++.
+<span class="lineNum">     263 </span>            :   * Charm++ is compiled by running
+<span class="lineNum">     264 </span>            :     `./build charm++ ARCH OPTIONS`.
+<span class="lineNum">     265 </span>            :     To figure out the correct target architecture and options, you can simply
+<span class="lineNum">     266 </span>            :     run `./build`; the script will then ask you questions to guide you towards
+<span class="lineNum">     267 </span>            :     the correct settings (see notes below for additional details).
+<span class="lineNum">     268 </span>            :     Then compile Charm++.
+<span class="lineNum">     269 </span>            :     The Charm++ build will be located in a new directory,
+<span class="lineNum">     270 </span>            :     `CHARM_DIR/ARCH_OPTS`, whose name may (or may not) have some of the options
+<span class="lineNum">     271 </span>            :     appended to the architecture.
+<span class="lineNum">     272 </span>            :   * The SpECTRE repo contains a patch that must be applied to Charm++ *after*
+<span class="lineNum">     273 </span>            :     Charm++ has been compiled. While still in `CHARM_DIR`, apply this patch by
+<span class="lineNum">     274 </span>            :     running `git apply SPECTRE_ROOT/support/Charm/v6.8.patch`.
+<span class="lineNum">     275 </span>            :   * On macOS 10.12 it is necessary to patch the STL implementation. Insert
+<span class="lineNum">     276 </span>            :     \code
+<span class="lineNum">     277 </span>            :     #ifndef _MACH_PORT_T
+<span class="lineNum">     278 </span>            :     #define _MACH_PORT_T
+<span class="lineNum">     279 </span>            :     #include &lt;sys/_types.h&gt; /* __darwin_mach_port_t */
+<span class="lineNum">     280 </span>            :     typedef __darwin_mach_port_t mach_port_t;
+<span class="lineNum">     281 </span>            :     #include &lt;pthread.h&gt;
+<span class="lineNum">     282 </span>            :     mach_port_t pthread_mach_thread_np(pthread_t);
+<span class="lineNum">     283 </span>            :     #endif /* _MACH_PORT_T */
+<span class="lineNum">     284 </span>            :     \endcode
+<span class="lineNum">     285 </span>            :     into the front of
+<span class="lineNum">     286 </span>            :     `/Library/Developer/CommandLineTools/usr/include/c++/v1/__threading_support`
+<span class="lineNum">     287 </span>            : 3.  Return to `SPECTRE_ROOT`, and create a build dir by running
+<span class="lineNum">     288 </span>            :     `mkdir build &amp;&amp; cd build`
+<span class="lineNum">     289 </span>            : 4.  Build SpECTRE with
+<span class="lineNum">     290 </span>            :     `cmake -D CHARM_ROOT=CHARM_DIR/ARCH_OPTS SPECTRE_ROOT`
+<span class="lineNum">     291 </span>            :     then
+<span class="lineNum">     292 </span>            :     `make -jN`
+<span class="lineNum">     293 </span>            :     to compile the code.
+<span class="lineNum">     294 </span>            : 5.  Run the tests with
+<span class="lineNum">     295 </span>            :     `make test-executables &amp;&amp; ctest`.
+<span class="lineNum">     296 </span>            : 
+<span class="lineNum">     297 </span>            : **Notes**:
+<span class="lineNum">     298 </span>            : * For more details on building Charm++, see the directions
+<span class="lineNum">     299 </span>            :   [here](http://charm.cs.illinois.edu/manuals/html/charm++/A.html)
+<span class="lineNum">     300 </span>            :   The correct target is `charm++` and, for a personal machine, the
+<span class="lineNum">     301 </span>            :   correct target architecture is likely to be `multicore-linux64`
+<span class="lineNum">     302 </span>            :   (or `multicore-darwin-x86_64` on macOS).
+<span class="lineNum">     303 </span>            :   On an HPC system, the correct Charm++ target architecture depends on the
+<span class="lineNum">     304 </span>            :   machine's inter-node communication architecture. We will be providing specific
+<span class="lineNum">     305 </span>            :   instructions for various HPC systems.
+<span class="lineNum">     306 </span>            : * Both Charm++ and SpECTRE must be compiled using the same compiler,
+<span class="lineNum">     307 </span>            :   otherwise you will receive undefined reference errors while linking SpECTRE.
+<span class="lineNum">     308 </span>            :   When compiling Charm++ you can specify the compiler using, for example,
+<span class="lineNum">     309 </span>            :   ```
+<span class="lineNum">     310 </span>            :   ./build charm++ ARCH clang
+<span class="lineNum">     311 </span>            :   ```
+<span class="lineNum">     312 </span>            :   When compiling SpECTRE you can specify the compiler to CMake using,
+<span class="lineNum">     313 </span>            :   for example,
+<span class="lineNum">     314 </span>            :   ```
+<span class="lineNum">     315 </span>            :   cmake -D CMAKE_CXX_COMPILER=clang++ \
+<span class="lineNum">     316 </span>            :         -D CMAKE_C_COMPILER=clang \
+<span class="lineNum">     317 </span>            :         -D CMAKE_Fortran_COMPILER=gfortran \
+<span class="lineNum">     318 </span>            :         -D CHARM_ROOT=CHARM_DIR/ARCH_OPTS SPECTRE_ROOT
+<span class="lineNum">     319 </span>            :   ```
+<span class="lineNum">     320 </span>            : * Inside the SpECTRE build directory, use `make list` to see all available
+<span class="lineNum">     321 </span>            :   targets. This list can be refreshed by running CMake again.
+<span class="lineNum">     322 </span>            : 
+<span class="lineNum">     323 </span>            : ## Code Coverage Analysis
+<span class="lineNum">     324 </span>            : 
+<span class="lineNum">     325 </span>            : For any coverage analysis you will need to have LCOV installed on the system.
+<span class="lineNum">     326 </span>            : For documentation coverage analysis you will also need to install
+<span class="lineNum">     327 </span>            : [coverxygen](https://github.com/psycofdj/coverxygen) and for test coverage
+<span class="lineNum">     328 </span>            : analysis [gcov](https://gcc.gnu.org/onlinedocs/gcc/Gcov.html).
+<span class="lineNum">     329 </span>            : 
+<span class="lineNum">     330 </span>            : If you have these installed (which is already done if
+<span class="lineNum">     331 </span>            : you are using the docker container), you can look at code coverage as follows:
+<span class="lineNum">     332 </span>            : 
+<span class="lineNum">     333 </span>            : 1. On a gcc build, pass `-D COVERAGE=ON` to `cmake`
+<span class="lineNum">     334 </span>            : 2. `make unit-test-coverage`
+<span class="lineNum">     335 </span>            : 3. The output is in `docs/html/unit-test-coverage`.
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,483 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - PointwiseFunctions/AnalyticSolutions/GrMhd/BondiMichel.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">PointwiseFunctions/AnalyticSolutions/GrMhd</a> - BondiMichel.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">7</td>
+            <td class="headerCovTableEntry">73</td>
+            <td class="headerCovTableEntryLo">9.6 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;limits&gt;
+<span class="lineNum">       7 </span>            : #include &lt;pup.h&gt;
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : #include &quot;DataStructures/DataBox/Prefixes.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      10 </span>            : #include &quot;DataStructures/DataVector.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;DataStructures/Tensor/TypeAliases.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;Options/Options.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;PointwiseFunctions/AnalyticSolutions/GeneralRelativity/KerrSchild.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;PointwiseFunctions/GeneralRelativity/Tags.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      15 </span>            : #include &quot;PointwiseFunctions/Hydro/EquationsOfState/EquationOfState.hpp&quot;
+<span class="lineNum">      16 </span>            : #include &quot;PointwiseFunctions/Hydro/EquationsOfState/PolytropicFluid.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      17 </span>            : #include &quot;PointwiseFunctions/Hydro/Tags.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      18 </span>            : #include &quot;Utilities/Requires.hpp&quot;
+<span class="lineNum">      19 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">      20 </span>            : #include &quot;Utilities/TaggedTuple.hpp&quot;
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : namespace grmhd {
+<span class="lineNum">      23 </span>            : namespace Solutions {
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            : /*!
+<span class="lineNum">      26 </span>            :  * \brief Bondi-Michel accretion \cite Michel1972 with superposed magnetic field
+<span class="lineNum">      27 </span>            :  * in Schwarzschild spacetime in Cartesian Kerr-Schild coordinates.
+<span class="lineNum">      28 </span>            :  *
+<span class="lineNum">      29 </span>            :  * An analytic solution to the 3-D GRMHD system. The user specifies the sonic
+<span class="lineNum">      30 </span>            :  * radius \f$r_c\f$ and sonic rest mass density \f$\rho_c\f$, which are the
+<span class="lineNum">      31 </span>            :  * radius and rest mass density at the sonic point, the radius at which the
+<span class="lineNum">      32 </span>            :  * fluid's Eulerian velocity as seen by a distant observer overtakes the local
+<span class="lineNum">      33 </span>            :  * sound speed \f$c_{s,c}\f$. With a specified polytropic exponent \f$\gamma\f$,
+<span class="lineNum">      34 </span>            :  * these quantities can be related to the sound speed at infinity
+<span class="lineNum">      35 </span>            :  * \f$c_{s,\infty}\f$ using the following relations:
+<span class="lineNum">      36 </span>            :  *
+<span class="lineNum">      37 </span>            :  * \f{align*}
+<span class="lineNum">      38 </span>            :  * c_{s,c}^2 &amp;= \frac{M}{2r_c - 3M} \\
+<span class="lineNum">      39 </span>            :  * c_{s,\infty}^2 &amp;= \gamma - 1 + (c_{s,c}^2 - \gamma + 1)\sqrt{1 + 3c_{s,c}^2}
+<span class="lineNum">      40 </span>            :  * \f}
+<span class="lineNum">      41 </span>            :  *
+<span class="lineNum">      42 </span>            :  * In the case of the interstellar medium, the sound
+<span class="lineNum">      43 </span>            :  * speed is \f$\approx 10^{-4}\f$, which results in a sonic radius of
+<span class="lineNum">      44 </span>            :  * \f$\approx 10^8 M\f$ for \f$\gamma \neq 5/3\f$ \cite RezzollaBook.
+<span class="lineNum">      45 </span>            :  *
+<span class="lineNum">      46 </span>            :  * The density is found via root-finding, through the
+<span class="lineNum">      47 </span>            :  * Bernoulli equation. As one approaches the sonic radius, a second root makes
+<span class="lineNum">      48 </span>            :  * an appearance and one must take care to bracket the correct root. This is
+<span class="lineNum">      49 </span>            :  * done by using the upper bound
+<span class="lineNum">      50 </span>            :  * \f$\frac{\dot{M}}{4\pi}\sqrt{\frac{2}{Mr^3}}\f$.
+<span class="lineNum">      51 </span>            :  *
+<span class="lineNum">      52 </span>            :  * Additionally specified by the user are the polytropic exponent \f$\gamma\f$,
+<span class="lineNum">      53 </span>            :  * and the strength parameter of the magnetic field \f$B_0\f$.
+<span class="lineNum">      54 </span>            :  * In Cartesian Kerr-Schild coordinates \f$(x, y, z)\f$, where
+<span class="lineNum">      55 </span>            :  * \f$ r = \sqrt{x^2 + y^2 + z^2}\f$, the superposed magnetic field is
+<span class="lineNum">      56 </span>            :  * \cite Etienne2010ui
+<span class="lineNum">      57 </span>            :  *
+<span class="lineNum">      58 </span>            :  * \f{align*}
+<span class="lineNum">      59 </span>            :  * B^i(\vec{x},t) = \frac{B_0 M^2}{r^3 \sqrt{\gamma}}x^i
+<span class="lineNum">      60 </span>            :  *  =\frac{B_0 M^2}{r^3 \sqrt{1 + 2M/r}}x^i.
+<span class="lineNum">      61 </span>            :  * \f}
+<span class="lineNum">      62 </span>            :  *
+<span class="lineNum">      63 </span>            :  * The accretion rate is
+<span class="lineNum">      64 </span>            :  *
+<span class="lineNum">      65 </span>            :  * \f{align*}{
+<span class="lineNum">      66 </span>            :  * \dot{M}=4\pi r^2\rho u^r,
+<span class="lineNum">      67 </span>            :  * \f}
+<span class="lineNum">      68 </span>            :  *
+<span class="lineNum">      69 </span>            :  * and at the sonic radius
+<span class="lineNum">      70 </span>            :  *
+<span class="lineNum">      71 </span>            :  * \f{align*}{
+<span class="lineNum">      72 </span>            :  * \dot{M}_c=\sqrt{8}\pi \sqrt{M}r_c^{3/2}\rho_c.
+<span class="lineNum">      73 </span>            :  * \f}
+<span class="lineNum">      74 </span>            :  *
+<span class="lineNum">      75 </span>            :  * The polytropic constant is given by
+<span class="lineNum">      76 </span>            :  *
+<span class="lineNum">      77 </span>            :  * \f{align*}{
+<span class="lineNum">      78 </span>            :  * K=\frac{1}{\gamma\rho_c^{\gamma-1}}
+<span class="lineNum">      79 </span>            :  * \left[\frac{M(\gamma-1)}{(2r_c-3M)(\gamma-1)-M}\right].
+<span class="lineNum">      80 </span>            :  * \f}
+<span class="lineNum">      81 </span>            :  *
+<span class="lineNum">      82 </span>            :  * The density as a function of the sound speed is
+<span class="lineNum">      83 </span>            :  *
+<span class="lineNum">      84 </span>            :  * \f{align*}{
+<span class="lineNum">      85 </span>            :  * \rho^{\gamma-1}=\frac{(\gamma-1)c_s^2}{\gamma K(\gamma-1-c_s^2)}.
+<span class="lineNum">      86 </span>            :  * \f}
+<span class="lineNum">      87 </span>            :  *
+<span class="lineNum">      88 </span>            :  * #### Horizon quantities, \f$\gamma\ne5/3\f$
+<span class="lineNum">      89 </span>            :  * The density at the horizon is given by:
+<span class="lineNum">      90 </span>            :  *
+<span class="lineNum">      91 </span>            :  * \f{align*}{
+<span class="lineNum">      92 </span>            :  *  \rho_h\simeq\frac{1}{16}
+<span class="lineNum">      93 </span>            :  *  \left(\frac{5-3\gamma}{2}\right)^{(3\gamma-5)/[2(\gamma-1)]}
+<span class="lineNum">      94 </span>            :  *  \frac{\rho_\infty}{c_{s,\infty}^3}.
+<span class="lineNum">      95 </span>            :  * \f}
+<span class="lineNum">      96 </span>            :  *
+<span class="lineNum">      97 </span>            :  * Using the Lorentz invariance of \f$b^2\f$ we evaluate:
+<span class="lineNum">      98 </span>            :  *
+<span class="lineNum">      99 </span>            :  * \f{align*}{
+<span class="lineNum">     100 </span>            :  * b^2=\frac{B^2}{W^2}+(B^i v_i)^2=
+<span class="lineNum">     101 </span>            :  *  B^r B^r(1-\gamma_{rr}v^r v^r)+B^r B^r v^r v^r
+<span class="lineNum">     102 </span>            :  * =B^r B^r = \frac{B_0^2 M^4}{r^4},
+<span class="lineNum">     103 </span>            :  * \f}
+<span class="lineNum">     104 </span>            :  *
+<span class="lineNum">     105 </span>            :  * where \f$r\f$ is the Cartesian Kerr-Schild radius, which is equal to the
+<span class="lineNum">     106 </span>            :  * areal radius for a non-spinning black hole. At the horizon we get
+<span class="lineNum">     107 </span>            :  *
+<span class="lineNum">     108 </span>            :  * \f{align*}{
+<span class="lineNum">     109 </span>            :  * b^2_h=\frac{B^2_0}{16}.
+<span class="lineNum">     110 </span>            :  * \f}
+<span class="lineNum">     111 </span>            :  *
+<span class="lineNum">     112 </span>            :  * Finally, we get
+<span class="lineNum">     113 </span>            :  *
+<span class="lineNum">     114 </span>            :  * \f{align*}{
+<span class="lineNum">     115 </span>            :  * B_0 = 4 \sqrt{b^2_h} = 4\sqrt{\rho_h} \sqrt{\frac{b^2_h}{\rho_h}},
+<span class="lineNum">     116 </span>            :  * \f}
+<span class="lineNum">     117 </span>            :  *
+<span class="lineNum">     118 </span>            :  * where the last equality is useful for comparison to papers that give
+<span class="lineNum">     119 </span>            :  * \f$b^2_h/\rho_h\f$.
+<span class="lineNum">     120 </span>            :  *
+<span class="lineNum">     121 </span>            :  * To help with comparing to other codes the following script can be used to
+<span class="lineNum">     122 </span>            :  * compute \f$b^2_h/\rho_h\f$:
+<span class="lineNum">     123 </span>            :  *
+<span class="lineNum">     124 </span>            :  * \code{.py}
+<span class="lineNum">     125 </span>            :  * #!/bin/env python
+<span class="lineNum">     126 </span>            :  *
+<span class="lineNum">     127 </span>            :  * import numpy as np
+<span class="lineNum">     128 </span>            :  *
+<span class="lineNum">     129 </span>            :  * # Input parameters
+<span class="lineNum">     130 </span>            :  * B_0 = 18
+<span class="lineNum">     131 </span>            :  * r_c = 8
+<span class="lineNum">     132 </span>            :  * rho_c = 1 / 16
+<span class="lineNum">     133 </span>            :  * gamma = 4 / 3
+<span class="lineNum">     134 </span>            :  * mass = 1
+<span class="lineNum">     135 </span>            :  *
+<span class="lineNum">     136 </span>            :  * K = 1 / (gamma * rho_c**(gamma - 1)) * ((gamma - 1) * mass) / (
+<span class="lineNum">     137 </span>            :  *     (2 * r_c - 3 * mass) * (gamma - 1) - mass)
+<span class="lineNum">     138 </span>            :  * c_s_c = mass / (2 * r_c - 3 * mass)
+<span class="lineNum">     139 </span>            :  * c_inf = gamma - 1 + (c_s_c - gamma + 1) * np.sqrt(1. + 3. * c_s_c)
+<span class="lineNum">     140 </span>            :  * rho_inf = ((gamma - 1) * c_inf / (gamma * K *
+<span class="lineNum">     141 </span>            :  *                                   (gamma - 1 - c_inf)))**(1. / (gamma - 1.))
+<span class="lineNum">     142 </span>            :  * rho_h = 1. / 16. * (2.5 - 1.5 * gamma)**(
+<span class="lineNum">     143 </span>            :  *     (3 * gamma - 5) / (2 * (gamma - 1))) * rho_inf / (c_inf**1.5)
+<span class="lineNum">     144 </span>            :  *
+<span class="lineNum">     145 </span>            :  * print(&quot;B_0&quot;, B_0)
+<span class="lineNum">     146 </span>            :  * print(&quot;r_c: &quot;, r_c)
+<span class="lineNum">     147 </span>            :  * print(&quot;rho_c&quot;, rho_c)
+<span class="lineNum">     148 </span>            :  * print(&quot;b_h^2/rho_h: &quot;, B_0**2 / (16. * rho_h))
+<span class="lineNum">     149 </span>            :  * print(&quot;gamma: &quot;, gamma)
+<span class="lineNum">     150 </span>            :  * \endcode
+<span class="lineNum">     151 </span>            :  *
+<span class="lineNum">     152 </span>            :  * #### Horizon quantities, \f$\gamma=5/3\f$
+<span class="lineNum">     153 </span>            :  * The density at the horizon is given by:
+<span class="lineNum">     154 </span>            :  *
+<span class="lineNum">     155 </span>            :  * \f{align*}{
+<span class="lineNum">     156 </span>            :  * \rho_h\simeq \frac{1}{16}\frac{\rho_\infty}{u_h c_{s,\infty}^3},
+<span class="lineNum">     157 </span>            :  * \f}
+<span class="lineNum">     158 </span>            :  *
+<span class="lineNum">     159 </span>            :  * which gives \cite RezzollaBook
+<span class="lineNum">     160 </span>            :  *
+<span class="lineNum">     161 </span>            :  * \f{align*}{
+<span class="lineNum">     162 </span>            :  * \rho_h\simeq 0.08\frac{\rho_\infty}{c_{s,\infty}^3}.
+<span class="lineNum">     163 </span>            :  * \f}
+<span class="lineNum">     164 </span>            :  *
+<span class="lineNum">     165 </span>            :  * The magnetic field \f$b^2\f$ is the same as the \f$\gamma\ne5/3\f$.
+<span class="lineNum">     166 </span>            :  */
+<span class="lineNum">     167 </span><span class="lineCov">          1 : class BondiMichel {</span>
+<span class="lineNum">     168 </span>            :   template &lt;typename DataType&gt;
+<span class="lineNum">     169 </span><span class="lineNoCov">          0 :   struct IntermediateVars;</span>
+<span class="lineNum">     170 </span>            : 
+<span class="lineNum">     171 </span>            :  public:
+<span class="lineNum">     172 </span><span class="lineNoCov">          0 :   using equation_of_state_type = EquationsOfState::PolytropicFluid&lt;true&gt;;</span>
+<span class="lineNum">     173 </span><span class="lineNoCov">          0 :   using background_spacetime_type = gr::Solutions::KerrSchild;</span>
+<span class="lineNum">     174 </span>            : 
+<span class="lineNum">     175 </span>            :   /// The mass of the black hole.
+<span class="lineNum">     176 </span><span class="lineCov">          1 :   struct Mass {</span>
+<span class="lineNum">     177 </span><span class="lineNoCov">          0 :     using type = double;</span>
+<span class="lineNum">     178 </span><span class="lineNoCov">          0 :     static constexpr OptionString help = {&quot;Mass of the black hole.&quot;};</span>
+<span class="lineNum">     179 </span><span class="lineNoCov">          0 :     static type lower_bound() noexcept { return 0.0; }</span>
+<span class="lineNum">     180 </span>            :   };
+<span class="lineNum">     181 </span>            : 
+<span class="lineNum">     182 </span>            :   /// The radius at which the fluid becomes supersonic.
+<span class="lineNum">     183 </span><span class="lineCov">          1 :   struct SonicRadius {</span>
+<span class="lineNum">     184 </span><span class="lineNoCov">          0 :     using type = double;</span>
+<span class="lineNum">     185 </span><span class="lineNoCov">          0 :     static constexpr OptionString help = {</span>
+<span class="lineNum">     186 </span>            :         &quot;Schwarzschild radius where fluid becomes supersonic.&quot;};
+<span class="lineNum">     187 </span><span class="lineNoCov">          0 :     static type lower_bound() noexcept { return 0.0; }</span>
+<span class="lineNum">     188 </span>            :   };
+<span class="lineNum">     189 </span>            : 
+<span class="lineNum">     190 </span>            :   /// The rest mass density of the fluid at the sonic radius.
+<span class="lineNum">     191 </span><span class="lineCov">          1 :   struct SonicDensity {</span>
+<span class="lineNum">     192 </span><span class="lineNoCov">          0 :     using type = double;</span>
+<span class="lineNum">     193 </span><span class="lineNoCov">          0 :     static constexpr OptionString help = {</span>
+<span class="lineNum">     194 </span>            :         &quot;The density of the fluid at the sonic radius.&quot;};
+<span class="lineNum">     195 </span><span class="lineNoCov">          0 :     static type lower_bound() noexcept { return 0.0; }</span>
+<span class="lineNum">     196 </span>            :   };
+<span class="lineNum">     197 </span>            : 
+<span class="lineNum">     198 </span>            :   /// The polytropic exponent for the polytropic fluid.
+<span class="lineNum">     199 </span><span class="lineCov">          1 :   struct PolytropicExponent {</span>
+<span class="lineNum">     200 </span><span class="lineNoCov">          0 :     using type = double;</span>
+<span class="lineNum">     201 </span><span class="lineNoCov">          0 :     static constexpr OptionString help = {</span>
+<span class="lineNum">     202 </span>            :         &quot;The polytropic exponent for the polytropic fluid.&quot;};
+<span class="lineNum">     203 </span><span class="lineNoCov">          0 :     static type lower_bound() noexcept { return 1.0; }</span>
+<span class="lineNum">     204 </span>            :   };
+<span class="lineNum">     205 </span>            : 
+<span class="lineNum">     206 </span>            :   /// The strength of the radial magnetic field.
+<span class="lineNum">     207 </span><span class="lineCov">          1 :   struct MagFieldStrength {</span>
+<span class="lineNum">     208 </span><span class="lineNoCov">          0 :     using type = double;</span>
+<span class="lineNum">     209 </span><span class="lineNoCov">          0 :     static constexpr OptionString help = {</span>
+<span class="lineNum">     210 </span>            :         &quot;The strength of the radial magnetic field.&quot;};
+<span class="lineNum">     211 </span>            :   };
+<span class="lineNum">     212 </span>            : 
+<span class="lineNum">     213 </span><span class="lineNoCov">          0 :   using options = tmpl::list&lt;Mass, SonicRadius, SonicDensity,</span>
+<span class="lineNum">     214 </span>            :                              PolytropicExponent, MagFieldStrength&gt;;
+<span class="lineNum">     215 </span><span class="lineNoCov">          0 :   static constexpr OptionString help = {</span>
+<span class="lineNum">     216 </span>            :       &quot;Bondi-Michel solution with a radial magnetic field using \n&quot;
+<span class="lineNum">     217 </span>            :       &quot;the Schwarzschild coordinate system. Quantities prefixed with \n&quot;
+<span class="lineNum">     218 </span>            :       &quot;`sonic` refer to field quantities evaluated at the radius \n&quot;
+<span class="lineNum">     219 </span>            :       &quot;where the fluid speed overtakes the sound speed.&quot;};
+<span class="lineNum">     220 </span>            : 
+<span class="lineNum">     221 </span><span class="lineNoCov">          0 :   BondiMichel() = default;</span>
+<span class="lineNum">     222 </span><span class="lineNoCov">          0 :   BondiMichel(const BondiMichel&amp; /*rhs*/) = delete;</span>
+<span class="lineNum">     223 </span><span class="lineNoCov">          0 :   BondiMichel&amp; operator=(const BondiMichel&amp; /*rhs*/) = delete;</span>
+<span class="lineNum">     224 </span><span class="lineNoCov">          0 :   BondiMichel(BondiMichel&amp;&amp; /*rhs*/) noexcept = default;</span>
+<span class="lineNum">     225 </span><span class="lineNoCov">          0 :   BondiMichel&amp; operator=(BondiMichel&amp;&amp; /*rhs*/) noexcept = default;</span>
+<span class="lineNum">     226 </span><span class="lineNoCov">          0 :   ~BondiMichel() = default;</span>
+<span class="lineNum">     227 </span>            : 
+<span class="lineNum">     228 </span><span class="lineNoCov">          0 :   BondiMichel(Mass::type mass, SonicRadius::type sonic_radius,</span>
+<span class="lineNum">     229 </span>            :               SonicDensity::type sonic_density,
+<span class="lineNum">     230 </span>            :               PolytropicExponent::type polytropic_exponent,
+<span class="lineNum">     231 </span>            :               MagFieldStrength::type mag_field_strength) noexcept;
+<span class="lineNum">     232 </span>            : 
+<span class="lineNum">     233 </span>            :   /// Retrieve a collection of  hydro variables at `(x, t)`
+<span class="lineNum">     234 </span>            :   template &lt;typename DataType, typename... Tags&gt;
+<span class="lineNum">     235 </span><span class="lineCov">          1 :   tuples::TaggedTuple&lt;Tags...&gt; variables(const tnsr::I&lt;DataType, 3&gt;&amp; x,</span>
+<span class="lineNum">     236 </span>            :                                          const double /*t*/,
+<span class="lineNum">     237 </span>            :                                          tmpl::list&lt;Tags...&gt; /*meta*/) const
+<span class="lineNum">     238 </span>            :       noexcept {
+<span class="lineNum">     239 </span>            :     // non-const so we can move out the metric vars. We assume that no variable
+<span class="lineNum">     240 </span>            :     // is being retrieved more than once, which would cause problems with
+<span class="lineNum">     241 </span>            :     // TaggedTuple anyway.
+<span class="lineNum">     242 </span>            :     auto intermediate_vars = IntermediateVars&lt;DataType&gt;{
+<span class="lineNum">     243 </span>            :         rest_mass_density_at_infinity_,
+<span class="lineNum">     244 </span>            :         mass_accretion_rate_over_four_pi_,
+<span class="lineNum">     245 </span>            :         mass_,
+<span class="lineNum">     246 </span>            :         polytropic_constant_,
+<span class="lineNum">     247 </span>            :         polytropic_exponent_,
+<span class="lineNum">     248 </span>            :         bernoulli_constant_squared_minus_one_,
+<span class="lineNum">     249 </span>            :         sonic_radius_,
+<span class="lineNum">     250 </span>            :         sonic_density_,
+<span class="lineNum">     251 </span>            :         x,
+<span class="lineNum">     252 </span>            :         tmpl2::flat_any_v&lt;
+<span class="lineNum">     253 </span>            :             not tmpl::list_contains_v&lt;hydro::grmhd_tags&lt;DataType&gt;, Tags&gt;...&gt;,
+<span class="lineNum">     254 </span>            :         background_spacetime_};
+<span class="lineNum">     255 </span>            :     return {get&lt;Tags&gt;(variables(x, tmpl::list&lt;Tags&gt;{}, intermediate_vars))...};
+<span class="lineNum">     256 </span>            :   }
+<span class="lineNum">     257 </span>            : 
+<span class="lineNum">     258 </span>            :   template &lt;typename DataType, typename Tag&gt;
+<span class="lineNum">     259 </span><span class="lineNoCov">          0 :   tuples::TaggedTuple&lt;Tag&gt; variables(const tnsr::I&lt;DataType, 3&gt;&amp; x,</span>
+<span class="lineNum">     260 </span>            :                                      const double /*t*/,  // NOLINT
+<span class="lineNum">     261 </span>            :                                      tmpl::list&lt;Tag&gt; /*meta*/) const noexcept {
+<span class="lineNum">     262 </span>            :     return variables(
+<span class="lineNum">     263 </span>            :         x, tmpl::list&lt;Tag&gt;{},
+<span class="lineNum">     264 </span>            :         IntermediateVars&lt;DataType&gt;{
+<span class="lineNum">     265 </span>            :             rest_mass_density_at_infinity_, mass_accretion_rate_over_four_pi_,
+<span class="lineNum">     266 </span>            :             mass_, polytropic_constant_, polytropic_exponent_,
+<span class="lineNum">     267 </span>            :             bernoulli_constant_squared_minus_one_, sonic_radius_,
+<span class="lineNum">     268 </span>            :             sonic_density_, x,
+<span class="lineNum">     269 </span>            :             not tmpl::list_contains_v&lt;hydro::grmhd_tags&lt;DataType&gt;, Tag&gt;,
+<span class="lineNum">     270 </span>            :             background_spacetime_});
+<span class="lineNum">     271 </span>            :   }
+<span class="lineNum">     272 </span>            : 
+<span class="lineNum">     273 </span>            :   // clang-tidy: no runtime references
+<span class="lineNum">     274 </span><span class="lineNoCov">          0 :   void pup(PUP::er&amp; /*p*/) noexcept;  //  NOLINT</span>
+<span class="lineNum">     275 </span><span class="lineNoCov">          0 :   const EquationsOfState::PolytropicFluid&lt;true&gt;&amp; equation_of_state() const</span>
+<span class="lineNum">     276 </span>            :       noexcept {
+<span class="lineNum">     277 </span>            :     return equation_of_state_;
+<span class="lineNum">     278 </span>            :   }
+<span class="lineNum">     279 </span>            : 
+<span class="lineNum">     280 </span>            :  private:
+<span class="lineNum">     281 </span><span class="lineNoCov">          0 :   friend bool operator==(const BondiMichel&amp; lhs,</span>
+<span class="lineNum">     282 </span>            :                          const BondiMichel&amp; rhs) noexcept;
+<span class="lineNum">     283 </span>            : 
+<span class="lineNum">     284 </span>            :   template &lt;typename DataType&gt;
+<span class="lineNum">     285 </span><span class="lineNoCov">          0 :   auto variables(const tnsr::I&lt;DataType, 3&gt;&amp; x,</span>
+<span class="lineNum">     286 </span>            :                  tmpl::list&lt;hydro::Tags::RestMassDensity&lt;DataType&gt;&gt; /*meta*/,
+<span class="lineNum">     287 </span>            :                  const IntermediateVars&lt;DataType&gt;&amp; vars) const noexcept
+<span class="lineNum">     288 </span>            :       -&gt; tuples::TaggedTuple&lt;hydro::Tags::RestMassDensity&lt;DataType&gt;&gt;;
+<span class="lineNum">     289 </span>            : 
+<span class="lineNum">     290 </span>            :   template &lt;typename DataType&gt;
+<span class="lineNum">     291 </span><span class="lineNoCov">          0 :   auto variables(</span>
+<span class="lineNum">     292 </span>            :       const tnsr::I&lt;DataType, 3&gt;&amp; x,
+<span class="lineNum">     293 </span>            :       tmpl::list&lt;hydro::Tags::SpecificInternalEnergy&lt;DataType&gt;&gt; /*meta*/,
+<span class="lineNum">     294 </span>            :       const IntermediateVars&lt;DataType&gt;&amp; vars) const noexcept
+<span class="lineNum">     295 </span>            :       -&gt; tuples::TaggedTuple&lt;hydro::Tags::SpecificInternalEnergy&lt;DataType&gt;&gt;;
+<span class="lineNum">     296 </span>            : 
+<span class="lineNum">     297 </span>            :   template &lt;typename DataType&gt;
+<span class="lineNum">     298 </span><span class="lineNoCov">          0 :   auto variables(const tnsr::I&lt;DataType, 3&gt;&amp; x,</span>
+<span class="lineNum">     299 </span>            :                  tmpl::list&lt;hydro::Tags::Pressure&lt;DataType&gt;&gt; /*meta*/,
+<span class="lineNum">     300 </span>            :                  const IntermediateVars&lt;DataType&gt;&amp; vars) const noexcept
+<span class="lineNum">     301 </span>            :       -&gt; tuples::TaggedTuple&lt;hydro::Tags::Pressure&lt;DataType&gt;&gt;;
+<span class="lineNum">     302 </span>            : 
+<span class="lineNum">     303 </span>            :   template &lt;typename DataType&gt;
+<span class="lineNum">     304 </span><span class="lineNoCov">          0 :   auto variables(</span>
+<span class="lineNum">     305 </span>            :       const tnsr::I&lt;DataType, 3&gt;&amp; x,
+<span class="lineNum">     306 </span>            :       tmpl::list&lt;
+<span class="lineNum">     307 </span>            :           hydro::Tags::SpatialVelocity&lt;DataType, 3, Frame::Inertial&gt;&gt; /*meta*/,
+<span class="lineNum">     308 </span>            :       const IntermediateVars&lt;DataType&gt;&amp; vars) const noexcept
+<span class="lineNum">     309 </span>            :       -&gt; tuples::TaggedTuple&lt;
+<span class="lineNum">     310 </span>            :           hydro::Tags::SpatialVelocity&lt;DataType, 3, Frame::Inertial&gt;&gt;;
+<span class="lineNum">     311 </span>            : 
+<span class="lineNum">     312 </span>            :   template &lt;typename DataType&gt;
+<span class="lineNum">     313 </span><span class="lineNoCov">          0 :   auto variables(</span>
+<span class="lineNum">     314 </span>            :       const tnsr::I&lt;DataType, 3&gt;&amp; x,
+<span class="lineNum">     315 </span>            :       tmpl::list&lt;
+<span class="lineNum">     316 </span>            :           hydro::Tags::MagneticField&lt;DataType, 3, Frame::Inertial&gt;&gt; /*meta*/,
+<span class="lineNum">     317 </span>            :       const IntermediateVars&lt;DataType&gt;&amp; vars) const noexcept
+<span class="lineNum">     318 </span>            :       -&gt; tuples::TaggedTuple&lt;
+<span class="lineNum">     319 </span>            :           hydro::Tags::MagneticField&lt;DataType, 3, Frame::Inertial&gt;&gt;;
+<span class="lineNum">     320 </span>            : 
+<span class="lineNum">     321 </span>            :   template &lt;typename DataType&gt;
+<span class="lineNum">     322 </span><span class="lineNoCov">          0 :   auto variables(</span>
+<span class="lineNum">     323 </span>            :       const tnsr::I&lt;DataType, 3&gt;&amp; x,
+<span class="lineNum">     324 </span>            :       tmpl::list&lt;hydro::Tags::DivergenceCleaningField&lt;DataType&gt;&gt; /*meta*/,
+<span class="lineNum">     325 </span>            :       const IntermediateVars&lt;DataType&gt;&amp; vars) const noexcept
+<span class="lineNum">     326 </span>            :       -&gt; tuples::TaggedTuple&lt;hydro::Tags::DivergenceCleaningField&lt;DataType&gt;&gt;;
+<span class="lineNum">     327 </span>            : 
+<span class="lineNum">     328 </span>            :   template &lt;typename DataType&gt;
+<span class="lineNum">     329 </span><span class="lineNoCov">          0 :   auto variables(const tnsr::I&lt;DataType, 3&gt;&amp; x,</span>
+<span class="lineNum">     330 </span>            :                  tmpl::list&lt;hydro::Tags::LorentzFactor&lt;DataType&gt;&gt; /*meta*/,
+<span class="lineNum">     331 </span>            :                  const IntermediateVars&lt;DataType&gt;&amp; vars) const noexcept
+<span class="lineNum">     332 </span>            :       -&gt; tuples::TaggedTuple&lt;hydro::Tags::LorentzFactor&lt;DataType&gt;&gt;;
+<span class="lineNum">     333 </span>            : 
+<span class="lineNum">     334 </span>            :   template &lt;typename DataType&gt;
+<span class="lineNum">     335 </span><span class="lineNoCov">          0 :   auto variables(const tnsr::I&lt;DataType, 3&gt;&amp; x,</span>
+<span class="lineNum">     336 </span>            :                  tmpl::list&lt;hydro::Tags::SpecificEnthalpy&lt;DataType&gt;&gt; /*meta*/,
+<span class="lineNum">     337 </span>            :                  const IntermediateVars&lt;DataType&gt;&amp; vars) const noexcept
+<span class="lineNum">     338 </span>            :       -&gt; tuples::TaggedTuple&lt;hydro::Tags::SpecificEnthalpy&lt;DataType&gt;&gt;;
+<span class="lineNum">     339 </span>            : 
+<span class="lineNum">     340 </span>            :   template &lt;typename DataType, typename Tag,
+<span class="lineNum">     341 </span>            :             Requires&lt;not tmpl::list_contains_v&lt;hydro::grmhd_tags&lt;DataType&gt;,
+<span class="lineNum">     342 </span>            :                                                Tag&gt;&gt; = nullptr&gt;
+<span class="lineNum">     343 </span><span class="lineNoCov">          0 :   tuples::TaggedTuple&lt;Tag&gt; variables(const tnsr::I&lt;DataType, 3&gt;&amp; /*x*/,</span>
+<span class="lineNum">     344 </span>            :                                      tmpl::list&lt;Tag&gt; /*meta*/,
+<span class="lineNum">     345 </span>            :                                      IntermediateVars&lt;DataType&gt;&amp; vars) const
+<span class="lineNum">     346 </span>            :       noexcept {
+<span class="lineNum">     347 </span>            :     return {std::move(get&lt;Tag&gt;(vars.kerr_schild_soln))};
+<span class="lineNum">     348 </span>            :   }
+<span class="lineNum">     349 </span>            : 
+<span class="lineNum">     350 </span>            :   template &lt;typename DataType&gt;
+<span class="lineNum">     351 </span>            :   struct IntermediateVars {
+<span class="lineNum">     352 </span><span class="lineNoCov">          0 :     IntermediateVars(</span>
+<span class="lineNum">     353 </span>            :         double rest_mass_density_at_infinity,
+<span class="lineNum">     354 </span>            :         double in_mass_accretion_rate_over_four_pi, double in_mass,
+<span class="lineNum">     355 </span>            :         double in_polytropic_constant, double in_polytropic_exponent,
+<span class="lineNum">     356 </span>            :         double in_bernoulli_constant_squared_minus_one, double in_sonic_radius,
+<span class="lineNum">     357 </span>            :         double in_sonic_density, const tnsr::I&lt;DataType, 3&gt;&amp; x,
+<span class="lineNum">     358 </span>            :         bool need_spacetime,
+<span class="lineNum">     359 </span>            :         const gr::Solutions::KerrSchild&amp; background_spacetime) noexcept;
+<span class="lineNum">     360 </span><span class="lineNoCov">          0 :     DataType radius{};</span>
+<span class="lineNum">     361 </span><span class="lineNoCov">          0 :     DataType rest_mass_density{};</span>
+<span class="lineNum">     362 </span><span class="lineNoCov">          0 :     double mass_accretion_rate_over_four_pi{};</span>
+<span class="lineNum">     363 </span><span class="lineNoCov">          0 :     double mass{};</span>
+<span class="lineNum">     364 </span><span class="lineNoCov">          0 :     double polytropic_constant{};</span>
+<span class="lineNum">     365 </span><span class="lineNoCov">          0 :     double polytropic_exponent{};</span>
+<span class="lineNum">     366 </span><span class="lineNoCov">          0 :     double bernoulli_constant_squared_minus_one{};</span>
+<span class="lineNum">     367 </span><span class="lineNoCov">          0 :     double sonic_radius{};</span>
+<span class="lineNum">     368 </span><span class="lineNoCov">          0 :     double sonic_density{};</span>
+<span class="lineNum">     369 </span><span class="lineNoCov">          0 :     double bernoulli_root_function(double rest_mass_density_guess,</span>
+<span class="lineNum">     370 </span>            :                                    double current_radius) const noexcept;
+<span class="lineNum">     371 </span>            :     tuples::tagged_tuple_from_typelist&lt;
+<span class="lineNum">     372 </span>            :         typename gr::Solutions::KerrSchild::tags&lt;DataType&gt;&gt;
+<span class="lineNum">     373 </span><span class="lineNoCov">          0 :         kerr_schild_soln{};</span>
+<span class="lineNum">     374 </span>            :   };
+<span class="lineNum">     375 </span>            : 
+<span class="lineNum">     376 </span><span class="lineNoCov">          0 :   Mass::type mass_ = std::numeric_limits&lt;double&gt;::signaling_NaN();</span>
+<span class="lineNum">     377 </span><span class="lineNoCov">          0 :   SonicRadius::type sonic_radius_ =</span>
+<span class="lineNum">     378 </span>            :       std::numeric_limits&lt;double&gt;::signaling_NaN();
+<span class="lineNum">     379 </span><span class="lineNoCov">          0 :   SonicDensity::type sonic_density_ =</span>
+<span class="lineNum">     380 </span>            :       std::numeric_limits&lt;double&gt;::signaling_NaN();
+<span class="lineNum">     381 </span><span class="lineNoCov">          0 :   PolytropicExponent::type polytropic_exponent_ =</span>
+<span class="lineNum">     382 </span>            :       std::numeric_limits&lt;double&gt;::signaling_NaN();
+<span class="lineNum">     383 </span><span class="lineNoCov">          0 :   MagFieldStrength::type mag_field_strength_ =</span>
+<span class="lineNum">     384 </span>            :       std::numeric_limits&lt;double&gt;::signaling_NaN();
+<span class="lineNum">     385 </span><span class="lineNoCov">          0 :   double sonic_fluid_speed_squared_ =</span>
+<span class="lineNum">     386 </span>            :       std::numeric_limits&lt;double&gt;::signaling_NaN();
+<span class="lineNum">     387 </span><span class="lineNoCov">          0 :   double sonic_sound_speed_squared_ =</span>
+<span class="lineNum">     388 </span>            :       std::numeric_limits&lt;double&gt;::signaling_NaN();
+<span class="lineNum">     389 </span><span class="lineNoCov">          0 :   double polytropic_constant_ = std::numeric_limits&lt;double&gt;::signaling_NaN();</span>
+<span class="lineNum">     390 </span><span class="lineNoCov">          0 :   double mass_accretion_rate_over_four_pi_ =</span>
+<span class="lineNum">     391 </span>            :       std::numeric_limits&lt;double&gt;::signaling_NaN();
+<span class="lineNum">     392 </span><span class="lineNoCov">          0 :   double bernoulli_constant_squared_minus_one_ =</span>
+<span class="lineNum">     393 </span>            :       std::numeric_limits&lt;double&gt;::signaling_NaN();
+<span class="lineNum">     394 </span><span class="lineNoCov">          0 :   double rest_mass_density_at_infinity_ =</span>
+<span class="lineNum">     395 </span>            :       std::numeric_limits&lt;double&gt;::signaling_NaN();
+<span class="lineNum">     396 </span><span class="lineNoCov">          0 :   EquationsOfState::PolytropicFluid&lt;true&gt; equation_of_state_{};</span>
+<span class="lineNum">     397 </span><span class="lineNoCov">          0 :   gr::Solutions::KerrSchild background_spacetime_{};</span>
+<span class="lineNum">     398 </span>            : };
+<span class="lineNum">     399 </span>            : 
+<span class="lineNum">     400 </span><span class="lineNoCov">          0 : bool operator!=(const BondiMichel&amp; lhs, const BondiMichel&amp; rhs) noexcept;</span>
+<span class="lineNum">     401 </span>            : 
+<span class="lineNum">     402 </span>            : }  // namespace Solutions
+<span class="lineNum">     403 </span>            : }  // namespace grmhd
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

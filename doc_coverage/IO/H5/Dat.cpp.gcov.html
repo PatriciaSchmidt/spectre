@@ -1,0 +1,366 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - IO/H5/Dat.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">IO/H5</a> - Dat.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;IO/H5/Dat.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;algorithm&gt;
+<span class="lineNum">       7 </span>            : #include &lt;hdf5.h&gt;
+<span class="lineNum">       8 </span>            : #include &lt;iosfwd&gt;
+<span class="lineNum">       9 </span>            : #include &lt;memory&gt;
+<span class="lineNum">      10 </span>            : #include &lt;ostream&gt;
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : #include &quot;DataStructures/Matrix.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;ErrorHandling/Error.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;IO/H5/CheckH5.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;IO/H5/Header.hpp&quot;
+<span class="lineNum">      16 </span>            : #include &quot;IO/H5/Helpers.hpp&quot;
+<span class="lineNum">      17 </span>            : #include &quot;IO/H5/Type.hpp&quot;
+<span class="lineNum">      18 </span>            : #include &quot;IO/H5/Version.hpp&quot;
+<span class="lineNum">      19 </span>            : #include &quot;IO/H5/Wrappers.hpp&quot;
+<span class="lineNum">      20 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      21 </span>            : #include &quot;Utilities/StdHelpers.hpp&quot;
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : // IWYU pragma: no_include &quot;DataStructures/Index.hpp&quot;
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span><span class="lineNoCov">          0 : namespace {</span>
+<span class="lineNum">      26 </span>            : /*!
+<span class="lineNum">      27 </span>            :  * Given a vector of contiguous data and an array giving the dimensions of the
+<span class="lineNum">      28 </span>            :  * matrix returns a `vector&lt;vector&lt;T&gt;&gt;` representing the matrix.
+<span class="lineNum">      29 </span>            :  */
+<span class="lineNum">      30 </span>            : Matrix vector_to_matrix(const std::vector&lt;double&gt;&amp; raw_data,
+<span class="lineNum">      31 </span>            :                         const std::array&lt;hsize_t, 2&gt;&amp; size) {
+<span class="lineNum">      32 </span>            :   Matrix temp(size[0], size[1]);
+<span class="lineNum">      33 </span>            :   for (size_t i = 0; i &lt; size[0]; ++i) {
+<span class="lineNum">      34 </span>            :     for (size_t j = 0; j &lt; size[1]; ++j) {
+<span class="lineNum">      35 </span>            :       temp(i, j) = raw_data[j + i * size[1]];
+<span class="lineNum">      36 </span>            :     }
+<span class="lineNum">      37 </span>            :   }
+<span class="lineNum">      38 </span>            :   return temp;
+<span class="lineNum">      39 </span>            : }
+<span class="lineNum">      40 </span>            : }  // namespace
+<span class="lineNum">      41 </span>            : 
+<span class="lineNum">      42 </span>            : namespace h5 {
+<span class="lineNum">      43 </span>            : /// \cond HIDDEN_SYMBOLS
+<span class="lineNum">      44 </span>            : Dat::Dat(const bool exists, detail::OpenGroup&amp;&amp; group, const hid_t location,
+<span class="lineNum">      45 </span>            :          const std::string&amp; name, std::vector&lt;std::string&gt; legend,
+<span class="lineNum">      46 </span>            :          const uint32_t version)
+<span class="lineNum">      47 </span>            :     : group_(std::move(group)),
+<span class="lineNum">      48 </span>            :       name_(extension() == name.substr(name.size() - extension().size())
+<span class="lineNum">      49 </span>            :                 ? name
+<span class="lineNum">      50 </span>            :                 : name + extension()),
+<span class="lineNum">      51 </span>            :       version_(version),
+<span class="lineNum">      52 </span>            :       legend_(std::move(legend)),
+<span class="lineNum">      53 </span>            :       size_{{0, legend_.size()}} {
+<span class="lineNum">      54 </span>            :   if (exists) {
+<span class="lineNum">      55 </span>            :     dataset_id_ = H5Dopen2(location, name_.c_str(), h5::h5p_default());
+<span class="lineNum">      56 </span>            :     CHECK_H5(dataset_id_, &quot;Failed to open dataset&quot;);
+<span class="lineNum">      57 </span>            :     {
+<span class="lineNum">      58 </span>            :       // We treat this as an internal version for now. We'll need to deal with
+<span class="lineNum">      59 </span>            :       // proper versioning later.
+<span class="lineNum">      60 </span>            :       const Version open_version(true, detail::OpenGroup{}, dataset_id_,
+<span class="lineNum">      61 </span>            :                                  &quot;version&quot;);
+<span class="lineNum">      62 </span>            :       version_ = open_version.get_version();
+<span class="lineNum">      63 </span>            :     }
+<span class="lineNum">      64 </span>            :     {
+<span class="lineNum">      65 </span>            :       const Header header(true, detail::OpenGroup{}, dataset_id_, &quot;header&quot;);
+<span class="lineNum">      66 </span>            :       header_ = header.get_header();
+<span class="lineNum">      67 </span>            :     }
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span>            :     hid_t space_id = H5Dget_space(dataset_id_);
+<span class="lineNum">      70 </span>            :     std::array&lt;hsize_t, 2&gt; maxdims{};
+<span class="lineNum">      71 </span>            :     if (2 !=
+<span class="lineNum">      72 </span>            :         H5Sget_simple_extent_dims(space_id, size_.data(), maxdims.data())) {
+<span class="lineNum">      73 </span>            :       ERROR(&quot;Invalid number of dimensions in file on disk.&quot;);  // LCOV_EXCL_LINE
+<span class="lineNum">      74 </span>            :     }
+<span class="lineNum">      75 </span>            :     CHECK_H5(H5Sclose(space_id), &quot;Failed to close dataspace&quot;);
+<span class="lineNum">      76 </span>            :     legend_ = read_rank1_attribute&lt;std::string&gt;(dataset_id_, &quot;Legend&quot;s);
+<span class="lineNum">      77 </span>            :     size_[1] = legend_.size();
+<span class="lineNum">      78 </span>            :   } else {  // file does not exist
+<span class="lineNum">      79 </span>            :     dataset_id_ = h5::detail::create_extensible_dataset(
+<span class="lineNum">      80 </span>            :         location, name_, size_, std::array&lt;hsize_t, 2&gt;{{4, legend_.size()}},
+<span class="lineNum">      81 </span>            :         {{h5s_unlimited(), legend_.size()}});
+<span class="lineNum">      82 </span>            :     CHECK_H5(dataset_id_, &quot;Failed to create dataset&quot;);
+<span class="lineNum">      83 </span>            : 
+<span class="lineNum">      84 </span>            :     {
+<span class="lineNum">      85 </span>            :       Version open_version(false, detail::OpenGroup{}, dataset_id_, &quot;version&quot;,
+<span class="lineNum">      86 </span>            :                            version_);
+<span class="lineNum">      87 </span>            :     }
+<span class="lineNum">      88 </span>            :     {
+<span class="lineNum">      89 </span>            :       Header header(false, detail::OpenGroup{}, dataset_id_, &quot;header&quot;);
+<span class="lineNum">      90 </span>            :       header_ = header.get_header();
+<span class="lineNum">      91 </span>            :     }
+<span class="lineNum">      92 </span>            :     // Capitalized for compatibility with SpEC output
+<span class="lineNum">      93 </span>            :     write_to_attribute(dataset_id_, &quot;Legend&quot;s, legend_);
+<span class="lineNum">      94 </span>            :   }
+<span class="lineNum">      95 </span>            : }
+<span class="lineNum">      96 </span>            : 
+<span class="lineNum">      97 </span>            : Dat::~Dat() { CHECK_H5(H5Dclose(dataset_id_), &quot;Failed to close dataset&quot;); }
+<span class="lineNum">      98 </span>            : /// \endcond HIDDEN_SYMBOLS
+<span class="lineNum">      99 </span>            : 
+<span class="lineNum">     100 </span>            : void Dat::append_impl(const hsize_t number_of_rows,
+<span class="lineNum">     101 </span>            :                       const std::vector&lt;double&gt;&amp; data) {
+<span class="lineNum">     102 </span>            :   {
+<span class="lineNum">     103 </span>            :     std::array&lt;hsize_t, 2&gt; read_size{}, read_max_size{};
+<span class="lineNum">     104 </span>            :     const hid_t dataspace_id = H5Dget_space(dataset_id_);
+<span class="lineNum">     105 </span>            :     CHECK_H5(dataspace_id, &quot;Failed to get dataspace for appending&quot;);
+<span class="lineNum">     106 </span>            :     if (2 != H5Sget_simple_extent_dims(dataspace_id, read_size.data(),
+<span class="lineNum">     107 </span>            :                                        read_max_size.data())) {
+<span class="lineNum">     108 </span>            :       ERROR(&quot;Incorrect rank of file on disk&quot;);  // LCOV_EXCL_LINE
+<span class="lineNum">     109 </span>            :     }
+<span class="lineNum">     110 </span>            :     CHECK_H5(H5Sclose(dataspace_id), &quot;Failed to close dataspace&quot;);
+<span class="lineNum">     111 </span>            :     if (read_size != size_) {
+<span class="lineNum">     112 </span>            :       using ::operator&lt;&lt;;
+<span class="lineNum">     113 </span>            :       ERROR(&quot;Mismatch in the size of the read dataset. Read &quot;
+<span class="lineNum">     114 </span>            :             &lt;&lt; read_size &lt;&lt; &quot; but have stored &quot; &lt;&lt; size_
+<span class="lineNum">     115 </span>            :             &lt;&lt; &quot;. This means that another thread or process is writing data at &quot;
+<span class="lineNum">     116 </span>            :                &quot;the same time it is being written by this process.&quot;);
+<span class="lineNum">     117 </span>            :     }
+<span class="lineNum">     118 </span>            :   }
+<span class="lineNum">     119 </span>            : 
+<span class="lineNum">     120 </span>            :   std::array&lt;hsize_t, 2&gt; new_size{{size_[0] + number_of_rows, size_[1]}};
+<span class="lineNum">     121 </span>            :   CHECK_H5(H5Dset_extent(dataset_id_, new_size.data()),
+<span class="lineNum">     122 </span>            :            &quot;Failed to append to the file '&quot; &lt;&lt; name_ &lt;&lt; &quot;'&quot;);
+<span class="lineNum">     123 </span>            :   const hid_t dataspace_id = H5Dget_space(dataset_id_);
+<span class="lineNum">     124 </span>            :   CHECK_H5(dataspace_id, &quot;Failed to get dataspace for appending&quot;);
+<span class="lineNum">     125 </span>            :   CHECK_H5(H5Sselect_all(dataspace_id),
+<span class="lineNum">     126 </span>            :            &quot;Failed to select dataspace for appending&quot;);
+<span class="lineNum">     127 </span>            :   CHECK_H5(H5Sselect_hyperslab(dataspace_id, H5S_SELECT_NOTB,
+<span class="lineNum">     128 </span>            :                                std::array&lt;hsize_t, 2&gt;{{0, 0}}.data(), nullptr,
+<span class="lineNum">     129 </span>            :                                size_.data(), nullptr),
+<span class="lineNum">     130 </span>            :            &quot;Failed to select the new dataspace subset where the appended &quot;
+<span class="lineNum">     131 </span>            :            &quot;data would have been written.&quot;);
+<span class="lineNum">     132 </span>            :   const std::array&lt;hsize_t, 2&gt; added_size{{number_of_rows, size_[1]}};
+<span class="lineNum">     133 </span>            :   const hid_t memspace_id =
+<span class="lineNum">     134 </span>            :       H5Screate_simple(2, added_size.data(), added_size.data());
+<span class="lineNum">     135 </span>            :   CHECK_H5(memspace_id, &quot;Failed to create new simple memspace while appending&quot;);
+<span class="lineNum">     136 </span>            :   CHECK_H5(H5Dwrite(dataset_id_, h5_type&lt;double&gt;(), memspace_id, dataspace_id,
+<span class="lineNum">     137 </span>            :                     h5::h5p_default(), data.data()),
+<span class="lineNum">     138 </span>            :            &quot;Failed to append to dataset while writing&quot;);
+<span class="lineNum">     139 </span>            :   CHECK_H5(H5Sclose(memspace_id), &quot;Failed to close memspace after appending&quot;);
+<span class="lineNum">     140 </span>            :   CHECK_H5(H5Sclose(dataspace_id), &quot;Failed to close dataspace after appending&quot;);
+<span class="lineNum">     141 </span>            :   size_ = new_size;
+<span class="lineNum">     142 </span>            : }
+<span class="lineNum">     143 </span>            : 
+<span class="lineNum">     144 </span>            : void Dat::append(const std::vector&lt;double&gt;&amp; data) {
+<span class="lineNum">     145 </span>            :   if (data.size() != size_[1]) {
+<span class="lineNum">     146 </span>            :     ERROR(&quot;Cannot add columns to Dat files. Current number of columns is &quot;
+<span class="lineNum">     147 </span>            :           &lt;&lt; size_[1] &lt;&lt; &quot; but received &quot; &lt;&lt; data.size() &lt;&lt; &quot; entries.&quot;);
+<span class="lineNum">     148 </span>            :   }
+<span class="lineNum">     149 </span>            :   append_impl(1, data);
+<span class="lineNum">     150 </span>            : }
+<span class="lineNum">     151 </span>            : 
+<span class="lineNum">     152 </span>            : void Dat::append(const std::vector&lt;std::vector&lt;double&gt;&gt;&amp; data) {
+<span class="lineNum">     153 </span>            :   if (data.empty()) {
+<span class="lineNum">     154 </span>            :     return;
+<span class="lineNum">     155 </span>            :   }
+<span class="lineNum">     156 </span>            :   if (data[0].size() != size_[1]) {
+<span class="lineNum">     157 </span>            :     ERROR(&quot;Cannot add columns to Dat files. Current number of columns is &quot;
+<span class="lineNum">     158 </span>            :           &lt;&lt; size_[1] &lt;&lt; &quot; but received &quot; &lt;&lt; data[0].size() &lt;&lt; &quot; entries.&quot;);
+<span class="lineNum">     159 </span>            :   }
+<span class="lineNum">     160 </span>            :   const std::vector&lt;double&gt; contiguous_data =
+<span class="lineNum">     161 </span>            :       [](const std::vector&lt;std::vector&lt;double&gt;&gt;&amp; ldata) {
+<span class="lineNum">     162 </span>            :         std::vector&lt;double&gt; result(ldata.size() * ldata[0].size());
+<span class="lineNum">     163 </span>            :         for (size_t i = 0; i &lt; ldata.size(); ++i) {
+<span class="lineNum">     164 </span>            :           if (ldata[i].size() != ldata[0].size()) {
+<span class="lineNum">     165 </span>            :             ERROR(
+<span class="lineNum">     166 </span>            :                 &quot;Each member of the vector&lt;vector&lt;double&gt;&gt; must be of the same &quot;
+<span class="lineNum">     167 </span>            :                 &quot;size, ie the number of columns must be the same.&quot;);
+<span class="lineNum">     168 </span>            :           }
+<span class="lineNum">     169 </span>            :           result.insert(
+<span class="lineNum">     170 </span>            :               result.begin() + static_cast&lt;std::ptrdiff_t&gt;(i * ldata[i].size()),
+<span class="lineNum">     171 </span>            :               ldata[i].begin(), ldata[i].end());
+<span class="lineNum">     172 </span>            :         }
+<span class="lineNum">     173 </span>            :         return result;
+<span class="lineNum">     174 </span>            :       }(data);
+<span class="lineNum">     175 </span>            :   append_impl(data.size(), contiguous_data);
+<span class="lineNum">     176 </span>            : }
+<span class="lineNum">     177 </span>            : 
+<span class="lineNum">     178 </span>            : void Dat::append(const Matrix&amp; data) {
+<span class="lineNum">     179 </span>            :   if (0 == data.rows() * data.columns()) {
+<span class="lineNum">     180 </span>            :     return;
+<span class="lineNum">     181 </span>            :   }
+<span class="lineNum">     182 </span>            :   if (data.columns() != size_[1]) {
+<span class="lineNum">     183 </span>            :     ERROR(&quot;Cannot add columns to Dat files. Current number of columns is &quot;
+<span class="lineNum">     184 </span>            :           &lt;&lt; size_[1] &lt;&lt; &quot; but received &quot; &lt;&lt; data.columns() &lt;&lt; &quot; entries.&quot;);
+<span class="lineNum">     185 </span>            :   }
+<span class="lineNum">     186 </span>            :   // can't use begin() and end() because the ordering ends up wrong
+<span class="lineNum">     187 </span>            :   const std::vector&lt;double&gt; contiguous_data = [](const Matrix&amp; ldata) {
+<span class="lineNum">     188 </span>            :     std::vector&lt;double&gt; result(ldata.rows() * ldata.columns());
+<span class="lineNum">     189 </span>            :     for (size_t i = 0; i &lt; ldata.rows(); ++i) {
+<span class="lineNum">     190 </span>            :       for (size_t j = 0; j &lt; ldata.columns(); ++j) {
+<span class="lineNum">     191 </span>            :         result[j + i * ldata.columns()] = ldata(i, j);
+<span class="lineNum">     192 </span>            :       }
+<span class="lineNum">     193 </span>            :     }
+<span class="lineNum">     194 </span>            :     return result;
+<span class="lineNum">     195 </span>            :   }(data);
+<span class="lineNum">     196 </span>            :   append_impl(data.rows(), contiguous_data);
+<span class="lineNum">     197 </span>            : }
+<span class="lineNum">     198 </span>            : 
+<span class="lineNum">     199 </span>            : Matrix Dat::get_data() const {
+<span class="lineNum">     200 </span>            :   const hid_t dataspace_id = H5Dget_space(dataset_id_);
+<span class="lineNum">     201 </span>            :   CHECK_H5(dataspace_id, &quot;Failed to get dataspace&quot;);
+<span class="lineNum">     202 </span>            : 
+<span class="lineNum">     203 </span>            :   std::array&lt;hsize_t, 2&gt; size{}, max_size{};
+<span class="lineNum">     204 </span>            :   if (2 !=
+<span class="lineNum">     205 </span>            :       H5Sget_simple_extent_dims(dataspace_id, size.data(), max_size.data())) {
+<span class="lineNum">     206 </span>            :     ERROR(&quot;Incorrect dimension in get_data()&quot;);  // LCOV_EXCL_LINE
+<span class="lineNum">     207 </span>            :   }
+<span class="lineNum">     208 </span>            :   CHECK_H5(H5Sclose(dataspace_id), &quot;Failed to close dataspace&quot;);
+<span class="lineNum">     209 </span>            : 
+<span class="lineNum">     210 </span>            :   if (size != size_) {
+<span class="lineNum">     211 </span>            :     using ::operator&lt;&lt;;
+<span class="lineNum">     212 </span>            :     ERROR(&quot;Mismatch in the size of the read dataset. Read &quot;
+<span class="lineNum">     213 </span>            :           &lt;&lt; size &lt;&lt; &quot; but have stored &quot; &lt;&lt; size_
+<span class="lineNum">     214 </span>            :           &lt;&lt; &quot;. This means that another thread or process is writing data at &quot;
+<span class="lineNum">     215 </span>            :              &quot;the same time it is being read.&quot;);
+<span class="lineNum">     216 </span>            :   }
+<span class="lineNum">     217 </span>            : 
+<span class="lineNum">     218 </span>            :   std::vector&lt;double&gt; temp(size[0] * size[1]);
+<span class="lineNum">     219 </span>            :   if (0 != size[0] * size[1]) {
+<span class="lineNum">     220 </span>            :     CHECK_H5(H5Dread(dataset_id_, h5_type&lt;double&gt;(), h5::h5s_all(),
+<span class="lineNum">     221 </span>            :                      h5::h5s_all(), h5::h5p_default(), temp.data()),
+<span class="lineNum">     222 </span>            :              &quot;Failed to read data&quot;);
+<span class="lineNum">     223 </span>            :   }
+<span class="lineNum">     224 </span>            :   return vector_to_matrix(temp, size);
+<span class="lineNum">     225 </span>            : }
+<span class="lineNum">     226 </span>            : 
+<span class="lineNum">     227 </span>            : Matrix Dat::get_data_subset(const std::vector&lt;size_t&gt;&amp; these_columns,
+<span class="lineNum">     228 </span>            :                             const size_t first_row,
+<span class="lineNum">     229 </span>            :                             const size_t num_rows) const {
+<span class="lineNum">     230 </span>            :   Expects(first_row + num_rows &lt;= size_[0]);
+<span class="lineNum">     231 </span>            :   Expects(std::all_of(these_columns.begin(),
+<span class="lineNum">     232 </span>            :                       these_columns.end(), [size = size_](const auto&amp; column) {
+<span class="lineNum">     233 </span>            :                         return column &lt; size[1];
+<span class="lineNum">     234 </span>            :                       }));
+<span class="lineNum">     235 </span>            : 
+<span class="lineNum">     236 </span>            :   const auto num_cols = these_columns.size();
+<span class="lineNum">     237 </span>            :   if (0 == num_cols * num_rows) {
+<span class="lineNum">     238 </span>            :     return Matrix(num_rows, num_cols, 0.0);
+<span class="lineNum">     239 </span>            :   }
+<span class="lineNum">     240 </span>            : 
+<span class="lineNum">     241 </span>            :   const hid_t dataspace_id = H5Dget_space(dataset_id_);
+<span class="lineNum">     242 </span>            :   CHECK_H5(dataspace_id, &quot;Failed to get dataspace&quot;);
+<span class="lineNum">     243 </span>            :   std::array&lt;hsize_t, 2&gt; size{}, max_size{};
+<span class="lineNum">     244 </span>            :   if (2 !=
+<span class="lineNum">     245 </span>            :       H5Sget_simple_extent_dims(dataspace_id, size.data(), max_size.data())) {
+<span class="lineNum">     246 </span>            :     ERROR(&quot;Incorrect dimension in get_data()&quot;);  // LCOV_EXCL_LINE
+<span class="lineNum">     247 </span>            :   }
+<span class="lineNum">     248 </span>            :   if (size != size_) {
+<span class="lineNum">     249 </span>            :     using ::operator&lt;&lt;;
+<span class="lineNum">     250 </span>            :     CHECK_H5(H5Sclose(dataspace_id), &quot;Failed to close dataspace&quot;);
+<span class="lineNum">     251 </span>            :     ERROR(&quot;Mismatch in the size of the read dataset. Read &quot;
+<span class="lineNum">     252 </span>            :           &lt;&lt; size &lt;&lt; &quot; but have stored &quot; &lt;&lt; size_
+<span class="lineNum">     253 </span>            :           &lt;&lt; &quot;. This means that another thread or process is writing data at &quot;
+<span class="lineNum">     254 </span>            :              &quot;the same time it is being read.&quot;);
+<span class="lineNum">     255 </span>            :   }
+<span class="lineNum">     256 </span>            : 
+<span class="lineNum">     257 </span>            :   CHECK_H5(H5Sselect_none(dataspace_id),
+<span class="lineNum">     258 </span>            :            &quot;Failed to select none of the dataspace&quot;);
+<span class="lineNum">     259 </span>            :   for (auto&amp; column : these_columns) {
+<span class="lineNum">     260 </span>            :     const std::array&lt;hsize_t, 2&gt; start{
+<span class="lineNum">     261 </span>            :         {first_row, static_cast&lt;hsize_t&gt;(column)}};
+<span class="lineNum">     262 </span>            :     // offset between blocks (have only one anyway)
+<span class="lineNum">     263 </span>            :     const std::array&lt;hsize_t, 2&gt; stride{{1, 1}};
+<span class="lineNum">     264 </span>            :     const std::array&lt;hsize_t, 2&gt; count{{1, 1}};
+<span class="lineNum">     265 </span>            :     const std::array&lt;hsize_t, 2&gt; block{{num_rows, 1}};
+<span class="lineNum">     266 </span>            : 
+<span class="lineNum">     267 </span>            :     CHECK_H5(H5Sselect_hyperslab(dataspace_id, H5S_SELECT_OR, start.data(),
+<span class="lineNum">     268 </span>            :                                  stride.data(), count.data(), block.data()),
+<span class="lineNum">     269 </span>            :              &quot;Failed to select column &quot; &lt;&lt; column);
+<span class="lineNum">     270 </span>            :   }
+<span class="lineNum">     271 </span>            : 
+<span class="lineNum">     272 </span>            :   std::vector&lt;double&gt; raw_data(num_rows * num_cols);
+<span class="lineNum">     273 </span>            :   const std::array&lt;hsize_t, 2&gt; memspace_size{{num_rows, num_cols}};
+<span class="lineNum">     274 </span>            :   const hid_t memspace_id =
+<span class="lineNum">     275 </span>            :       H5Screate_simple(2, memspace_size.data(), memspace_size.data());
+<span class="lineNum">     276 </span>            :   CHECK_H5(memspace_id, &quot;Failed to create memory space&quot;);
+<span class="lineNum">     277 </span>            :   CHECK_H5(H5Dread(dataset_id_, h5_type&lt;double&gt;(), memspace_id, dataspace_id,
+<span class="lineNum">     278 </span>            :                    h5::h5p_default(), raw_data.data()),
+<span class="lineNum">     279 </span>            :            &quot;Failed to read data subset&quot;);
+<span class="lineNum">     280 </span>            : 
+<span class="lineNum">     281 </span>            :   CHECK_H5(H5Sclose(memspace_id), &quot;Failed to close memory space&quot;);
+<span class="lineNum">     282 </span>            :   CHECK_H5(H5Sclose(dataspace_id), &quot;Failed to close dataspace&quot;);
+<span class="lineNum">     283 </span>            :   return vector_to_matrix(raw_data,
+<span class="lineNum">     284 </span>            :                           std::array&lt;hsize_t, 2&gt;{{num_rows, num_cols}});
+<span class="lineNum">     285 </span>            : }
+<span class="lineNum">     286 </span>            : }  // namespace h5
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

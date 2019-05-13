@@ -1,0 +1,190 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - NumericalAlgorithms/LinearOperators/DefiniteIntegral.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">NumericalAlgorithms/LinearOperators</a> - DefiniteIntegral.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;NumericalAlgorithms/LinearOperators/DefiniteIntegral.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;array&gt;  // Used for mesh.slices
+<span class="lineNum">       7 </span>            : #include &lt;ostream&gt;
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : #include &quot;DataStructures/DataVector.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;Domain/Mesh.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;ErrorHandling/Assert.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;NumericalAlgorithms/Spectral/Spectral.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;Utilities/Blas.hpp&quot;
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : /// \cond
+<span class="lineNum">      16 </span>            : // The 2D and 3D definite integrals have been optimized and are up to 2x faster
+<span class="lineNum">      17 </span>            : // than the previous implementation. The main differences are
+<span class="lineNum">      18 </span>            : //
+<span class="lineNum">      19 </span>            : // - No memory allocations are required
+<span class="lineNum">      20 </span>            : // - Manual loop unrolling (this will be somewhat hardware specific on the
+<span class="lineNum">      21 </span>            : //   ~decade time scale).
+<span class="lineNum">      22 </span>            : // - Pointers to avoid any potential overhead from indexing
+<span class="lineNum">      23 </span>            : //
+<span class="lineNum">      24 </span>            : // Note: The inner loop is over x because the memory layout used by SpECTRE is
+<span class="lineNum">      25 </span>            : //       x-varies-fastest.
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span>            : template &lt;&gt;
+<span class="lineNum">      28 </span>            : double definite_integral&lt;1&gt;(const DataVector&amp; integrand,
+<span class="lineNum">      29 </span>            :                             const Mesh&lt;1&gt;&amp; mesh) noexcept {
+<span class="lineNum">      30 </span>            :   const size_t num_grid_points = mesh.number_of_grid_points();
+<span class="lineNum">      31 </span>            :   ASSERT(integrand.size() == num_grid_points,
+<span class="lineNum">      32 </span>            :          &quot;num_grid_points = &quot; &lt;&lt; num_grid_points
+<span class="lineNum">      33 </span>            :                               &lt;&lt; &quot;, integrand size = &quot; &lt;&lt; integrand.size());
+<span class="lineNum">      34 </span>            :   const DataVector&amp; weights = Spectral::quadrature_weights(mesh);
+<span class="lineNum">      35 </span>            :   return ddot_(num_grid_points, weights.data(), 1, integrand.data(), 1);
+<span class="lineNum">      36 </span>            : }
+<span class="lineNum">      37 </span>            : 
+<span class="lineNum">      38 </span>            : template &lt;&gt;
+<span class="lineNum">      39 </span>            : double definite_integral&lt;2&gt;(const DataVector&amp; integrand,
+<span class="lineNum">      40 </span>            :                             const Mesh&lt;2&gt;&amp; mesh) noexcept {
+<span class="lineNum">      41 </span>            :   ASSERT(integrand.size() == mesh.number_of_grid_points(),
+<span class="lineNum">      42 </span>            :          &quot;num_grid_points = &quot; &lt;&lt; mesh.number_of_grid_points()
+<span class="lineNum">      43 </span>            :                               &lt;&lt; &quot;, integrand size = &quot; &lt;&lt; integrand.size());
+<span class="lineNum">      44 </span>            :   const auto sliced_meshes = mesh.slices();
+<span class="lineNum">      45 </span>            :   const size_t x_size = sliced_meshes[0].number_of_grid_points();
+<span class="lineNum">      46 </span>            :   const size_t x_last_unrolled = x_size - x_size % 2;
+<span class="lineNum">      47 </span>            :   const size_t y_size = sliced_meshes[1].number_of_grid_points();
+<span class="lineNum">      48 </span>            :   const double* const w_x =
+<span class="lineNum">      49 </span>            :       Spectral::quadrature_weights(sliced_meshes[0]).data();
+<span class="lineNum">      50 </span>            :   const double* const w_y =
+<span class="lineNum">      51 </span>            :       Spectral::quadrature_weights(sliced_meshes[1]).data();
+<span class="lineNum">      52 </span>            : 
+<span class="lineNum">      53 </span>            :   double result = 0.0;
+<span class="lineNum">      54 </span>            :   for (size_t j = 0; j &lt; y_size; ++j) {
+<span class="lineNum">      55 </span>            :     const size_t offset = j * x_size;
+<span class="lineNum">      56 </span>            :     for (size_t i = 0; i &lt; x_last_unrolled; i += 2) {
+<span class="lineNum">      57 </span>            :       // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+<span class="lineNum">      58 </span>            :       result += w_y[j] * w_x[i] * integrand[i + offset] +
+<span class="lineNum">      59 </span>            :                 w_y[j] * w_x[i + 1] * integrand[i + 1 + offset];  // NOLINT
+<span class="lineNum">      60 </span>            :     }
+<span class="lineNum">      61 </span>            :     for (size_t i = x_last_unrolled; i &lt; x_size; ++i) {
+<span class="lineNum">      62 </span>            :       // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+<span class="lineNum">      63 </span>            :       result += w_y[j] * w_x[i] * integrand[i + offset];
+<span class="lineNum">      64 </span>            :     }
+<span class="lineNum">      65 </span>            :   }
+<span class="lineNum">      66 </span>            :   return result;
+<span class="lineNum">      67 </span>            : }
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span>            : template &lt;&gt;
+<span class="lineNum">      70 </span>            : double definite_integral&lt;3&gt;(const DataVector&amp; integrand,
+<span class="lineNum">      71 </span>            :                             const Mesh&lt;3&gt;&amp; mesh) noexcept {
+<span class="lineNum">      72 </span>            :   ASSERT(integrand.size() == mesh.number_of_grid_points(),
+<span class="lineNum">      73 </span>            :          &quot;num_grid_points = &quot; &lt;&lt; mesh.number_of_grid_points()
+<span class="lineNum">      74 </span>            :                               &lt;&lt; &quot;, integrand size = &quot; &lt;&lt; integrand.size());
+<span class="lineNum">      75 </span>            :   const auto sliced_meshes = mesh.slices();
+<span class="lineNum">      76 </span>            :   const size_t x_size = sliced_meshes[0].number_of_grid_points();
+<span class="lineNum">      77 </span>            :   const size_t x_last_unrolled = x_size - x_size % 2;
+<span class="lineNum">      78 </span>            :   const size_t y_size = sliced_meshes[1].number_of_grid_points();
+<span class="lineNum">      79 </span>            :   const size_t z_size = sliced_meshes[2].number_of_grid_points();
+<span class="lineNum">      80 </span>            :   const double* const w_x =
+<span class="lineNum">      81 </span>            :       Spectral::quadrature_weights(sliced_meshes[0]).data();
+<span class="lineNum">      82 </span>            :   const double* const w_y =
+<span class="lineNum">      83 </span>            :       Spectral::quadrature_weights(sliced_meshes[1]).data();
+<span class="lineNum">      84 </span>            :   const double* const w_z =
+<span class="lineNum">      85 </span>            :       Spectral::quadrature_weights(sliced_meshes[2]).data();
+<span class="lineNum">      86 </span>            : 
+<span class="lineNum">      87 </span>            :   double result = 0.0;
+<span class="lineNum">      88 </span>            :   for (size_t k = 0; k &lt; z_size; ++k) {
+<span class="lineNum">      89 </span>            :     for (size_t j = 0; j &lt; y_size; ++j) {
+<span class="lineNum">      90 </span>            :       // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+<span class="lineNum">      91 </span>            :       const double prod = w_z[k] * w_y[j];
+<span class="lineNum">      92 </span>            :       const size_t offset = x_size * (j + y_size * k);
+<span class="lineNum">      93 </span>            :       // Unrolling at 2 gives better performance on AVX machines (the most
+<span class="lineNum">      94 </span>            :       // common in 2018). The stride will probably need to be updated as
+<span class="lineNum">      95 </span>            :       // hardware changes. Note: using a single loop is ~15% faster when
+<span class="lineNum">      96 </span>            :       // x_size == 3, and both loop styles are comparable for x_size == 2.
+<span class="lineNum">      97 </span>            :       for (size_t i = 0; i &lt; x_last_unrolled; i += 2) {
+<span class="lineNum">      98 </span>            :         // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+<span class="lineNum">      99 </span>            :         result += prod * w_x[i] * integrand[i + offset] +
+<span class="lineNum">     100 </span>            :                   prod * w_x[i + 1] * integrand[i + 1 + offset];  // NOLINT
+<span class="lineNum">     101 </span>            :       }
+<span class="lineNum">     102 </span>            :       for (size_t i = x_last_unrolled; i &lt; x_size; ++i) {
+<span class="lineNum">     103 </span>            :         // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+<span class="lineNum">     104 </span>            :         result += prod * w_x[i] * integrand[i + offset];
+<span class="lineNum">     105 </span>            :       }
+<span class="lineNum">     106 </span>            :     }
+<span class="lineNum">     107 </span>            :   }
+<span class="lineNum">     108 </span>            :   return result;
+<span class="lineNum">     109 </span>            : }
+<span class="lineNum">     110 </span>            : /// \endcond
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

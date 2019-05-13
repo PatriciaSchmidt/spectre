@@ -1,0 +1,197 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - /work/spectre/docs/DevGuide/OptionParsing.md</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">work/spectre/docs/DevGuide</a> - OptionParsing.md</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : \cond NEVER</span>
+<span class="lineNum">       2 </span>            : Distributed under the MIT License.
+<span class="lineNum">       3 </span>            : See LICENSE.txt for details.
+<span class="lineNum">       4 </span>            : \endcond
+<span class="lineNum">       5 </span>            : # Option Parsing {#dev_guide_option_parsing}
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            : SpECTRE can read YAML configuration files at runtime to set parameters
+<span class="lineNum">       8 </span>            : and choose between classes implementing an interface.  %Options are
+<span class="lineNum">       9 </span>            : parsed during code initialization and can be used to construct objects
+<span class="lineNum">      10 </span>            : placed in the Parallel::ConstGlobalCache and options passed to the
+<span class="lineNum">      11 </span>            : parallel components.  The types necessary to mark objects for parsing
+<span class="lineNum">      12 </span>            : are declared in `Options/Options.hpp`.
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            : ## General option format
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : An option is defined by an &quot;option tag&quot;, represented by a `struct`.  At minimum,
+<span class="lineNum">      17 </span>            : the struct must declare the type of the object to be parsed and provide a brief
+<span class="lineNum">      18 </span>            : description of the meaning.  The name of the option in the input file
+<span class="lineNum">      19 </span>            : defaults to the name of the struct (excluding any template parameters
+<span class="lineNum">      20 </span>            : and scope information), but can be overridden by providing a static
+<span class="lineNum">      21 </span>            : `name()` function.  Several other pieces of information, such as
+<span class="lineNum">      22 </span>            : defaults, limits and grouping, may be provided if desired.  This information is
+<span class="lineNum">      23 </span>            : all included in the generated help output.
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            : Examples:
+<span class="lineNum">      26 </span>            : \snippet Test_Options.cpp options_example_scalar_struct
+<span class="lineNum">      27 </span>            : \snippet Test_Options.cpp options_example_vector_struct
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            : The option type can be any type understood natively by yaml-cpp
+<span class="lineNum">      30 </span>            : (fundamentals, `std::string`, and `std::map`, `std::vector`,
+<span class="lineNum">      31 </span>            : `std::list`, `std::array`, and `std::pair` of parsable types) and
+<span class="lineNum">      32 </span>            : types SpECTRE adds support for.  SpECTRE adds `std::unordered_map`
+<span class="lineNum">      33 </span>            : (but only with ordered keys), and various classes marked as
+<span class="lineNum">      34 </span>            : constructible in their declarations.
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span>            : An option tag can be placed in a group by adding a `group` type alias to the
+<span class="lineNum">      37 </span>            : struct. The alias should refer to a type that, like option tags, defines a help
+<span class="lineNum">      38 </span>            : string and may override a static `name()` function.
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span>            : Example:
+<span class="lineNum">      41 </span>            : \snippet Test_Options.cpp options_example_group
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span>            : ## Constructible classes
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span>            : A class that defines `static constexpr OptionString help` and a
+<span class="lineNum">      46 </span>            : typelist of option structs `options` can be created by the option
+<span class="lineNum">      47 </span>            : parser.  When the class is requested, the option parser will parse
+<span class="lineNum">      48 </span>            : each of the options in the `options` list, and then supply them to the
+<span class="lineNum">      49 </span>            : constructor of the class.  (See [Custom parsing](#custom-parsing)
+<span class="lineNum">      50 </span>            : below for more general creation mechanisms.)
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            : Unlike option descriptions, which should be brief, the class help
+<span class="lineNum">      53 </span>            : string has no length limits and should give a description of the class
+<span class="lineNum">      54 </span>            : and any necessary discussion of its options beyond what can be
+<span class="lineNum">      55 </span>            : described in their individual help strings.
+<span class="lineNum">      56 </span>            : 
+<span class="lineNum">      57 </span>            : Creatable classes must be default constructible and move assignable.
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span>            : The `OptionContext` is an optional argument to the constructor that should be
+<span class="lineNum">      60 </span>            : used when the constructor checks for validity of the input. If the input is
+<span class="lineNum">      61 </span>            : invalid, `PARSE_ERROR` is used to propagate the error message back through the
+<span class="lineNum">      62 </span>            : options ensuring that the error message will have a full backtrace so it is easy
+<span class="lineNum">      63 </span>            : for the user to diagnose. Finally, after the `OptionContext` the constructor may
+<span class="lineNum">      64 </span>            : optionally take the Metavariables struct, which is effectively the compile time
+<span class="lineNum">      65 </span>            : input file, and the constructor can use the Metavariables for whatever it wants,
+<span class="lineNum">      66 </span>            : including additional option parsing.
+<span class="lineNum">      67 </span>            : 
+<span class="lineNum">      68 </span>            : Example:
+<span class="lineNum">      69 </span>            : \snippet Test_CustomTypeConstruction.cpp class_creation_example
+<span class="lineNum">      70 </span>            : 
+<span class="lineNum">      71 </span>            : ## Factory
+<span class="lineNum">      72 </span>            : 
+<span class="lineNum">      73 </span>            : The factory interface creates an object of type
+<span class="lineNum">      74 </span>            : `std::unique_ptr&lt;Base&gt;` containing a pointer to some class derived
+<span class="lineNum">      75 </span>            : from `Base`.  The base class must define a type alias listing the
+<span class="lineNum">      76 </span>            : derived classes that can be created.
+<span class="lineNum">      77 </span>            : \code{cpp}
+<span class="lineNum">      78 </span>            :  using creatable_classes = tmpl::list&lt;Derived1, ...&gt;;
+<span class="lineNum">      79 </span>            : \endcode
+<span class="lineNum">      80 </span>            : The requested derived class is created in the same way as an
+<span class="lineNum">      81 </span>            : explicitly constructible class.
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span>            : ## &lt;a name=&quot;custom-parsing&quot;&gt;&lt;/a&gt;Custom parsing
+<span class="lineNum">      84 </span>            : 
+<span class="lineNum">      85 </span>            : Occasionally, the requirements imposed by the default creation
+<span class="lineNum">      86 </span>            : mechanism are too stringent.  In these cases, the construction
+<span class="lineNum">      87 </span>            : algorithm can be overridden by providing a specialization of the
+<span class="lineNum">      88 </span>            : struct
+<span class="lineNum">      89 </span>            : \code{cpp}
+<span class="lineNum">      90 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      91 </span>            : struct create_from_yaml {
+<span class="lineNum">      92 </span>            :   template &lt;typename Metavariables&gt;
+<span class="lineNum">      93 </span>            :   static T create(const Option&amp; options);
+<span class="lineNum">      94 </span>            : };
+<span class="lineNum">      95 </span>            : \endcode
+<span class="lineNum">      96 </span>            : The create function can perform any operations required to construct
+<span class="lineNum">      97 </span>            : the object.
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span>            : Example of using a specialization to parse an enum:
+<span class="lineNum">     100 </span>            : \snippet Test_CustomTypeConstruction.cpp enum_creation_example
+<span class="lineNum">     101 </span>            : 
+<span class="lineNum">     102 </span>            : Note that in the case where the `create` function does *not* need to use the
+<span class="lineNum">     103 </span>            : `Metavariables` it is recommended that a general implementation forward to an
+<span class="lineNum">     104 </span>            : explicit instantiation with `void` as the `Metavariables` type. The reason for
+<span class="lineNum">     105 </span>            : using `void` specialization is to reduce compile time. Since we only need one
+<span class="lineNum">     106 </span>            : full implementation of the function independent of what type `Metavariables` is,
+<span class="lineNum">     107 </span>            : we should only parse and compile it once. By having a specialization on `void`
+<span class="lineNum">     108 </span>            : (or some other non-metavariables type like `NoSuchType`) we can handle the
+<span class="lineNum">     109 </span>            : metavariables-independent case efficiently. As a concrete example, the general
+<span class="lineNum">     110 </span>            : definition and forward declaration of the `void` specialization in the header
+<span class="lineNum">     111 </span>            : file would be:
+<span class="lineNum">     112 </span>            : 
+<span class="lineNum">     113 </span>            : \snippet Test_CustomTypeConstruction.cpp enum_void_creation_header_example
+<span class="lineNum">     114 </span>            : 
+<span class="lineNum">     115 </span>            : while in the `cpp` file the definition of the `void` specialization is:
+<span class="lineNum">     116 </span>            : 
+<span class="lineNum">     117 </span>            : \snippet Test_CustomTypeConstruction.cpp enum_void_creation_cpp_example
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

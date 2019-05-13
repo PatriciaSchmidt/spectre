@@ -1,0 +1,131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - PointwiseFunctions/Hydro/LorentzFactor.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">PointwiseFunctions/Hydro</a> - LorentzFactor.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;PointwiseFunctions/Hydro/LorentzFactor.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;cmath&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : #include &quot;DataStructures/Tensor/EagerMath/DotProduct.hpp&quot;
+<span class="lineNum">       9 </span>            : #include &quot;DataStructures/Tensor/Tensor.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;PointwiseFunctions/Hydro/Tags.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      11 </span>            : #include &quot;Utilities/GenerateInstantiations.hpp&quot;
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            : /// \cond
+<span class="lineNum">      14 </span>            : namespace hydro {
+<span class="lineNum">      15 </span>            : template &lt;typename DataType&gt;
+<span class="lineNum">      16 </span>            : Scalar&lt;DataType&gt; lorentz_factor(
+<span class="lineNum">      17 </span>            :     const Scalar&lt;DataType&gt;&amp; spatial_velocity_squared) noexcept {
+<span class="lineNum">      18 </span>            :   return Scalar&lt;DataType&gt;{1.0 / sqrt(1.0 - get(spatial_velocity_squared))};
+<span class="lineNum">      19 </span>            : }
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : template &lt;typename DataType, size_t Dim, typename Frame&gt;
+<span class="lineNum">      22 </span>            : Scalar&lt;DataType&gt; lorentz_factor(
+<span class="lineNum">      23 </span>            :     const tnsr::I&lt;DataType, Dim, Frame&gt;&amp; spatial_velocity,
+<span class="lineNum">      24 </span>            :     const tnsr::i&lt;DataType, Dim, Frame&gt;&amp; spatial_velocity_form) noexcept {
+<span class="lineNum">      25 </span>            :   return lorentz_factor(dot_product(spatial_velocity, spatial_velocity_form));
+<span class="lineNum">      26 </span>            : }
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            : #define DIM(data) BOOST_PP_TUPLE_ELEM(0, data)
+<span class="lineNum">      29 </span>            : #define DTYPE(data) BOOST_PP_TUPLE_ELEM(1, data)
+<span class="lineNum">      30 </span>            : #define FRAME(data) BOOST_PP_TUPLE_ELEM(2, data)
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span>            : #define INSTANTIATE(_, data)                                                \
+<span class="lineNum">      33 </span>            :   template Scalar&lt;DTYPE(data)&gt; lorentz_factor(                              \
+<span class="lineNum">      34 </span>            :       const tnsr::I&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp; spatial_velocity, \
+<span class="lineNum">      35 </span>            :       const tnsr::i&lt;DTYPE(data), DIM(data), FRAME(data)&gt;&amp;                   \
+<span class="lineNum">      36 </span>            :           spatial_velocity_form) noexcept;
+<span class="lineNum">      37 </span>            : 
+<span class="lineNum">      38 </span>            : GENERATE_INSTANTIATIONS(INSTANTIATE, (1, 2, 3), (double, DataVector),
+<span class="lineNum">      39 </span>            :                         (Frame::Grid, Frame::Inertial))
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            : template Scalar&lt;DataVector&gt; lorentz_factor(
+<span class="lineNum">      42 </span>            :     const Scalar&lt;DataVector&gt;&amp; spatial_velocity_squared) noexcept;
+<span class="lineNum">      43 </span>            : template Scalar&lt;double&gt; lorentz_factor(
+<span class="lineNum">      44 </span>            :     const Scalar&lt;double&gt;&amp; spatial_velocity_squared) noexcept;
+<span class="lineNum">      45 </span>            : 
+<span class="lineNum">      46 </span>            : #undef DIM
+<span class="lineNum">      47 </span>            : #undef DTYPE
+<span class="lineNum">      48 </span>            : #undef FRAME
+<span class="lineNum">      49 </span>            : #undef INSTANTIATE
+<span class="lineNum">      50 </span>            : }  // namespace hydro
+<span class="lineNum">      51 </span>            : /// \endcond
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

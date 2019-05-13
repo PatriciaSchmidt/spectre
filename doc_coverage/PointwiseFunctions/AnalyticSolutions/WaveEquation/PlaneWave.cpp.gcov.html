@@ -1,0 +1,257 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - PointwiseFunctions/AnalyticSolutions/WaveEquation/PlaneWave.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">PointwiseFunctions/AnalyticSolutions/WaveEquation</a> - PlaneWave.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryLo">50.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;PointwiseFunctions/AnalyticSolutions/WaveEquation/PlaneWave.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;algorithm&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : #include &quot;DataStructures/DataBox/Prefixes.hpp&quot;    // IWYU pragma: keep
+<span class="lineNum">       9 </span>            : #include &quot;DataStructures/Variables.hpp&quot;           // IWYU pragma: keep
+<span class="lineNum">      10 </span>            : #include &quot;Evolution/Systems/ScalarWave/Tags.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      11 </span>            : #include &quot;Parallel/PupStlCpp11.hpp&quot;               // IWYU pragma: keep
+<span class="lineNum">      12 </span>            : #include &quot;Utilities/ConstantExpressions.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;Utilities/GenerateInstantiations.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;Utilities/MakeWithValue.hpp&quot;
+<span class="lineNum">      16 </span>            : #include &quot;Utilities/StdArrayHelpers.hpp&quot;
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            : namespace ScalarWave {
+<span class="lineNum">      19 </span><span class="lineCov">          1 : namespace Solutions {</span>
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      22 </span>            : PlaneWave&lt;Dim&gt;::PlaneWave(std::array&lt;double, Dim&gt; wave_vector,
+<span class="lineNum">      23 </span>            :                           std::array&lt;double, Dim&gt; center,
+<span class="lineNum">      24 </span>            :                           std::unique_ptr&lt;MathFunction&lt;1&gt;&gt; profile) noexcept
+<span class="lineNum">      25 </span>            :     : wave_vector_(std::move(wave_vector)),
+<span class="lineNum">      26 </span>            :       center_(std::move(center)),
+<span class="lineNum">      27 </span>            :       profile_(std::move(profile)),
+<span class="lineNum">      28 </span>            :       omega_(magnitude(wave_vector_)) {}
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      31 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      32 </span>            : Scalar&lt;T&gt; PlaneWave&lt;Dim&gt;::psi(const tnsr::I&lt;T, Dim&gt;&amp; x, const double t) const
+<span class="lineNum">      33 </span>            :     noexcept {
+<span class="lineNum">      34 </span>            :   return Scalar&lt;T&gt;(profile_-&gt;operator()(u(x, t)));
+<span class="lineNum">      35 </span>            : }
+<span class="lineNum">      36 </span>            : 
+<span class="lineNum">      37 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      38 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      39 </span>            : Scalar&lt;T&gt; PlaneWave&lt;Dim&gt;::dpsi_dt(const tnsr::I&lt;T, Dim&gt;&amp; x,
+<span class="lineNum">      40 </span>            :                                   const double t) const noexcept {
+<span class="lineNum">      41 </span>            :   return Scalar&lt;T&gt;(-omega_ * profile_-&gt;first_deriv(u(x, t)));
+<span class="lineNum">      42 </span>            : }
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      45 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      46 </span>            : tnsr::i&lt;T, Dim&gt; PlaneWave&lt;Dim&gt;::dpsi_dx(const tnsr::I&lt;T, Dim&gt;&amp; x,
+<span class="lineNum">      47 </span>            :                                         const double t) const noexcept {
+<span class="lineNum">      48 </span>            :   auto result = make_with_value&lt;tnsr::i&lt;T, Dim&gt;&gt;(x, 0.0);
+<span class="lineNum">      49 </span>            :   const auto du = profile_-&gt;first_deriv(u(x, t));
+<span class="lineNum">      50 </span>            :   for (size_t i = 0; i &lt; Dim; ++i) {
+<span class="lineNum">      51 </span>            :     result.get(i) = gsl::at(wave_vector_, i) * du;
+<span class="lineNum">      52 </span>            :   }
+<span class="lineNum">      53 </span>            :   return result;
+<span class="lineNum">      54 </span>            : }
+<span class="lineNum">      55 </span>            : 
+<span class="lineNum">      56 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      57 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      58 </span>            : Scalar&lt;T&gt; PlaneWave&lt;Dim&gt;::d2psi_dt2(const tnsr::I&lt;T, Dim&gt;&amp; x,
+<span class="lineNum">      59 </span>            :                                     const double t) const noexcept {
+<span class="lineNum">      60 </span>            :   return Scalar&lt;T&gt;(square(omega_) * profile_-&gt;second_deriv(u(x, t)));
+<span class="lineNum">      61 </span>            : }
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      64 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      65 </span>            : tnsr::i&lt;T, Dim&gt; PlaneWave&lt;Dim&gt;::d2psi_dtdx(const tnsr::I&lt;T, Dim&gt;&amp; x,
+<span class="lineNum">      66 </span>            :                                            const double t) const noexcept {
+<span class="lineNum">      67 </span>            :   auto result = make_with_value&lt;tnsr::i&lt;T, Dim&gt;&gt;(x, 0.0);
+<span class="lineNum">      68 </span>            :   const auto d2u = profile_-&gt;second_deriv(u(x, t));
+<span class="lineNum">      69 </span>            :   for (size_t i = 0; i &lt; Dim; ++i) {
+<span class="lineNum">      70 </span>            :     result.get(i) = -omega_ * gsl::at(wave_vector_, i) * d2u;
+<span class="lineNum">      71 </span>            :   }
+<span class="lineNum">      72 </span>            :   return result;
+<span class="lineNum">      73 </span>            : }
+<span class="lineNum">      74 </span>            : 
+<span class="lineNum">      75 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      76 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      77 </span>            : tnsr::ii&lt;T, Dim&gt; PlaneWave&lt;Dim&gt;::d2psi_dxdx(const tnsr::I&lt;T, Dim&gt;&amp; x,
+<span class="lineNum">      78 </span>            :                                             const double t) const noexcept {
+<span class="lineNum">      79 </span>            :   auto result = make_with_value&lt;tnsr::ii&lt;T, Dim&gt;&gt;(x, 0.0);
+<span class="lineNum">      80 </span>            :   const auto d2u = profile_-&gt;second_deriv(u(x, t));
+<span class="lineNum">      81 </span>            :   for (size_t i = 0; i &lt; Dim; ++i) {
+<span class="lineNum">      82 </span>            :     for (size_t j = i; j &lt; Dim; ++j) {
+<span class="lineNum">      83 </span>            :       result.get(i, j) =
+<span class="lineNum">      84 </span>            :           gsl::at(wave_vector_, i) * gsl::at(wave_vector_, j) * d2u;
+<span class="lineNum">      85 </span>            :     }
+<span class="lineNum">      86 </span>            :   }
+<span class="lineNum">      87 </span>            :   return result;
+<span class="lineNum">      88 </span>            : }
+<span class="lineNum">      89 </span>            : 
+<span class="lineNum">      90 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      91 </span>            : tuples::TaggedTuple&lt;ScalarWave::Pi, ScalarWave::Phi&lt;Dim&gt;, ScalarWave::Psi&gt;
+<span class="lineNum">      92 </span>            : PlaneWave&lt;Dim&gt;::variables(const tnsr::I&lt;DataVector, Dim&gt;&amp; x, double t,
+<span class="lineNum">      93 </span>            :                           const tmpl::list&lt;ScalarWave::Pi, ScalarWave::Phi&lt;Dim&gt;,
+<span class="lineNum">      94 </span>            :                                            ScalarWave::Psi&gt; /*meta*/) const
+<span class="lineNum">      95 </span>            :     noexcept {
+<span class="lineNum">      96 </span>            :   tuples::TaggedTuple&lt;ScalarWave::Pi, ScalarWave::Phi&lt;Dim&gt;, ScalarWave::Psi&gt;
+<span class="lineNum">      97 </span>            :       variables{dpsi_dt(x, t), dpsi_dx(x, t), psi(x, t)};
+<span class="lineNum">      98 </span>            :   get&lt;ScalarWave::Pi&gt;(variables).get() *= -1.0;
+<span class="lineNum">      99 </span>            :   return variables;
+<span class="lineNum">     100 </span>            : }
+<span class="lineNum">     101 </span>            : 
+<span class="lineNum">     102 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">     103 </span>            : tuples::TaggedTuple&lt;Tags::dt&lt;ScalarWave::Pi&gt;, Tags::dt&lt;ScalarWave::Phi&lt;Dim&gt;&gt;,
+<span class="lineNum">     104 </span>            :                     Tags::dt&lt;ScalarWave::Psi&gt;&gt;
+<span class="lineNum">     105 </span>            : PlaneWave&lt;Dim&gt;::variables(
+<span class="lineNum">     106 </span>            :     const tnsr::I&lt;DataVector, Dim&gt;&amp; x, double t,
+<span class="lineNum">     107 </span>            :     const tmpl::list&lt;Tags::dt&lt;ScalarWave::Pi&gt;, Tags::dt&lt;ScalarWave::Phi&lt;Dim&gt;&gt;,
+<span class="lineNum">     108 </span>            :                      Tags::dt&lt;ScalarWave::Psi&gt;&gt; /*meta*/) const noexcept {
+<span class="lineNum">     109 </span>            :   tuples::TaggedTuple&lt;Tags::dt&lt;ScalarWave::Pi&gt;, Tags::dt&lt;ScalarWave::Phi&lt;Dim&gt;&gt;,
+<span class="lineNum">     110 </span>            :                       Tags::dt&lt;ScalarWave::Psi&gt;&gt;
+<span class="lineNum">     111 </span>            :       dt_variables{d2psi_dt2(x, t), d2psi_dtdx(x, t), dpsi_dt(x, t)};
+<span class="lineNum">     112 </span>            :   get&lt;Tags::dt&lt;ScalarWave::Pi&gt;&gt;(dt_variables).get() *= -1.0;
+<span class="lineNum">     113 </span>            :   return dt_variables;
+<span class="lineNum">     114 </span>            : }
+<span class="lineNum">     115 </span>            : 
+<span class="lineNum">     116 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">     117 </span>            : void PlaneWave&lt;Dim&gt;::pup(PUP::er&amp; p) noexcept {
+<span class="lineNum">     118 </span>            :   p | wave_vector_;
+<span class="lineNum">     119 </span>            :   p | center_;
+<span class="lineNum">     120 </span>            :   p | profile_;
+<span class="lineNum">     121 </span>            :   p | omega_;
+<span class="lineNum">     122 </span>            : }
+<span class="lineNum">     123 </span>            : 
+<span class="lineNum">     124 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">     125 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     126 </span>            : T PlaneWave&lt;Dim&gt;::u(const tnsr::I&lt;T, Dim&gt;&amp; x, const double t) const noexcept {
+<span class="lineNum">     127 </span>            :   auto result = make_with_value&lt;T&gt;(x, -omega_ * t);
+<span class="lineNum">     128 </span>            :   for (size_t d = 0; d &lt; Dim; ++d) {
+<span class="lineNum">     129 </span>            :     result += gsl::at(wave_vector_, d) * (x.get(d) - gsl::at(center_, d));
+<span class="lineNum">     130 </span>            :   }
+<span class="lineNum">     131 </span>            :   return result;
+<span class="lineNum">     132 </span>            : }
+<span class="lineNum">     133 </span>            : 
+<span class="lineNum">     134 </span>            : }  // namespace Solutions
+<span class="lineNum">     135 </span>            : }  // namespace ScalarWave
+<span class="lineNum">     136 </span>            : 
+<span class="lineNum">     137 </span>            : /// \cond
+<span class="lineNum">     138 </span>            : #define DIM(data) BOOST_PP_TUPLE_ELEM(0, data)
+<span class="lineNum">     139 </span>            : #define DTYPE(data) BOOST_PP_TUPLE_ELEM(1, data)
+<span class="lineNum">     140 </span>            : 
+<span class="lineNum">     141 </span>            : #define INSTANTIATE(_, data)                                              \
+<span class="lineNum">     142 </span>            :   template Scalar&lt;DTYPE(data)&gt;                                            \
+<span class="lineNum">     143 </span>            :   ScalarWave::Solutions::PlaneWave&lt;DIM(data)&gt;::psi(                       \
+<span class="lineNum">     144 </span>            :       const tnsr::I&lt;DTYPE(data), DIM(data)&gt;&amp; x, double t) const noexcept; \
+<span class="lineNum">     145 </span>            :   template Scalar&lt;DTYPE(data)&gt;                                            \
+<span class="lineNum">     146 </span>            :   ScalarWave::Solutions::PlaneWave&lt;DIM(data)&gt;::dpsi_dt(                   \
+<span class="lineNum">     147 </span>            :       const tnsr::I&lt;DTYPE(data), DIM(data)&gt;&amp; x, double t) const noexcept; \
+<span class="lineNum">     148 </span>            :   template tnsr::i&lt;DTYPE(data), DIM(data)&gt;                                \
+<span class="lineNum">     149 </span>            :   ScalarWave::Solutions::PlaneWave&lt;DIM(data)&gt;::dpsi_dx(                   \
+<span class="lineNum">     150 </span>            :       const tnsr::I&lt;DTYPE(data), DIM(data)&gt;&amp; x, const double t)           \
+<span class="lineNum">     151 </span>            :       const noexcept;                                                     \
+<span class="lineNum">     152 </span>            :   template Scalar&lt;DTYPE(data)&gt;                                            \
+<span class="lineNum">     153 </span>            :   ScalarWave::Solutions::PlaneWave&lt;DIM(data)&gt;::d2psi_dt2(                 \
+<span class="lineNum">     154 </span>            :       const tnsr::I&lt;DTYPE(data), DIM(data)&gt;&amp; x, const double t)           \
+<span class="lineNum">     155 </span>            :       const noexcept;                                                     \
+<span class="lineNum">     156 </span>            :   template tnsr::i&lt;DTYPE(data), DIM(data)&gt;                                \
+<span class="lineNum">     157 </span>            :   ScalarWave::Solutions::PlaneWave&lt;DIM(data)&gt;::d2psi_dtdx(                \
+<span class="lineNum">     158 </span>            :       const tnsr::I&lt;DTYPE(data), DIM(data)&gt;&amp; x, const double t)           \
+<span class="lineNum">     159 </span>            :       const noexcept;                                                     \
+<span class="lineNum">     160 </span>            :   template tnsr::ii&lt;DTYPE(data), DIM(data)&gt;                               \
+<span class="lineNum">     161 </span>            :   ScalarWave::Solutions::PlaneWave&lt;DIM(data)&gt;::d2psi_dxdx(                \
+<span class="lineNum">     162 </span>            :       const tnsr::I&lt;DTYPE(data), DIM(data)&gt;&amp; x, const double t)           \
+<span class="lineNum">     163 </span>            :       const noexcept;                                                     \
+<span class="lineNum">     164 </span>            :   template DTYPE(data) ScalarWave::Solutions::PlaneWave&lt;DIM(data)&gt;::u(    \
+<span class="lineNum">     165 </span>            :       const tnsr::I&lt;DTYPE(data), DIM(data)&gt;&amp; x, const double t)           \
+<span class="lineNum">     166 </span>            :       const noexcept;
+<span class="lineNum">     167 </span>            : 
+<span class="lineNum">     168 </span>            : GENERATE_INSTANTIATIONS(INSTANTIATE, (1, 2, 3), (double, DataVector))
+<span class="lineNum">     169 </span>            : 
+<span class="lineNum">     170 </span>            : #undef DIM
+<span class="lineNum">     171 </span>            : #undef DTYPE
+<span class="lineNum">     172 </span>            : #undef INSTANTIATE
+<span class="lineNum">     173 </span>            : 
+<span class="lineNum">     174 </span>            : template class ScalarWave::Solutions::PlaneWave&lt;1&gt;;
+<span class="lineNum">     175 </span>            : template class ScalarWave::Solutions::PlaneWave&lt;2&gt;;
+<span class="lineNum">     176 </span>            : template class ScalarWave::Solutions::PlaneWave&lt;3&gt;;
+<span class="lineNum">     177 </span>            : /// \endcond
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

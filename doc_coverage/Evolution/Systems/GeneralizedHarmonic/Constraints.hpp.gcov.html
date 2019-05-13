@@ -1,0 +1,568 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Evolution/Systems/GeneralizedHarmonic/Constraints.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">Evolution/Systems/GeneralizedHarmonic</a> - Constraints.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineCov">          1 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : ///\file
+<span class="lineNum">       5 </span>            : /// Defines functions to calculate the generalized harmonic constraints
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            : #pragma once
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : #include &quot;DataStructures/Tensor/TypeAliases.hpp&quot;
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            : /// \cond
+<span class="lineNum">      14 </span>            : namespace gsl {
+<span class="lineNum">      15 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      16 </span>            : class not_null;
+<span class="lineNum">      17 </span>            : }  // namespace gsl
+<span class="lineNum">      18 </span>            : /// \endcond
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : namespace GeneralizedHarmonic {
+<span class="lineNum">      21 </span>            : // @{
+<span class="lineNum">      22 </span>            : /*!
+<span class="lineNum">      23 </span>            :  * \brief Computes the generalized-harmonic 3-index constraint.
+<span class="lineNum">      24 </span>            :  *
+<span class="lineNum">      25 </span>            :  * \details Computes the generalized-harmonic 3-index constraint,
+<span class="lineNum">      26 </span>            :  * \f$C_{iab} = \partial_i\psi_{ab} - \Phi_{iab},\f$ which is
+<span class="lineNum">      27 </span>            :  * given by Eq. (26) of \cite Lindblom2005qh
+<span class="lineNum">      28 </span>            :  */
+<span class="lineNum">      29 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">      30 </span>            : tnsr::iaa&lt;DataType, SpatialDim, Frame&gt; three_index_constraint(
+<span class="lineNum">      31 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; d_spacetime_metric,
+<span class="lineNum">      32 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; phi) noexcept;
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">      35 </span><span class="lineCov">          1 : void three_index_constraint(</span>
+<span class="lineNum">      36 </span>            :     gsl::not_null&lt;tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;*&gt; constraint,
+<span class="lineNum">      37 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; d_spacetime_metric,
+<span class="lineNum">      38 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; phi) noexcept;
+<span class="lineNum">      39 </span>            : // @}
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            : // @{
+<span class="lineNum">      42 </span>            : /*!
+<span class="lineNum">      43 </span>            :  * \brief Computes the generalized-harmonic gauge constraint.
+<span class="lineNum">      44 </span>            :  *
+<span class="lineNum">      45 </span>            :  * \details Computes the generalized-harmonic gauge constraint
+<span class="lineNum">      46 </span>            :  * [Eq. (40) of \cite Lindblom2005qh],
+<span class="lineNum">      47 </span>            :  * \f[
+<span class="lineNum">      48 </span>            :  * C_a = H_a + g^{ij} \Phi_{ija} + t^b \Pi_{ba}
+<span class="lineNum">      49 </span>            :  * - \frac{1}{2} g^i_a \psi^{bc} \Phi_{ibc}
+<span class="lineNum">      50 </span>            :  * - \frac{1}{2} t_a \psi^{bc} \Pi_{bc},
+<span class="lineNum">      51 </span>            :  * \f]
+<span class="lineNum">      52 </span>            :  * where \f$H_a\f$ is the gauge function,
+<span class="lineNum">      53 </span>            :  * \f$\psi_{ab}\f$ is the spacetime metric,
+<span class="lineNum">      54 </span>            :  * \f$\Pi_{ab}=-t^c\partial_c \psi_{ab}\f$, and
+<span class="lineNum">      55 </span>            :  * \f$\Phi_{iab} = \partial_i\psi_{ab}\f$; \f$t^a\f$ is the timelike unit
+<span class="lineNum">      56 </span>            :  * normal vector to the spatial slice, \f$g^{ij}\f$ is the inverse spatial
+<span class="lineNum">      57 </span>            :  * metric, and \f$g^b_c = \delta^b_c + t^b t_c\f$.
+<span class="lineNum">      58 </span>            :  */
+<span class="lineNum">      59 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">      60 </span>            : tnsr::a&lt;DataType, SpatialDim, Frame&gt; gauge_constraint(
+<span class="lineNum">      61 </span>            :     const tnsr::a&lt;DataType, SpatialDim, Frame&gt;&amp; gauge_function,
+<span class="lineNum">      62 </span>            :     const tnsr::a&lt;DataType, SpatialDim, Frame&gt;&amp; spacetime_normal_one_form,
+<span class="lineNum">      63 </span>            :     const tnsr::A&lt;DataType, SpatialDim, Frame&gt;&amp; spacetime_normal_vector,
+<span class="lineNum">      64 </span>            :     const tnsr::II&lt;DataType, SpatialDim, Frame&gt;&amp; inverse_spatial_metric,
+<span class="lineNum">      65 </span>            :     const tnsr::AA&lt;DataType, SpatialDim, Frame&gt;&amp; inverse_spacetime_metric,
+<span class="lineNum">      66 </span>            :     const tnsr::aa&lt;DataType, SpatialDim, Frame&gt;&amp; pi,
+<span class="lineNum">      67 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; phi) noexcept;
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">      70 </span><span class="lineCov">          1 : void gauge_constraint(</span>
+<span class="lineNum">      71 </span>            :     gsl::not_null&lt;tnsr::a&lt;DataType, SpatialDim, Frame&gt;*&gt; constraint,
+<span class="lineNum">      72 </span>            :     const tnsr::a&lt;DataType, SpatialDim, Frame&gt;&amp; gauge_function,
+<span class="lineNum">      73 </span>            :     const tnsr::a&lt;DataType, SpatialDim, Frame&gt;&amp; spacetime_normal_one_form,
+<span class="lineNum">      74 </span>            :     const tnsr::A&lt;DataType, SpatialDim, Frame&gt;&amp; spacetime_normal_vector,
+<span class="lineNum">      75 </span>            :     const tnsr::II&lt;DataType, SpatialDim, Frame&gt;&amp; inverse_spatial_metric,
+<span class="lineNum">      76 </span>            :     const tnsr::AA&lt;DataType, SpatialDim, Frame&gt;&amp; inverse_spacetime_metric,
+<span class="lineNum">      77 </span>            :     const tnsr::aa&lt;DataType, SpatialDim, Frame&gt;&amp; pi,
+<span class="lineNum">      78 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; phi) noexcept;
+<span class="lineNum">      79 </span>            : // @}
+<span class="lineNum">      80 </span>            : 
+<span class="lineNum">      81 </span>            : // @{
+<span class="lineNum">      82 </span>            : /*!
+<span class="lineNum">      83 </span>            :  * \brief Computes the generalized-harmonic 2-index constraint.
+<span class="lineNum">      84 </span>            :  *
+<span class="lineNum">      85 </span>            :  * \details Computes the generalized-harmonic 2-index constraint
+<span class="lineNum">      86 </span>            :  * [Eq. (44) of \cite Lindblom2005qh],
+<span class="lineNum">      87 </span>            :  * \f{eqnarray}{
+<span class="lineNum">      88 </span>            :  * C_{ia} &amp;\equiv&amp; g^{jk}\partial_j \Phi_{ika}
+<span class="lineNum">      89 </span>            :  * - \frac{1}{2} g_a^j\psi^{cd}\partial_j \Phi_{icd}
+<span class="lineNum">      90 </span>            :  * + t^b \partial_i \Pi_{ba}
+<span class="lineNum">      91 </span>            :  * - \frac{1}{2} t_a \psi^{cd}\partial_i\Pi_{cd}
+<span class="lineNum">      92 </span>            :  * \nonumber\\&amp;&amp;
+<span class="lineNum">      93 </span>            :  * + \partial_i H_a
+<span class="lineNum">      94 </span>            :  * + \frac{1}{2} g_a^j \Phi_{jcd} \Phi_{ief}
+<span class="lineNum">      95 </span>            :  * \psi^{ce}\psi^{df}
+<span class="lineNum">      96 </span>            :  * + \frac{1}{2} g^{jk} \Phi_{jcd} \Phi_{ike}
+<span class="lineNum">      97 </span>            :  * \psi^{cd}t^e t_a
+<span class="lineNum">      98 </span>            :  * \nonumber\\&amp;&amp;
+<span class="lineNum">      99 </span>            :  * - g^{jk}g^{mn}\Phi_{jma}\Phi_{ikn}
+<span class="lineNum">     100 </span>            :  * + \frac{1}{2} \Phi_{icd} \Pi_{be} t_a
+<span class="lineNum">     101 </span>            :  *                             \left(\psi^{cb}\psi^{de}
+<span class="lineNum">     102 </span>            :  *                       +\frac{1}{2}\psi^{be} t^c t^d\right)
+<span class="lineNum">     103 </span>            :  * \nonumber\\&amp;&amp;
+<span class="lineNum">     104 </span>            :  * - \Phi_{icd} \Pi_{ba} t^c \left(\psi^{bd}
+<span class="lineNum">     105 </span>            :  *                             +\frac{1}{2} t^b t^d\right)
+<span class="lineNum">     106 </span>            :  * + \frac{1}{2} \gamma_2 \left(t_a \psi^{cd}
+<span class="lineNum">     107 </span>            :  * - 2 \delta^c_a t^d\right) C_{icd}.
+<span class="lineNum">     108 </span>            :  * \f}
+<span class="lineNum">     109 </span>            :  * where \f$H_a\f$ is the gauge function,
+<span class="lineNum">     110 </span>            :  * \f$\psi_{ab}\f$ is the spacetime metric,
+<span class="lineNum">     111 </span>            :  * \f$\Pi_{ab}=-t^c\partial_c \psi_{ab}\f$, and
+<span class="lineNum">     112 </span>            :  * \f$\Phi_{iab} = \partial_i\psi_{ab}\f$; \f$t^a\f$ is the timelike unit
+<span class="lineNum">     113 </span>            :  * normal vector to the spatial slice, \f$g^{ij}\f$ is the inverse spatial
+<span class="lineNum">     114 </span>            :  * metric, and \f$g^b_c = \delta^b_c + t^b t_c\f$.
+<span class="lineNum">     115 </span>            :  */
+<span class="lineNum">     116 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     117 </span>            : tnsr::ia&lt;DataType, SpatialDim, Frame&gt; two_index_constraint(
+<span class="lineNum">     118 </span>            :     const tnsr::ia&lt;DataType, SpatialDim, Frame&gt;&amp; d_gauge_function,
+<span class="lineNum">     119 </span>            :     const tnsr::a&lt;DataType, SpatialDim, Frame&gt;&amp; spacetime_normal_one_form,
+<span class="lineNum">     120 </span>            :     const tnsr::A&lt;DataType, SpatialDim, Frame&gt;&amp; spacetime_normal_vector,
+<span class="lineNum">     121 </span>            :     const tnsr::II&lt;DataType, SpatialDim, Frame&gt;&amp; inverse_spatial_metric,
+<span class="lineNum">     122 </span>            :     const tnsr::AA&lt;DataType, SpatialDim, Frame&gt;&amp; inverse_spacetime_metric,
+<span class="lineNum">     123 </span>            :     const tnsr::aa&lt;DataType, SpatialDim, Frame&gt;&amp; pi,
+<span class="lineNum">     124 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; phi,
+<span class="lineNum">     125 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; d_pi,
+<span class="lineNum">     126 </span>            :     const tnsr::ijaa&lt;DataType, SpatialDim, Frame&gt;&amp; d_phi,
+<span class="lineNum">     127 </span>            :     const Scalar&lt;DataType&gt;&amp; gamma2,
+<span class="lineNum">     128 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp;
+<span class="lineNum">     129 </span>            :         three_index_constraint) noexcept;
+<span class="lineNum">     130 </span>            : 
+<span class="lineNum">     131 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     132 </span><span class="lineCov">          1 : void two_index_constraint(</span>
+<span class="lineNum">     133 </span>            :     gsl::not_null&lt;tnsr::ia&lt;DataType, SpatialDim, Frame&gt;*&gt; constraint,
+<span class="lineNum">     134 </span>            :     const tnsr::ia&lt;DataType, SpatialDim, Frame&gt;&amp; d_gauge_function,
+<span class="lineNum">     135 </span>            :     const tnsr::a&lt;DataType, SpatialDim, Frame&gt;&amp; spacetime_normal_one_form,
+<span class="lineNum">     136 </span>            :     const tnsr::A&lt;DataType, SpatialDim, Frame&gt;&amp; spacetime_normal_vector,
+<span class="lineNum">     137 </span>            :     const tnsr::II&lt;DataType, SpatialDim, Frame&gt;&amp; inverse_spatial_metric,
+<span class="lineNum">     138 </span>            :     const tnsr::AA&lt;DataType, SpatialDim, Frame&gt;&amp; inverse_spacetime_metric,
+<span class="lineNum">     139 </span>            :     const tnsr::aa&lt;DataType, SpatialDim, Frame&gt;&amp; pi,
+<span class="lineNum">     140 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; phi,
+<span class="lineNum">     141 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; d_pi,
+<span class="lineNum">     142 </span>            :     const tnsr::ijaa&lt;DataType, SpatialDim, Frame&gt;&amp; d_phi,
+<span class="lineNum">     143 </span>            :     const Scalar&lt;DataType&gt;&amp; gamma2,
+<span class="lineNum">     144 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp;
+<span class="lineNum">     145 </span>            :         three_index_constraint) noexcept;
+<span class="lineNum">     146 </span>            : // @}
+<span class="lineNum">     147 </span>            : 
+<span class="lineNum">     148 </span>            : // @{
+<span class="lineNum">     149 </span>            : /*!
+<span class="lineNum">     150 </span>            :  * \brief Computes the generalized-harmonic 4-index constraint.
+<span class="lineNum">     151 </span>            :  *
+<span class="lineNum">     152 </span>            :  * \details Computes the independent components of the generalized-harmonic
+<span class="lineNum">     153 </span>            :  * 4-index constraint. The constraint itself is given by Eq. (45) of
+<span class="lineNum">     154 </span>            :  * \cite Lindblom2005qh,
+<span class="lineNum">     155 </span>            :  * \f{eqnarray}{
+<span class="lineNum">     156 </span>            :  * C_{ijab} = 2 \partial_{[i}\Phi_{j]ab},
+<span class="lineNum">     157 </span>            :  * \f}
+<span class="lineNum">     158 </span>            :  * where \f$\Phi_{iab} = \partial_i\psi_{ab}\f$. Because the constraint is
+<span class="lineNum">     159 </span>            :  * antisymmetric on the two spatial indices, here we compute and store
+<span class="lineNum">     160 </span>            :  * only the independent components of \f$C_{ijab}\f$. Specifically, we
+<span class="lineNum">     161 </span>            :  * compute
+<span class="lineNum">     162 </span>            :  * \f{eqnarray}{
+<span class="lineNum">     163 </span>            :  * D_{iab} \equiv \frac{1}{2} \epsilon_{i}{}^{jk} C_{jkab}
+<span class="lineNum">     164 </span>            :  * = \epsilon_{i}{}^{jk} \partial_j \Phi_{kab},
+<span class="lineNum">     165 </span>            :  * \f}
+<span class="lineNum">     166 </span>            :  * where \f$\epsilon_{ijk}\f$ is the flat-space Levi-Civita symbol,
+<span class="lineNum">     167 </span>            :  * which is raised and lowered with the Kronecker delta.
+<span class="lineNum">     168 </span>            :  * In terms
+<span class="lineNum">     169 </span>            :  * of \f$D_{iab}\f$, the full 4-index constraint is
+<span class="lineNum">     170 </span>            :  * \f{eqnarray}{
+<span class="lineNum">     171 </span>            :  * C_{jkab} = \epsilon^{i}{}_{jk} D_{iab}.
+<span class="lineNum">     172 </span>            :  * \f}
+<span class="lineNum">     173 </span>            :  */
+<span class="lineNum">     174 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     175 </span>            : tnsr::iaa&lt;DataType, SpatialDim, Frame&gt; four_index_constraint(
+<span class="lineNum">     176 </span>            :     const tnsr::ijaa&lt;DataType, SpatialDim, Frame&gt;&amp; d_phi) noexcept;
+<span class="lineNum">     177 </span>            : 
+<span class="lineNum">     178 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     179 </span><span class="lineCov">          1 : void four_index_constraint(</span>
+<span class="lineNum">     180 </span>            :     gsl::not_null&lt;tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;*&gt; constraint,
+<span class="lineNum">     181 </span>            :     const tnsr::ijaa&lt;DataType, SpatialDim, Frame&gt;&amp; d_phi) noexcept;
+<span class="lineNum">     182 </span>            : // @}
+<span class="lineNum">     183 </span>            : 
+<span class="lineNum">     184 </span>            : // @{
+<span class="lineNum">     185 </span>            : /*!
+<span class="lineNum">     186 </span>            :  * \brief Computes the generalized-harmonic F constraint.
+<span class="lineNum">     187 </span>            :  *
+<span class="lineNum">     188 </span>            :  * \details Computes the generalized-harmonic F constraint
+<span class="lineNum">     189 </span>            :  * [Eq. (43) of \cite Lindblom2005qh],
+<span class="lineNum">     190 </span>            :  * \f{eqnarray}{
+<span class="lineNum">     191 </span>            :  * {\cal F}_a &amp;\equiv&amp;
+<span class="lineNum">     192 </span>            :  * \frac{1}{2} g_a^i \psi^{bc}\partial_i \Pi_{bc}
+<span class="lineNum">     193 </span>            :  * - g^{ij} \partial_i \Pi_{ja}
+<span class="lineNum">     194 </span>            :  * - g^{ij} t^b \partial_i \Phi_{jba}
+<span class="lineNum">     195 </span>            :  * + \frac{1}{2} t_a \psi^{bc} g^{ij} \partial_i \Phi_{jbc}
+<span class="lineNum">     196 </span>            :  * \nonumber \\ &amp;&amp;
+<span class="lineNum">     197 </span>            :  * + t_a g^{ij} \partial_i H_j
+<span class="lineNum">     198 </span>            :  * + g_a^i \Phi_{ijb} g^{jk}\Phi_{kcd} \psi^{bd} t^c
+<span class="lineNum">     199 </span>            :  * - \frac{1}{2} g_a^i \Phi_{ijb} g^{jk}
+<span class="lineNum">     200 </span>            :  *   \Phi_{kcd} \psi^{cd} t^b
+<span class="lineNum">     201 </span>            :  * \nonumber \\ &amp;&amp;
+<span class="lineNum">     202 </span>            :  * - g_a^i t^b \partial_i H_b
+<span class="lineNum">     203 </span>            :  * + g^{ij} \Phi_{icd} \Phi_{jba} \psi^{bc} t^d
+<span class="lineNum">     204 </span>            :  * - \frac{1}{2} t_a g^{ij} g^{mn} \Phi_{imc} \Phi_{njd}\psi^{cd}
+<span class="lineNum">     205 </span>            :  * \nonumber \\ &amp;&amp;
+<span class="lineNum">     206 </span>            :  * - \frac{1}{4}  t_a g^{ij}\Phi_{icd}\Phi_{jbe}
+<span class="lineNum">     207 </span>            :  *    \psi^{cb}\psi^{de}
+<span class="lineNum">     208 </span>            :  * + \frac{1}{4}  t_a \Pi_{cd} \Pi_{be}
+<span class="lineNum">     209 </span>            :  *    \psi^{cb}\psi^{de}
+<span class="lineNum">     210 </span>            :  * - g^{ij} H_i \Pi_{ja}
+<span class="lineNum">     211 </span>            :  * \nonumber \\ &amp;&amp;
+<span class="lineNum">     212 </span>            :  * - t^b g^{ij} \Pi_{b i} \Pi_{ja}
+<span class="lineNum">     213 </span>            :  * - \frac{1}{4}  g_a^i \Phi_{icd} t^c t^d \Pi_{be}
+<span class="lineNum">     214 </span>            :  *   \psi^{be}
+<span class="lineNum">     215 </span>            :  * + \frac{1}{2} t_a \Pi_{cd} \Pi_{be}\psi^{ce}
+<span class="lineNum">     216 </span>            :  *   t^d t^b
+<span class="lineNum">     217 </span>            :  * \nonumber \\ &amp;&amp;
+<span class="lineNum">     218 </span>            :  * + g_a^i \Phi_{icd} \Pi_{be} t^c t^b \psi^{de}
+<span class="lineNum">     219 </span>            :  * - g^{ij}\Phi_{iba} t^b \Pi_{je} t^e
+<span class="lineNum">     220 </span>            :  * - \frac{1}{2} g^{ij}\Phi_{icd} t^c t^d \Pi_{ja}
+<span class="lineNum">     221 </span>            :  * \nonumber \\ &amp;&amp;
+<span class="lineNum">     222 </span>            :  * - g^{ij} H_i \Phi_{jba} t^b
+<span class="lineNum">     223 </span>            :  * + g_{a}^i \Phi_{icd} H_b \psi^{bc} t^d
+<span class="lineNum">     224 </span>            :  * +\gamma_2\bigl(g^{id}{\cal C}_{ida}
+<span class="lineNum">     225 </span>            :  * -\frac{1}{2}  g_a^i\psi^{cd}{\cal C}_{icd}\bigr)
+<span class="lineNum">     226 </span>            :  * \nonumber \\ &amp;&amp;
+<span class="lineNum">     227 </span>            :  * + \frac{1}{2} t_a \Pi_{cd}\psi^{cd} H_b t^b
+<span class="lineNum">     228 </span>            :  * - t_a g^{ij} \Phi_{ijc} H_d \psi^{cd}
+<span class="lineNum">     229 </span>            :  * +\frac{1}{2}  t_a g^{ij} H_i \Phi_{jcd}\psi^{cd},
+<span class="lineNum">     230 </span>            :  * \f}
+<span class="lineNum">     231 </span>            :  * where \f$H_a\f$ is the gauge function,
+<span class="lineNum">     232 </span>            :  * \f$\psi_{ab}\f$ is the spacetime metric,
+<span class="lineNum">     233 </span>            :  * \f$\Pi_{ab}=-t^c\partial_c \psi_{ab}\f$, and
+<span class="lineNum">     234 </span>            :  * \f$\Phi_{iab} = \partial_i\psi_{ab}\f$; \f$t^a\f$ is the timelike unit
+<span class="lineNum">     235 </span>            :  * normal vector to the spatial slice, \f$g^{ij}\f$ is the inverse spatial
+<span class="lineNum">     236 </span>            :  * metric, and \f$g^b_c = \delta^b_c + t^b t_c\f$.
+<span class="lineNum">     237 </span>            :  */
+<span class="lineNum">     238 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     239 </span>            : tnsr::a&lt;DataType, SpatialDim, Frame&gt; f_constraint(
+<span class="lineNum">     240 </span>            :     const tnsr::a&lt;DataType, SpatialDim, Frame&gt;&amp; gauge_function,
+<span class="lineNum">     241 </span>            :     const tnsr::ia&lt;DataType, SpatialDim, Frame&gt;&amp; d_gauge_function,
+<span class="lineNum">     242 </span>            :     const tnsr::a&lt;DataType, SpatialDim, Frame&gt;&amp; spacetime_normal_one_form,
+<span class="lineNum">     243 </span>            :     const tnsr::A&lt;DataType, SpatialDim, Frame&gt;&amp; spacetime_normal_vector,
+<span class="lineNum">     244 </span>            :     const tnsr::II&lt;DataType, SpatialDim, Frame&gt;&amp; inverse_spatial_metric,
+<span class="lineNum">     245 </span>            :     const tnsr::AA&lt;DataType, SpatialDim, Frame&gt;&amp; inverse_spacetime_metric,
+<span class="lineNum">     246 </span>            :     const tnsr::aa&lt;DataType, SpatialDim, Frame&gt;&amp; pi,
+<span class="lineNum">     247 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; phi,
+<span class="lineNum">     248 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; d_pi,
+<span class="lineNum">     249 </span>            :     const tnsr::ijaa&lt;DataType, SpatialDim, Frame&gt;&amp; d_phi,
+<span class="lineNum">     250 </span>            :     const Scalar&lt;DataType&gt;&amp; gamma2,
+<span class="lineNum">     251 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp;
+<span class="lineNum">     252 </span>            :         three_index_constraint) noexcept;
+<span class="lineNum">     253 </span>            : 
+<span class="lineNum">     254 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     255 </span>            : void f_constraint(
+<span class="lineNum">     256 </span>            :     gsl::not_null&lt;tnsr::a&lt;DataType, SpatialDim, Frame&gt;*&gt; constraint,
+<span class="lineNum">     257 </span>            :     const tnsr::a&lt;DataType, SpatialDim, Frame&gt;&amp; gauge_function,
+<span class="lineNum">     258 </span>            :     const tnsr::ia&lt;DataType, SpatialDim, Frame&gt;&amp; d_gauge_function,
+<span class="lineNum">     259 </span>            :     const tnsr::a&lt;DataType, SpatialDim, Frame&gt;&amp; spacetime_normal_one_form,
+<span class="lineNum">     260 </span>            :     const tnsr::A&lt;DataType, SpatialDim, Frame&gt;&amp; spacetime_normal_vector,
+<span class="lineNum">     261 </span>            :     const tnsr::II&lt;DataType, SpatialDim, Frame&gt;&amp; inverse_spatial_metric,
+<span class="lineNum">     262 </span>            :     const tnsr::AA&lt;DataType, SpatialDim, Frame&gt;&amp; inverse_spacetime_metric,
+<span class="lineNum">     263 </span>            :     const tnsr::aa&lt;DataType, SpatialDim, Frame&gt;&amp; pi,
+<span class="lineNum">     264 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; phi,
+<span class="lineNum">     265 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; d_pi,
+<span class="lineNum">     266 </span>            :     const tnsr::ijaa&lt;DataType, SpatialDim, Frame&gt;&amp; d_phi,
+<span class="lineNum">     267 </span>            :     const Scalar&lt;DataType&gt;&amp; gamma2,
+<span class="lineNum">     268 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp;
+<span class="lineNum">     269 </span>            :         three_index_constraint) noexcept;
+<span class="lineNum">     270 </span>            : // @}
+<span class="lineNum">     271 </span>            : 
+<span class="lineNum">     272 </span>            : // @{
+<span class="lineNum">     273 </span>            : /*!
+<span class="lineNum">     274 </span>            :  * \brief Computes the generalized-harmonic (unnormalized) constraint energy.
+<span class="lineNum">     275 </span>            :  *
+<span class="lineNum">     276 </span>            :  * \details Computes the generalized-harmonic unnormalized constraint energy
+<span class="lineNum">     277 </span>            :  * [Eq. (53) of \cite Lindblom2005qh with \f$m^{ab}=\delta^{ab}\f$ and with each
+<span class="lineNum">     278 </span>            :  * term in the sum scaled by an arbitrary coefficient],
+<span class="lineNum">     279 </span>            :  * \f{eqnarray}{
+<span class="lineNum">     280 </span>            :  * E &amp; = &amp; K_1 C_a C_a + K_2\left(F_a F_a
+<span class="lineNum">     281 </span>            :      + C_{ia} C_{ja} g^{ij}\right)\nonumber\\
+<span class="lineNum">     282 </span>            :      &amp; + &amp; K_3 C_{iab} C_{jab} g^{ij} + K_4 C_{ikab} C_{jlab}g^{ij} g^{kl}.
+<span class="lineNum">     283 </span>            :  * \f}
+<span class="lineNum">     284 </span>            :  * Here \f$C_a\f$ is the gauge constraint, \f$F_a\f$ is the f constraint,
+<span class="lineNum">     285 </span>            :  * \f$C_{ia}\f$ is the two-index constraint, \f$C_{iab}\f$ is the
+<span class="lineNum">     286 </span>            :  * three-index constraint, \f$C_{ikab}\f$ is the four-index constraint,
+<span class="lineNum">     287 </span>            :  * \f$g^{ij}\f$ is the inverse spatial metric, and
+<span class="lineNum">     288 </span>            :  * \f$K_1\f$, \f$K_2\f$, \f$K_3\f$, and \f$K_4\f$ are constant multipliers
+<span class="lineNum">     289 </span>            :  * for each term that each default to a value of 1.0. Note that in this
+<span class="lineNum">     290 </span>            :  * equation, spacetime indices \f$a,b\f$ are raised and lowered with
+<span class="lineNum">     291 </span>            :  * the Kronecker delta.
+<span class="lineNum">     292 </span>            :  *
+<span class="lineNum">     293 </span>            :  * Also note that the argument `four_index_constraint` is a rank-3 tensor.
+<span class="lineNum">     294 </span>            :  * This is because `GeneralizedHarmonic::four_index_constraint()` takes
+<span class="lineNum">     295 </span>            :  * advantage of the antisymmetry of the four-index constraint's first two
+<span class="lineNum">     296 </span>            :  * indices to only compute and return the independent
+<span class="lineNum">     297 </span>            :  * components of \f$C_{ijab}\f$, which can be written as
+<span class="lineNum">     298 </span>            :  * \f{eqnarray}{
+<span class="lineNum">     299 </span>            :  * D_{iab} \equiv \frac{1}{2} \epsilon_{i}{}^{jk} C_{jkab},
+<span class="lineNum">     300 </span>            :  * \f} where \f$\epsilon_{ijk}\f$ is the flat-space Levi-Civita tensor,
+<span class="lineNum">     301 </span>            :  * whose inidces are raised and lowered with the Kronecker delta.
+<span class="lineNum">     302 </span>            :  * The result is
+<span class="lineNum">     303 </span>            :  * \f{eqnarray}{
+<span class="lineNum">     304 </span>            :  * E &amp; = &amp; K_1 C_a C_a + K_2\left(F_a F_a
+<span class="lineNum">     305 </span>            :  *       + C_{ia} C_{ja} g^{ij}\right)\nonumber\\
+<span class="lineNum">     306 </span>            :  *   &amp; + &amp; K_3 C_{iab} C_{jab} g^{ij}\nonumber\\
+<span class="lineNum">     307 </span>            :      &amp; + &amp; 2 K_4 g D_{iab} D_{jab} g^{ij},
+<span class="lineNum">     308 </span>            :  * \f} where \f$g\f$ is the determinant of the spatial metric.
+<span class="lineNum">     309 </span>            :  *
+<span class="lineNum">     310 </span>            :  * To derive this expression for the constraint energy implemented here,
+<span class="lineNum">     311 </span>            :  * Eq.~(53) of \cite Lindblom2005qh is
+<span class="lineNum">     312 </span>            :  * \f{eqnarray}{
+<span class="lineNum">     313 </span>            :  * S_{AB} dc^A dc^B &amp;=&amp;
+<span class="lineNum">     314 </span>            :  *      m^{ab}\Bigl[d F_ad F_b
+<span class="lineNum">     315 </span>            :  *      +g^{ij}\bigl(d C_{ia}d C_{jb}
+<span class="lineNum">     316 </span>            :  *      +g^{kl}m^{cd}d C_{ikac}d C_{jlbd}\bigr)
+<span class="lineNum">     317 </span>            :  * \nonumber\\
+<span class="lineNum">     318 </span>            :  *      &amp; + &amp; \Lambda^2\bigl(d C_ad C_b
+<span class="lineNum">     319 </span>            :  *      +g^{ij}m^{cd}d C_{iac}d C_{jbd}\bigr)
+<span class="lineNum">     320 </span>            :  * \Bigr].
+<span class="lineNum">     321 </span>            :  * \f} Replace \f$dc^A\rightarrow c^A\f$ to get
+<span class="lineNum">     322 </span>            :  * \f{eqnarray}{
+<span class="lineNum">     323 </span>            :  * E&amp;=&amp;
+<span class="lineNum">     324 </span>            :  *      m^{ab}\Bigl[ F_a F_b
+<span class="lineNum">     325 </span>            :  *      +g^{ij}\bigl( C_{ia} C_{jb}
+<span class="lineNum">     326 </span>            :  *      +g^{kl}m^{cd} C_{ikac} C_{jlbd}\bigr)
+<span class="lineNum">     327 </span>            :  * \nonumber\\
+<span class="lineNum">     328 </span>            :  *      &amp; + &amp; \Lambda^2\bigl( C_a C_b
+<span class="lineNum">     329 </span>            :  *      +g^{ij}m^{cd} C_{iac} C_{jbd}\bigr)
+<span class="lineNum">     330 </span>            :  * \Bigr]\nonumber\\
+<span class="lineNum">     331 </span>            :  * &amp;=&amp;
+<span class="lineNum">     332 </span>            :  *      m^{ab} F_a F_b
+<span class="lineNum">     333 </span>            :  *      +m^{ab}g^{ij} C_{ia} C_{jb}
+<span class="lineNum">     334 </span>            :  *      +m^{ab}g^{ij} g^{kl}m^{cd} C_{ikac} C_{jlbd}
+<span class="lineNum">     335 </span>            :  * \nonumber\\
+<span class="lineNum">     336 </span>            :  *      &amp; + &amp; m^{ab}\Lambda^2 C_a C_b
+<span class="lineNum">     337 </span>            :  *      +m^{ab}\Lambda^2 g^{ij}m^{cd} C_{iac} C_{jbd}.
+<span class="lineNum">     338 </span>            :  * \f} Here \f$m^{ab}\f$ is an arbitrary positive-definite matrix, and
+<span class="lineNum">     339 </span>            :  * \f$\Lambda\f$ is an arbitrary real scalar.
+<span class="lineNum">     340 </span>            :  * Choose \f$m^{ab} = \delta^{ab}\f$ but allow an arbitrary coefficient to be
+<span class="lineNum">     341 </span>            :  * placed in front of each term. Then, absorb \f$\Lambda^2\f$ into one of
+<span class="lineNum">     342 </span>            :  * these coefficients, to get
+<span class="lineNum">     343 </span>            :  * \f{eqnarray}{ E &amp;=&amp; K_
+<span class="lineNum">     344 </span>            :  * F\delta^{ab} F_a F_b +K_2\delta^{ab}g^{ij} C_{ia} C_{jb}
+<span class="lineNum">     345 </span>            :  +K_4\delta^{ab}g^{ij}
+<span class="lineNum">     346 </span>            :  * g^{kl}\delta^{cd} C_{ikac} C_{jlbd}
+<span class="lineNum">     347 </span>            :  * \nonumber\\
+<span class="lineNum">     348 </span>            :  *      &amp; + &amp; K_1\delta^{ab} C_a C_b
+<span class="lineNum">     349 </span>            :  *      +K_3\delta^{ab} g^{ij}\delta^{cd} C_{iac} C_{jbd}.
+<span class="lineNum">     350 </span>            :  * \f}
+<span class="lineNum">     351 </span>            :  * Adopting a Euclidean norm for the constraint space (i.e., choosing to raise
+<span class="lineNum">     352 </span>            :  and
+<span class="lineNum">     353 </span>            :  * lower spacetime indices with Kronecker deltas) gives
+<span class="lineNum">     354 </span>            :  * \f{eqnarray}{ E &amp;=&amp; K_ F
+<span class="lineNum">     355 </span>            :  * F_a F_a +K_2g^{ij} C_{ia} C_{ja} +K_4 g^{ij} g^{kl} C_{ikac} C_{jlac}
+<span class="lineNum">     356 </span>            :  * \nonumber\\
+<span class="lineNum">     357 </span>            :  *      &amp; + &amp; K_1 C_a C_a
+<span class="lineNum">     358 </span>            :  *      +K_3g^{ij} C_{iac} C_{jac}.
+<span class="lineNum">     359 </span>            :  * \f} The two-index constraint and f constraint can be viewed as the
+<span class="lineNum">     360 </span>            :  * time and space components of a combined spacetime constraint. So next
+<span class="lineNum">     361 </span>            :  * choose
+<span class="lineNum">     362 </span>            :  * \f$K_ F=K_2\f$, giving \f{eqnarray}{ E&amp;=&amp; K_1 C_a C_a + K_2\left(F_a F_a
+<span class="lineNum">     363 </span>            :  *      + C_{ia} C_{ja} g^{ij}\right)\nonumber\\
+<span class="lineNum">     364 </span>            :  *      &amp; + &amp; K_3 C_{iab} C_{jab} g^{ij}
+<span class="lineNum">     365 </span>            :  *      + K_4 C_{ikab} C_{jlab}g^{ij} g^{kl}.
+<span class="lineNum">     366 </span>            :  * \f}
+<span class="lineNum">     367 </span>            :  *
+<span class="lineNum">     368 </span>            :  * Note that \f$C_{ikab}\f$ is antisymmetric on the first two indices. Next,
+<span class="lineNum">     369 </span>            :  * replace the four-index constraint \f$C_{ijab}\f$ with \f$D_{iab}\f$, which
+<span class="lineNum">     370 </span>            :  * contains the independent components of \f$C_{ijab}\f$. Specifically,
+<span class="lineNum">     371 </span>            :  * \f{eqnarray}{
+<span class="lineNum">     372 </span>            :  * D_{iab} \equiv \frac{1}{2} \epsilon_{i}{}^{jk} C_{jkab}.
+<span class="lineNum">     373 </span>            :  * \f} The inverse relationship is
+<span class="lineNum">     374 </span>            :  * \f{eqnarray}{
+<span class="lineNum">     375 </span>            :  * C_{jkab} = \epsilon^{i}{}_{jk} D_{iab},
+<span class="lineNum">     376 </span>            :  * \f} where \f$\epsilon_{ijk}\f$ is the flat-space Levi-Civita tensor, whose
+<span class="lineNum">     377 </span>            :  * indices are raised and lowered with the Kronecker delta. Inserting this
+<span class="lineNum">     378 </span>            :  relation
+<span class="lineNum">     379 </span>            :  * to replace \f$C_{jkab}\f$ with \f$D_{iab}\f$ gives \f{eqnarray}{ E &amp;=&amp; K_1
+<span class="lineNum">     380 </span>            :  C_a
+<span class="lineNum">     381 </span>            :  * C_a + K_2\left(F_a F_a
+<span class="lineNum">     382 </span>            :  *      + C_{ia} C_{ja} g^{ij}\right)\nonumber\\
+<span class="lineNum">     383 </span>            :  *      &amp; + &amp; K_3 C_{iab} C_{jab} g^{ij}\nonumber\\
+<span class="lineNum">     384 </span>            :  *      &amp; + &amp; K_4 D_{mab} D_{nab} \epsilon^{m}{}_{ik}
+<span class="lineNum">     385 </span>            :  *      \epsilon^{n}{}_{jl} g^{ij} g^{kl}. \f}
+<span class="lineNum">     386 </span>            :  *
+<span class="lineNum">     387 </span>            :  * There's a subtle point here: \f$g^{ij}\f$ is the inverse spatial metric,
+<span class="lineNum">     388 </span>            :  which
+<span class="lineNum">     389 </span>            :  * is not necessarily flat. But \f$\epsilon^{i}{}_{jk}\f$ is the flat space
+<span class="lineNum">     390 </span>            :  * Levi-Civita tensor. In order to raise and lower indices of the Levi-Civita
+<span class="lineNum">     391 </span>            :  * tensor with the inverse spatial metrics, put in the appropriate factors of
+<span class="lineNum">     392 </span>            :  * \f$\sqrt{g}\f$, where \f$g\f$ is the metric determinant, to make the
+<span class="lineNum">     393 </span>            :  * curved-space Levi-Civita tensor compatible with \f$g^{ij}\f$. Let
+<span class="lineNum">     394 </span>            :  * \f$\varepsilon^{ijk}\f$ represent the curved space Levi-Civita tensor
+<span class="lineNum">     395 </span>            :  compatible
+<span class="lineNum">     396 </span>            :  * with \f$g^{ij}\f$: \f{eqnarray}{
+<span class="lineNum">     397 </span>            :  * \varepsilon^{mik} = g^{-1/2} \epsilon^{mik}\\
+<span class="lineNum">     398 </span>            :  * \varepsilon_{mik} = g^{1/2} \epsilon_{mik}.
+<span class="lineNum">     399 </span>            :  * \f} Then we can write the constraint energy as
+<span class="lineNum">     400 </span>            :  * \f{eqnarray}{
+<span class="lineNum">     401 </span>            :  * E &amp;=&amp; K_1 C_a C_a + K_2\left(F_a F_a
+<span class="lineNum">     402 </span>            :  *      + C_{ia} C_{ja} g^{ij}\right)\nonumber\\
+<span class="lineNum">     403 </span>            :  *      &amp; + &amp; K_3 C_{iab} C_{jab} g^{ij}\nonumber\\
+<span class="lineNum">     404 </span>            :  *      &amp; + &amp; K_4 D_{mab} D_{nab} g g^{-1/2}\epsilon^{m}{}_{ik}
+<span class="lineNum">     405 </span>            :  * g^{-1/2}\epsilon^{n}{}_{jl} g^{ij} g^{kl}. \f} The factors of
+<span class="lineNum">     406 </span>            :  * \f$g^{-1/2}\f$ make the Levi-Civita tensor compatible with \f$g^{ij}\f$.
+<span class="lineNum">     407 </span>            :  * Swapping which summed indices are raised and which are lowered gives
+<span class="lineNum">     408 </span>            :  * \f{eqnarray}{ E &amp;=&amp; K_1 C_a
+<span class="lineNum">     409 </span>            :  C_a +
+<span class="lineNum">     410 </span>            :  * K_2\left(F_a F_a
+<span class="lineNum">     411 </span>            :  *      + C_{ia} C_{ja} g^{ij}\right)\nonumber\\
+<span class="lineNum">     412 </span>            :  *      &amp; + &amp; K_3 C_{iab} C_{jab} g^{ij}\nonumber\\
+<span class="lineNum">     413 </span>            :  *      &amp; + &amp; K_4 D_{mab} D_{nab} g g^{-1/2}\epsilon^{mik}
+<span class="lineNum">     414 </span>            :  g^{-1/2}\epsilon^{njl}
+<span class="lineNum">     415 </span>            :  * g_{ij} g_{kl}, \f} or \f{eqnarray}{ E &amp;=&amp; K_1 C_a C_a + K_2\left(F_a F_a
+<span class="lineNum">     416 </span>            :  *      + C_{ia} C_{ja} g^{ij}\right)\nonumber\\
+<span class="lineNum">     417 </span>            :  *      &amp; + &amp; K_3 C_{iab} C_{jab} g^{ij}\nonumber\\
+<span class="lineNum">     418 </span>            :  *      &amp; + &amp; K_4 D_{mab} D_{nab} g \varepsilon^{mik} \varepsilon^{njl} g_{ij}
+<span class="lineNum">     419 </span>            :  * g_{kl}, \f} or, reversing up and down repeated indices again,
+<span class="lineNum">     420 </span>            :  * \f{eqnarray}{ E
+<span class="lineNum">     421 </span>            :  * &amp;=&amp; K_1 C_a C_a + K_2\left(F_a F_a
+<span class="lineNum">     422 </span>            :  *      + C_{ia} C_{ja} g^{ij}\right)\nonumber\\
+<span class="lineNum">     423 </span>            :  *      &amp; + &amp; K_3 C_{iab} C_{jab} g^{ij}\nonumber\\
+<span class="lineNum">     424 </span>            :  *      &amp; + &amp; K_4 D_{mab} D_{nab} g \varepsilon^{m}{}_{ik}
+<span class="lineNum">     425 </span>            :  \varepsilon^{n}{}_{jl}
+<span class="lineNum">     426 </span>            :  * g^{ij} g^{kl}. \f}
+<span class="lineNum">     427 </span>            :  *
+<span class="lineNum">     428 </span>            :  * The metric raises and lowers the indices of \f$\varepsilon^{ijk}\f$,
+<span class="lineNum">     429 </span>            :  * so this can
+<span class="lineNum">     430 </span>            :  * be written as \f{eqnarray}{ E &amp;=&amp; K_1 C_a C_a + K_2\left(F_a F_a
+<span class="lineNum">     431 </span>            :  *      + C_{ia} C_{ja} g^{ij}\right)\nonumber\\
+<span class="lineNum">     432 </span>            :  *      &amp; + &amp; K_3 C_{iab} C_{jab} g^{ij}\nonumber\\
+<span class="lineNum">     433 </span>            :  *      &amp; + &amp; K_4 g D_{mab} D^{n}{}_{ab} \varepsilon^{mjl} \varepsilon_{njl}.
+<span class="lineNum">     434 </span>            :  * \f}
+<span class="lineNum">     435 </span>            :  *
+<span class="lineNum">     436 </span>            :  * Now, in flat space (Eq. (1.23) of \cite ThorneBlandford2017),
+<span class="lineNum">     437 </span>            :  * \f{eqnarray}{
+<span class="lineNum">     438 </span>            :  * \epsilon^{mjl} \epsilon_{njl} = \delta^{mj}_{nj} = \delta^m_n \delta^j_j -
+<span class="lineNum">     439 </span>            :  * \delta^m_j \delta^j_n = 2 \delta^m_n. \f} But this holds for curved space
+<span class="lineNum">     440 </span>            :  * as well: multiply the left hand side by \f$1 = g^{1/2} g^{-1/2}\f$ to get
+<span class="lineNum">     441 </span>            :  * \f{eqnarray}{
+<span class="lineNum">     442 </span>            :  * g^{-1/2}\epsilon^{mjl} g^{1/2}\epsilon_{njl} = \varepsilon^{mjl}
+<span class="lineNum">     443 </span>            :  * \varepsilon_{njl} = \delta^{mj}_{nj} = \delta^m_n \delta^j_j - \delta^m_j
+<span class="lineNum">     444 </span>            :  * \delta^j_n = 2 \delta^m_n. \f} So the constraint energy is \f{eqnarray}{ E
+<span class="lineNum">     445 </span>            :  &amp;=&amp;
+<span class="lineNum">     446 </span>            :  * K_1 C_a C_a + K_2\left(F_a F_a
+<span class="lineNum">     447 </span>            :  *      + C_{ia} C_{ja} g^{ij}\right)\nonumber\\
+<span class="lineNum">     448 </span>            :  *      &amp; + &amp; K_3 C_{iab} C_{jab} g^{ij}\nonumber\\
+<span class="lineNum">     449 </span>            :  *      &amp; + &amp; 2 K_4 D_{mab} D^{n}{}_{ab} \delta^m_n.
+<span class="lineNum">     450 </span>            :  * \f}
+<span class="lineNum">     451 </span>            :  * Simplifying gives the formula implemented here:
+<span class="lineNum">     452 </span>            :  * \f{eqnarray}{
+<span class="lineNum">     453 </span>            :  * E &amp;=&amp; K_1 C_a C_a + K_2\left(F_a F_a
+<span class="lineNum">     454 </span>            :  *      + C_{ia} C_{ja} g^{ij}\right)\nonumber\\
+<span class="lineNum">     455 </span>            :  *      &amp; + &amp; K_3 C_{iab} C_{jab} g^{ij}\nonumber\\
+<span class="lineNum">     456 </span>            :  *      &amp; + &amp; 2 K_4 g D_{iab} D_{jab} g^{ij}.
+<span class="lineNum">     457 </span>            :  * \f}
+<span class="lineNum">     458 </span>            :  */
+<span class="lineNum">     459 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     460 </span>            : Scalar&lt;DataType&gt; constraint_energy(
+<span class="lineNum">     461 </span>            :     const tnsr::a&lt;DataType, SpatialDim, Frame&gt;&amp; gauge_constraint,
+<span class="lineNum">     462 </span>            :     const tnsr::a&lt;DataType, SpatialDim, Frame&gt;&amp; f_constraint,
+<span class="lineNum">     463 </span>            :     const tnsr::ia&lt;DataType, SpatialDim, Frame&gt;&amp; two_index_constraint,
+<span class="lineNum">     464 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; three_index_constraint,
+<span class="lineNum">     465 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; four_index_constraint,
+<span class="lineNum">     466 </span>            :     const tnsr::II&lt;DataType, SpatialDim, Frame&gt;&amp; inverse_spatial_metric,
+<span class="lineNum">     467 </span>            :     const Scalar&lt;DataType&gt;&amp; spatial_metric_determinant,
+<span class="lineNum">     468 </span>            :     double gauge_constraint_multiplier = 1.0,
+<span class="lineNum">     469 </span>            :     double two_index_constraint_multiplier = 1.0,
+<span class="lineNum">     470 </span>            :     double three_index_constraint_multiplier = 1.0,
+<span class="lineNum">     471 </span>            :     double four_index_constraint_multiplier = 1.0) noexcept;
+<span class="lineNum">     472 </span>            : 
+<span class="lineNum">     473 </span>            : template &lt;size_t SpatialDim, typename Frame, typename DataType&gt;
+<span class="lineNum">     474 </span>            : void constraint_energy(
+<span class="lineNum">     475 </span>            :     gsl::not_null&lt;Scalar&lt;DataType&gt;*&gt; energy,
+<span class="lineNum">     476 </span>            :     const tnsr::a&lt;DataType, SpatialDim, Frame&gt;&amp; gauge_constraint,
+<span class="lineNum">     477 </span>            :     const tnsr::a&lt;DataType, SpatialDim, Frame&gt;&amp; f_constraint,
+<span class="lineNum">     478 </span>            :     const tnsr::ia&lt;DataType, SpatialDim, Frame&gt;&amp; two_index_constraint,
+<span class="lineNum">     479 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; three_index_constraint,
+<span class="lineNum">     480 </span>            :     const tnsr::iaa&lt;DataType, SpatialDim, Frame&gt;&amp; four_index_constraint,
+<span class="lineNum">     481 </span>            :     const tnsr::II&lt;DataType, SpatialDim, Frame&gt;&amp; inverse_spatial_metric,
+<span class="lineNum">     482 </span>            :     const Scalar&lt;DataType&gt;&amp; spatial_metric_determinant,
+<span class="lineNum">     483 </span>            :     double gauge_constraint_multiplier = 1.0,
+<span class="lineNum">     484 </span>            :     double two_index_constraint_multiplier = 1.0,
+<span class="lineNum">     485 </span>            :     double three_index_constraint_multiplier = 1.0,
+<span class="lineNum">     486 </span>            :     double four_index_constraint_multiplier = 1.0) noexcept;
+<span class="lineNum">     487 </span>            : // @}
+<span class="lineNum">     488 </span>            : }  // namespace GeneralizedHarmonic
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,209 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Domain/Creators/Cylinder.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">Domain/Creators</a> - Cylinder.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">48</td>
+            <td class="headerCovTableEntryLo">6.2 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;array&gt;
+<span class="lineNum">       7 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       8 </span>            : #include &lt;vector&gt;
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : #include &quot;Domain/Domain.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;Options/Options.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            : /// \cond
+<span class="lineNum">      15 </span>            : template &lt;size_t Dim, typename Frame&gt;
+<span class="lineNum">      16 </span>            : class DomainCreator;  // IWYU pragma: keep
+<span class="lineNum">      17 </span>            : /// \endcond
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : namespace domain {
+<span class="lineNum">      20 </span>            : namespace creators {
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : /// \ingroup DomainCreatorsGroup
+<span class="lineNum">      23 </span>            : /// Create a 3D Domain in the shape of a cylinder where the cross-section
+<span class="lineNum">      24 </span>            : /// is a square surrounded by four two-dimensional wedges (see Wedge2D).
+<span class="lineNum">      25 </span>            : ///
+<span class="lineNum">      26 </span>            : /// \image html Cylinder.png &quot;The Cylinder Domain.&quot;
+<span class="lineNum">      27 </span>            : template &lt;typename TargetFrame&gt;
+<span class="lineNum">      28 </span><span class="lineCov">          1 : class Cylinder : public DomainCreator&lt;3, TargetFrame&gt; {</span>
+<span class="lineNum">      29 </span>            :  public:
+<span class="lineNum">      30 </span><span class="lineNoCov">          0 :   struct InnerRadius {</span>
+<span class="lineNum">      31 </span><span class="lineNoCov">          0 :     using type = double;</span>
+<span class="lineNum">      32 </span><span class="lineNoCov">          0 :     static constexpr OptionString help = {</span>
+<span class="lineNum">      33 </span>            :         &quot;Radius of the circle circumscribing the inner square.&quot;};
+<span class="lineNum">      34 </span>            :   };
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span><span class="lineNoCov">          0 :   struct OuterRadius {</span>
+<span class="lineNum">      37 </span><span class="lineNoCov">          0 :     using type = double;</span>
+<span class="lineNum">      38 </span><span class="lineNoCov">          0 :     static constexpr OptionString help = {&quot;Radius of the cylinder.&quot;};</span>
+<span class="lineNum">      39 </span>            :   };
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span><span class="lineNoCov">          0 :   struct LowerBound {</span>
+<span class="lineNum">      42 </span><span class="lineNoCov">          0 :     using type = double;</span>
+<span class="lineNum">      43 </span><span class="lineNoCov">          0 :     static constexpr OptionString help = {</span>
+<span class="lineNum">      44 </span>            :         &quot;z-coordinate of the base of the cylinder.&quot;};
+<span class="lineNum">      45 </span>            :   };
+<span class="lineNum">      46 </span>            : 
+<span class="lineNum">      47 </span><span class="lineNoCov">          0 :   struct UpperBound {</span>
+<span class="lineNum">      48 </span><span class="lineNoCov">          0 :     using type = double;</span>
+<span class="lineNum">      49 </span><span class="lineNoCov">          0 :     static constexpr OptionString help = {</span>
+<span class="lineNum">      50 </span>            :         &quot;z-coordinate of the top of the cylinder.&quot;};
+<span class="lineNum">      51 </span>            :   };
+<span class="lineNum">      52 </span>            : 
+<span class="lineNum">      53 </span><span class="lineNoCov">          0 :   struct IsPeriodicInZ {</span>
+<span class="lineNum">      54 </span><span class="lineNoCov">          0 :     using type = bool;</span>
+<span class="lineNum">      55 </span><span class="lineNoCov">          0 :     static constexpr OptionString help = {</span>
+<span class="lineNum">      56 </span>            :         &quot;True if periodic in the cylindrical z direction.&quot;};
+<span class="lineNum">      57 </span><span class="lineNoCov">          0 :     static type default_value() noexcept { return true; }</span>
+<span class="lineNum">      58 </span>            :   };
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span><span class="lineNoCov">          0 :   struct InitialRefinement {</span>
+<span class="lineNum">      61 </span><span class="lineNoCov">          0 :     using type = size_t;</span>
+<span class="lineNum">      62 </span><span class="lineNoCov">          0 :     static constexpr OptionString help = {</span>
+<span class="lineNum">      63 </span>            :         &quot;Initial refinement level in each dimension.&quot;};
+<span class="lineNum">      64 </span>            :   };
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span><span class="lineNoCov">          0 :   struct InitialGridPoints {</span>
+<span class="lineNum">      67 </span><span class="lineNoCov">          0 :     using type = std::array&lt;size_t, 3&gt;;</span>
+<span class="lineNum">      68 </span><span class="lineNoCov">          0 :     static constexpr OptionString help = {</span>
+<span class="lineNum">      69 </span>            :         &quot;Initial number of grid points in [r, theta, z].&quot;};
+<span class="lineNum">      70 </span>            :   };
+<span class="lineNum">      71 </span>            : 
+<span class="lineNum">      72 </span><span class="lineNoCov">          0 :   struct UseEquiangularMap {</span>
+<span class="lineNum">      73 </span><span class="lineNoCov">          0 :     using type = bool;</span>
+<span class="lineNum">      74 </span><span class="lineNoCov">          0 :     static constexpr OptionString help = {</span>
+<span class="lineNum">      75 </span>            :         &quot;Use equiangular instead of equidistant coordinates.&quot;};
+<span class="lineNum">      76 </span><span class="lineNoCov">          0 :     static type default_value() noexcept { return false; }</span>
+<span class="lineNum">      77 </span>            :   };
+<span class="lineNum">      78 </span>            : 
+<span class="lineNum">      79 </span><span class="lineNoCov">          0 :   using options = tmpl::list&lt;InnerRadius, OuterRadius, LowerBound, UpperBound,</span>
+<span class="lineNum">      80 </span>            :                              IsPeriodicInZ, InitialRefinement,
+<span class="lineNum">      81 </span>            :                              InitialGridPoints, UseEquiangularMap&gt;;
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span><span class="lineNoCov">          0 :   static constexpr OptionString help{</span>
+<span class="lineNum">      84 </span>            :       &quot;Creates a 3D Cylinder with five Blocks.\n&quot;
+<span class="lineNum">      85 </span>            :       &quot;Only one refinement level for all dimensions is currently supported.\n&quot;
+<span class="lineNum">      86 </span>            :       &quot;The number of gridpoints in each dimension can be set independently.\n&quot;
+<span class="lineNum">      87 </span>            :       &quot;The number of gridpoints along the dimensions of the square is equal\n&quot;
+<span class="lineNum">      88 </span>            :       &quot;to the number of gridpoints along the angular dimension of the wedges.\n&quot;
+<span class="lineNum">      89 </span>            :       &quot;Equiangular coordinates give better gridpoint spacings in the angular\n&quot;
+<span class="lineNum">      90 </span>            :       &quot;direction, while equidistant coordinates give better gridpoint\n&quot;
+<span class="lineNum">      91 </span>            :       &quot;spacings in the center block. This Domain uses equidistant coordinates\n&quot;
+<span class="lineNum">      92 </span>            :       &quot;by default. The boundary conditions are set to be periodic along the\n&quot;
+<span class="lineNum">      93 </span>            :       &quot;cylindrical z-axis by default.&quot;};
+<span class="lineNum">      94 </span>            : 
+<span class="lineNum">      95 </span><span class="lineNoCov">          0 :   Cylinder(typename InnerRadius::type inner_radius,</span>
+<span class="lineNum">      96 </span>            :            typename OuterRadius::type outer_radius,
+<span class="lineNum">      97 </span>            :            typename LowerBound::type lower_bound,
+<span class="lineNum">      98 </span>            :            typename UpperBound::type upper_bound,
+<span class="lineNum">      99 </span>            :            typename IsPeriodicInZ::type is_periodic_in_z,
+<span class="lineNum">     100 </span>            :            typename InitialRefinement::type initial_refinement,
+<span class="lineNum">     101 </span>            :            typename InitialGridPoints::type initial_number_of_grid_points,
+<span class="lineNum">     102 </span>            :            typename UseEquiangularMap::type use_equiangular_map) noexcept;
+<span class="lineNum">     103 </span>            : 
+<span class="lineNum">     104 </span><span class="lineNoCov">          0 :   Cylinder() = default;</span>
+<span class="lineNum">     105 </span><span class="lineNoCov">          0 :   Cylinder(const Cylinder&amp;) = delete;</span>
+<span class="lineNum">     106 </span><span class="lineNoCov">          0 :   Cylinder(Cylinder&amp;&amp;) noexcept = default;</span>
+<span class="lineNum">     107 </span><span class="lineNoCov">          0 :   Cylinder&amp; operator=(const Cylinder&amp;) = delete;</span>
+<span class="lineNum">     108 </span><span class="lineNoCov">          0 :   Cylinder&amp; operator=(Cylinder&amp;&amp;) noexcept = default;</span>
+<span class="lineNum">     109 </span><span class="lineNoCov">          0 :   ~Cylinder() noexcept override = default;</span>
+<span class="lineNum">     110 </span>            : 
+<span class="lineNum">     111 </span><span class="lineNoCov">          0 :   Domain&lt;3, TargetFrame&gt; create_domain() const noexcept override;</span>
+<span class="lineNum">     112 </span>            : 
+<span class="lineNum">     113 </span><span class="lineCov">          1 :   std::vector&lt;std::array&lt;size_t, 3&gt;&gt; initial_extents() const noexcept override;</span>
+<span class="lineNum">     114 </span>            : 
+<span class="lineNum">     115 </span><span class="lineCov">          1 :   std::vector&lt;std::array&lt;size_t, 3&gt;&gt; initial_refinement_levels() const</span>
+<span class="lineNum">     116 </span>            :       noexcept override;
+<span class="lineNum">     117 </span>            : 
+<span class="lineNum">     118 </span>            :  private:
+<span class="lineNum">     119 </span><span class="lineNoCov">          0 :   typename InnerRadius::type inner_radius_{};</span>
+<span class="lineNum">     120 </span><span class="lineNoCov">          0 :   typename OuterRadius::type outer_radius_{};</span>
+<span class="lineNum">     121 </span><span class="lineNoCov">          0 :   typename LowerBound::type lower_bound_{};</span>
+<span class="lineNum">     122 </span><span class="lineNoCov">          0 :   typename UpperBound::type upper_bound_{};</span>
+<span class="lineNum">     123 </span><span class="lineNoCov">          0 :   typename IsPeriodicInZ::type is_periodic_in_z_{true};</span>
+<span class="lineNum">     124 </span><span class="lineNoCov">          0 :   typename InitialRefinement::type initial_refinement_{};</span>
+<span class="lineNum">     125 </span><span class="lineNoCov">          0 :   typename InitialGridPoints::type initial_number_of_grid_points_{};</span>
+<span class="lineNum">     126 </span><span class="lineNoCov">          0 :   typename UseEquiangularMap::type use_equiangular_map_{false};</span>
+<span class="lineNum">     127 </span>            : };
+<span class="lineNum">     128 </span>            : }  // namespace creators
+<span class="lineNum">     129 </span>            : }  // namespace domain
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - PointwiseFunctions/Hydro/EquationsOfState/PolytropicFluid.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">PointwiseFunctions/Hydro/EquationsOfState</a> - PolytropicFluid.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;PointwiseFunctions/Hydro/EquationsOfState/PolytropicFluid.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &quot;DataStructures/DataVector.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">       7 </span>            : #include &quot;DataStructures/Tensor/Tensor.hpp&quot;
+<span class="lineNum">       8 </span>            : #include &quot;Utilities/MakeWithValue.hpp&quot;
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : // IWYU pragma: no_forward_declare Tensor
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : /// \cond
+<span class="lineNum">      13 </span>            : namespace EquationsOfState {
+<span class="lineNum">      14 </span>            : template &lt;bool IsRelativistic&gt;
+<span class="lineNum">      15 </span>            : PolytropicFluid&lt;IsRelativistic&gt;::PolytropicFluid(
+<span class="lineNum">      16 </span>            :     const double polytropic_constant, const double polytropic_exponent) noexcept
+<span class="lineNum">      17 </span>            :     : polytropic_constant_(polytropic_constant),
+<span class="lineNum">      18 </span>            :       polytropic_exponent_(polytropic_exponent) {}
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : EQUATION_OF_STATE_MEMBER_DEFINITIONS(template &lt;bool IsRelativistic&gt;,
+<span class="lineNum">      21 </span>            :                                      PolytropicFluid&lt;IsRelativistic&gt;, double, 1)
+<span class="lineNum">      22 </span>            : EQUATION_OF_STATE_MEMBER_DEFINITIONS(template &lt;bool IsRelativistic&gt;,
+<span class="lineNum">      23 </span>            :                                      PolytropicFluid&lt;IsRelativistic&gt;,
+<span class="lineNum">      24 </span>            :                                      DataVector, 1)
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            : template &lt;bool IsRelativistic&gt;
+<span class="lineNum">      27 </span>            : PolytropicFluid&lt;IsRelativistic&gt;::PolytropicFluid(
+<span class="lineNum">      28 </span>            :     CkMigrateMessage* /*unused*/) noexcept {}
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span>            : template &lt;bool IsRelativistic&gt;
+<span class="lineNum">      31 </span>            : void PolytropicFluid&lt;IsRelativistic&gt;::pup(PUP::er&amp; p) noexcept {
+<span class="lineNum">      32 </span>            :   EquationOfState&lt;IsRelativistic, 1&gt;::pup(p);
+<span class="lineNum">      33 </span>            :   p | polytropic_constant_;
+<span class="lineNum">      34 </span>            :   p | polytropic_exponent_;
+<span class="lineNum">      35 </span>            : }
+<span class="lineNum">      36 </span>            : 
+<span class="lineNum">      37 </span>            : template &lt;bool IsRelativistic&gt;
+<span class="lineNum">      38 </span>            : template &lt;class DataType&gt;
+<span class="lineNum">      39 </span>            : Scalar&lt;DataType&gt; PolytropicFluid&lt;IsRelativistic&gt;::pressure_from_density_impl(
+<span class="lineNum">      40 </span>            :     const Scalar&lt;DataType&gt;&amp; rest_mass_density) const noexcept {
+<span class="lineNum">      41 </span>            :   return Scalar&lt;DataType&gt;{polytropic_constant_ *
+<span class="lineNum">      42 </span>            :                           pow(get(rest_mass_density), polytropic_exponent_)};
+<span class="lineNum">      43 </span>            : }
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span>            : template &lt;&gt;
+<span class="lineNum">      46 </span>            : template &lt;class DataType&gt;
+<span class="lineNum">      47 </span>            : Scalar&lt;DataType&gt; PolytropicFluid&lt;true&gt;::rest_mass_density_from_enthalpy_impl(
+<span class="lineNum">      48 </span>            :     const Scalar&lt;DataType&gt;&amp; specific_enthalpy) const noexcept {
+<span class="lineNum">      49 </span>            :   return Scalar&lt;DataType&gt;{pow(((polytropic_exponent_ - 1.0) /
+<span class="lineNum">      50 </span>            :                                (polytropic_constant_ * polytropic_exponent_)) *
+<span class="lineNum">      51 </span>            :                                   (get(specific_enthalpy) - 1.0),
+<span class="lineNum">      52 </span>            :                               1.0 / (polytropic_exponent_ - 1.0))};
+<span class="lineNum">      53 </span>            : }
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span>            : template &lt;&gt;
+<span class="lineNum">      56 </span>            : template &lt;class DataType&gt;
+<span class="lineNum">      57 </span>            : Scalar&lt;DataType&gt; PolytropicFluid&lt;false&gt;::rest_mass_density_from_enthalpy_impl(
+<span class="lineNum">      58 </span>            :     const Scalar&lt;DataType&gt;&amp; specific_enthalpy) const noexcept {
+<span class="lineNum">      59 </span>            :   return Scalar&lt;DataType&gt;{pow(((polytropic_exponent_ - 1.0) /
+<span class="lineNum">      60 </span>            :                                (polytropic_constant_ * polytropic_exponent_)) *
+<span class="lineNum">      61 </span>            :                                   get(specific_enthalpy),
+<span class="lineNum">      62 </span>            :                               1.0 / (polytropic_exponent_ - 1.0))};
+<span class="lineNum">      63 </span>            : }
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span>            : template &lt;&gt;
+<span class="lineNum">      66 </span>            : template &lt;class DataType&gt;
+<span class="lineNum">      67 </span>            : Scalar&lt;DataType&gt; PolytropicFluid&lt;true&gt;::specific_enthalpy_from_density_impl(
+<span class="lineNum">      68 </span>            :     const Scalar&lt;DataType&gt;&amp; rest_mass_density) const noexcept {
+<span class="lineNum">      69 </span>            :   return Scalar&lt;DataType&gt;{
+<span class="lineNum">      70 </span>            :       1.0 + polytropic_exponent_ / (polytropic_exponent_ - 1.0) *
+<span class="lineNum">      71 </span>            :                 polytropic_constant_ *
+<span class="lineNum">      72 </span>            :                 pow(get(rest_mass_density), polytropic_exponent_ - 1.0)};
+<span class="lineNum">      73 </span>            : }
+<span class="lineNum">      74 </span>            : 
+<span class="lineNum">      75 </span>            : template &lt;&gt;
+<span class="lineNum">      76 </span>            : template &lt;class DataType&gt;
+<span class="lineNum">      77 </span>            : Scalar&lt;DataType&gt; PolytropicFluid&lt;false&gt;::specific_enthalpy_from_density_impl(
+<span class="lineNum">      78 </span>            :     const Scalar&lt;DataType&gt;&amp; rest_mass_density) const noexcept {
+<span class="lineNum">      79 </span>            :   return Scalar&lt;DataType&gt;{
+<span class="lineNum">      80 </span>            :       polytropic_exponent_ / (polytropic_exponent_ - 1.0) *
+<span class="lineNum">      81 </span>            :       polytropic_constant_ *
+<span class="lineNum">      82 </span>            :       pow(get(rest_mass_density), polytropic_exponent_ - 1.0)};
+<span class="lineNum">      83 </span>            : }
+<span class="lineNum">      84 </span>            : 
+<span class="lineNum">      85 </span>            : template &lt;bool IsRelativistic&gt;
+<span class="lineNum">      86 </span>            : template &lt;class DataType&gt;
+<span class="lineNum">      87 </span>            : Scalar&lt;DataType&gt;
+<span class="lineNum">      88 </span>            : PolytropicFluid&lt;IsRelativistic&gt;::specific_internal_energy_from_density_impl(
+<span class="lineNum">      89 </span>            :     const Scalar&lt;DataType&gt;&amp; rest_mass_density) const noexcept {
+<span class="lineNum">      90 </span>            :   return Scalar&lt;DataType&gt;{
+<span class="lineNum">      91 </span>            :       polytropic_constant_ / (polytropic_exponent_ - 1.0) *
+<span class="lineNum">      92 </span>            :       pow(get(rest_mass_density), polytropic_exponent_ - 1.0)};
+<span class="lineNum">      93 </span>            : }
+<span class="lineNum">      94 </span>            : 
+<span class="lineNum">      95 </span>            : template &lt;bool IsRelativistic&gt;
+<span class="lineNum">      96 </span>            : template &lt;class DataType&gt;
+<span class="lineNum">      97 </span>            : Scalar&lt;DataType&gt; PolytropicFluid&lt;IsRelativistic&gt;::chi_from_density_impl(
+<span class="lineNum">      98 </span>            :     const Scalar&lt;DataType&gt;&amp; rest_mass_density) const noexcept {
+<span class="lineNum">      99 </span>            :   return Scalar&lt;DataType&gt;{
+<span class="lineNum">     100 </span>            :       polytropic_constant_ * polytropic_exponent_ *
+<span class="lineNum">     101 </span>            :       pow(get(rest_mass_density), polytropic_exponent_ - 1.0)};
+<span class="lineNum">     102 </span>            : }
+<span class="lineNum">     103 </span>            : 
+<span class="lineNum">     104 </span>            : template &lt;bool IsRelativistic&gt;
+<span class="lineNum">     105 </span>            : template &lt;class DataType&gt;
+<span class="lineNum">     106 </span>            : Scalar&lt;DataType&gt; PolytropicFluid&lt;IsRelativistic&gt;::
+<span class="lineNum">     107 </span>            :     kappa_times_p_over_rho_squared_from_density_impl(
+<span class="lineNum">     108 </span>            :         const Scalar&lt;DataType&gt;&amp; rest_mass_density) const noexcept {
+<span class="lineNum">     109 </span>            :   return make_with_value&lt;Scalar&lt;DataType&gt;&gt;(get(rest_mass_density), 0.0);
+<span class="lineNum">     110 </span>            : }
+<span class="lineNum">     111 </span>            : }  // namespace EquationsOfState
+<span class="lineNum">     112 </span>            : 
+<span class="lineNum">     113 </span>            : template class EquationsOfState::PolytropicFluid&lt;true&gt;;
+<span class="lineNum">     114 </span>            : template class EquationsOfState::PolytropicFluid&lt;false&gt;;
+<span class="lineNum">     115 </span>            : /// \endcond
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

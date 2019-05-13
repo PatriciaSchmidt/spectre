@@ -1,0 +1,164 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Elliptic/Actions/ComputeOperatorAction.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">Elliptic/Actions</a> - ComputeOperatorAction.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntryLo">20.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;tuple&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : #include &quot;DataStructures/DataBox/DataBox.hpp&quot;
+<span class="lineNum">       9 </span>            : #include &quot;DataStructures/DataBox/DataBoxTag.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;DataStructures/DataBox/Prefixes.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;Utilities/Requires.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : /// \cond
+<span class="lineNum">      16 </span>            : // IWYU pragma: no_forward_declare db::DataBox
+<span class="lineNum">      17 </span>            : namespace tuples {
+<span class="lineNum">      18 </span>            : template &lt;typename...&gt;
+<span class="lineNum">      19 </span>            : class TaggedTuple;  // IWYU pragma: keep
+<span class="lineNum">      20 </span>            : }  // namespace tuples
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : namespace Parallel {
+<span class="lineNum">      23 </span>            : template &lt;typename Metavariables&gt;
+<span class="lineNum">      24 </span>            : class ConstGlobalCache;
+<span class="lineNum">      25 </span>            : }  // namespace Parallel
+<span class="lineNum">      26 </span>            : /// \endcond
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span><span class="lineNoCov">          0 : namespace Elliptic {</span>
+<span class="lineNum">      29 </span><span class="lineNoCov">          0 : namespace Actions {</span>
+<span class="lineNum">      30 </span>            : /*!
+<span class="lineNum">      31 </span>            :  * \ingroup ActionsGroup
+<span class="lineNum">      32 </span>            :  * \ingroup DiscontinuousGalerkinGroup
+<span class="lineNum">      33 </span>            :  * \brief Compute the bulk contribution to the linear operator applied to the
+<span class="lineNum">      34 </span>            :  * variables
+<span class="lineNum">      35 </span>            :  *
+<span class="lineNum">      36 </span>            :  * The `system::compute_operator_action` operator is invoked with its
+<span class="lineNum">      37 </span>            :  * `argument_tags`. The result of this computation is stored in
+<span class="lineNum">      38 </span>            :  * `db::add_tag_prefix&lt;step_prefix, variables_tag&gt;`, where `step_prefix` is
+<span class="lineNum">      39 </span>            :  * retrieved from the `Metavariables::temporal_id`. For elliptic systems this
+<span class="lineNum">      40 </span>            :  * prefix is generally `LinearSolver::Tags::OperatorAppliedTo`.
+<span class="lineNum">      41 </span>            :  *
+<span class="lineNum">      42 </span>            :  * Uses:
+<span class="lineNum">      43 </span>            :  * - Metavariables:
+<span class="lineNum">      44 </span>            :  *   - `temporal_id::step_prefix`
+<span class="lineNum">      45 </span>            :  * - System:
+<span class="lineNum">      46 </span>            :  *   - `variables_tag`
+<span class="lineNum">      47 </span>            :  *   - `compute_operator_action`
+<span class="lineNum">      48 </span>            :  * - DataBox:
+<span class="lineNum">      49 </span>            :  *   - db::add_tag_prefix&lt;step_prefix, variables_tag&gt;
+<span class="lineNum">      50 </span>            :  *   - All elements in `compute_operator_action::argument_tags`
+<span class="lineNum">      51 </span>            :  *
+<span class="lineNum">      52 </span>            :  * DataBox changes:
+<span class="lineNum">      53 </span>            :  * - Modifies:
+<span class="lineNum">      54 </span>            :  *   - `db::add_tag_prefix&lt;step_prefix, variables_tag&gt;`
+<span class="lineNum">      55 </span>            :  */
+<span class="lineNum">      56 </span><span class="lineCov">          1 : struct ComputeOperatorAction {</span>
+<span class="lineNum">      57 </span>            :   template &lt;typename DbTagsList, typename... InboxTags, typename Metavariables,
+<span class="lineNum">      58 </span>            :             typename ArrayIndex, typename ActionList,
+<span class="lineNum">      59 </span>            :             typename ParallelComponent,
+<span class="lineNum">      60 </span>            :             Requires&lt;tmpl::size&lt;DbTagsList&gt;::value != 0&gt; = nullptr&gt;
+<span class="lineNum">      61 </span><span class="lineNoCov">          0 :   static auto apply(db::DataBox&lt;DbTagsList&gt;&amp; box,</span>
+<span class="lineNum">      62 </span>            :                     tuples::TaggedTuple&lt;InboxTags...&gt;&amp; /*inboxes*/,
+<span class="lineNum">      63 </span>            :                     const Parallel::ConstGlobalCache&lt;Metavariables&gt;&amp; /*cache*/,
+<span class="lineNum">      64 </span>            :                     const ArrayIndex&amp; /*array_index*/,
+<span class="lineNum">      65 </span>            :                     const ActionList /*meta*/,
+<span class="lineNum">      66 </span>            :                     const ParallelComponent* const /*meta*/) noexcept {
+<span class="lineNum">      67 </span>            :     using system = typename Metavariables::system;
+<span class="lineNum">      68 </span>            :     using computer = typename system::compute_operator_action;
+<span class="lineNum">      69 </span>            :     // Notes:
+<span class="lineNum">      70 </span>            :     // - step_variables is not zeroed and the operator cannot assume this.
+<span class="lineNum">      71 </span>            :     // - We retrieve the `step_prefix` from the `Metavariables` (as opposed to
+<span class="lineNum">      72 </span>            :     // hard-coding `LinearSolver::Tags::OperatorAppliedTo`) to retain
+<span class="lineNum">      73 </span>            :     // consistency with other actions that do the same (for instance
+<span class="lineNum">      74 </span>            :     // `dg::Actions::ApplyFluxes` that is not specific to elliptic systems)
+<span class="lineNum">      75 </span>            :     db::mutate_apply&lt;db::split_tag&lt;db::add_tag_prefix&lt;
+<span class="lineNum">      76 </span>            :                          Metavariables::temporal_id::template step_prefix,
+<span class="lineNum">      77 </span>            :                          typename system::variables_tag&gt;&gt;,
+<span class="lineNum">      78 </span>            :                      typename computer::argument_tags&gt;(computer{},
+<span class="lineNum">      79 </span>            :                                                        make_not_null(&amp;box));
+<span class="lineNum">      80 </span>            :     return std::forward_as_tuple(std::move(box));
+<span class="lineNum">      81 </span>            :   }
+<span class="lineNum">      82 </span>            : };
+<span class="lineNum">      83 </span>            : }  // namespace Actions
+<span class="lineNum">      84 </span>            : }  // namespace Elliptic
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - /work/build_Debug_clang/docs/xml/spectre_build_system.xml</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">work/build_Debug_clang/docs/xml</a> - spectre_build_system.xml</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineCov">          1 : &lt;?xml version='1.0' encoding='UTF-8' standalone='no'?&gt;</span>
+<span class="lineNum">       2 </span>            : &lt;doxygen xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:noNamespaceSchemaLocation=&quot;compound.xsd&quot; version=&quot;1.8.13&quot;&gt;
+<span class="lineNum">       3 </span>            :   &lt;compounddef id=&quot;spectre_build_system&quot; kind=&quot;page&quot;&gt;
+<span class="lineNum">       4 </span>            :     &lt;compoundname&gt;spectre_build_system&lt;/compoundname&gt;
+<span class="lineNum">       5 </span>            :     &lt;title&gt;Build System&lt;/title&gt;
+<span class="lineNum">       6 </span>            :     &lt;detaileddescription&gt;
+<span class="lineNum">       7 </span>            : &lt;sect1 id=&quot;spectre_build_system_1cmake&quot;&gt;
+<span class="lineNum">       8 </span>            : &lt;title&gt;CMake&lt;/title&gt;
+<span class="lineNum">       9 </span>            : &lt;para&gt;SpECTRE uses &lt;ulink url=&quot;https://cmake.org/&quot;&gt;CMake&lt;/ulink&gt; for the build system. In this section of the guide we outline how to &lt;ulink url=&quot;#adding_source_files&quot;&gt;add new source files&lt;/ulink&gt;, &lt;ulink url=&quot;#adding_libraries&quot;&gt;libraries&lt;/ulink&gt;, &lt;ulink url=&quot;#adding_unit_tests&quot;&gt;unit tests&lt;/ulink&gt;, &lt;ulink url=&quot;#adding_executables&quot;&gt;executables&lt;/ulink&gt;, and &lt;ulink url=&quot;#adding_external_dependencies&quot;&gt;external dependencies&lt;/ulink&gt;. We also describe &lt;ulink url=&quot;#common_cmake_flags&quot;&gt;commonly used CMake flags&lt;/ulink&gt;.&lt;/para&gt;&lt;para&gt;Note that in editing &lt;computeroutput&gt;CMakeLists.txt&lt;/computeroutput&gt; files, it is conventional to indent multiline commands by two spaces (except for the first line), and to separate most commands by blank lines.&lt;/para&gt;&lt;sect2 id=&quot;spectre_build_system_1adding_source_files&quot;&gt;
+<span class="lineNum">      10 </span>            : &lt;title&gt;Adding Source Files&lt;/title&gt;
+<span class="lineNum">      11 </span>            : &lt;para&gt;SpECTRE organizes source files into subdirectories of &lt;computeroutput&gt;src&lt;/computeroutput&gt; that are compiled into libraries. To add a new source file &lt;computeroutput&gt;FILE.cpp&lt;/computeroutput&gt; to an existing library in &lt;computeroutput&gt;src/PATH/DIR&lt;/computeroutput&gt;, just edit &lt;computeroutput&gt;src/PATH/DIR/CMakeLists.txt&lt;/computeroutput&gt; and add &lt;computeroutput&gt;FILE.cpp&lt;/computeroutput&gt; to the list of files in &lt;programlisting&gt;&lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;set(LIBRARY_SOURCES&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      12 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;sp/&gt;&lt;sp/&gt;&amp;lt;list_of_files&amp;gt;&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      13 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;sp/&gt;&lt;sp/&gt;)&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      14 </span>            : &lt;/programlisting&gt; such that the resulting &lt;computeroutput&gt;&amp;lt;list_of_files&amp;gt;&lt;/computeroutput&gt; is in alphabetical order.&lt;/para&gt;&lt;sect3 id=&quot;spectre_build_system_1adding_libraries&quot;&gt;
+<span class="lineNum">      15 </span>            : &lt;title&gt;Adding Libraries&lt;/title&gt;
+<span class="lineNum">      16 </span>            : &lt;para&gt;To add a source file &lt;computeroutput&gt;FILE.cpp&lt;/computeroutput&gt; that is compiled into a new library &lt;computeroutput&gt;LIB&lt;/computeroutput&gt; in a directory &lt;computeroutput&gt;src/PATH/DIR&lt;/computeroutput&gt; (either in a new directory, or in an existing directory that either does not have a &lt;computeroutput&gt;CMakeLists.txt&lt;/computeroutput&gt; file, or does not create a library in the existing &lt;computeroutput&gt;CMakeLists.txt&lt;/computeroutput&gt;):&lt;itemizedlist&gt;
+<span class="lineNum">      17 </span>            : &lt;listitem&gt;&lt;para&gt;Create (if necessary) a &lt;computeroutput&gt;CMakeLists.txt&lt;/computeroutput&gt; file in &lt;computeroutput&gt;DIR&lt;/computeroutput&gt;, with the following two lines at the top: &lt;programlisting&gt;&lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;#&lt;sp/&gt;Distributed&lt;sp/&gt;under&lt;sp/&gt;the&lt;sp/&gt;MIT&lt;sp/&gt;License.&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      18 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;#&lt;sp/&gt;See&lt;sp/&gt;LICENSE.txt&lt;sp/&gt;for&lt;sp/&gt;details.&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      19 </span>            : &lt;/programlisting&gt;&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;In the parent directory (i.e. &lt;computeroutput&gt;src/PATH&lt;/computeroutput&gt;), (if necessary) add the following line to its &lt;computeroutput&gt;CMakeLists.txt&lt;/computeroutput&gt; file (if necessary, recursively do the previous step and this one until you reach a &lt;computeroutput&gt;CMakeLists.txt&lt;/computeroutput&gt; that adds the appropriate subdirectory): &lt;programlisting&gt;&lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;add_subdirectory(DIR)&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      20 </span>            : &lt;/programlisting&gt; If there are already other &lt;computeroutput&gt;add_subdirectory()&lt;/computeroutput&gt; lines in the file, place the new one so that the subdirectories are in alphabetical order.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;Add the line: &lt;programlisting&gt;&lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;set(LIBRARY&lt;sp/&gt;LIB)&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      21 </span>            : &lt;/programlisting&gt; where convention is that &lt;computeroutput&gt;LIB&lt;/computeroutput&gt; = &lt;computeroutput&gt;DIR&lt;/computeroutput&gt;. As library names must be unique, this is not always possible, in which case the convention is to prepend the parent directory to &lt;computeroutput&gt;DIR&lt;/computeroutput&gt;.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;Add the lines &lt;programlisting&gt;&lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;set(LIBRARY_SOURCES&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      22 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;sp/&gt;&lt;sp/&gt;FILE.cpp&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      23 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;sp/&gt;&lt;sp/&gt;)&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      24 </span>            : &lt;codeline&gt;&lt;/codeline&gt;
+<span class="lineNum">      25 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;add_spectre_library(${LIBRARY}&lt;sp/&gt;${LIBRARY_SOURCES})&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      26 </span>            : &lt;codeline&gt;&lt;/codeline&gt;
+<span class="lineNum">      27 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;target_link_libraries(&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      28 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;sp/&gt;&lt;sp/&gt;${LIBRARY}&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      29 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;sp/&gt;&lt;sp/&gt;&amp;lt;list_of_interfaces&amp;gt;&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      30 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;sp/&gt;&lt;sp/&gt;)&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      31 </span>            : &lt;/programlisting&gt; where &lt;computeroutput&gt;&amp;lt;list_of_interfaces&amp;gt;&lt;/computeroutput&gt; is an alphabetized list of lines of the form &lt;programlisting&gt;&lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;INTERFACE&lt;sp/&gt;SOME_LIBRARY&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      32 </span>            : &lt;/programlisting&gt; where &lt;computeroutput&gt;SOME_LIBRARY&lt;/computeroutput&gt; is a library that must be linked in order for the new library to be successfully linked in an executable.&lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      33 </span>            : &lt;/para&gt;&lt;/sect3&gt;
+<span class="lineNum">      34 </span>            : &lt;/sect2&gt;
+<span class="lineNum">      35 </span>            : &lt;sect2 id=&quot;spectre_build_system_1adding_unit_tests&quot;&gt;
+<span class="lineNum">      36 </span>            : &lt;title&gt;Adding Unit Tests&lt;/title&gt;
+<span class="lineNum">      37 </span>            : &lt;para&gt;We use the &lt;ulink url=&quot;https://github.com/philsquared/Catch&quot;&gt;Catch&lt;/ulink&gt; testing framework for unit tests. All unit tests are housed in &lt;computeroutput&gt;tests/Unit&lt;/computeroutput&gt; with subdirectories for each subdirectory of &lt;computeroutput&gt;src&lt;/computeroutput&gt;. Add the &lt;computeroutput&gt;cpp&lt;/computeroutput&gt; file to the appropriate subdirectory and also to the &lt;computeroutput&gt;CMakeLists.txt&lt;/computeroutput&gt; in that subdirectory. Inside the source file you can create a new test by adding a &lt;computeroutput&gt;SPECTRE_TEST_CASE(&amp;quot;Unit.Dir.Component&amp;quot;, &amp;quot;[Unit][Dir][Tag]&amp;quot;)&lt;/computeroutput&gt;. The &lt;computeroutput&gt;[Tag]&lt;/computeroutput&gt; is optional and you can have more than one, but the tags should be used quite sparingly. The purpose of the tags is to be able to run all unit tests or all tests of a particular set of components, e.g. &lt;computeroutput&gt;ctest -L Data&lt;/computeroutput&gt; to run all tests inside the &lt;computeroutput&gt;Data&lt;/computeroutput&gt; directory. Please see &lt;ref refid=&quot;writing_unit_tests&quot; kindref=&quot;compound&quot;&gt;writing unit tests&lt;/ref&gt;, other unit tests and the &lt;ulink url=&quot;https://github.com/philsquared/Catch&quot;&gt;Catch documentation&lt;/ulink&gt; for more help on writing tests. Unit tests should take as short a time as possible, with a goal of less than two seconds. Please also limit the number of distinct cases (by using &lt;computeroutput&gt;SECTION&lt;/computeroutput&gt;s).&lt;/para&gt;&lt;para&gt;You can check the unit test coverage of your code by installing all the optional components and then running &lt;computeroutput&gt;make unit-test-coverage&lt;/computeroutput&gt; (after re-running CMake). This will create the directory &lt;computeroutput&gt;BUILD_DIR/docs/html/unit-test-coverage/&lt;/computeroutput&gt; which is where the coverage information is located. Open the &lt;computeroutput&gt;index.html&lt;/computeroutput&gt; file in your browser and make sure that your tests are indeed checking all lines of your code. Your pull requests might not be merged until your line coverage is over 90% (we are aiming for 100% line coverage wherever possible). Unreachable lines of code can be excluded from coverage analysis by adding the inline comment &lt;computeroutput&gt;LCOV_EXCL_LINE&lt;/computeroutput&gt; or a block can be excluded using &lt;computeroutput&gt;LCOV_EXCL_START&lt;/computeroutput&gt; and &lt;computeroutput&gt;LCOV_EXCL_STOP&lt;/computeroutput&gt;. However, this should be used extremely sparingly since unreachable code paths should be removed from the code base altogether.&lt;/para&gt;&lt;/sect2&gt;
+<span class="lineNum">      38 </span>            : &lt;sect2 id=&quot;spectre_build_system_1adding_executables&quot;&gt;
+<span class="lineNum">      39 </span>            : &lt;title&gt;Adding Executables&lt;/title&gt;
+<span class="lineNum">      40 </span>            : &lt;para&gt;All general executables are found in &lt;computeroutput&gt;src/Executables&lt;/computeroutput&gt;, while those for specific evolution (elliptic) systems are found in &lt;computeroutput&gt;src/Evolution/Executables&lt;/computeroutput&gt; (&lt;computeroutput&gt;src/Elliptic/Executables&lt;/computeroutput&gt;). See &lt;ref refid=&quot;dev_guide_creating_executables&quot; kindref=&quot;compound&quot;&gt;how to create executables&lt;/ref&gt;.&lt;/para&gt;&lt;/sect2&gt;
+<span class="lineNum">      41 </span>            : &lt;sect2 id=&quot;spectre_build_system_1adding_external_dependencies&quot;&gt;
+<span class="lineNum">      42 </span>            : &lt;title&gt;Adding External Dependencies&lt;/title&gt;
+<span class="lineNum">      43 </span>            : &lt;para&gt;To add an external dependency, first add a &lt;computeroutput&gt;SetupDEPENDENCY.cmake&lt;/computeroutput&gt; file to the &lt;computeroutput&gt;cmake&lt;/computeroutput&gt; directory. You should model this after one of the existing ones for &lt;computeroutput&gt;Catch&lt;/computeroutput&gt; or &lt;computeroutput&gt;Brigand&lt;/computeroutput&gt; if you&amp;apos;re adding a header-only library and &lt;computeroutput&gt;yaml-cpp&lt;/computeroutput&gt; if the library is not header-only. If CMake does not already support &lt;computeroutput&gt;find_package&lt;/computeroutput&gt; for the library you&amp;apos;re adding you can write your own. These should be modeled after &lt;computeroutput&gt;FindBrigand&lt;/computeroutput&gt; or &lt;computeroutput&gt;FindCatch&lt;/computeroutput&gt; for header-only libraries, and &lt;computeroutput&gt;FindYAMLCPP&lt;/computeroutput&gt; for compiled libraries. The &lt;computeroutput&gt;SetupDEPENDENCY.cmake&lt;/computeroutput&gt; file must then be included in the root &lt;computeroutput&gt;spectre/CMakeLists.txt&lt;/computeroutput&gt;. Be sure to test both that setting &lt;computeroutput&gt;LIBRARY_ROOT&lt;/computeroutput&gt; works correctly for your library, and also that if the library is required that CMake fails gracefully if the library is not found.&lt;/para&gt;&lt;/sect2&gt;
+<span class="lineNum">      44 </span>            : &lt;sect2 id=&quot;spectre_build_system_1common_cmake_flags&quot;&gt;
+<span class="lineNum">      45 </span>            : &lt;title&gt;Commonly Used CMake flags&lt;/title&gt;
+<span class="lineNum">      46 </span>            : &lt;para&gt;The following are the most common flags used to control building with &lt;computeroutput&gt;CMake&lt;/computeroutput&gt;. They are used by &lt;programlisting&gt;&lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;cmake&lt;sp/&gt;-D&lt;sp/&gt;FLAG1=OPT1&lt;sp/&gt;...&lt;sp/&gt;-D&lt;sp/&gt;FLAGN=OPTN&lt;sp/&gt;&amp;lt;SPECTRE_ROOT&amp;gt;&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      47 </span>            : &lt;/programlisting&gt;&lt;itemizedlist&gt;
+<span class="lineNum">      48 </span>            : &lt;listitem&gt;&lt;para&gt;ASAN&lt;itemizedlist&gt;
+<span class="lineNum">      49 </span>            : &lt;listitem&gt;&lt;para&gt;Whether or not to turn on the address sanitizer compile flags (&lt;computeroutput&gt;-fsanitize=address&lt;/computeroutput&gt;) (default is &lt;computeroutput&gt;OFF&lt;/computeroutput&gt;)&lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      50 </span>            : &lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;BUILD_SHARED_LIBS&lt;itemizedlist&gt;
+<span class="lineNum">      51 </span>            : &lt;listitem&gt;&lt;para&gt;Whether shared libraries are built instead of static libraries (default is &lt;computeroutput&gt;OFF&lt;/computeroutput&gt;)&lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      52 </span>            : &lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;CHARM_ROOT&lt;itemizedlist&gt;
+<span class="lineNum">      53 </span>            : &lt;listitem&gt;&lt;para&gt;The path to the build directory of &lt;computeroutput&gt;Charm++&lt;/computeroutput&gt;&lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      54 </span>            : &lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;CMAKE_BUILD_TYPE&lt;itemizedlist&gt;
+<span class="lineNum">      55 </span>            : &lt;listitem&gt;&lt;para&gt;Sets the build type. Common options:&lt;itemizedlist&gt;
+<span class="lineNum">      56 </span>            : &lt;listitem&gt;&lt;para&gt;&lt;computeroutput&gt;Debug&lt;/computeroutput&gt; (the default if the flag is not specified): sets flags that trigger additional error checking&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;&lt;computeroutput&gt;Release&lt;/computeroutput&gt;&lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      57 </span>            : &lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      58 </span>            : &lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;CMAKE_C_COMPILER&lt;itemizedlist&gt;
+<span class="lineNum">      59 </span>            : &lt;listitem&gt;&lt;para&gt;The &lt;computeroutput&gt;C&lt;/computeroutput&gt; compiler used (defaults to whatever is determined by &lt;computeroutput&gt;CMake/Modules/CMakeDetermineCCompiler.cmake&lt;/computeroutput&gt;, usually &lt;computeroutput&gt;cc&lt;/computeroutput&gt;)&lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      60 </span>            : &lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;CMAKE_CXX_COMPILER&lt;itemizedlist&gt;
+<span class="lineNum">      61 </span>            : &lt;listitem&gt;&lt;para&gt;The &lt;computeroutput&gt;C++&lt;/computeroutput&gt; compiler used (defaults to whatever is determined by &lt;computeroutput&gt;CMake/Modules/CMakeDetermineCXXCompiler.cmake&lt;/computeroutput&gt;, usually &lt;computeroutput&gt;c++&lt;/computeroutput&gt;)&lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      62 </span>            : &lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;CMAKE_Fortran_COMPILER&lt;itemizedlist&gt;
+<span class="lineNum">      63 </span>            : &lt;listitem&gt;&lt;para&gt;The &lt;computeroutput&gt;Fortran&lt;/computeroutput&gt; compiler used (defaults to whatever is determined by &lt;computeroutput&gt;CMake/Modules/CMakeDetermineFortranCompiler.cmake&lt;/computeroutput&gt;)&lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      64 </span>            : &lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;CMAKE_C_FLAGS&lt;itemizedlist&gt;
+<span class="lineNum">      65 </span>            : &lt;listitem&gt;&lt;para&gt;Additional flags passed to the &lt;computeroutput&gt;C&lt;/computeroutput&gt; compiler.&lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      66 </span>            : &lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;CMAKE_CXX_FLAGS&lt;itemizedlist&gt;
+<span class="lineNum">      67 </span>            : &lt;listitem&gt;&lt;para&gt;Additional flags passed to the &lt;computeroutput&gt;C++&lt;/computeroutput&gt; compiler.&lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      68 </span>            : &lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;CMAKE_Fortran_FLAGS&lt;itemizedlist&gt;
+<span class="lineNum">      69 </span>            : &lt;listitem&gt;&lt;para&gt;Additional flags passed to the &lt;computeroutput&gt;Fortran&lt;/computeroutput&gt; compiler.&lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      70 </span>            : &lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;CMAKE_RUNTIME_OUTPUT_DIRECTORY&lt;itemizedlist&gt;
+<span class="lineNum">      71 </span>            : &lt;listitem&gt;&lt;para&gt;Sets the directory where the library and executables are placed. By default libraries end up in &lt;computeroutput&gt;&amp;lt;BUILD_DIR&amp;gt;/lib&lt;/computeroutput&gt; and executables in &lt;computeroutput&gt;&amp;lt;BUILD_DIR&amp;gt;/bin&lt;/computeroutput&gt;.&lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      72 </span>            : &lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;ENABLE_WARNINGS&lt;itemizedlist&gt;
+<span class="lineNum">      73 </span>            : &lt;listitem&gt;&lt;para&gt;Whether or not warning flags are enabled (default is &lt;computeroutput&gt;ON&lt;/computeroutput&gt;)&lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      74 </span>            : &lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;UBSAN_INTEGER&lt;itemizedlist&gt;
+<span class="lineNum">      75 </span>            : &lt;listitem&gt;&lt;para&gt;Whether or not to turn on the undefined behavior sanitizer unsigned integer overflow flag (&lt;computeroutput&gt;-fsanitize=integer&lt;/computeroutput&gt;) (default is &lt;computeroutput&gt;OFF&lt;/computeroutput&gt;)&lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      76 </span>            : &lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;UBSAN_UNDEFINED&lt;itemizedlist&gt;
+<span class="lineNum">      77 </span>            : &lt;listitem&gt;&lt;para&gt;Whether or not to turn on the undefined behavior sanitizer undefined behavior compile flags (&lt;computeroutput&gt;-fsanitize=undefined&lt;/computeroutput&gt;) (default is &lt;computeroutput&gt;OFF&lt;/computeroutput&gt;)&lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      78 </span>            : &lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;USE_PCH&lt;itemizedlist&gt;
+<span class="lineNum">      79 </span>            : &lt;listitem&gt;&lt;para&gt;Whether or not to use pre-compiled headers (default is &lt;computeroutput&gt;ON&lt;/computeroutput&gt;)&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;This needs to be turned &lt;computeroutput&gt;OFF&lt;/computeroutput&gt; in order to use &lt;ulink url=&quot;https://github.com/include-what-you-use/include-what-you-use&quot;&gt;include-what-you-use (IWYU)&lt;/ulink&gt;&lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      80 </span>            : &lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      81 </span>            : &lt;/para&gt;&lt;para&gt;&lt;heading level=&quot;2&quot;&gt;Formaline&lt;/heading&gt;
+<span class="lineNum">      82 </span>            : &lt;/para&gt;&lt;para&gt;SpECTRE&amp;apos;s implementation of Formaline is based on, but distinct in implementation from, the original design by &lt;ulink url=&quot;https://github.com/hypercott/formaline&quot;&gt;Erik Schnetter and Christian Ott&lt;/ulink&gt;, which embeds an archive of the source tree into the executable. The original design creates a C/C++ file with a function that returns an array/vector of &lt;computeroutput&gt;char&lt;/computeroutput&gt;s (a byte stream). However, this results in a very large source file (50MB or more), which is very slow to compile and ends up more than doubling the link time. Instead, SpECTRE&amp;apos;s Formaline implementation uses the linker &lt;computeroutput&gt;ld&lt;/computeroutput&gt; to encode a file into an object, which means rather than creating a large source file, we can directly encode the source tree archive into the binary at the linking stage.&lt;/para&gt;&lt;para&gt;Most of SpECTRE&amp;apos;s Formaline is implemented inside the &lt;computeroutput&gt;tools/WrapLinker.sh&lt;/computeroutput&gt; script. Function declarations are provided in &lt;computeroutput&gt;&lt;ref refid=&quot;Formaline_8hpp_source&quot; kindref=&quot;compound&quot;&gt;Utilities/Formaline.hpp&lt;/ref&gt;&lt;/computeroutput&gt; and a small function that writes the source file to disk is defined in &lt;computeroutput&gt;Utilities/Formaline.cpp&lt;/computeroutput&gt;. The first Formaline-related thing done in &lt;computeroutput&gt;WrapLinker.sh&lt;/computeroutput&gt; is to archive everything in the source directory tracked by git. Once the archive is created we run &lt;computeroutput&gt;ld -r -b binary -o object.o src.tar.gz&lt;/computeroutput&gt; (with unique names for &lt;computeroutput&gt;object.o&lt;/computeroutput&gt; and &lt;computeroutput&gt;src.tar.gz&lt;/computeroutput&gt; for each executable that is built to avoid name collisions) to generate an object file with the source file encoded from &lt;computeroutput&gt;_binary_src_tar_gz_start&lt;/computeroutput&gt; to &lt;computeroutput&gt;_binary_src_tar_gz_end&lt;/computeroutput&gt;. Next we write a C++ source file that defines a function &lt;computeroutput&gt;get_archive&lt;/computeroutput&gt; to convert the byte stream into a &lt;computeroutput&gt;&lt;ref refid=&quot;cpp/container/vector&quot; kindref=&quot;compound&quot; external=&quot;/work/spectre/docs/config/cppreference-doxygen-web.tag.xml&quot;&gt;std::vector&lt;/ref&gt;&amp;lt;char&amp;gt;&lt;/computeroutput&gt;. We also encode the output of &lt;computeroutput&gt;printenv&lt;/computeroutput&gt;, the various &lt;computeroutput&gt;PATH&lt;/computeroutput&gt; environment variables, and the CMake generated &lt;computeroutput&gt;LibraryVersions.txt&lt;/computeroutput&gt; file into the source file. Finally, the generated source file is built during the linking phase and the object file containing the source archive is linked into the executable.&lt;/para&gt;&lt;para&gt;To further aid in reproducibility, the &lt;computeroutput&gt;printenv&lt;/computeroutput&gt; output and &lt;computeroutput&gt;LibraryVersions.txt&lt;/computeroutput&gt; contents are written to HDF5 files as part of the &lt;computeroutput&gt;&lt;ref refid=&quot;classh5_1_1Header&quot; kindref=&quot;compound&quot;&gt;h5::Header&lt;/ref&gt;&lt;/computeroutput&gt; object. The archive of the source tree is written using the &lt;computeroutput&gt;&lt;ref refid=&quot;classh5_1_1SourceArchive&quot; kindref=&quot;compound&quot;&gt;h5::SourceArchive&lt;/ref&gt;&lt;/computeroutput&gt; object and can be extracted by running &lt;programlisting&gt;&lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;h5dump&lt;sp/&gt;-d&lt;sp/&gt;/src.tar.gz&lt;sp/&gt;-b&lt;sp/&gt;LE&lt;sp/&gt;-o&lt;sp/&gt;src.tar.gz&lt;sp/&gt;/path/to/hdf5/file.h5&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      83 </span>            : &lt;/programlisting&gt; &lt;/para&gt;&lt;/sect2&gt;
+<span class="lineNum">      84 </span>            : &lt;/sect1&gt;
+<span class="lineNum">      85 </span>            :     &lt;/detaileddescription&gt;
+<span class="lineNum">      86 </span>            :   &lt;/compounddef&gt;
+<span class="lineNum">      87 </span>            : &lt;/doxygen&gt;
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

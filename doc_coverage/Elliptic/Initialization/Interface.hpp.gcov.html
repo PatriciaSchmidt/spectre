@@ -1,0 +1,222 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Elliptic/Initialization/Interface.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">Elliptic/Initialization</a> - Interface.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntryLo">12.5 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       7 </span>            : #include &lt;utility&gt;
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : #include &quot;DataStructures/DataBox/DataBox.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;DataStructures/DataBox/DataBoxTag.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;DataStructures/Tensor/EagerMath/Magnitude.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;Domain/FaceNormal.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;NumericalAlgorithms/LinearOperators/Divergence.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;NumericalAlgorithms/LinearOperators/PartialDerivatives.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            : namespace Elliptic {
+<span class="lineNum">      18 </span>            : namespace Initialization {
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : /*!
+<span class="lineNum">      21 </span>            :  * \brief Initializes the DataBox tags related to data on the element faces
+<span class="lineNum">      22 </span>            :  *
+<span class="lineNum">      23 </span>            :  * With:
+<span class="lineNum">      24 </span>            :  * - `face&lt;Tag&gt;` =
+<span class="lineNum">      25 </span>            :  * `Tags::Interface&lt;Tags::InternalDirections&lt;volume_dim&gt;, Tag&gt;` **and**
+<span class="lineNum">      26 </span>            :  * `Tags::Interface&lt;Tags::BoundaryDirectionsInterior&lt;volume_dim&gt;, Tag&gt;`
+<span class="lineNum">      27 </span>            :  * - `ext&lt;Tag&gt;` =
+<span class="lineNum">      28 </span>            :  * `Tags::Interface&lt;Tags::BoundaryDirectionsExterior&lt;volume_dim&gt;, Tag&gt;`
+<span class="lineNum">      29 </span>            :  *
+<span class="lineNum">      30 </span>            :  * Uses:
+<span class="lineNum">      31 </span>            :  * - System:
+<span class="lineNum">      32 </span>            :  *   - `volume_dim`
+<span class="lineNum">      33 </span>            :  *   - `variables_tag`
+<span class="lineNum">      34 </span>            :  *   - `gradient_tags`
+<span class="lineNum">      35 </span>            :  *   - `magnitude_tag`
+<span class="lineNum">      36 </span>            :  * - DataBox:
+<span class="lineNum">      37 </span>            :  *   - All items needed by the added compute tags
+<span class="lineNum">      38 </span>            :  *
+<span class="lineNum">      39 </span>            :  * DataBox:
+<span class="lineNum">      40 </span>            :  * - Adds:
+<span class="lineNum">      41 </span>            :  *   - `Tags::InternalDirections&lt;volume_dim&gt;`
+<span class="lineNum">      42 </span>            :  *   - `Tags::BoundaryDirectionsInterior&lt;volume_dim&gt;`
+<span class="lineNum">      43 </span>            :  *   - `face&lt;Tags::Direction&lt;volume_dim&gt;&gt;`
+<span class="lineNum">      44 </span>            :  *   - `face&lt;Tags::Mesh&lt;volume_dim - 1&gt;&gt;`
+<span class="lineNum">      45 </span>            :  *   - `face&lt;variables_tag&gt;` (as a compute tag)
+<span class="lineNum">      46 </span>            :  *   - `face&lt;db::add_tag_prefix&lt;Tags::deriv, db::variables_tag_with_tags_list&lt;
+<span class="lineNum">      47 </span>            :  *   variables_tag, gradient_tags&gt;, tmpl::size_t&lt;volume_dim&gt;, Frame::Inertial&gt;&gt;`
+<span class="lineNum">      48 </span>            :  *   - `face&lt;Tags::Coordinates&lt;volume_dim, Frame::Inertial&gt;&gt;`
+<span class="lineNum">      49 </span>            :  *   - `face&lt;Tags::UnnormalizedFaceNormal&lt;volume_dim&gt;&gt;`
+<span class="lineNum">      50 </span>            :  *   - `face&lt;magnitude_tag&lt;Tags::UnnormalizedFaceNormal&lt;volume_dim&gt;&gt;&gt;`
+<span class="lineNum">      51 </span>            :  *   - `face&lt;Tags::Normalized&lt;Tags::UnnormalizedFaceNormal&lt;volume_dim&gt;&gt;&gt;`
+<span class="lineNum">      52 </span>            :  *   - `Tags::BoundaryDirectionsExterior&lt;volume_dim&gt;`
+<span class="lineNum">      53 </span>            :  *   - `ext&lt;Tags::Direction&lt;volume_dim&gt;&gt;`
+<span class="lineNum">      54 </span>            :  *   - `ext&lt;Tags::Mesh&lt;volume_dim - 1&gt;&gt;`
+<span class="lineNum">      55 </span>            :  *   - `ext&lt;variables_tag&gt;` (as a simple tag)
+<span class="lineNum">      56 </span>            :  *   - `ext&lt;db::add_tag_prefix&lt;Tags::deriv, db::variables_tag_with_tags_list&lt;
+<span class="lineNum">      57 </span>            :  *   variables_tag, gradient_tags&gt;, tmpl::size_t&lt;volume_dim&gt;, Frame::Inertial&gt;&gt;`
+<span class="lineNum">      58 </span>            :  *   - `ext&lt;Tags::UnnormalizedFaceNormal&lt;volume_dim&gt;&gt;`
+<span class="lineNum">      59 </span>            :  *   - `ext&lt;magnitude_tag&lt;Tags::UnnormalizedFaceNormal&lt;volume_dim&gt;&gt;&gt;`
+<span class="lineNum">      60 </span>            :  *   - `ext&lt;Tags::Normalized&lt;Tags::UnnormalizedFaceNormal&lt;volume_dim&gt;&gt;&gt;`
+<span class="lineNum">      61 </span>            :  */
+<span class="lineNum">      62 </span>            : template &lt;typename System&gt;
+<span class="lineNum">      63 </span><span class="lineCov">          1 : struct Interface {</span>
+<span class="lineNum">      64 </span><span class="lineNoCov">          0 :   static constexpr size_t volume_dim = System::volume_dim;</span>
+<span class="lineNum">      65 </span>            :   template &lt;typename Directions&gt;
+<span class="lineNum">      66 </span><span class="lineNoCov">          0 :   using face_tags = tmpl::list&lt;</span>
+<span class="lineNum">      67 </span>            :       Directions,
+<span class="lineNum">      68 </span>            :       Tags::InterfaceComputeItem&lt;Directions, Tags::Direction&lt;volume_dim&gt;&gt;,
+<span class="lineNum">      69 </span>            :       Tags::InterfaceComputeItem&lt;Directions, Tags::InterfaceMesh&lt;volume_dim&gt;&gt;,
+<span class="lineNum">      70 </span>            :       Tags::Slice&lt;Directions, typename System::variables_tag&gt;,
+<span class="lineNum">      71 </span>            :       Tags::Slice&lt;Directions, db::add_tag_prefix&lt;
+<span class="lineNum">      72 </span>            :                                   Tags::deriv,
+<span class="lineNum">      73 </span>            :                                   db::variables_tag_with_tags_list&lt;
+<span class="lineNum">      74 </span>            :                                       typename System::variables_tag,
+<span class="lineNum">      75 </span>            :                                       typename System::gradient_tags&gt;,
+<span class="lineNum">      76 </span>            :                                   tmpl::size_t&lt;volume_dim&gt;, Frame::Inertial&gt;&gt;,
+<span class="lineNum">      77 </span>            :       Tags::InterfaceComputeItem&lt;
+<span class="lineNum">      78 </span>            :           Directions, Tags::BoundaryCoordinates&lt;volume_dim, Frame::Inertial&gt;&gt;,
+<span class="lineNum">      79 </span>            :       Tags::InterfaceComputeItem&lt;Directions,
+<span class="lineNum">      80 </span>            :                                  Tags::UnnormalizedFaceNormal&lt;volume_dim&gt;&gt;,
+<span class="lineNum">      81 </span>            :       Tags::InterfaceComputeItem&lt;Directions,
+<span class="lineNum">      82 </span>            :                                  typename System::template magnitude_tag&lt;
+<span class="lineNum">      83 </span>            :                                      Tags::UnnormalizedFaceNormal&lt;volume_dim&gt;&gt;&gt;,
+<span class="lineNum">      84 </span>            :       Tags::InterfaceComputeItem&lt;
+<span class="lineNum">      85 </span>            :           Directions,
+<span class="lineNum">      86 </span>            :           Tags::Normalized&lt;Tags::UnnormalizedFaceNormal&lt;volume_dim&gt;&gt;&gt;&gt;;
+<span class="lineNum">      87 </span>            : 
+<span class="lineNum">      88 </span><span class="lineNoCov">          0 :   using exterior_face_tags = tmpl::list&lt;</span>
+<span class="lineNum">      89 </span>            :       Tags::BoundaryDirectionsExterior&lt;volume_dim&gt;,
+<span class="lineNum">      90 </span>            :       Tags::InterfaceComputeItem&lt;Tags::BoundaryDirectionsExterior&lt;volume_dim&gt;,
+<span class="lineNum">      91 </span>            :                                  Tags::Direction&lt;volume_dim&gt;&gt;,
+<span class="lineNum">      92 </span>            :       Tags::InterfaceComputeItem&lt;Tags::BoundaryDirectionsExterior&lt;volume_dim&gt;,
+<span class="lineNum">      93 </span>            :                                  Tags::InterfaceMesh&lt;volume_dim&gt;&gt;,
+<span class="lineNum">      94 </span>            :       // We slice the gradients to the exterior faces, too. This may need to be
+<span class="lineNum">      95 </span>            :       // reconsidered when boundary conditions are reworked.
+<span class="lineNum">      96 </span>            :       Tags::Slice&lt;
+<span class="lineNum">      97 </span>            :           Tags::BoundaryDirectionsExterior&lt;volume_dim&gt;,
+<span class="lineNum">      98 </span>            :           db::add_tag_prefix&lt;
+<span class="lineNum">      99 </span>            :               Tags::deriv,
+<span class="lineNum">     100 </span>            :               db::variables_tag_with_tags_list&lt;typename System::variables_tag,
+<span class="lineNum">     101 </span>            :                                                typename System::gradient_tags&gt;,
+<span class="lineNum">     102 </span>            :               tmpl::size_t&lt;volume_dim&gt;, Frame::Inertial&gt;&gt;,
+<span class="lineNum">     103 </span>            :       Tags::InterfaceComputeItem&lt;Tags::BoundaryDirectionsExterior&lt;volume_dim&gt;,
+<span class="lineNum">     104 </span>            :                                  Tags::UnnormalizedFaceNormal&lt;volume_dim&gt;&gt;,
+<span class="lineNum">     105 </span>            :       Tags::InterfaceComputeItem&lt;Tags::BoundaryDirectionsExterior&lt;volume_dim&gt;,
+<span class="lineNum">     106 </span>            :                                  typename System::template magnitude_tag&lt;
+<span class="lineNum">     107 </span>            :                                      Tags::UnnormalizedFaceNormal&lt;volume_dim&gt;&gt;&gt;,
+<span class="lineNum">     108 </span>            :       Tags::InterfaceComputeItem&lt;
+<span class="lineNum">     109 </span>            :           Tags::BoundaryDirectionsExterior&lt;volume_dim&gt;,
+<span class="lineNum">     110 </span>            :           Tags::Normalized&lt;Tags::UnnormalizedFaceNormal&lt;volume_dim&gt;&gt;&gt;&gt;;
+<span class="lineNum">     111 </span>            : 
+<span class="lineNum">     112 </span><span class="lineNoCov">          0 :   using simple_tags = db::AddSimpleTags&lt;</span>
+<span class="lineNum">     113 </span>            :       // We rely on the variable data on exterior faces being updated manually.
+<span class="lineNum">     114 </span>            :       // This may need to be reconsidered when boundary conditions are reworked.
+<span class="lineNum">     115 </span>            :       Tags::Interface&lt;Tags::BoundaryDirectionsExterior&lt;volume_dim&gt;,
+<span class="lineNum">     116 </span>            :                       typename System::variables_tag&gt;&gt;;
+<span class="lineNum">     117 </span><span class="lineNoCov">          0 :   using compute_tags =</span>
+<span class="lineNum">     118 </span>            :       tmpl::append&lt;face_tags&lt;Tags::InternalDirections&lt;volume_dim&gt;&gt;,
+<span class="lineNum">     119 </span>            :                    face_tags&lt;Tags::BoundaryDirectionsInterior&lt;volume_dim&gt;&gt;,
+<span class="lineNum">     120 </span>            :                    exterior_face_tags&gt;;
+<span class="lineNum">     121 </span>            : 
+<span class="lineNum">     122 </span>            :   template &lt;typename TagsList&gt;
+<span class="lineNum">     123 </span><span class="lineNoCov">          0 :   static auto initialize(db::DataBox&lt;TagsList&gt;&amp;&amp; box) noexcept {</span>
+<span class="lineNum">     124 </span>            :     const auto&amp; mesh = db::get&lt;Tags::Mesh&lt;volume_dim&gt;&gt;(box);
+<span class="lineNum">     125 </span>            :     std::unordered_map&lt;Direction&lt;volume_dim&gt;,
+<span class="lineNum">     126 </span>            :                        db::item_type&lt;typename System::variables_tag&gt;&gt;
+<span class="lineNum">     127 </span>            :         external_boundary_vars{};
+<span class="lineNum">     128 </span>            : 
+<span class="lineNum">     129 </span>            :     for (const auto&amp; direction :
+<span class="lineNum">     130 </span>            :          db::get&lt;Tags::Element&lt;volume_dim&gt;&gt;(box).external_boundaries()) {
+<span class="lineNum">     131 </span>            :       external_boundary_vars[direction] =
+<span class="lineNum">     132 </span>            :           db::item_type&lt;typename System::variables_tag&gt;{
+<span class="lineNum">     133 </span>            :               mesh.slice_away(direction.dimension()).number_of_grid_points()};
+<span class="lineNum">     134 </span>            :     }
+<span class="lineNum">     135 </span>            : 
+<span class="lineNum">     136 </span>            :     return db::create_from&lt;db::RemoveTags&lt;&gt;, simple_tags, compute_tags&gt;(
+<span class="lineNum">     137 </span>            :         std::move(box), std::move(external_boundary_vars));
+<span class="lineNum">     138 </span>            :   }
+<span class="lineNum">     139 </span>            : };
+<span class="lineNum">     140 </span>            : 
+<span class="lineNum">     141 </span>            : }  // namespace Initialization
+<span class="lineNum">     142 </span>            : }  // namespace Elliptic
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

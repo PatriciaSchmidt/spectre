@@ -1,0 +1,365 @@
+<!-- HTML header for doxygen 1.8.10-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=9"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="SXS Collaboration">
+    <meta name="generator" content="Doxygen 1.8.13"/>
+    <style>
+        /*!
+         * IE10 viewport hack for Surface/desktop Windows 8 bug
+         * Copyright 2014-2015 Twitter, Inc.
+         * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+         */
+        @-webkit-viewport { width: device-width; }
+        @-moz-viewport    { width: device-width; }
+        @-ms-viewport     { width: device-width; }
+        @-o-viewport      { width: device-width; }
+        @viewport         { width: device-width; }
+      </style>
+  <title>SpECTRE: Spectral::Swsh::Collocation&lt; Representation &gt; Class Template Reference</title>
+  <link href="tabs.css" rel="stylesheet" type="text/css"/>
+  <script type="text/javascript" src="jquery.js"></script>
+  <script type="text/javascript" src="dynsections.js"></script>
+  <link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js", "color.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+});
+MathJax.Hub.Config({
+    TeX: { equationNumbers: { autoNumber: "AMS" } }
+});
+MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['^^','^^'], ['\\(', '\\)']]}
+});
+</script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js"></script>
+  <link href="octicons.css" rel="stylesheet">
+  <link href="bootstrap.min.css" rel="stylesheet">
+  <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <script type="text/javascript" src="jquery.js"></script>
+  <script type="text/javascript" src="popper.min.js"></script>
+  <script type="text/javascript" src="bootstrap.min.js"></script>
+  <script type="text/javascript" src="spectre.js"></script>
+  </head>
+  <body>
+  <div id="top" class="navbar-fixed-top"><!-- do not remove this div, it is closed by doxygen! -->
+  <!-- BEGIN TITLEAREA -->
+  <div id="titlearea">
+  <script type="text/javascript">
+  var searchBox = new SearchBox("searchBox", "search",false,'Search');
+  </script>
+  <div id="main-nav">
+    <ul class="sm sm-dox" id="main-menu">
+      <li>
+      <a href="index.html">
+      SpECTRE &#160;
+        <span id="projectnumber">v0.0.0</span>
+      </a>
+      </li>
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="selected">
+          <span id="selected">
+            <i class="octicon octicon-book"></i><span>Documentation</span>
+          </span>
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li style="min-width: 135px;">
+            <a href="index.html">
+            <i class="octicon octicon-book"></i><span>Introduction</span></a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="installation.html">
+              <i class="octicon octicon-desktop-download"></i><span>Installation</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="tutorials.html">
+              <i class="octicon octicon-mortar-board"></i><span>User Tutorials</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="dev_guide.html">
+              <i class="octicon octicon-gist-secret"></i><span>Dev Guide</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="code_of_conduct.html">
+              <i class="octicon octicon-comment-discussion"></i><span>Code of Conduct</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="contributing_to_spectre.html">
+              <i class="octicon octicon-git-pull-request"></i><span>Contributing Guide</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="selected">
+          <span id="selected">
+            <i class="octicon octicon-code"></i>
+              <span>Code Reference</span>
+          </span>
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li style="min-width: 130px;">
+            <a href="modules.html">
+              <i class="octicon octicon-code"></i>
+              <span>Topics</span>
+            </a>
+          </li>
+          <li style="min-width: 130px;">
+            <a href="namespaces.html">
+              <i class="octicon octicon-gist"></i>
+              <span>Namespaces</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <a href="files.html">
+          <i class="octicon octicon-file-directory"></i><span>Files</span>
+        </a>
+      </li>
+      <li>
+        <a href="citelist.html">
+          <i class="octicon octicon-file-text"></i><span>Bibliography</span>
+        </a>
+      </li>
+      <li>
+        <a href="https://github.com/sxs-collaboration/spectre" target="_blank">
+          <i class="octicon octicon-mark-github"></i><span>View on GitHub</span>
+        </a>
+      </li>
+      <!--The Search <li> is added by doxygen later-->
+    </ul>
+  </div><!-- main-nav -->
+  </div><!-- titlearea -->
+  <!-- window showing the filter options -->
+  <div id="MSearchSelectWindow"  style="position: fixed;"
+       onmouseover="return searchBox.OnSearchSelectShow()"
+       onmouseout="return searchBox.OnSearchSelectHide()"
+       onkeydown="return searchBox.OnSearchSelectKey(event)">
+  </div>
+  <!-- iframe showing the search results (closed by default) -->
+  <div id="MSearchResultsWindow"  style="position: fixed;">
+  <iframe src="javascript:void(0)" frameborder="0"
+          name="MSearchResults" id="MSearchResults">
+  </iframe>
+  </div>
+<!-- Generated by Doxygen 1.8.13 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search",false,'Search');
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="namespaceSpectral.html">Spectral</a></li><li class="navelem"><a class="el" href="namespaceSpectral_1_1Swsh.html">Swsh</a></li><li class="navelem"><a class="el" href="classSpectral_1_1Swsh_1_1Collocation.html">Collocation</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
+<a href="classSpectral_1_1Swsh_1_1Collocation-members.html">List of all members</a>  </div>
+  <div class="headertitle">
+<div class="title">Spectral::Swsh::Collocation&lt; Representation &gt; Class Template Reference</div>  </div>
+</div><!--header-->
+<div class="contents">
+
+<p>A wrapper class for the spherical harmonic library collocation data.  
+ <a href="classSpectral_1_1Swsh_1_1Collocation.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="SwshCollocation_8hpp_source.html">SwshCollocation.hpp</a>&gt;</code></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectral_1_1Swsh_1_1Collocation_1_1CollocationConstIterator.html">CollocationConstIterator</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a567049ce472c25fc7ce6e5bdcff6e070"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectral_1_1Swsh_1_1Collocation.html#a567049ce472c25fc7ce6e5bdcff6e070">Collocation</a> (size_t l_max) noexcept</td></tr>
+<tr class="memdesc:a567049ce472c25fc7ce6e5bdcff6e070"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates the libsharp collocation information and stores it in <code>geom_info_</code>.  <a href="#a567049ce472c25fc7ce6e5bdcff6e070">More...</a><br /></td></tr>
+<tr class="separator:a567049ce472c25fc7ce6e5bdcff6e070"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9192a870efa1adf0b95485d8da62c1e8"><td class="memItemLeft" align="right" valign="top"><a id="a9192a870efa1adf0b95485d8da62c1e8"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectral_1_1Swsh_1_1Collocation.html#a9192a870efa1adf0b95485d8da62c1e8">~Collocation</a> ()=default</td></tr>
+<tr class="memdesc:a9192a870efa1adf0b95485d8da62c1e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">default constructor required for iterator use <br /></td></tr>
+<tr class="separator:a9192a870efa1adf0b95485d8da62c1e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acca25b8226ccaf7dba9b41b168f4e1c7"><td class="memItemLeft" align="right" valign="top"><a id="acca25b8226ccaf7dba9b41b168f4e1c7"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Collocation</b> (const <a class="el" href="classSpectral_1_1Swsh_1_1Collocation.html">Collocation</a> &amp;)=default</td></tr>
+<tr class="separator:acca25b8226ccaf7dba9b41b168f4e1c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d0dede409192525f0a607dde2154f88"><td class="memItemLeft" align="right" valign="top"><a id="a3d0dede409192525f0a607dde2154f88"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Collocation</b> (<a class="el" href="classSpectral_1_1Swsh_1_1Collocation.html">Collocation</a> &amp;&amp;)=default</td></tr>
+<tr class="separator:a3d0dede409192525f0a607dde2154f88"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b6a35d3dbf03cfdd37bd077c1b08138"><td class="memItemLeft" align="right" valign="top"><a id="a4b6a35d3dbf03cfdd37bd077c1b08138"></a>
+<a class="el" href="classSpectral_1_1Swsh_1_1Collocation.html">Collocation</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classSpectral_1_1Swsh_1_1Collocation.html">Collocation</a> &amp;)=default</td></tr>
+<tr class="separator:a4b6a35d3dbf03cfdd37bd077c1b08138"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a25a0c48306d9a62ea543bd5273263224"><td class="memItemLeft" align="right" valign="top"><a id="a25a0c48306d9a62ea543bd5273263224"></a>
+<a class="el" href="classSpectral_1_1Swsh_1_1Collocation.html">Collocation</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (<a class="el" href="classSpectral_1_1Swsh_1_1Collocation.html">Collocation</a> &amp;&amp;)=default</td></tr>
+<tr class="separator:a25a0c48306d9a62ea543bd5273263224"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0426118e348bced5d492ca400ff5a479"><td class="memItemLeft" align="right" valign="top"><a id="a0426118e348bced5d492ca400ff5a479"></a>
+sharp_geom_info *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectral_1_1Swsh_1_1Collocation.html#a0426118e348bced5d492ca400ff5a479">get_sharp_geom_info</a> () const noexcept</td></tr>
+<tr class="memdesc:a0426118e348bced5d492ca400ff5a479"><td class="mdescLeft">&#160;</td><td class="mdescRight">retrieve the <code>sharp_geom_info*</code> stored. This should largely be used only for passing to other libsharp functions. Otherwise, access elements through iterator or access functions. <br /></td></tr>
+<tr class="separator:a0426118e348bced5d492ca400ff5a479"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad9ebe57eb424bdc70dd5f20c4c90f96d"><td class="memItemLeft" align="right" valign="top"><a id="ad9ebe57eb424bdc70dd5f20c4c90f96d"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectral_1_1Swsh_1_1Collocation.html#ad9ebe57eb424bdc70dd5f20c4c90f96d">theta</a> (size_t offset) const noexcept</td></tr>
+<tr class="memdesc:ad9ebe57eb424bdc70dd5f20c4c90f96d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the \(\theta\) value for a given index in a libsharp-compatible array. <br /></td></tr>
+<tr class="separator:ad9ebe57eb424bdc70dd5f20c4c90f96d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7918446dea74eaba94c66f01eff85c51"><td class="memItemLeft" align="right" valign="top"><a id="a7918446dea74eaba94c66f01eff85c51"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectral_1_1Swsh_1_1Collocation.html#a7918446dea74eaba94c66f01eff85c51">phi</a> (size_t offset) const noexcept</td></tr>
+<tr class="memdesc:a7918446dea74eaba94c66f01eff85c51"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the \(\phi\) value for a given index in a libsharp-compatible array. <br /></td></tr>
+<tr class="separator:a7918446dea74eaba94c66f01eff85c51"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab93be10258c3236c4b5f4bfcdcd5ae70"><td class="memItemLeft" align="right" valign="top"><a id="ab93be10258c3236c4b5f4bfcdcd5ae70"></a>
+constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><b>l_max</b> () const noexcept</td></tr>
+<tr class="separator:ab93be10258c3236c4b5f4bfcdcd5ae70"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a2b87b3ead4a4154cd23d18fd5a50c7"><td class="memItemLeft" align="right" valign="top"><a id="a4a2b87b3ead4a4154cd23d18fd5a50c7"></a>
+constexpr size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectral_1_1Swsh_1_1Collocation.html#a4a2b87b3ead4a4154cd23d18fd5a50c7">size</a> () const noexcept</td></tr>
+<tr class="memdesc:a4a2b87b3ead4a4154cd23d18fd5a50c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the number of entries the libsharp-compatible data structure should have. <br /></td></tr>
+<tr class="separator:a4a2b87b3ead4a4154cd23d18fd5a50c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader"></div></td></tr>
+<tr class="memitem:a79c593e04299be3f99db210fa193dde5"><td class="memItemLeft" align="right" valign="top"><a id="a79c593e04299be3f99db210fa193dde5"></a>
+<a class="el" href="classSpectral_1_1Swsh_1_1Collocation.html">Collocation</a>&lt; Representation &gt;::<a class="el" href="classSpectral_1_1Swsh_1_1Collocation_1_1CollocationConstIterator.html">CollocationConstIterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectral_1_1Swsh_1_1Collocation.html#a79c593e04299be3f99db210fa193dde5">begin</a> () const noexcept</td></tr>
+<tr class="memdesc:a79c593e04299be3f99db210fa193dde5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a bidirectional iterator to the start of the grid. <code>operator*</code> for that iterator gives a <code><a class="el" href="structSpectral_1_1Swsh_1_1LibsharpCollocationPoint.html" title="A container for reporting a single collocation point for libsharp compatible data structures...">LibsharpCollocationPoint</a></code> with members <code>offset</code>, <code>theta</code>, and <code>phi</code> with operator *. <br /></td></tr>
+<tr class="separator:a79c593e04299be3f99db210fa193dde5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aef28e88f88ff02ef1f8bf2150d236d68"><td class="memItemLeft" align="right" valign="top"><a id="aef28e88f88ff02ef1f8bf2150d236d68"></a>
+<a class="el" href="classSpectral_1_1Swsh_1_1Collocation.html">Collocation</a>&lt; Representation &gt;::<a class="el" href="classSpectral_1_1Swsh_1_1Collocation_1_1CollocationConstIterator.html">CollocationConstIterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectral_1_1Swsh_1_1Collocation.html#aef28e88f88ff02ef1f8bf2150d236d68">cbegin</a> () const noexcept</td></tr>
+<tr class="memdesc:aef28e88f88ff02ef1f8bf2150d236d68"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a bidirectional iterator to the start of the grid. <code>operator*</code> for that iterator gives a <code><a class="el" href="structSpectral_1_1Swsh_1_1LibsharpCollocationPoint.html" title="A container for reporting a single collocation point for libsharp compatible data structures...">LibsharpCollocationPoint</a></code> with members <code>offset</code>, <code>theta</code>, and <code>phi</code> with operator *. <br /></td></tr>
+<tr class="separator:aef28e88f88ff02ef1f8bf2150d236d68"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader"></div></td></tr>
+<tr class="memitem:a658daafa64313476055fc7ff43ba56b5"><td class="memItemLeft" align="right" valign="top"><a id="a658daafa64313476055fc7ff43ba56b5"></a>
+<a class="el" href="classSpectral_1_1Swsh_1_1Collocation.html">Collocation</a>&lt; Representation &gt;::<a class="el" href="classSpectral_1_1Swsh_1_1Collocation_1_1CollocationConstIterator.html">CollocationConstIterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectral_1_1Swsh_1_1Collocation.html#a658daafa64313476055fc7ff43ba56b5">end</a> () const noexcept</td></tr>
+<tr class="memdesc:a658daafa64313476055fc7ff43ba56b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a bidirectional iterator to the end of the grid. <code>operator*</code> for that iterator gives a <code><a class="el" href="structSpectral_1_1Swsh_1_1LibsharpCollocationPoint.html" title="A container for reporting a single collocation point for libsharp compatible data structures...">LibsharpCollocationPoint</a></code> with members <code>offset</code>, <code>theta</code>, and <code>phi</code> with operator *. <br /></td></tr>
+<tr class="separator:a658daafa64313476055fc7ff43ba56b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace87fca2faa583024f242ce2217d5609"><td class="memItemLeft" align="right" valign="top"><a id="ace87fca2faa583024f242ce2217d5609"></a>
+<a class="el" href="classSpectral_1_1Swsh_1_1Collocation.html">Collocation</a>&lt; Representation &gt;::<a class="el" href="classSpectral_1_1Swsh_1_1Collocation_1_1CollocationConstIterator.html">CollocationConstIterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectral_1_1Swsh_1_1Collocation.html#ace87fca2faa583024f242ce2217d5609">cend</a> () const noexcept</td></tr>
+<tr class="memdesc:ace87fca2faa583024f242ce2217d5609"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a bidirectional iterator to the end of the grid. <code>operator*</code> for that iterator gives a <code><a class="el" href="structSpectral_1_1Swsh_1_1LibsharpCollocationPoint.html" title="A container for reporting a single collocation point for libsharp compatible data structures...">LibsharpCollocationPoint</a></code> with members <code>offset</code>, <code>theta</code>, and <code>phi</code> with operator *. <br /></td></tr>
+<tr class="separator:ace87fca2faa583024f242ce2217d5609"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:ac0cd3b17d22faf9bc9a72d15303d4dc4"><td class="memItemLeft" align="right" valign="top">static constexpr <a class="el" href="namespaceSpectral_1_1Swsh.html#ab1fa85ae53abba64a770e7e806bf12f6">ComplexRepresentation</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectral_1_1Swsh_1_1Collocation.html#ac0cd3b17d22faf9bc9a72d15303d4dc4">complex_representation</a></td></tr>
+<tr class="memdesc:ac0cd3b17d22faf9bc9a72d15303d4dc4"><td class="mdescLeft">&#160;</td><td class="mdescRight">The representation of the block of complex values, which sets the stride inside the libsharp type.  <a href="#ac0cd3b17d22faf9bc9a72d15303d4dc4">More...</a><br /></td></tr>
+<tr class="separator:ac0cd3b17d22faf9bc9a72d15303d4dc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;ComplexRepresentation Representation&gt;<br />
+class Spectral::Swsh::Collocation&lt; Representation &gt;</h3>
+
+<p>A wrapper class for the spherical harmonic library collocation data. </p>
+<h3>Details</h3>
+<p>The currently chosen library for spin-weighted spherical harmonic transforms is libsharp. The <code><a class="el" href="classSpectral_1_1Swsh_1_1Collocation.html" title="A wrapper class for the spherical harmonic library collocation data. ">Collocation</a></code> class stores the libsharp <code>sharp_geom_info</code> object, which contains data about</p><ol type="1">
+<li>The angular collocation points used in spin-weighted spherical harmonic transforms</li>
+<li>The memory representation of double-type values at those collocation points</li>
+</ol>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Representation</td><td>the ComplexRepresentation, either <code>ComplexRepresentation::Interleaved</code> or <code>ComplexRepresentation::RealsThenImags</code> compatible with the generated <code><a class="el" href="classSpectral_1_1Swsh_1_1Collocation.html" title="A wrapper class for the spherical harmonic library collocation data. ">Collocation</a></code> - this is necessary because the stored libsharp type contains memory stride information. </td></tr>
+  </table>
+  </dd>
+</dl>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a567049ce472c25fc7ce6e5bdcff6e070"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a567049ce472c25fc7ce6e5bdcff6e070">&#9670;&nbsp;</a></span>Collocation()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;ComplexRepresentation Representation&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classSpectral_1_1Swsh_1_1Collocation.html">Spectral::Swsh::Collocation</a>&lt; Representation &gt;::<a class="el" href="classSpectral_1_1Swsh_1_1Collocation.html">Collocation</a> </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>l_max</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">explicit</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Generates the libsharp collocation information and stores it in <code>geom_info_</code>. </p>
+<dl class="section note"><dt>Note</dt><dd>If you will potentially use the same <code>l_max</code> collocation set more than once, it is probably better to use the <code>precomputed_spherical_harmonic_collocation</code> function </dd></dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="ac0cd3b17d22faf9bc9a72d15303d4dc4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac0cd3b17d22faf9bc9a72d15303d4dc4">&#9670;&nbsp;</a></span>complex_representation</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;ComplexRepresentation Representation&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr <a class="el" href="namespaceSpectral_1_1Swsh.html#ab1fa85ae53abba64a770e7e806bf12f6">ComplexRepresentation</a> <a class="el" href="classSpectral_1_1Swsh_1_1Collocation.html">Spectral::Swsh::Collocation</a>&lt; Representation &gt;::complex_representation</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">=</div><div class="line">      Representation</div></div><!-- fragment -->
+<p>The representation of the block of complex values, which sets the stride inside the libsharp type. </p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following files:<ul>
+<li>src/NumericalAlgorithms/Spectral/<a class="el" href="SwshCollocation_8hpp_source.html">SwshCollocation.hpp</a></li>
+<li>src/NumericalAlgorithms/Spectral/SwshCollocation.cpp</li>
+</ul>
+</div><!-- contents -->
+<!-- HTML footer for doxygen 1.8.10-->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+&copy; Copyright 2017 - 2019
+<a href="https://black-holes.org">SXS Collaboration</a>,
+<a href="LICENSE.txt" target="_blank">
+<span class="hidden-xs">Distributed under the</span>
+MIT License</a>
+</small></address>
+</body>
+</html>

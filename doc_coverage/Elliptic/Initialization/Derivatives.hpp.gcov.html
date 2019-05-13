@@ -1,0 +1,142 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Elliptic/Initialization/Derivatives.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">Elliptic/Initialization</a> - Derivatives.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">7</td>
+            <td class="headerCovTableEntryLo">14.3 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : #include &quot;DataStructures/DataBox/DataBox.hpp&quot;
+<span class="lineNum">       9 </span>            : #include &quot;DataStructures/DataBox/DataBoxTag.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;NumericalAlgorithms/LinearOperators/Divergence.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;NumericalAlgorithms/LinearOperators/PartialDerivatives.hpp&quot;
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            : /// \cond
+<span class="lineNum">      14 </span>            : namespace Frame {
+<span class="lineNum">      15 </span>            : struct Inertial;
+<span class="lineNum">      16 </span>            : }  // namespace Frame
+<span class="lineNum">      17 </span>            : /// \endcond
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : namespace Elliptic {
+<span class="lineNum">      20 </span>            : namespace Initialization {
+<span class="lineNum">      21 </span>            : /*!
+<span class="lineNum">      22 </span>            :  * \brief Initializes the DataBox tags related to derivatives of the system
+<span class="lineNum">      23 </span>            :  * variables
+<span class="lineNum">      24 </span>            :  *
+<span class="lineNum">      25 </span>            :  * We have to initialize these separately from
+<span class="lineNum">      26 </span>            :  * `Elliptic::Initialization::System` since the `variables_tag` is the linear
+<span class="lineNum">      27 </span>            :  * solver operand, which is added by the linear solver initialization.
+<span class="lineNum">      28 </span>            :  *
+<span class="lineNum">      29 </span>            :  * With:
+<span class="lineNum">      30 </span>            :  * - `inv_jac_tag` = `Tags::InverseJacobian&lt;
+<span class="lineNum">      31 </span>            :  * Tags::ElementMap&lt;Dim&gt;, Tags::Coordinates&lt;Dim, Frame::Logical&gt;&gt;`
+<span class="lineNum">      32 </span>            :  *
+<span class="lineNum">      33 </span>            :  * Uses:
+<span class="lineNum">      34 </span>            :  * - System:
+<span class="lineNum">      35 </span>            :  *   - `volume_dim`
+<span class="lineNum">      36 </span>            :  *   - `variables_tag`
+<span class="lineNum">      37 </span>            :  *   - `gradient_tags`
+<span class="lineNum">      38 </span>            :  *
+<span class="lineNum">      39 </span>            :  * DataBox:
+<span class="lineNum">      40 </span>            :  * - Adds:
+<span class="lineNum">      41 </span>            :  *   - `Tags::DerivCompute&lt;variables_tag, inv_jac_tag, gradient_tags&gt;&gt;`
+<span class="lineNum">      42 </span>            :  */
+<span class="lineNum">      43 </span>            : template &lt;typename SystemType&gt;
+<span class="lineNum">      44 </span><span class="lineCov">          1 : struct Derivatives {</span>
+<span class="lineNum">      45 </span><span class="lineNoCov">          0 :   static constexpr size_t Dim = SystemType::volume_dim;</span>
+<span class="lineNum">      46 </span><span class="lineNoCov">          0 :   using inv_jac_tag =</span>
+<span class="lineNum">      47 </span>            :       Tags::InverseJacobian&lt;Tags::ElementMap&lt;Dim&gt;,
+<span class="lineNum">      48 </span>            :                             Tags::Coordinates&lt;Dim, Frame::Logical&gt;&gt;;
+<span class="lineNum">      49 </span>            : 
+<span class="lineNum">      50 </span><span class="lineNoCov">          0 :   using simple_tags = db::AddSimpleTags&lt;&gt;;</span>
+<span class="lineNum">      51 </span><span class="lineNoCov">          0 :   using compute_tags = db::AddComputeTags&lt;</span>
+<span class="lineNum">      52 </span>            :       Tags::DerivCompute&lt;typename SystemType::variables_tag, inv_jac_tag,
+<span class="lineNum">      53 </span>            :                          typename SystemType::gradient_tags&gt;&gt;;
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span>            :   template &lt;typename TagsList&gt;
+<span class="lineNum">      56 </span><span class="lineNoCov">          0 :   static auto initialize(db::DataBox&lt;TagsList&gt;&amp;&amp; box) noexcept {</span>
+<span class="lineNum">      57 </span>            :     return db::create_from&lt;db::RemoveTags&lt;&gt;, simple_tags, compute_tags&gt;(
+<span class="lineNum">      58 </span>            :         std::move(box));
+<span class="lineNum">      59 </span>            :   }
+<span class="lineNum">      60 </span>            : };
+<span class="lineNum">      61 </span>            : }  // namespace Initialization
+<span class="lineNum">      62 </span>            : }  // namespace Elliptic
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

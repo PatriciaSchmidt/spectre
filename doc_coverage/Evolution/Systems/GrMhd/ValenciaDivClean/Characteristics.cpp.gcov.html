@@ -1,0 +1,333 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Evolution/Systems/GrMhd/ValenciaDivClean/Characteristics.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">Evolution/Systems/GrMhd/ValenciaDivClean</a> - Characteristics.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;Evolution/Systems/GrMhd/ValenciaDivClean/Characteristics.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : #include &quot;DataStructures/DataVector.hpp&quot;
+<span class="lineNum">       9 </span>            : #include &quot;DataStructures/Tensor/EagerMath/DotProduct.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;DataStructures/Tensor/Tensor.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;DataStructures/Variables.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;Evolution/Systems/RelativisticEuler/Valencia/Characteristics.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;PointwiseFunctions/GeneralRelativity/IndexManipulation.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;PointwiseFunctions/GeneralRelativity/Tags.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      15 </span>            : #include &quot;PointwiseFunctions/Hydro/Tags.hpp&quot;              // IWYU pragma: keep
+<span class="lineNum">      16 </span>            : #include &quot;Utilities/ConstantExpressions.hpp&quot;
+<span class="lineNum">      17 </span>            : #include &quot;Utilities/GenerateInstantiations.hpp&quot;
+<span class="lineNum">      18 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      19 </span>            : #include &quot;Utilities/Overloader.hpp&quot;
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : // IWYU pragma: no_forward_declare EquationsOfState::EquationOfState
+<span class="lineNum">      22 </span>            : // IWYU pragma: no_forward_declare Tensor
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : /// \cond
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            : namespace {
+<span class="lineNum">      27 </span>            : void compute_characteristic_speeds(
+<span class="lineNum">      28 </span>            :     const gsl::not_null&lt;std::array&lt;DataVector, 9&gt;*&gt; pchar_speeds,
+<span class="lineNum">      29 </span>            :     const Scalar&lt;DataVector&gt;&amp; lapse, const tnsr::I&lt;DataVector, 3&gt;&amp; shift,
+<span class="lineNum">      30 </span>            :     const tnsr::I&lt;DataVector, 3&gt;&amp; spatial_velocity,
+<span class="lineNum">      31 </span>            :     const Scalar&lt;DataVector&gt;&amp; spatial_velocity_squared,
+<span class="lineNum">      32 </span>            :     const Scalar&lt;DataVector&gt;&amp; sound_speed_squared,
+<span class="lineNum">      33 </span>            :     const Scalar&lt;DataVector&gt;&amp; alfven_speed_squared,
+<span class="lineNum">      34 </span>            :     const tnsr::i&lt;DataVector, 3&gt;&amp; normal) noexcept {
+<span class="lineNum">      35 </span>            :   const size_t num_grid_points = get(lapse).size();
+<span class="lineNum">      36 </span>            :   auto&amp; char_speeds = *pchar_speeds;
+<span class="lineNum">      37 </span>            :   if (char_speeds[0].size() != num_grid_points) {
+<span class="lineNum">      38 </span>            :     char_speeds[0] = DataVector(num_grid_points);
+<span class="lineNum">      39 </span>            :   }
+<span class="lineNum">      40 </span>            :   Scalar&lt;DataVector&gt; temp0(char_speeds[0].data(), num_grid_points);
+<span class="lineNum">      41 </span>            :   dot_product(make_not_null(&amp;temp0), normal, shift);
+<span class="lineNum">      42 </span>            :   char_speeds[0] *= -1.0;
+<span class="lineNum">      43 </span>            :   char_speeds[8] = char_speeds[0] + get(lapse);
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span>            :   char_speeds[0] -= get(lapse);
+<span class="lineNum">      46 </span>            :   // Mapping of indices between GRMHD char speeds and relativistic Euler char
+<span class="lineNum">      47 </span>            :   // speeds arrays.
+<span class="lineNum">      48 </span>            :   //
+<span class="lineNum">      49 </span>            :   // GRMHD     Rel Euler
+<span class="lineNum">      50 </span>            :   //   1           0
+<span class="lineNum">      51 </span>            :   //   2           1
+<span class="lineNum">      52 </span>            :   //   3           2
+<span class="lineNum">      53 </span>            :   //   4           3
+<span class="lineNum">      54 </span>            :   //   5           1
+<span class="lineNum">      55 </span>            :   //   6           1
+<span class="lineNum">      56 </span>            :   //   7           4
+<span class="lineNum">      57 </span>            :   //
+<span class="lineNum">      58 </span>            :   // Create an array of non-owning DataVectors to be passed to the Relativistic
+<span class="lineNum">      59 </span>            :   // Euler char speed computation as a not_null&lt;array&lt;DataVectors&gt;&gt;.
+<span class="lineNum">      60 </span>            :   std::array&lt;DataVector, 5&gt; rel_euler_char_speeds{};
+<span class="lineNum">      61 </span>            :   for (size_t i = 0; i &lt; 4; ++i) {
+<span class="lineNum">      62 </span>            :     if (gsl::at(char_speeds, i + 1).size() != num_grid_points) {
+<span class="lineNum">      63 </span>            :       gsl::at(char_speeds, i + 1) = DataVector(num_grid_points);
+<span class="lineNum">      64 </span>            :     }
+<span class="lineNum">      65 </span>            :     gsl::at(rel_euler_char_speeds, i)
+<span class="lineNum">      66 </span>            :         .set_data_ref(&amp;gsl::at(char_speeds, i + 1));
+<span class="lineNum">      67 </span>            :   }
+<span class="lineNum">      68 </span>            :   if (gsl::at(char_speeds, 7).size() != num_grid_points) {
+<span class="lineNum">      69 </span>            :     gsl::at(char_speeds, 7) = DataVector(num_grid_points);
+<span class="lineNum">      70 </span>            :   }
+<span class="lineNum">      71 </span>            :   rel_euler_char_speeds[4].set_data_ref(&amp;(char_speeds[7]));
+<span class="lineNum">      72 </span>            : 
+<span class="lineNum">      73 </span>            :   RelativisticEuler::Valencia::characteristic_speeds(
+<span class="lineNum">      74 </span>            :       make_not_null(&amp;rel_euler_char_speeds), lapse, shift, spatial_velocity,
+<span class="lineNum">      75 </span>            :       spatial_velocity_squared,
+<span class="lineNum">      76 </span>            :       Scalar&lt;DataVector&gt;{get(sound_speed_squared) +
+<span class="lineNum">      77 </span>            :                          get(alfven_speed_squared) *
+<span class="lineNum">      78 </span>            :                              (1.0 - get(sound_speed_squared))},
+<span class="lineNum">      79 </span>            :       normal);
+<span class="lineNum">      80 </span>            : 
+<span class="lineNum">      81 </span>            :   for (size_t i = 5; i &lt; 7; ++i) {
+<span class="lineNum">      82 </span>            :     gsl::at(char_speeds, i) = rel_euler_char_speeds[1];
+<span class="lineNum">      83 </span>            :   }
+<span class="lineNum">      84 </span>            : }
+<span class="lineNum">      85 </span>            : }  // namespace
+<span class="lineNum">      86 </span>            : 
+<span class="lineNum">      87 </span>            : namespace grmhd {
+<span class="lineNum">      88 </span>            : namespace ValenciaDivClean {
+<span class="lineNum">      89 </span>            : template &lt;size_t ThermodynamicDim&gt;
+<span class="lineNum">      90 </span>            : void characteristic_speeds(
+<span class="lineNum">      91 </span>            :     const gsl::not_null&lt;std::array&lt;DataVector, 9&gt;*&gt; char_speeds,
+<span class="lineNum">      92 </span>            :     const Scalar&lt;DataVector&gt;&amp; rest_mass_density,
+<span class="lineNum">      93 </span>            :     const Scalar&lt;DataVector&gt;&amp; specific_internal_energy,
+<span class="lineNum">      94 </span>            :     const Scalar&lt;DataVector&gt;&amp; specific_enthalpy,
+<span class="lineNum">      95 </span>            :     const tnsr::I&lt;DataVector, 3, Frame::Inertial&gt;&amp; spatial_velocity,
+<span class="lineNum">      96 </span>            :     const Scalar&lt;DataVector&gt;&amp; lorentz_factor,
+<span class="lineNum">      97 </span>            :     const tnsr::I&lt;DataVector, 3, Frame::Inertial&gt;&amp; magnetic_field,
+<span class="lineNum">      98 </span>            :     const Scalar&lt;DataVector&gt;&amp; lapse, const tnsr::I&lt;DataVector, 3&gt;&amp; shift,
+<span class="lineNum">      99 </span>            :     const tnsr::ii&lt;DataVector, 3, Frame::Inertial&gt;&amp; spatial_metric,
+<span class="lineNum">     100 </span>            :     const tnsr::i&lt;DataVector, 3&gt;&amp; unit_normal,
+<span class="lineNum">     101 </span>            :     const EquationsOfState::EquationOfState&lt;true, ThermodynamicDim&gt;&amp;
+<span class="lineNum">     102 </span>            :         equation_of_state) noexcept {
+<span class="lineNum">     103 </span>            :   // Use a Variables to reduce total number of allocations. This is especially
+<span class="lineNum">     104 </span>            :   // important in a multithreaded environment.
+<span class="lineNum">     105 </span>            :   // Remaining places to reduce allocations:
+<span class="lineNum">     106 </span>            :   // - EoS calls: 2 allocations
+<span class="lineNum">     107 </span>            :   // - Pass temp pointer to Rel Euler: 1 allocation
+<span class="lineNum">     108 </span>            :   // - Return a DataVectorArray (not yet implemented): 9 allocations
+<span class="lineNum">     109 </span>            :   Variables&lt;tmpl::list&lt;
+<span class="lineNum">     110 </span>            :       hydro::Tags::SpatialVelocityOneForm&lt;DataVector, 3, Frame::Inertial&gt;,
+<span class="lineNum">     111 </span>            :       hydro::Tags::SpatialVelocitySquared&lt;DataVector&gt;,
+<span class="lineNum">     112 </span>            :       hydro::Tags::MagneticFieldOneForm&lt;DataVector, 3, Frame::Inertial&gt;,
+<span class="lineNum">     113 </span>            :       hydro::Tags::MagneticFieldDotSpatialVelocity&lt;DataVector&gt;,
+<span class="lineNum">     114 </span>            :       hydro::Tags::MagneticFieldSquared&lt;DataVector&gt;,
+<span class="lineNum">     115 </span>            :       hydro::Tags::ComovingMagneticFieldSquared&lt;DataVector&gt;,
+<span class="lineNum">     116 </span>            :       hydro::Tags::SoundSpeedSquared&lt;DataVector&gt;&gt;&gt;
+<span class="lineNum">     117 </span>            :       temp_tensors{get&lt;0&gt;(shift).size()};
+<span class="lineNum">     118 </span>            : 
+<span class="lineNum">     119 </span>            :   const auto&amp; spatial_velocity_one_form =
+<span class="lineNum">     120 </span>            :       get&lt;hydro::Tags::SpatialVelocityOneForm&lt;DataVector, 3, Frame::Inertial&gt;&gt;(
+<span class="lineNum">     121 </span>            :           temp_tensors);
+<span class="lineNum">     122 </span>            :   raise_or_lower_index(
+<span class="lineNum">     123 </span>            :       make_not_null(&amp;get&lt;hydro::Tags::SpatialVelocityOneForm&lt;
+<span class="lineNum">     124 </span>            :                         DataVector, 3, Frame::Inertial&gt;&gt;(temp_tensors)),
+<span class="lineNum">     125 </span>            :       spatial_velocity, spatial_metric);
+<span class="lineNum">     126 </span>            :   const auto&amp; magnetic_field_one_form =
+<span class="lineNum">     127 </span>            :       get&lt;hydro::Tags::MagneticFieldOneForm&lt;DataVector, 3, Frame::Inertial&gt;&gt;(
+<span class="lineNum">     128 </span>            :           temp_tensors);
+<span class="lineNum">     129 </span>            :   raise_or_lower_index(
+<span class="lineNum">     130 </span>            :       make_not_null(&amp;get&lt;hydro::Tags::MagneticFieldOneForm&lt;
+<span class="lineNum">     131 </span>            :                         DataVector, 3, Frame::Inertial&gt;&gt;(temp_tensors)),
+<span class="lineNum">     132 </span>            :       magnetic_field, spatial_metric);
+<span class="lineNum">     133 </span>            :   const auto&amp; magnetic_field_dot_spatial_velocity =
+<span class="lineNum">     134 </span>            :       get&lt;hydro::Tags::MagneticFieldDotSpatialVelocity&lt;DataVector&gt;&gt;(
+<span class="lineNum">     135 </span>            :           temp_tensors);
+<span class="lineNum">     136 </span>            :   dot_product(
+<span class="lineNum">     137 </span>            :       make_not_null(
+<span class="lineNum">     138 </span>            :           &amp;get&lt;hydro::Tags::MagneticFieldDotSpatialVelocity&lt;DataVector&gt;&gt;(
+<span class="lineNum">     139 </span>            :               temp_tensors)),
+<span class="lineNum">     140 </span>            :       magnetic_field, spatial_velocity_one_form);
+<span class="lineNum">     141 </span>            :   const auto&amp; spatial_velocity_squared =
+<span class="lineNum">     142 </span>            :       get&lt;hydro::Tags::SpatialVelocitySquared&lt;DataVector&gt;&gt;(temp_tensors);
+<span class="lineNum">     143 </span>            :   dot_product(
+<span class="lineNum">     144 </span>            :       make_not_null(
+<span class="lineNum">     145 </span>            :           &amp;get&lt;hydro::Tags::SpatialVelocitySquared&lt;DataVector&gt;&gt;(temp_tensors)),
+<span class="lineNum">     146 </span>            :       spatial_velocity, spatial_velocity_one_form);
+<span class="lineNum">     147 </span>            : 
+<span class="lineNum">     148 </span>            :   const auto&amp; magnetic_field_squared =
+<span class="lineNum">     149 </span>            :       get&lt;hydro::Tags::MagneticFieldSquared&lt;DataVector&gt;&gt;(temp_tensors);
+<span class="lineNum">     150 </span>            :   dot_product(make_not_null(&amp;get&lt;hydro::Tags::MagneticFieldSquared&lt;DataVector&gt;&gt;(
+<span class="lineNum">     151 </span>            :                   temp_tensors)),
+<span class="lineNum">     152 </span>            :               magnetic_field, magnetic_field_one_form);
+<span class="lineNum">     153 </span>            :   const auto&amp; comoving_magnetic_field_squared =
+<span class="lineNum">     154 </span>            :       get&lt;hydro::Tags::ComovingMagneticFieldSquared&lt;DataVector&gt;&gt;(temp_tensors);
+<span class="lineNum">     155 </span>            :   get(get&lt;hydro::Tags::ComovingMagneticFieldSquared&lt;DataVector&gt;&gt;(
+<span class="lineNum">     156 </span>            :       temp_tensors)) =
+<span class="lineNum">     157 </span>            :       get(magnetic_field_squared) / square(get(lorentz_factor)) +
+<span class="lineNum">     158 </span>            :       square(get(magnetic_field_dot_spatial_velocity));
+<span class="lineNum">     159 </span>            : 
+<span class="lineNum">     160 </span>            :   // reuse magnetic_field_squared allocation for Alfven speed squared
+<span class="lineNum">     161 </span>            :   const auto&amp; alfven_speed_squared =
+<span class="lineNum">     162 </span>            :       get&lt;hydro::Tags::MagneticFieldSquared&lt;DataVector&gt;&gt;(temp_tensors);
+<span class="lineNum">     163 </span>            :   get(get&lt;hydro::Tags::MagneticFieldSquared&lt;DataVector&gt;&gt;(temp_tensors)) =
+<span class="lineNum">     164 </span>            :       get(comoving_magnetic_field_squared) /
+<span class="lineNum">     165 </span>            :       (get(comoving_magnetic_field_squared) +
+<span class="lineNum">     166 </span>            :        get(rest_mass_density) * get(specific_enthalpy));
+<span class="lineNum">     167 </span>            : 
+<span class="lineNum">     168 </span>            :   Scalar&lt;DataVector&gt;&amp; sound_speed_squared =
+<span class="lineNum">     169 </span>            :       get&lt;hydro::Tags::SoundSpeedSquared&lt;DataVector&gt;&gt;(temp_tensors);
+<span class="lineNum">     170 </span>            :   make_overloader(
+<span class="lineNum">     171 </span>            :       [&amp;rest_mass_density, &amp;
+<span class="lineNum">     172 </span>            :        sound_speed_squared ](const EquationsOfState::EquationOfState&lt;true, 1&gt;&amp;
+<span class="lineNum">     173 </span>            :                                  the_equation_of_state) noexcept {
+<span class="lineNum">     174 </span>            :         get(sound_speed_squared) =
+<span class="lineNum">     175 </span>            :             get(the_equation_of_state.chi_from_density(rest_mass_density)) +
+<span class="lineNum">     176 </span>            :             get(the_equation_of_state
+<span class="lineNum">     177 </span>            :                     .kappa_times_p_over_rho_squared_from_density(
+<span class="lineNum">     178 </span>            :                         rest_mass_density));
+<span class="lineNum">     179 </span>            :       },
+<span class="lineNum">     180 </span>            :       [&amp;rest_mass_density, &amp;specific_internal_energy, &amp;
+<span class="lineNum">     181 </span>            :        sound_speed_squared ](const EquationsOfState::EquationOfState&lt;true, 2&gt;&amp;
+<span class="lineNum">     182 </span>            :                                  the_equation_of_state) noexcept {
+<span class="lineNum">     183 </span>            :         get(sound_speed_squared) =
+<span class="lineNum">     184 </span>            :             get(the_equation_of_state.chi_from_density_and_energy(
+<span class="lineNum">     185 </span>            :                 rest_mass_density, specific_internal_energy)) +
+<span class="lineNum">     186 </span>            :             get(the_equation_of_state
+<span class="lineNum">     187 </span>            :                     .kappa_times_p_over_rho_squared_from_density_and_energy(
+<span class="lineNum">     188 </span>            :                         rest_mass_density, specific_internal_energy));
+<span class="lineNum">     189 </span>            :       })(equation_of_state);
+<span class="lineNum">     190 </span>            :   get(sound_speed_squared) /= get(specific_enthalpy);
+<span class="lineNum">     191 </span>            : 
+<span class="lineNum">     192 </span>            :   compute_characteristic_speeds(char_speeds, lapse, shift, spatial_velocity,
+<span class="lineNum">     193 </span>            :                                 spatial_velocity_squared, sound_speed_squared,
+<span class="lineNum">     194 </span>            :                                 alfven_speed_squared, unit_normal);
+<span class="lineNum">     195 </span>            : }
+<span class="lineNum">     196 </span>            : 
+<span class="lineNum">     197 </span>            : template &lt;size_t ThermodynamicDim&gt;
+<span class="lineNum">     198 </span>            : std::array&lt;DataVector, 9&gt; characteristic_speeds(
+<span class="lineNum">     199 </span>            :     const Scalar&lt;DataVector&gt;&amp; rest_mass_density,
+<span class="lineNum">     200 </span>            :     const Scalar&lt;DataVector&gt;&amp; specific_internal_energy,
+<span class="lineNum">     201 </span>            :     const Scalar&lt;DataVector&gt;&amp; specific_enthalpy,
+<span class="lineNum">     202 </span>            :     const tnsr::I&lt;DataVector, 3, Frame::Inertial&gt;&amp; spatial_velocity,
+<span class="lineNum">     203 </span>            :     const Scalar&lt;DataVector&gt;&amp; lorentz_factor,
+<span class="lineNum">     204 </span>            :     const tnsr::I&lt;DataVector, 3, Frame::Inertial&gt;&amp; magnetic_field,
+<span class="lineNum">     205 </span>            :     const Scalar&lt;DataVector&gt;&amp; lapse, const tnsr::I&lt;DataVector, 3&gt;&amp; shift,
+<span class="lineNum">     206 </span>            :     const tnsr::ii&lt;DataVector, 3, Frame::Inertial&gt;&amp; spatial_metric,
+<span class="lineNum">     207 </span>            :     const tnsr::i&lt;DataVector, 3&gt;&amp; unit_normal,
+<span class="lineNum">     208 </span>            :     const EquationsOfState::EquationOfState&lt;true, ThermodynamicDim&gt;&amp;
+<span class="lineNum">     209 </span>            :         equation_of_state) noexcept {
+<span class="lineNum">     210 </span>            :   std::array&lt;DataVector, 9&gt; char_speeds{};
+<span class="lineNum">     211 </span>            :   characteristic_speeds(make_not_null(&amp;char_speeds), rest_mass_density,
+<span class="lineNum">     212 </span>            :                         specific_internal_energy, specific_enthalpy,
+<span class="lineNum">     213 </span>            :                         spatial_velocity, lorentz_factor, magnetic_field, lapse,
+<span class="lineNum">     214 </span>            :                         shift, spatial_metric, unit_normal, equation_of_state);
+<span class="lineNum">     215 </span>            :   return char_speeds;
+<span class="lineNum">     216 </span>            : }
+<span class="lineNum">     217 </span>            : 
+<span class="lineNum">     218 </span>            : #define GET_DIM(data) BOOST_PP_TUPLE_ELEM(0, data)
+<span class="lineNum">     219 </span>            : 
+<span class="lineNum">     220 </span>            : #define INSTANTIATION(r, data)                                              \
+<span class="lineNum">     221 </span>            :   template std::array&lt;DataVector, 9&gt; characteristic_speeds&lt;GET_DIM(data)&gt;(  \
+<span class="lineNum">     222 </span>            :       const Scalar&lt;DataVector&gt;&amp; rest_mass_density,                          \
+<span class="lineNum">     223 </span>            :       const Scalar&lt;DataVector&gt;&amp; specific_internal_energy,                   \
+<span class="lineNum">     224 </span>            :       const Scalar&lt;DataVector&gt;&amp; specific_enthalpy,                          \
+<span class="lineNum">     225 </span>            :       const tnsr::I&lt;DataVector, 3, Frame::Inertial&gt;&amp; spatial_velocity,      \
+<span class="lineNum">     226 </span>            :       const Scalar&lt;DataVector&gt;&amp; lorentz_factor,                             \
+<span class="lineNum">     227 </span>            :       const tnsr::I&lt;DataVector, 3, Frame::Inertial&gt;&amp; magnetic_field,        \
+<span class="lineNum">     228 </span>            :       const Scalar&lt;DataVector&gt;&amp; lapse, const tnsr::I&lt;DataVector, 3&gt;&amp; shift, \
+<span class="lineNum">     229 </span>            :       const tnsr::ii&lt;DataVector, 3, Frame::Inertial&gt;&amp; spatial_metric,       \
+<span class="lineNum">     230 </span>            :       const tnsr::i&lt;DataVector, 3&gt;&amp; unit_normal,                            \
+<span class="lineNum">     231 </span>            :       const EquationsOfState::EquationOfState&lt;true, GET_DIM(data)&gt;&amp;         \
+<span class="lineNum">     232 </span>            :           equation_of_state) noexcept;                                      \
+<span class="lineNum">     233 </span>            :   template void characteristic_speeds&lt;GET_DIM(data)&gt;(                       \
+<span class="lineNum">     234 </span>            :       const gsl::not_null&lt;std::array&lt;DataVector, 9&gt;*&gt; char_speeds,          \
+<span class="lineNum">     235 </span>            :       const Scalar&lt;DataVector&gt;&amp; rest_mass_density,                          \
+<span class="lineNum">     236 </span>            :       const Scalar&lt;DataVector&gt;&amp; specific_internal_energy,                   \
+<span class="lineNum">     237 </span>            :       const Scalar&lt;DataVector&gt;&amp; specific_enthalpy,                          \
+<span class="lineNum">     238 </span>            :       const tnsr::I&lt;DataVector, 3, Frame::Inertial&gt;&amp; spatial_velocity,      \
+<span class="lineNum">     239 </span>            :       const Scalar&lt;DataVector&gt;&amp; lorentz_factor,                             \
+<span class="lineNum">     240 </span>            :       const tnsr::I&lt;DataVector, 3, Frame::Inertial&gt;&amp; magnetic_field,        \
+<span class="lineNum">     241 </span>            :       const Scalar&lt;DataVector&gt;&amp; lapse, const tnsr::I&lt;DataVector, 3&gt;&amp; shift, \
+<span class="lineNum">     242 </span>            :       const tnsr::ii&lt;DataVector, 3, Frame::Inertial&gt;&amp; spatial_metric,       \
+<span class="lineNum">     243 </span>            :       const tnsr::i&lt;DataVector, 3&gt;&amp; unit_normal,                            \
+<span class="lineNum">     244 </span>            :       const EquationsOfState::EquationOfState&lt;true, GET_DIM(data)&gt;&amp;         \
+<span class="lineNum">     245 </span>            :           equation_of_state) noexcept;
+<span class="lineNum">     246 </span>            : 
+<span class="lineNum">     247 </span>            : GENERATE_INSTANTIATIONS(INSTANTIATION, (1, 2))
+<span class="lineNum">     248 </span>            : 
+<span class="lineNum">     249 </span>            : #undef GET_DIM
+<span class="lineNum">     250 </span>            : #undef INSTANTIATION
+<span class="lineNum">     251 </span>            : }  // namespace ValenciaDivClean
+<span class="lineNum">     252 </span>            : }  // namespace grmhd
+<span class="lineNum">     253 </span>            : /// \endcond
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

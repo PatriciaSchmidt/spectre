@@ -1,0 +1,307 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - /work/spectre/docs/DevGuide/BuildSystem.md</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">work/spectre/docs/DevGuide</a> - BuildSystem.md</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : \cond NEVER</span>
+<span class="lineNum">       2 </span>            : Distributed under the MIT License.
+<span class="lineNum">       3 </span>            : See LICENSE.txt for details.
+<span class="lineNum">       4 </span>            : \endcond
+<span class="lineNum">       5 </span>            : # Build System {#spectre_build_system}
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            : # CMake {#cmake}
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : SpECTRE uses [CMake](https://cmake.org/) for the build system. In this
+<span class="lineNum">      10 </span>            : section of the guide we outline how to [add new source
+<span class="lineNum">      11 </span>            : files](#adding_source_files), [libraries](#adding_libraries), [unit
+<span class="lineNum">      12 </span>            : tests](#adding_unit_tests), [executables](#adding_executables), and
+<span class="lineNum">      13 </span>            : [external dependencies](#adding_external_dependencies).  We also
+<span class="lineNum">      14 </span>            : describe [commonly used CMake flags](#common_cmake_flags).
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : Note that in editing `CMakeLists.txt` files, it is conventional to
+<span class="lineNum">      17 </span>            : indent multiline commands by two spaces (except for the first line),
+<span class="lineNum">      18 </span>            : and to separate most commands by blank lines.
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : ## Adding Source Files {#adding_source_files}
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : SpECTRE organizes source files into subdirectories of `src` that are
+<span class="lineNum">      23 </span>            : compiled into libraries.  To add a new source file `FILE.cpp` to an
+<span class="lineNum">      24 </span>            : existing library in `src/PATH/DIR`, just edit
+<span class="lineNum">      25 </span>            : `src/PATH/DIR/CMakeLists.txt` and add `FILE.cpp` to the list of files
+<span class="lineNum">      26 </span>            : in
+<span class="lineNum">      27 </span>            : ```
+<span class="lineNum">      28 </span>            : set(LIBRARY_SOURCES
+<span class="lineNum">      29 </span>            :   &lt;list_of_files&gt;
+<span class="lineNum">      30 </span>            :   )
+<span class="lineNum">      31 </span>            : ```
+<span class="lineNum">      32 </span>            : such that the resulting `&lt;list_of_files&gt;` is in alphabetical order.
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            : ### Adding Libraries {#adding_libraries}
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span>            : To add a source file `FILE.cpp` that is compiled into a new library `LIB` in a
+<span class="lineNum">      37 </span>            : directory `src/PATH/DIR` (either in a new directory, or in an existing
+<span class="lineNum">      38 </span>            : directory that either does not have a `CMakeLists.txt` file, or does
+<span class="lineNum">      39 </span>            : not create a library in the existing `CMakeLists.txt`):
+<span class="lineNum">      40 </span>            : - Create (if necessary) a `CMakeLists.txt` file in `DIR`, with the following
+<span class="lineNum">      41 </span>            : two lines at the top:
+<span class="lineNum">      42 </span>            : ```
+<span class="lineNum">      43 </span>            : # Distributed under the MIT License.
+<span class="lineNum">      44 </span>            : # See LICENSE.txt for details.
+<span class="lineNum">      45 </span>            : ```
+<span class="lineNum">      46 </span>            : - In the parent directory (i.e. `src/PATH`), (if necessary) add the
+<span class="lineNum">      47 </span>            : following line to its `CMakeLists.txt` file (if necessary, recursively
+<span class="lineNum">      48 </span>            : do the previous step and this one until you reach a `CMakeLists.txt` that
+<span class="lineNum">      49 </span>            : adds the appropriate subdirectory):
+<span class="lineNum">      50 </span>            : ```
+<span class="lineNum">      51 </span>            : add_subdirectory(DIR)
+<span class="lineNum">      52 </span>            : ```
+<span class="lineNum">      53 </span>            : If there are already other `add_subdirectory()` lines in the file, place
+<span class="lineNum">      54 </span>            : the new one so that the subdirectories are in alphabetical order.
+<span class="lineNum">      55 </span>            : - Add the line:
+<span class="lineNum">      56 </span>            : ```
+<span class="lineNum">      57 </span>            : set(LIBRARY LIB)
+<span class="lineNum">      58 </span>            : ```
+<span class="lineNum">      59 </span>            : where convention is that `LIB` = `DIR`.  As library names must be
+<span class="lineNum">      60 </span>            : unique, this is not always possible, in which case the convention is to
+<span class="lineNum">      61 </span>            : prepend the parent directory to `DIR`.
+<span class="lineNum">      62 </span>            : - Add the lines
+<span class="lineNum">      63 </span>            : ```
+<span class="lineNum">      64 </span>            : set(LIBRARY_SOURCES
+<span class="lineNum">      65 </span>            :   FILE.cpp
+<span class="lineNum">      66 </span>            :   )
+<span class="lineNum">      67 </span>            : 
+<span class="lineNum">      68 </span>            : add_spectre_library(${LIBRARY} ${LIBRARY_SOURCES})
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span>            : target_link_libraries(
+<span class="lineNum">      71 </span>            :   ${LIBRARY}
+<span class="lineNum">      72 </span>            :   &lt;list_of_interfaces&gt;
+<span class="lineNum">      73 </span>            :   )
+<span class="lineNum">      74 </span>            : ```
+<span class="lineNum">      75 </span>            : where `&lt;list_of_interfaces&gt;` is an alphabetized list of lines of the form
+<span class="lineNum">      76 </span>            : ```
+<span class="lineNum">      77 </span>            :   INTERFACE SOME_LIBRARY
+<span class="lineNum">      78 </span>            : ```
+<span class="lineNum">      79 </span>            : where `SOME_LIBRARY` is a library that must be linked in order for the
+<span class="lineNum">      80 </span>            : new library to be successfully linked in an executable.
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span>            : ## Adding Unit Tests {#adding_unit_tests}
+<span class="lineNum">      83 </span>            : 
+<span class="lineNum">      84 </span>            : We use the [Catch](https://github.com/philsquared/Catch) testing
+<span class="lineNum">      85 </span>            : framework for unit tests. All unit tests are housed in `tests/Unit`
+<span class="lineNum">      86 </span>            : with subdirectories for each subdirectory of `src`. Add the `cpp` file
+<span class="lineNum">      87 </span>            : to the appropriate subdirectory and also to the `CMakeLists.txt` in
+<span class="lineNum">      88 </span>            : that subdirectory. Inside the source file you can create a new test by
+<span class="lineNum">      89 </span>            : adding a `SPECTRE_TEST_CASE(&quot;Unit.Dir.Component&quot;,
+<span class="lineNum">      90 </span>            : &quot;[Unit][Dir][Tag]&quot;)`. The `[Tag]` is optional and you can have more
+<span class="lineNum">      91 </span>            : than one, but the tags should be used quite sparingly.  The purpose of
+<span class="lineNum">      92 </span>            : the tags is to be able to run all unit tests or all tests of a
+<span class="lineNum">      93 </span>            : particular set of components, e.g. `ctest -L Data` to run all tests
+<span class="lineNum">      94 </span>            : inside the `Data` directory. Please see \ref writing_unit_tests
+<span class="lineNum">      95 </span>            : &quot;writing unit tests&quot;, other unit tests and the [Catch
+<span class="lineNum">      96 </span>            : documentation](https://github.com/philsquared/Catch) for more help on
+<span class="lineNum">      97 </span>            : writing tests. Unit tests should take as short a time as possible,
+<span class="lineNum">      98 </span>            : with a goal of less than two seconds.  Please also limit the number of
+<span class="lineNum">      99 </span>            : distinct cases (by using `SECTION`s).
+<span class="lineNum">     100 </span>            : 
+<span class="lineNum">     101 </span>            : You can check the unit test coverage of your code by installing all the optional
+<span class="lineNum">     102 </span>            : components and then running `make unit-test-coverage` (after re-running CMake).
+<span class="lineNum">     103 </span>            : This will create the
+<span class="lineNum">     104 </span>            : directory `BUILD_DIR/docs/html/unit-test-coverage/` which is where the coverage
+<span class="lineNum">     105 </span>            : information is located. Open the `index.html` file in your browser and make
+<span class="lineNum">     106 </span>            : sure that your tests are indeed checking all lines of your code. Your pull
+<span class="lineNum">     107 </span>            : requests might not be merged until your line coverage is over 90% (we are aiming
+<span class="lineNum">     108 </span>            : for 100% line coverage wherever possible). Unreachable lines of code can be
+<span class="lineNum">     109 </span>            : excluded from coverage analysis by adding the inline comment `LCOV_EXCL_LINE`
+<span class="lineNum">     110 </span>            : or a block can be excluded using `LCOV_EXCL_START` and `LCOV_EXCL_STOP`.
+<span class="lineNum">     111 </span>            : However, this should be used extremely sparingly since unreachable code paths
+<span class="lineNum">     112 </span>            : should be removed from the code base altogether.
+<span class="lineNum">     113 </span>            : 
+<span class="lineNum">     114 </span>            : ## Adding Executables {#adding_executables}
+<span class="lineNum">     115 </span>            : 
+<span class="lineNum">     116 </span>            : All general executables are found in `src/Executables`, while those
+<span class="lineNum">     117 </span>            : for specific evolution (elliptic) systems are found in
+<span class="lineNum">     118 </span>            : `src/Evolution/Executables` (`src/Elliptic/Executables`).  See \ref
+<span class="lineNum">     119 </span>            : dev_guide_creating_executables &quot;how to create executables&quot;.
+<span class="lineNum">     120 </span>            : 
+<span class="lineNum">     121 </span>            : ## Adding External Dependencies {#adding_external_dependencies}
+<span class="lineNum">     122 </span>            : 
+<span class="lineNum">     123 </span>            : To add an external dependency, first add a `SetupDEPENDENCY.cmake`
+<span class="lineNum">     124 </span>            : file to the `cmake` directory. You should model this after one of the
+<span class="lineNum">     125 </span>            : existing ones for `Catch` or `Brigand` if you're adding a header-only
+<span class="lineNum">     126 </span>            : library and `yaml-cpp` if the library is not header-only. If CMake
+<span class="lineNum">     127 </span>            : does not already support `find_package` for the library you're adding
+<span class="lineNum">     128 </span>            : you can write your own. These should be modeled after `FindBrigand` or
+<span class="lineNum">     129 </span>            : `FindCatch` for header-only libraries, and `FindYAMLCPP` for compiled
+<span class="lineNum">     130 </span>            : libraries. The `SetupDEPENDENCY.cmake` file must then be included in
+<span class="lineNum">     131 </span>            : the root `spectre/CMakeLists.txt`. Be sure to test both that setting
+<span class="lineNum">     132 </span>            : `LIBRARY_ROOT` works correctly for your library, and also that if the
+<span class="lineNum">     133 </span>            : library is required that CMake fails gracefully if the library is not
+<span class="lineNum">     134 </span>            : found.
+<span class="lineNum">     135 </span>            : 
+<span class="lineNum">     136 </span>            : ## Commonly Used CMake flags {#common_cmake_flags}
+<span class="lineNum">     137 </span>            : The following are the most common flags used to control building with
+<span class="lineNum">     138 </span>            : `CMake`. They are used by
+<span class="lineNum">     139 </span>            : ```
+<span class="lineNum">     140 </span>            : cmake -D FLAG1=OPT1 ... -D FLAGN=OPTN &lt;SPECTRE_ROOT&gt;
+<span class="lineNum">     141 </span>            : ```
+<span class="lineNum">     142 </span>            : - ASAN
+<span class="lineNum">     143 </span>            :   - Whether or not to turn on the address sanitizer compile flags
+<span class="lineNum">     144 </span>            :     (`-fsanitize=address`) (default is `OFF`)
+<span class="lineNum">     145 </span>            : - BUILD_SHARED_LIBS
+<span class="lineNum">     146 </span>            :   - Whether shared libraries are built instead of static libraries
+<span class="lineNum">     147 </span>            :     (default is `OFF`)
+<span class="lineNum">     148 </span>            : - CHARM_ROOT
+<span class="lineNum">     149 </span>            :   - The path to the build directory of `Charm++`
+<span class="lineNum">     150 </span>            : - CMAKE_BUILD_TYPE
+<span class="lineNum">     151 </span>            :   - Sets the build type.  Common options:
+<span class="lineNum">     152 </span>            :     - `Debug` (the default if the flag is not specified): sets flags
+<span class="lineNum">     153 </span>            :       that trigger additional error checking
+<span class="lineNum">     154 </span>            :     - `Release`
+<span class="lineNum">     155 </span>            : - CMAKE_C_COMPILER
+<span class="lineNum">     156 </span>            :   - The `C` compiler used (defaults to whatever is determined by
+<span class="lineNum">     157 </span>            :     `CMake/Modules/CMakeDetermineCCompiler.cmake`, usually `cc`)
+<span class="lineNum">     158 </span>            : - CMAKE_CXX_COMPILER
+<span class="lineNum">     159 </span>            :   - The `C++` compiler used (defaults to whatever is determined by
+<span class="lineNum">     160 </span>            :     `CMake/Modules/CMakeDetermineCXXCompiler.cmake`, usually `c++`)
+<span class="lineNum">     161 </span>            : - CMAKE_Fortran_COMPILER
+<span class="lineNum">     162 </span>            :   - The `Fortran` compiler used (defaults to whatever is determined by
+<span class="lineNum">     163 </span>            :     `CMake/Modules/CMakeDetermineFortranCompiler.cmake`)
+<span class="lineNum">     164 </span>            : - CMAKE_C_FLAGS
+<span class="lineNum">     165 </span>            :   - Additional flags passed to the `C` compiler.
+<span class="lineNum">     166 </span>            : - CMAKE_CXX_FLAGS
+<span class="lineNum">     167 </span>            :   - Additional flags passed to the `C++` compiler.
+<span class="lineNum">     168 </span>            : - CMAKE_Fortran_FLAGS
+<span class="lineNum">     169 </span>            :   - Additional flags passed to the `Fortran` compiler.
+<span class="lineNum">     170 </span>            : - CMAKE_RUNTIME_OUTPUT_DIRECTORY
+<span class="lineNum">     171 </span>            :   - Sets the directory where the library and executables are placed.
+<span class="lineNum">     172 </span>            :     By default libraries end up in `&lt;BUILD_DIR&gt;/lib` and executables
+<span class="lineNum">     173 </span>            :     in `&lt;BUILD_DIR&gt;/bin`.
+<span class="lineNum">     174 </span>            : - ENABLE_WARNINGS
+<span class="lineNum">     175 </span>            :   - Whether or not warning flags are enabled (default is `ON`)
+<span class="lineNum">     176 </span>            : - UBSAN_INTEGER
+<span class="lineNum">     177 </span>            :   - Whether or not to turn on the undefined behavior sanitizer
+<span class="lineNum">     178 </span>            :     unsigned integer overflow flag (`-fsanitize=integer`) (default is
+<span class="lineNum">     179 </span>            :     `OFF`)
+<span class="lineNum">     180 </span>            : - UBSAN_UNDEFINED
+<span class="lineNum">     181 </span>            :   - Whether or not to turn on the undefined behavior sanitizer
+<span class="lineNum">     182 </span>            :     undefined behavior compile flags (`-fsanitize=undefined`) (default
+<span class="lineNum">     183 </span>            :     is `OFF`)
+<span class="lineNum">     184 </span>            : - USE_PCH
+<span class="lineNum">     185 </span>            :   - Whether or not to use pre-compiled headers (default is `ON`)
+<span class="lineNum">     186 </span>            :   - This needs to be turned `OFF` in order to use
+<span class="lineNum">     187 </span>            :     [include-what-you-use
+<span class="lineNum">     188 </span>            :     (IWYU)](https://github.com/include-what-you-use/include-what-you-use)
+<span class="lineNum">     189 </span>            : 
+<span class="lineNum">     190 </span>            : ## Formaline
+<span class="lineNum">     191 </span>            : 
+<span class="lineNum">     192 </span>            : SpECTRE's implementation of Formaline is based on, but distinct in
+<span class="lineNum">     193 </span>            : implementation from, the original design by
+<span class="lineNum">     194 </span>            : [Erik Schnetter and Christian Ott](https://github.com/hypercott/formaline),
+<span class="lineNum">     195 </span>            : which embeds an archive of the source tree into the executable. The original
+<span class="lineNum">     196 </span>            : design creates a C/C++ file with a function that returns an array/vector of
+<span class="lineNum">     197 </span>            : `char`s (a byte stream). However, this results in a very large source file (50MB
+<span class="lineNum">     198 </span>            : or more), which is very slow to compile and ends up more than doubling the link
+<span class="lineNum">     199 </span>            : time. Instead, SpECTRE's Formaline implementation uses the linker `ld` to
+<span class="lineNum">     200 </span>            : encode a file into an object, which means
+<span class="lineNum">     201 </span>            : rather than creating a large source file, we can directly encode the source tree
+<span class="lineNum">     202 </span>            : archive into the binary at the linking stage.
+<span class="lineNum">     203 </span>            : 
+<span class="lineNum">     204 </span>            : Most of SpECTRE's Formaline is implemented
+<span class="lineNum">     205 </span>            : inside the `tools/WrapLinker.sh` script. Function declarations are provided
+<span class="lineNum">     206 </span>            : in `Utilities/Formaline.hpp` and a small function that writes the source
+<span class="lineNum">     207 </span>            : file to disk is defined in `Utilities/Formaline.cpp`. The first
+<span class="lineNum">     208 </span>            : Formaline-related thing done in `WrapLinker.sh` is to archive everything in the
+<span class="lineNum">     209 </span>            : source directory tracked by git. Once the archive is created we run
+<span class="lineNum">     210 </span>            : `ld -r -b binary -o object.o src.tar.gz` (with unique names for `object.o` and
+<span class="lineNum">     211 </span>            : `src.tar.gz` for each executable that is built to avoid name collisions) to
+<span class="lineNum">     212 </span>            : generate an object file with the source file encoded from
+<span class="lineNum">     213 </span>            : `_binary_src_tar_gz_start` to `_binary_src_tar_gz_end`. Next we write a C++
+<span class="lineNum">     214 </span>            : source file that defines a function `get_archive` to convert the byte stream
+<span class="lineNum">     215 </span>            : into a `std::vector&lt;char&gt;`. We also encode the output of `printenv`, the various
+<span class="lineNum">     216 </span>            : `PATH` environment variables, and the CMake generated `LibraryVersions.txt` file
+<span class="lineNum">     217 </span>            : into the source file. Finally, the generated source file is built during the
+<span class="lineNum">     218 </span>            : linking phase and the object file containing the source archive is linked into
+<span class="lineNum">     219 </span>            : the executable.
+<span class="lineNum">     220 </span>            : 
+<span class="lineNum">     221 </span>            : To further aid in reproducibility, the `printenv` output and
+<span class="lineNum">     222 </span>            : `LibraryVersions.txt` contents are written to HDF5 files as part of the
+<span class="lineNum">     223 </span>            : `h5::Header` object. The archive of the source tree is written using the
+<span class="lineNum">     224 </span>            : `h5::SourceArchive` object and can be extracted by running
+<span class="lineNum">     225 </span>            : ```
+<span class="lineNum">     226 </span>            : h5dump -d /src.tar.gz -b LE -o src.tar.gz /path/to/hdf5/file.h5
+<span class="lineNum">     227 </span>            : ```
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

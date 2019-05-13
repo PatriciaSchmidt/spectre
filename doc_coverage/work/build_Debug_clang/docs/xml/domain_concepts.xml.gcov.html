@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - /work/build_Debug_clang/docs/xml/domain_concepts.xml</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">work/build_Debug_clang/docs/xml</a> - domain_concepts.xml</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineCov">          1 : &lt;?xml version='1.0' encoding='UTF-8' standalone='no'?&gt;</span>
+<span class="lineNum">       2 </span>            : &lt;doxygen xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:noNamespaceSchemaLocation=&quot;compound.xsd&quot; version=&quot;1.8.13&quot;&gt;
+<span class="lineNum">       3 </span>            :   &lt;compounddef id=&quot;domain_concepts&quot; kind=&quot;page&quot;&gt;
+<span class="lineNum">       4 </span>            :     &lt;compoundname&gt;domain_concepts&lt;/compoundname&gt;
+<span class="lineNum">       5 </span>            :     &lt;title&gt;Domain Concepts&lt;/title&gt;
+<span class="lineNum">       6 </span>            :     &lt;detaileddescription&gt;
+<span class="lineNum">       7 </span>            : &lt;para&gt;&lt;itemizedlist&gt;
+<span class="lineNum">       8 </span>            : &lt;listitem&gt;&lt;para&gt;Logical Coordinates:&lt;linebreak/&gt;
+<span class="lineNum">       9 </span>            :  The coordinate frame of a reference cell.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;&lt;ref refid=&quot;classDomain&quot; kindref=&quot;compound&quot;&gt;Domain&lt;/ref&gt;:&lt;linebreak/&gt;
+<span class="lineNum">      10 </span>            :  The computational domain is partitioned into cells called Blocks. Furthermore, each &lt;ref refid=&quot;classBlock&quot; kindref=&quot;compound&quot;&gt;Block&lt;/ref&gt; must have at most one neighboring &lt;ref refid=&quot;classBlock&quot; kindref=&quot;compound&quot;&gt;Block&lt;/ref&gt; in each &lt;ref refid=&quot;classDirection&quot; kindref=&quot;compound&quot;&gt;Direction&lt;/ref&gt;.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;&lt;ref refid=&quot;classBlock&quot; kindref=&quot;compound&quot;&gt;Block&lt;/ref&gt;:&lt;linebreak/&gt;
+<span class="lineNum">      11 </span>            :  A reference cell embedded into a subset of the computational domain. Blocks are identified by unique integral values.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;Orientation:&lt;linebreak/&gt;
+<span class="lineNum">      12 </span>            :  The information of how the Logical Coordinates between Blocks are related.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;&lt;ref refid=&quot;classBlockNeighbor&quot; kindref=&quot;compound&quot;&gt;Block Neighbor&lt;/ref&gt;:&lt;linebreak/&gt;
+<span class="lineNum">      13 </span>            :  The identity and Orientation of a neighbor of a given &lt;ref refid=&quot;classBlock&quot; kindref=&quot;compound&quot;&gt;Block&lt;/ref&gt;.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;&lt;ref refid=&quot;classDirection&quot; kindref=&quot;compound&quot;&gt;Direction&lt;/ref&gt;:&lt;linebreak/&gt;
+<span class="lineNum">      14 </span>            :  A logical coordinate axis and a label &amp;quot;Upper&amp;quot; or &amp;quot;Lower&amp;quot; depending on whether the &lt;ref refid=&quot;classDirection&quot; kindref=&quot;compound&quot;&gt;Direction&lt;/ref&gt; is aligned with or anti-aligned with the logical coordinate axis, respectively.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;Refinement Level:&lt;linebreak/&gt;
+<span class="lineNum">      15 </span>            :  The number of times a &lt;ref refid=&quot;classBlock&quot; kindref=&quot;compound&quot;&gt;Block&lt;/ref&gt; is split in half in a given dimension.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;Segment:&lt;linebreak/&gt;
+<span class="lineNum">      16 </span>            :  The specific subset of the interval &lt;formula id=&quot;1331&quot;&gt;$[-1, 1]$&lt;/formula&gt; defined by the Refinement Level and an integer label such that the Segment&amp;apos;s interval is &lt;formula id=&quot;1332&quot;&gt;$[-1 + 2*(N/D), -1 + 2*(N+1)/D]$&lt;/formula&gt; where N is the integer label and D is &lt;formula id=&quot;1333&quot;&gt;$2^{(\textrm{Refinement Level})}$&lt;/formula&gt;.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;&lt;ref refid=&quot;classSegmentId&quot; kindref=&quot;compound&quot;&gt;Segment Identifier&lt;/ref&gt;:&lt;linebreak/&gt;
+<span class="lineNum">      17 </span>            :  The Refinement Level and an integer labeling a Segment.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;&lt;ref refid=&quot;classElement&quot; kindref=&quot;compound&quot;&gt;Element&lt;/ref&gt;:&lt;linebreak/&gt;
+<span class="lineNum">      18 </span>            :  A refined subregion of a &lt;ref refid=&quot;classBlock&quot; kindref=&quot;compound&quot;&gt;Block&lt;/ref&gt; defined by its Segments in each logical coordinate. The properties of the &lt;ref refid=&quot;classElement&quot; kindref=&quot;compound&quot;&gt;Element&lt;/ref&gt; are inherited from the block, i.e. it is self-similar to the &lt;ref refid=&quot;classBlock&quot; kindref=&quot;compound&quot;&gt;Block&lt;/ref&gt;.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;&lt;ref refid=&quot;classElementId&quot; kindref=&quot;compound&quot;&gt;Element Identifier&lt;/ref&gt;:&lt;linebreak/&gt;
+<span class="lineNum">      19 </span>            :  The &lt;ref refid=&quot;classBlock&quot; kindref=&quot;compound&quot;&gt;Block&lt;/ref&gt; Identifier containing the &lt;ref refid=&quot;classElement&quot; kindref=&quot;compound&quot;&gt;Element&lt;/ref&gt; and a Segment Identifier in each logical coordinate axis.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;&lt;ref refid=&quot;classMesh&quot; kindref=&quot;compound&quot;&gt;Mesh&lt;/ref&gt;:&lt;linebreak/&gt;
+<span class="lineNum">      20 </span>            :  A regular set of grid points associated with an &lt;ref refid=&quot;classElement&quot; kindref=&quot;compound&quot;&gt;Element&lt;/ref&gt;. Represented by the data structure &lt;ref refid=&quot;classMesh&quot; kindref=&quot;compound&quot;&gt;Mesh&lt;/ref&gt;.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;External Boundary:&lt;linebreak/&gt;
+<span class="lineNum">      21 </span>            :  A face of a &lt;ref refid=&quot;classBlock&quot; kindref=&quot;compound&quot;&gt;Block&lt;/ref&gt; or &lt;ref refid=&quot;classElement&quot; kindref=&quot;compound&quot;&gt;Element&lt;/ref&gt; that has no neighbor.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;Internal Boundary:&lt;linebreak/&gt;
+<span class="lineNum">      22 </span>            :  A boundary that is not an External Boundary.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;&lt;ref refid=&quot;classNeighbors&quot; kindref=&quot;compound&quot;&gt;Face Neighbors&lt;/ref&gt; (Rename C++ &lt;ref refid=&quot;classNeighbors&quot; kindref=&quot;compound&quot;&gt;Neighbors&lt;/ref&gt; class to FaceNeighbors):&lt;linebreak/&gt;
+<span class="lineNum">      23 </span>            :  The identities and Orientation of the neighbors in a particular direction of a given &lt;ref refid=&quot;classElement&quot; kindref=&quot;compound&quot;&gt;Element&lt;/ref&gt;.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;External Boundary Condition:&lt;linebreak/&gt;
+<span class="lineNum">      24 </span>            :  A prescription for updating the solution on an External Boundary. Each External Boundary of &lt;ref refid=&quot;classBlock&quot; kindref=&quot;compound&quot;&gt;Block&lt;/ref&gt; has exactly one External Boundary Condition associated with it. &lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      25 </span>            : &lt;/para&gt;    &lt;/detaileddescription&gt;
+<span class="lineNum">      26 </span>            :   &lt;/compounddef&gt;
+<span class="lineNum">      27 </span>            : &lt;/doxygen&gt;
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

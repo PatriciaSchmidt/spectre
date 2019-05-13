@@ -1,0 +1,162 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Elliptic/Systems/Poisson/FirstOrderSystem.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">Elliptic/Systems/Poisson</a> - FirstOrderSystem.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">11</td>
+            <td class="headerCovTableEntryLo">18.2 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineCov">          1 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : /// \file
+<span class="lineNum">       5 </span>            : /// Defines class Poisson::FirstOrderSystem
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            : #pragma once
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : #include &quot;DataStructures/Tensor/EagerMath/Magnitude.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;Elliptic/Systems/Poisson/Equations.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;Elliptic/Systems/Poisson/Tags.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;NumericalAlgorithms/LinearSolver/Tags.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            : /// \cond
+<span class="lineNum">      18 </span>            : namespace Tags {
+<span class="lineNum">      19 </span>            : template &lt;typename&gt;
+<span class="lineNum">      20 </span>            : class Variables;
+<span class="lineNum">      21 </span>            : }  // namespace Tags
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : namespace LinearSolver {
+<span class="lineNum">      24 </span>            : namespace Tags {
+<span class="lineNum">      25 </span>            : template &lt;typename&gt;
+<span class="lineNum">      26 </span>            : struct Operand;
+<span class="lineNum">      27 </span>            : }  // namespace Tags
+<span class="lineNum">      28 </span>            : }  // namespace LinearSolver
+<span class="lineNum">      29 </span>            : /// \endcond
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span>            : namespace Poisson {
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span>            : /*!
+<span class="lineNum">      34 </span>            :  * \brief The Poisson equation formulated as a set of coupled first-order PDEs.
+<span class="lineNum">      35 </span>            :  *
+<span class="lineNum">      36 </span>            :  * \details This system formulates the Poisson equation \f$-\Delta u(x) =
+<span class="lineNum">      37 </span>            :  * f(x)\f$ as the set of coupled first-order PDEs
+<span class="lineNum">      38 </span>            :  * \f[
+<span class="lineNum">      39 </span>            :  * -\nabla \cdot \boldsymbol{v}(x) = f(x) \\
+<span class="lineNum">      40 </span>            :  * \nabla u(x) - \boldsymbol{v}(x) = 0
+<span class="lineNum">      41 </span>            :  * \f]
+<span class="lineNum">      42 </span>            :  * where we make use of an auxiliary variable \f$\boldsymbol{v}\f$. This scheme
+<span class="lineNum">      43 </span>            :  * also goes by the name of _mixed_ or _flux_ formulation (see e.g.
+<span class="lineNum">      44 </span>            :  * \cite Arnold2002). The auxiliary variable is treated on the same footing as
+<span class="lineNum">      45 </span>            :  * the field \f$u\f$. This allows us to make use of the DG architecture
+<span class="lineNum">      46 </span>            :  * developed for coupled first-order PDEs, in particular the flux communication
+<span class="lineNum">      47 </span>            :  * and lifting code. It does, however, introduce auxiliary degrees of freedom
+<span class="lineNum">      48 </span>            :  * that can be avoided in the _primal formulation_. Furthermore, the linear
+<span class="lineNum">      49 </span>            :  * operator that represents the DG discretization for this system is not
+<span class="lineNum">      50 </span>            :  * symmetric (since no mass operator is applied) and has both positive and
+<span class="lineNum">      51 </span>            :  * negative eigenvalues. These properties further increase the computational
+<span class="lineNum">      52 </span>            :  * cost (see \ref LinearSolverGroup) and are remedied in the primal formulation.
+<span class="lineNum">      53 </span>            :  */
+<span class="lineNum">      54 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      55 </span><span class="lineCov">          1 : struct FirstOrderSystem {</span>
+<span class="lineNum">      56 </span><span class="lineNoCov">          0 :   static constexpr size_t volume_dim = Dim;</span>
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span>            :   // The physical fields to solve for
+<span class="lineNum">      59 </span><span class="lineNoCov">          0 :   using fields_tag = Tags::Variables&lt;tmpl::list&lt;Field, AuxiliaryField&lt;Dim&gt;&gt;&gt;;</span>
+<span class="lineNum">      60 </span><span class="lineNoCov">          0 :   using impose_boundary_conditions_on_fields = tmpl::list&lt;Field&gt;;</span>
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span>            :   // The variables to compute bulk contributions and fluxes for.
+<span class="lineNum">      63 </span><span class="lineNoCov">          0 :   using variables_tag =</span>
+<span class="lineNum">      64 </span>            :       db::add_tag_prefix&lt;LinearSolver::Tags::Operand, fields_tag&gt;;
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span>            :   // The bulk contribution to the linear operator action
+<span class="lineNum">      67 </span><span class="lineNoCov">          0 :   using compute_operator_action = ComputeFirstOrderOperatorAction&lt;Dim&gt;;</span>
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span>            :   // The interface normal dotted into the fluxes that is required by the strong
+<span class="lineNum">      70 </span>            :   // flux lifting operation
+<span class="lineNum">      71 </span><span class="lineNoCov">          0 :   using normal_dot_fluxes = ComputeFirstOrderNormalDotFluxes&lt;Dim&gt;;</span>
+<span class="lineNum">      72 </span>            : 
+<span class="lineNum">      73 </span>            :   // The tag of the operator to compute magnitudes on the manifold, e.g. to
+<span class="lineNum">      74 </span>            :   // normalize vectors on the faces of an element
+<span class="lineNum">      75 </span>            :   template &lt;typename Tag&gt;
+<span class="lineNum">      76 </span><span class="lineNoCov">          0 :   using magnitude_tag = Tags::EuclideanMagnitude&lt;Tag&gt;;</span>
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span>            :   // The tags to instantiate derivative functions for
+<span class="lineNum">      79 </span><span class="lineNoCov">          0 :   using gradient_tags = tmpl::list&lt;LinearSolver::Tags::Operand&lt;Field&gt;&gt;;</span>
+<span class="lineNum">      80 </span><span class="lineNoCov">          0 :   using divergence_tags = tmpl::list&lt;AuxiliaryField&lt;Dim&gt;&gt;;</span>
+<span class="lineNum">      81 </span>            : };
+<span class="lineNum">      82 </span>            : }  // namespace Poisson
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

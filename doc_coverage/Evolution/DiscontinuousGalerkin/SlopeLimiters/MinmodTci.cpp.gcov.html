@@ -1,0 +1,313 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Evolution/DiscontinuousGalerkin/SlopeLimiters/MinmodTci.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">Evolution/DiscontinuousGalerkin/SlopeLimiters</a> - MinmodTci.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;Evolution/DiscontinuousGalerkin/SlopeLimiters/MinmodTci.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;algorithm&gt;
+<span class="lineNum">       7 </span>            : #include &lt;array&gt;
+<span class="lineNum">       8 </span>            : #include &lt;cmath&gt;
+<span class="lineNum">       9 </span>            : #include &lt;limits&gt;
+<span class="lineNum">      10 </span>            : #include &lt;utility&gt;
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : #include &quot;Domain/Direction.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;Domain/Element.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      14 </span>            : #include &quot;Domain/Side.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;NumericalAlgorithms/LinearOperators/Linearize.hpp&quot;
+<span class="lineNum">      16 </span>            : #include &quot;NumericalAlgorithms/LinearOperators/MeanValue.hpp&quot;
+<span class="lineNum">      17 </span>            : #include &quot;Utilities/ConstantExpressions.hpp&quot;
+<span class="lineNum">      18 </span>            : #include &quot;Utilities/GenerateInstantiations.hpp&quot;
+<span class="lineNum">      19 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      20 </span>            : #include &quot;Utilities/MakeArray.hpp&quot;
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span><span class="lineNoCov">          0 : namespace {</span>
+<span class="lineNum">      23 </span>            : // Encodes the return status of the minmod_tvbm function.
+<span class="lineNum">      24 </span>            : struct MinmodResult {
+<span class="lineNum">      25 </span>            :   const double value;
+<span class="lineNum">      26 </span>            :   const bool activated;
+<span class="lineNum">      27 </span>            : };
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            : // The TVBM-corrected minmod function, see e.g. Cockburn reference Eq. 2.26.
+<span class="lineNum">      30 </span>            : MinmodResult minmod_tvbm(const double a, const double b, const double c,
+<span class="lineNum">      31 </span>            :                          const double tvbm_scale) noexcept {
+<span class="lineNum">      32 </span>            :   if (fabs(a) &lt;= tvbm_scale) {
+<span class="lineNum">      33 </span>            :     return {a, false};
+<span class="lineNum">      34 </span>            :   }
+<span class="lineNum">      35 </span>            :   if ((std::signbit(a) == std::signbit(b)) and
+<span class="lineNum">      36 </span>            :       (std::signbit(a) == std::signbit(c))) {
+<span class="lineNum">      37 </span>            :     // The if/else group below could be more simply written as
+<span class="lineNum">      38 </span>            :     //   std::copysign(std::min({fabs(a), fabs(b), fabs(c)}), a);
+<span class="lineNum">      39 </span>            :     // however, by separating different cases, we gain the ability to
+<span class="lineNum">      40 </span>            :     // distinguish whether or not the limiter activated.
+<span class="lineNum">      41 </span>            :     if (fabs(a) &lt;= fabs(b) and fabs(a) &lt;= fabs(c)) {
+<span class="lineNum">      42 </span>            :       return {a, false};
+<span class="lineNum">      43 </span>            :     } else {
+<span class="lineNum">      44 </span>            :       return {std::copysign(std::min(fabs(b), fabs(c)), a), true};
+<span class="lineNum">      45 </span>            :     }
+<span class="lineNum">      46 </span>            :   } else {
+<span class="lineNum">      47 </span>            :     return {0.0, true};
+<span class="lineNum">      48 </span>            :   }
+<span class="lineNum">      49 </span>            : }
+<span class="lineNum">      50 </span>            : }  // namespace
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            : namespace SlopeLimiters {
+<span class="lineNum">      53 </span>            : namespace Minmod_detail {
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span>            : template &lt;size_t VolumeDim&gt;
+<span class="lineNum">      56 </span>            : bool troubled_cell_indicator(
+<span class="lineNum">      57 </span>            :     const gsl::not_null&lt;double*&gt; u_mean,
+<span class="lineNum">      58 </span>            :     const gsl::not_null&lt;std::array&lt;double, VolumeDim&gt;*&gt; u_limited_slopes,
+<span class="lineNum">      59 </span>            :     const gsl::not_null&lt;DataVector*&gt; u_lin_buffer,
+<span class="lineNum">      60 </span>            :     const gsl::not_null&lt;std::array&lt;DataVector, VolumeDim&gt;*&gt; boundary_buffer,
+<span class="lineNum">      61 </span>            :     const SlopeLimiters::MinmodType&amp; minmod_type, const double tvbm_constant,
+<span class="lineNum">      62 </span>            :     const DataVector&amp; u, const Element&lt;VolumeDim&gt;&amp; element,
+<span class="lineNum">      63 </span>            :     const Mesh&lt;VolumeDim&gt;&amp; mesh,
+<span class="lineNum">      64 </span>            :     const std::array&lt;double, VolumeDim&gt;&amp; element_size,
+<span class="lineNum">      65 </span>            :     const DirectionMap&lt;VolumeDim, double&gt;&amp; effective_neighbor_means,
+<span class="lineNum">      66 </span>            :     const DirectionMap&lt;VolumeDim, double&gt;&amp; effective_neighbor_sizes,
+<span class="lineNum">      67 </span>            :     const std::array&lt;std::pair&lt;gsl::span&lt;std::pair&lt;size_t, size_t&gt;&gt;,
+<span class="lineNum">      68 </span>            :                                gsl::span&lt;std::pair&lt;size_t, size_t&gt;&gt;&gt;,
+<span class="lineNum">      69 </span>            :                      VolumeDim&gt;&amp; volume_and_slice_indices) noexcept {
+<span class="lineNum">      70 </span>            :   const double tvbm_scale = [&amp;tvbm_constant, &amp;element_size ]() noexcept {
+<span class="lineNum">      71 </span>            :     const double max_h =
+<span class="lineNum">      72 </span>            :         *std::max_element(element_size.begin(), element_size.end());
+<span class="lineNum">      73 </span>            :     return tvbm_constant * square(max_h);
+<span class="lineNum">      74 </span>            :   }
+<span class="lineNum">      75 </span>            :   ();
+<span class="lineNum">      76 </span>            : 
+<span class="lineNum">      77 </span>            :   // Results from SpECTRE paper (https://arxiv.org/abs/1609.00098) used a
+<span class="lineNum">      78 </span>            :   // max_slope_factor a factor of 2.0 too small, so that LambdaPi1 behaved
+<span class="lineNum">      79 </span>            :   // like MUSCL, and MUSCL was even more dissipative.
+<span class="lineNum">      80 </span>            :   const double max_slope_factor =
+<span class="lineNum">      81 </span>            :       (minmod_type == SlopeLimiters::MinmodType::Muscl) ? 1.0 : 2.0;
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span>            :   *u_mean = mean_value(u, mesh);
+<span class="lineNum">      84 </span>            : 
+<span class="lineNum">      85 </span>            :   const auto difference_to_neighbor = [
+<span class="lineNum">      86 </span>            :     &amp;u_mean, &amp;element, &amp;element_size, &amp;effective_neighbor_means, &amp;
+<span class="lineNum">      87 </span>            :     effective_neighbor_sizes
+<span class="lineNum">      88 </span>            :   ](const size_t dim, const Side&amp; side) noexcept {
+<span class="lineNum">      89 </span>            :     const auto&amp; externals = element.external_boundaries();
+<span class="lineNum">      90 </span>            :     const auto dir = Direction&lt;VolumeDim&gt;(dim, side);
+<span class="lineNum">      91 </span>            :     const bool has_neighbors = (externals.find(dir) == externals.end());
+<span class="lineNum">      92 </span>            :     if (has_neighbors) {
+<span class="lineNum">      93 </span>            :       const double neighbor_mean = effective_neighbor_means.at(dir);
+<span class="lineNum">      94 </span>            :       const double neighbor_size = effective_neighbor_sizes.at(dir);
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span>            :       // Compute an effective element-center-to-neighbor-center distance
+<span class="lineNum">      97 </span>            :       // that accounts for the possibility of different refinement levels
+<span class="lineNum">      98 </span>            :       // or discontinuous maps (e.g., at Block boundaries). Treated naively,
+<span class="lineNum">      99 </span>            :       // these domain features can make a smooth solution appear to be
+<span class="lineNum">     100 </span>            :       // non-smooth in the logical coordinates, which could potentially lead
+<span class="lineNum">     101 </span>            :       // to the limiter triggering erroneously. This effective distance is
+<span class="lineNum">     102 </span>            :       // used to scale the difference in the means, so that a linear function
+<span class="lineNum">     103 </span>            :       // at a refinement or Block boundary will still appear smooth to the
+<span class="lineNum">     104 </span>            :       // limiter. The factor is normalized to be 1.0 on a uniform grid.
+<span class="lineNum">     105 </span>            :       // Note that this is not &quot;by the book&quot; Minmod, but an attempt to
+<span class="lineNum">     106 </span>            :       // generalize Minmod to work on non-uniform grids.
+<span class="lineNum">     107 </span>            :       const double distance_factor =
+<span class="lineNum">     108 </span>            :           0.5 * (1.0 + neighbor_size / gsl::at(element_size, dim));
+<span class="lineNum">     109 </span>            :       return (side == Side::Lower ? -1.0 : 1.0) * (neighbor_mean - *u_mean) /
+<span class="lineNum">     110 </span>            :              distance_factor;
+<span class="lineNum">     111 </span>            :     } else {
+<span class="lineNum">     112 </span>            :       return 0.0;
+<span class="lineNum">     113 </span>            :     }
+<span class="lineNum">     114 </span>            :   };
+<span class="lineNum">     115 </span>            : 
+<span class="lineNum">     116 </span>            :   // The LambdaPiN limiter allows high-order solutions to escape limiting if
+<span class="lineNum">     117 </span>            :   // the boundary values are not too different from the mean value:
+<span class="lineNum">     118 </span>            :   if (minmod_type == SlopeLimiters::MinmodType::LambdaPiN) {
+<span class="lineNum">     119 </span>            :     bool u_needs_limiting = false;
+<span class="lineNum">     120 </span>            :     for (size_t d = 0; d &lt; VolumeDim; ++d) {
+<span class="lineNum">     121 </span>            :       const double u_lower = mean_value_on_boundary(
+<span class="lineNum">     122 </span>            :           &amp;(gsl::at(*boundary_buffer, d)),
+<span class="lineNum">     123 </span>            :           gsl::at(volume_and_slice_indices, d).first, u, mesh, d, Side::Lower);
+<span class="lineNum">     124 </span>            :       const double u_upper = mean_value_on_boundary(
+<span class="lineNum">     125 </span>            :           &amp;(gsl::at(*boundary_buffer, d)),
+<span class="lineNum">     126 </span>            :           gsl::at(volume_and_slice_indices, d).second, u, mesh, d, Side::Upper);
+<span class="lineNum">     127 </span>            :       const double diff_lower = difference_to_neighbor(d, Side::Lower);
+<span class="lineNum">     128 </span>            :       const double diff_upper = difference_to_neighbor(d, Side::Upper);
+<span class="lineNum">     129 </span>            : 
+<span class="lineNum">     130 </span>            :       // Results from SpECTRE paper (https://arxiv.org/abs/1609.00098) used
+<span class="lineNum">     131 </span>            :       // minmod_tvbm(..., 0.0), rather than minmod_tvbm(..., tvbm_scale)
+<span class="lineNum">     132 </span>            :       const double v_lower =
+<span class="lineNum">     133 </span>            :           *u_mean -
+<span class="lineNum">     134 </span>            :           minmod_tvbm(*u_mean - u_lower, diff_lower, diff_upper, tvbm_scale)
+<span class="lineNum">     135 </span>            :               .value;
+<span class="lineNum">     136 </span>            :       const double v_upper =
+<span class="lineNum">     137 </span>            :           *u_mean +
+<span class="lineNum">     138 </span>            :           minmod_tvbm(u_upper - *u_mean, diff_lower, diff_upper, tvbm_scale)
+<span class="lineNum">     139 </span>            :               .value;
+<span class="lineNum">     140 </span>            :       // Value of epsilon from Hesthaven &amp; Warburton, Chapter 5, in the
+<span class="lineNum">     141 </span>            :       // SlopeLimitN.m code sample.
+<span class="lineNum">     142 </span>            :       const double eps = 1.e-8;
+<span class="lineNum">     143 </span>            :       if (fabs(v_lower - u_lower) &gt; eps or fabs(v_upper - u_upper) &gt; eps) {
+<span class="lineNum">     144 </span>            :         u_needs_limiting = true;
+<span class="lineNum">     145 </span>            :         break;
+<span class="lineNum">     146 </span>            :       }
+<span class="lineNum">     147 </span>            :     }
+<span class="lineNum">     148 </span>            : 
+<span class="lineNum">     149 </span>            :     if (not u_needs_limiting) {
+<span class="lineNum">     150 </span>            :       // Skip the limiting step for this tensor component
+<span class="lineNum">     151 </span>            : #ifdef SPECTRE_DEBUG
+<span class="lineNum">     152 </span>            :       *u_mean = std::numeric_limits&lt;double&gt;::signaling_NaN();
+<span class="lineNum">     153 </span>            :       *u_limited_slopes =
+<span class="lineNum">     154 </span>            :           make_array&lt;VolumeDim&gt;(std::numeric_limits&lt;double&gt;::signaling_NaN());
+<span class="lineNum">     155 </span>            : #endif  // ifdef SPECTRE_DEBUG
+<span class="lineNum">     156 </span>            :       return false;
+<span class="lineNum">     157 </span>            :     }
+<span class="lineNum">     158 </span>            :   }  // end if LambdaPiN
+<span class="lineNum">     159 </span>            : 
+<span class="lineNum">     160 </span>            :   // If the LambdaPiN check did not skip the limiting, then proceed as normal
+<span class="lineNum">     161 </span>            :   // to determine whether the slopes need to be reduced.
+<span class="lineNum">     162 </span>            :   //
+<span class="lineNum">     163 </span>            :   // Note that we expect the Muscl and LambdaPi1 limiters to linearize the
+<span class="lineNum">     164 </span>            :   // solution whether or not the slope needed reduction. To permit this
+<span class="lineNum">     165 </span>            :   // linearization, we always return (by reference) the slopes when these
+<span class="lineNum">     166 </span>            :   // limiters are in use. In contrast, for LambdaPiN, we only return the slopes
+<span class="lineNum">     167 </span>            :   // when they do in fact need to be reduced.
+<span class="lineNum">     168 </span>            :   bool slopes_need_reducing = false;
+<span class="lineNum">     169 </span>            : 
+<span class="lineNum">     170 </span>            :   linearize(u_lin_buffer, u, mesh);
+<span class="lineNum">     171 </span>            :   for (size_t d = 0; d &lt; VolumeDim; ++d) {
+<span class="lineNum">     172 </span>            :     const double u_lower =
+<span class="lineNum">     173 </span>            :         mean_value_on_boundary(&amp;(gsl::at(*boundary_buffer, d)),
+<span class="lineNum">     174 </span>            :                                gsl::at(volume_and_slice_indices, d).first,
+<span class="lineNum">     175 </span>            :                                *u_lin_buffer, mesh, d, Side::Lower);
+<span class="lineNum">     176 </span>            :     const double u_upper =
+<span class="lineNum">     177 </span>            :         mean_value_on_boundary(&amp;(gsl::at(*boundary_buffer, d)),
+<span class="lineNum">     178 </span>            :                                gsl::at(volume_and_slice_indices, d).second,
+<span class="lineNum">     179 </span>            :                                *u_lin_buffer, mesh, d, Side::Upper);
+<span class="lineNum">     180 </span>            : 
+<span class="lineNum">     181 </span>            :     // Divide by element's width (2.0 in logical coordinates) to get a slope
+<span class="lineNum">     182 </span>            :     const double local_slope = 0.5 * (u_upper - u_lower);
+<span class="lineNum">     183 </span>            :     const double upper_slope = 0.5 * difference_to_neighbor(d, Side::Upper);
+<span class="lineNum">     184 </span>            :     const double lower_slope = 0.5 * difference_to_neighbor(d, Side::Lower);
+<span class="lineNum">     185 </span>            : 
+<span class="lineNum">     186 </span>            :     const MinmodResult&amp; result =
+<span class="lineNum">     187 </span>            :         minmod_tvbm(local_slope, max_slope_factor * upper_slope,
+<span class="lineNum">     188 </span>            :                     max_slope_factor * lower_slope, tvbm_scale);
+<span class="lineNum">     189 </span>            :     gsl::at(*u_limited_slopes, d) = result.value;
+<span class="lineNum">     190 </span>            :     if (result.activated) {
+<span class="lineNum">     191 </span>            :       slopes_need_reducing = true;
+<span class="lineNum">     192 </span>            :     }
+<span class="lineNum">     193 </span>            :   }
+<span class="lineNum">     194 </span>            : 
+<span class="lineNum">     195 </span>            : #ifdef SPECTRE_DEBUG
+<span class="lineNum">     196 </span>            :   // Guard against incorrect use of returned (by reference) slopes in a
+<span class="lineNum">     197 </span>            :   // LambdaPiN limiter, by setting these to NaN when they should not be used.
+<span class="lineNum">     198 </span>            :   if (minmod_type == SlopeLimiters::MinmodType::LambdaPiN and
+<span class="lineNum">     199 </span>            :       not slopes_need_reducing) {
+<span class="lineNum">     200 </span>            :     *u_mean = std::numeric_limits&lt;double&gt;::signaling_NaN();
+<span class="lineNum">     201 </span>            :     *u_limited_slopes =
+<span class="lineNum">     202 </span>            :         make_array&lt;VolumeDim&gt;(std::numeric_limits&lt;double&gt;::signaling_NaN());
+<span class="lineNum">     203 </span>            :   }
+<span class="lineNum">     204 </span>            : #endif  // ifdef SPECTRE_DEBUG
+<span class="lineNum">     205 </span>            : 
+<span class="lineNum">     206 </span>            :   return slopes_need_reducing;
+<span class="lineNum">     207 </span>            : }
+<span class="lineNum">     208 </span>            : 
+<span class="lineNum">     209 </span>            : // Explicit instantiations
+<span class="lineNum">     210 </span><span class="lineNoCov">          0 : #define DIM(data) BOOST_PP_TUPLE_ELEM(0, data)</span>
+<span class="lineNum">     211 </span>            : 
+<span class="lineNum">     212 </span><span class="lineNoCov">          0 : #define INSTANTIATE(_, data)                                             \</span>
+<span class="lineNum">     213 </span>            :   template bool troubled_cell_indicator&lt;DIM(data)&gt;(                      \
+<span class="lineNum">     214 </span>            :       const gsl::not_null&lt;double*&gt;,                                      \
+<span class="lineNum">     215 </span>            :       const gsl::not_null&lt;std::array&lt;double, DIM(data)&gt;*&gt;,               \
+<span class="lineNum">     216 </span>            :       const gsl::not_null&lt;DataVector*&gt;,                                  \
+<span class="lineNum">     217 </span>            :       const gsl::not_null&lt;std::array&lt;DataVector, DIM(data)&gt;*&gt;,           \
+<span class="lineNum">     218 </span>            :       const SlopeLimiters::MinmodType&amp;, const double, const DataVector&amp;, \
+<span class="lineNum">     219 </span>            :       const Element&lt;DIM(data)&gt;&amp;, const Mesh&lt;DIM(data)&gt;&amp;,                 \
+<span class="lineNum">     220 </span>            :       const std::array&lt;double, DIM(data)&gt;&amp;,                              \
+<span class="lineNum">     221 </span>            :       const DirectionMap&lt;DIM(data), double&gt;&amp;,                            \
+<span class="lineNum">     222 </span>            :       const DirectionMap&lt;DIM(data), double&gt;&amp;,                            \
+<span class="lineNum">     223 </span>            :       const std::array&lt;std::pair&lt;gsl::span&lt;std::pair&lt;size_t, size_t&gt;&gt;,   \
+<span class="lineNum">     224 </span>            :                                  gsl::span&lt;std::pair&lt;size_t, size_t&gt;&gt;&gt;,  \
+<span class="lineNum">     225 </span>            :                        DIM(data)&gt;&amp;) noexcept;
+<span class="lineNum">     226 </span>            : 
+<span class="lineNum">     227 </span>            : GENERATE_INSTANTIATIONS(INSTANTIATE, (1, 2, 3))
+<span class="lineNum">     228 </span>            : 
+<span class="lineNum">     229 </span>            : #undef DIM
+<span class="lineNum">     230 </span>            : #undef INSTANTIATE
+<span class="lineNum">     231 </span>            : 
+<span class="lineNum">     232 </span>            : }  // namespace Minmod_detail
+<span class="lineNum">     233 </span>            : }  // namespace SlopeLimiters
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,398 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - /work/spectre/docs/CONTRIBUTING.md</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">work/spectre/docs</a> - CONTRIBUTING.md</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : \cond NEVER</span>
+<span class="lineNum">       2 </span>            : Distributed under the MIT License.
+<span class="lineNum">       3 </span>            : See LICENSE.txt for details.
+<span class="lineNum">       4 </span>            : \endcond
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            : # Contributing to SpECTRE {#contributing_to_spectre}
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : \tableofcontents
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : # Contributing to SpECTRE {#contributing_to_spectre_2}
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            : The following is a set of guidelines for contributing to SpECTRE,
+<span class="lineNum">      14 </span>            : which is hosted in the [Simulating eXtreme Spacetimes
+<span class="lineNum">      15 </span>            : Organization](https://github.com/sxs-collaboration) on GitHub.
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            : ## Code of Conduct
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : This project and everyone participating in it is governed by the \ref
+<span class="lineNum">      20 </span>            : code_of_conduct &quot;SpECTRE Code of Conduct&quot;. By participating, you are
+<span class="lineNum">      21 </span>            : expected to uphold this code. Please report possible violations of the
+<span class="lineNum">      22 </span>            : code of conduct to conduct@spectre-code.org.
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : ## What should I know before I get started? {#getting-started}
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            : SpECTRE is being developed in support of our collaborative Simulating
+<span class="lineNum">      27 </span>            : eXtreme Spacetimes (SXS) research program into the multi-messenger
+<span class="lineNum">      28 </span>            : astrophysics of neutron star mergers, core-collapse supernovae, and
+<span class="lineNum">      29 </span>            : gamma-ray bursts.  As such, almost all of the current contributors to
+<span class="lineNum">      30 </span>            : SpECTRE are members of SXS institutions, and a large amount of
+<span class="lineNum">      31 </span>            : discussion about SpECTRE is done in internal SXS meetings.  If you are
+<span class="lineNum">      32 </span>            : a member of SXS and wish to get involved, please contact one of the
+<span class="lineNum">      33 </span>            : project leaders.
+<span class="lineNum">      34 </span>            : 
+<span class="lineNum">      35 </span>            : In the future, we hope that SpECTRE can be applied to problems across
+<span class="lineNum">      36 </span>            : discipline boundaries, and that it can be a true community code.  At
+<span class="lineNum">      37 </span>            : the present time, however, SpECTRE cannot yet solve realistic
+<span class="lineNum">      38 </span>            : problems, and broad overview documentation is in an early, incomplete
+<span class="lineNum">      39 </span>            : stage.  Therefore, if you are not a member of SXS, but are interested
+<span class="lineNum">      40 </span>            : in contributing to SpECTRE, we strongly encourage you to contact us at
+<span class="lineNum">      41 </span>            : questions@spectre-code.org to discuss possible contributions.
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span>            : ## How Can I Contribute? {#how-can-i-contribute}
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span>            : ### Reporting Bugs {#reporting-bugs}
+<span class="lineNum">      46 </span>            : 
+<span class="lineNum">      47 </span>            : This section guides you through submitting a bug report for
+<span class="lineNum">      48 </span>            : SpECTRE. Following these guidelines helps maintainers and the
+<span class="lineNum">      49 </span>            : community understand your report, reproduce the behavior, and find
+<span class="lineNum">      50 </span>            : related reports.
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            : Before creating bug reports, please **perform a
+<span class="lineNum">      53 </span>            : [search](https://github.com/sxs-collaboration/spectre/issues)** to see
+<span class="lineNum">      54 </span>            : if the problem has already been reported. If it has **and the issue is
+<span class="lineNum">      55 </span>            : still open**, please add a comment to the existing issue instead of
+<span class="lineNum">      56 </span>            : opening a new one.
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span>            : &gt; **Note:** If you find a **Closed** issue that seems like it is the
+<span class="lineNum">      59 </span>            : &gt; same thing that you're experiencing, please open a new issue and
+<span class="lineNum">      60 </span>            : &gt; include a link to the original issue in the body of your new one.
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span>            : #### How Do I Submit A (Good) Bug Report? {#submit-bug-report}
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span>            : Bugs are tracked as [GitHub
+<span class="lineNum">      65 </span>            : issues](https://guides.github.com/features/issues/). When you are
+<span class="lineNum">      66 </span>            : creating a bug report, please **include as many details as
+<span class="lineNum">      67 </span>            : possible**. Please fill out the template completely.  The provided
+<span class="lineNum">      68 </span>            : information helps us resolve issues faster.
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span>            : Explain the problem and include additional details to help maintainers
+<span class="lineNum">      71 </span>            : reproduce the problem:
+<span class="lineNum">      72 </span>            : 
+<span class="lineNum">      73 </span>            : * **Use a clear and descriptive title** for the issue to identify the
+<span class="lineNum">      74 </span>            :   problem.
+<span class="lineNum">      75 </span>            : * **Describe the exact steps which reproduce the problem** in as much
+<span class="lineNum">      76 </span>            :   detail as possible. For example, start by explaining how you started
+<span class="lineNum">      77 </span>            :   SpECTRE, e.g. the exact command you used in the terminal, or the
+<span class="lineNum">      78 </span>            :   contents of the batch job script you used.
+<span class="lineNum">      79 </span>            : * **Describe the behavior you observed after following the steps** and
+<span class="lineNum">      80 </span>            :   point out what exactly is the problem with that behavior.
+<span class="lineNum">      81 </span>            : * **Explain which behavior you expected to see instead and why.**
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span>            : Provide more context by answering these questions:
+<span class="lineNum">      84 </span>            : 
+<span class="lineNum">      85 </span>            : * **Can you reproduce the problem in both debug and release mode?**
+<span class="lineNum">      86 </span>            : (this is controlled by the CMake flag `CMAKE_BUILD_TYPE`)
+<span class="lineNum">      87 </span>            : * **Did the problem start happening recently** (e.g. after updating to
+<span class="lineNum">      88 </span>            :   a new version/commit of SpECTRE) or was this always a problem?
+<span class="lineNum">      89 </span>            : * If the problem started happening recently, **can you reproduce the
+<span class="lineNum">      90 </span>            :   problem in an older version/commit?** What's the most recent
+<span class="lineNum">      91 </span>            :   version/commit in which the problem doesn't happen?
+<span class="lineNum">      92 </span>            : * **Can you reliably reproduce the issue?** If not, provide details
+<span class="lineNum">      93 </span>            :   about how often the problem happens and under which conditions it
+<span class="lineNum">      94 </span>            :   normally happens.
+<span class="lineNum">      95 </span>            : * **Can you reproduce the problem on another machine?**
+<span class="lineNum">      96 </span>            : * **Can you reproduce the problem in the docker container?** (see the
+<span class="lineNum">      97 </span>            :   \ref installation &quot;Installation notes&quot;)
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span>            : Include details about your configuration and environment:
+<span class="lineNum">     100 </span>            : 
+<span class="lineNum">     101 </span>            : * **Add as an attachment** (or add the contents of) the following:
+<span class="lineNum">     102 </span>            :   - The text output by SpECTRE (including any stack trace)
+<span class="lineNum">     103 </span>            :   - The input file(s)
+<span class="lineNum">     104 </span>            :   - $SPECTRE_BUILD_DIR/LibraryVersions.txt
+<span class="lineNum">     105 </span>            : * **What is the name and version of the OS you're using**?
+<span class="lineNum">     106 </span>            : * If possible (for SXS computers or HPC systems), a **path to a run
+<span class="lineNum">     107 </span>            :   directory** that is accessible by SpECTRE core developers.
+<span class="lineNum">     108 </span>            : 
+<span class="lineNum">     109 </span>            : ### Suggesting Enhancements {#suggesting-enhancements}
+<span class="lineNum">     110 </span>            : 
+<span class="lineNum">     111 </span>            : This section guides you through submitting an enhancement suggestion
+<span class="lineNum">     112 </span>            : for SpECTRE, including completely new features and minor improvements
+<span class="lineNum">     113 </span>            : to existing functionality. Following these guidelines helps
+<span class="lineNum">     114 </span>            : maintainers and the community understand your suggestion and find
+<span class="lineNum">     115 </span>            : related suggestions.
+<span class="lineNum">     116 </span>            : 
+<span class="lineNum">     117 </span>            : Before creating enhancement suggestions, please **perform a
+<span class="lineNum">     118 </span>            : [search](https://github.com/sxs-collaboration/spectre/issues)** to see
+<span class="lineNum">     119 </span>            : if the enhancement has already been suggested. If it has, add a
+<span class="lineNum">     120 </span>            : comment to the existing issue instead of opening a new one.
+<span class="lineNum">     121 </span>            : 
+<span class="lineNum">     122 </span>            : #### How Do I Submit A (Good) Enhancement Suggestion? {#submit-enhancement}
+<span class="lineNum">     123 </span>            : 
+<span class="lineNum">     124 </span>            : Enhancement suggestions are tracked as [GitHub
+<span class="lineNum">     125 </span>            : issues](https://guides.github.com/features/issues/).  When you are
+<span class="lineNum">     126 </span>            : creating an enhancement suggestion, please **include as many details
+<span class="lineNum">     127 </span>            : as possible** as you fill in the template.
+<span class="lineNum">     128 </span>            : 
+<span class="lineNum">     129 </span>            : * **Use a clear and descriptive title** for the issue to identify the
+<span class="lineNum">     130 </span>            :   suggestion.
+<span class="lineNum">     131 </span>            : * **Provide a step-by-step description of the suggested enhancement**
+<span class="lineNum">     132 </span>            :   in as many details as possible.
+<span class="lineNum">     133 </span>            : * **Explain why this enhancement would be useful** to most SpECTRE users.
+<span class="lineNum">     134 </span>            : 
+<span class="lineNum">     135 </span>            : ### Your First Code Contribution {#first-code-contribution}
+<span class="lineNum">     136 </span>            : 
+<span class="lineNum">     137 </span>            : Unsure where to begin contributing to SpECTRE? You can start by
+<span class="lineNum">     138 </span>            : looking through these `good first issue` and `help wanted` issues:
+<span class="lineNum">     139 </span>            : 
+<span class="lineNum">     140 </span>            : * [Good first issues][good-first-issue] - issues which should only
+<span class="lineNum">     141 </span>            :   require a few lines of code, and a test or two.
+<span class="lineNum">     142 </span>            : * [Help wanted issues][help-wanted] - issues which should be a bit
+<span class="lineNum">     143 </span>            :   more involved than `good first issue`s.
+<span class="lineNum">     144 </span>            : 
+<span class="lineNum">     145 </span>            : #### Local development {#local-development}
+<span class="lineNum">     146 </span>            : 
+<span class="lineNum">     147 </span>            : SpECTRE can be developed locally. For instructions on how to do this,
+<span class="lineNum">     148 </span>            : see the following sections in the [SpECTRE
+<span class="lineNum">     149 </span>            : documentation](https://spectre-code.org/):
+<span class="lineNum">     150 </span>            : 
+<span class="lineNum">     151 </span>            : * [Installing SpECTRE](installation.html)
+<span class="lineNum">     152 </span>            : * [Running Status Checks Locally](travis_guide.html#perform-checks-locally)
+<span class="lineNum">     153 </span>            : 
+<span class="lineNum">     154 </span>            : ## Pull Requests {#pull-requests}
+<span class="lineNum">     155 </span>            : 
+<span class="lineNum">     156 </span>            : Code contributions to SpECTRE follow a [pull request
+<span class="lineNum">     157 </span>            : model](https://help.github.com/articles/about-pull-requests/)
+<span class="lineNum">     158 </span>            : 
+<span class="lineNum">     159 </span>            : The process described here has several goals:
+<span class="lineNum">     160 </span>            : 
+<span class="lineNum">     161 </span>            : - Maintain SpECTRE's code and documentation quality
+<span class="lineNum">     162 </span>            : - Reach science goals in a timely manner
+<span class="lineNum">     163 </span>            : - Fix problems that are important to users
+<span class="lineNum">     164 </span>            : - Engage the community in working toward the best possible code
+<span class="lineNum">     165 </span>            : - Enable a sustainable system for SpECTRE's maintainers to review
+<span class="lineNum">     166 </span>            :   contributions
+<span class="lineNum">     167 </span>            : 
+<span class="lineNum">     168 </span>            : Please follow these steps to have your contribution considered by the
+<span class="lineNum">     169 </span>            : maintainers:
+<span class="lineNum">     170 </span>            : 
+<span class="lineNum">     171 </span>            : 1. Follow the \ref code_review_guide &quot;code review guidelines&quot;, the
+<span class="lineNum">     172 </span>            :   \ref writing_unit_tests &quot;guide to writing unit tests&quot;, and the \ref
+<span class="lineNum">     173 </span>            :   writing_good_dox &quot;guide to writing documentation&quot;
+<span class="lineNum">     174 </span>            : 2. Follow all instructions in the pull request template. Reference
+<span class="lineNum">     175 </span>            :    related issues and pull requests.
+<span class="lineNum">     176 </span>            : 3. After you submit your pull request, verify that all [status
+<span class="lineNum">     177 </span>            :    checks](https://help.github.com/articles/about-status-checks/) are
+<span class="lineNum">     178 </span>            :    passing
+<span class="lineNum">     179 </span>            : 
+<span class="lineNum">     180 </span>            :    &gt; If a status check is failing, and you believe that the failure is
+<span class="lineNum">     181 </span>            :    &gt; unrelated to your change, please leave a comment on the pull
+<span class="lineNum">     182 </span>            :    &gt; request explaining why you believe the failure is unrelated. A
+<span class="lineNum">     183 </span>            :    &gt; maintainer will re-run the status check for you. If we conclude
+<span class="lineNum">     184 </span>            :    &gt; that the failure was a false positive, then we will open an issue
+<span class="lineNum">     185 </span>            :    &gt; to track that problem with our status check suite.
+<span class="lineNum">     186 </span>            : 
+<span class="lineNum">     187 </span>            : While the prerequisites above must be satisfied prior to having your
+<span class="lineNum">     188 </span>            : pull request reviewed, the reviewers may ask you to complete
+<span class="lineNum">     189 </span>            : additional design work, tests, or other changes before your pull
+<span class="lineNum">     190 </span>            : request can be ultimately accepted.
+<span class="lineNum">     191 </span>            : 
+<span class="lineNum">     192 </span>            : ## How SpECTRE pull request reviews are conducted {#pull-request-reviews}
+<span class="lineNum">     193 </span>            : 
+<span class="lineNum">     194 </span>            : &gt; Note that these are guidelines and not rigid rules.
+<span class="lineNum">     195 </span>            : 
+<span class="lineNum">     196 </span>            : Please make your pull requests as small as reasonably possible, as
+<span class="lineNum">     197 </span>            : smaller pull requests are easier to review. In general, longer pull
+<span class="lineNum">     198 </span>            : requests take longer to review, with the time scaling exponentially
+<span class="lineNum">     199 </span>            : with the number of lines changed.  Therefore if your pull request is
+<span class="lineNum">     200 </span>            : too large, we may ask you to break it up into several smaller pull
+<span class="lineNum">     201 </span>            : requests.
+<span class="lineNum">     202 </span>            : 
+<span class="lineNum">     203 </span>            : &gt; Below, days mean business days, so if the time period includes the
+<span class="lineNum">     204 </span>            : &gt; weekend, add two days, and for major holidays add a day.
+<span class="lineNum">     205 </span>            : &gt; Furthermore, most of us are academics, and we occasionally go to
+<span class="lineNum">     206 </span>            : &gt; conferences which may lead to delays in the review process.  Also do
+<span class="lineNum">     207 </span>            : &gt; not expect much to happen between December 20th and January 3rd.
+<span class="lineNum">     208 </span>            : 
+<span class="lineNum">     209 </span>            : Most pull requests submitted to SpECTRE will be reviewed in the
+<span class="lineNum">     210 </span>            : following manner:
+<span class="lineNum">     211 </span>            : - When creating the pull request, the author should add the
+<span class="lineNum">     212 </span>            :   appropriate labels.  If the pull request is not a `new design` or
+<span class="lineNum">     213 </span>            :   `in progress` (discussed below), the author may either assign two
+<span class="lineNum">     214 </span>            :   reviewers (if GitHub suggested any) or add the `reviewers wanted`
+<span class="lineNum">     215 </span>            :   label.
+<span class="lineNum">     216 </span>            : - Within two days, assigned reviewers should either confirm that they
+<span class="lineNum">     217 </span>            :   are able to review, or remove themselves while adding the `reviewers
+<span class="lineNum">     218 </span>            :   wanted` label.
+<span class="lineNum">     219 </span>            : - Anyone is welcome to self-assign themselves as a reviewer; when
+<span class="lineNum">     220 </span>            :   there are at least two reviewers, the `reviewers wanted` label
+<span class="lineNum">     221 </span>            :   should be removed.
+<span class="lineNum">     222 </span>            : - If there are not two reviewers after two days, a [SpECTRE core
+<span class="lineNum">     223 </span>            :   developer](#core-developers) will assign reviewers, removing the
+<span class="lineNum">     224 </span>            :   `reviewers wanted` label.  If for some reason, no reviewers have
+<span class="lineNum">     225 </span>            :   been assigned after three days, the author of the pull request
+<span class="lineNum">     226 </span>            :   should feel free to [ping the core
+<span class="lineNum">     227 </span>            :   developers](https://github.blog/2011-03-23-mention-somebody-they-re-notified/)
+<span class="lineNum">     228 </span>            :   (e.g `@sxs-collaboration/spectre-core-devs please assign reviewers`)
+<span class="lineNum">     229 </span>            : - Assigned reviewers should submit their review in as timely a manner
+<span class="lineNum">     230 </span>            :   as possible.
+<span class="lineNum">     231 </span>            : - Anyone can request changes within either the first two days of the
+<span class="lineNum">     232 </span>            :   pull request, or within a day after the initial reviews of the
+<span class="lineNum">     233 </span>            :   assigned reviewers.  After this period, only the assigned reviewers
+<span class="lineNum">     234 </span>            :   can request changes, unless someone believes the code is wrong.
+<span class="lineNum">     235 </span>            :   Non-reviewers are allowed to make comments, which the pull request
+<span class="lineNum">     236 </span>            :   author is encouraged to address.  Alternatively the author can
+<span class="lineNum">     237 </span>            :   create an issue with the suggested changes, assigned to themselves,
+<span class="lineNum">     238 </span>            :   which would then be addressed in a subsequent pull request by the
+<span class="lineNum">     239 </span>            :   author.
+<span class="lineNum">     240 </span>            : - If any requested change is unclear to the author, they should ping
+<span class="lineNum">     241 </span>            :   the reviewer and ask for clarification.  Authors and reviewers are
+<span class="lineNum">     242 </span>            :   encouraged to talk to one another (in person, via Google hangout, or
+<span class="lineNum">     243 </span>            :   some other verbal method if possible) to resolve any issues.
+<span class="lineNum">     244 </span>            : - Reviewers are encouraged to [ping others
+<span class="lineNum">     245 </span>            :   \@GITHUB_USERNAME](https://github.blog/2011-03-23-mention-somebody-they-re-notified/)
+<span class="lineNum">     246 </span>            :   to get opinions on code they are unsure about.
+<span class="lineNum">     247 </span>            : - It is permissible to have a group code review led by one of the
+<span class="lineNum">     248 </span>            :   reviewers. The reviewer should comment on who was present at the
+<span class="lineNum">     249 </span>            :   group review.
+<span class="lineNum">     250 </span>            : - If necessary, pull requests can also be discussed at one of the
+<span class="lineNum">     251 </span>            :   weekly SpECTRE meetings.
+<span class="lineNum">     252 </span>            : - If changes are requested, the author should fix all of them in one
+<span class="lineNum">     253 </span>            :   or more fixup commits (where the first line of the commit message
+<span class="lineNum">     254 </span>            :   should begin with `fixup`), and then ping the reviewers that the
+<span class="lineNum">     255 </span>            :   pull request is updated.  In addition the `updated` label can be
+<span class="lineNum">     256 </span>            :   added.
+<span class="lineNum">     257 </span>            : - Once a pull request is updated, the reviewers should either request
+<span class="lineNum">     258 </span>            :   further changes (removing the `updated` label) or tell the pull
+<span class="lineNum">     259 </span>            :   request author to squash their commits.
+<span class="lineNum">     260 </span>            : - Once all reviewers give the okay to squash, the author should
+<span class="lineNum">     261 </span>            :   [rebase on develop and then squash their
+<span class="lineNum">     262 </span>            :   commits](https://git-scm.com/book/en/v2/Git-Tools-Rewriting-History)
+<span class="lineNum">     263 </span>            :   into one or more self-contained commits (such that the code will
+<span class="lineNum">     264 </span>            :   compile and pass all tests after each commit).  The squashed commits
+<span class="lineNum">     265 </span>            :   will need to be force pushed.
+<span class="lineNum">     266 </span>            : - Once the commits are squashed, the author should ping the reviewers.
+<span class="lineNum">     267 </span>            : - Once all reviewers have approved the pull request, someone should
+<span class="lineNum">     268 </span>            :   ping the `@sxs-collaboration/spectre-core-devs`.  If one of the
+<span class="lineNum">     269 </span>            :   original reviewers is a core developer, this is not necessary and
+<span class="lineNum">     270 </span>            :   the core developer can merge the pull request.
+<span class="lineNum">     271 </span>            : - One of the core developers will perform a final cursory review,
+<span class="lineNum">     272 </span>            :   requesting changes only for major problems, and commenting on other
+<span class="lineNum">     273 </span>            :   possible changes.
+<span class="lineNum">     274 </span>            : - The pull request author should address all final requested changes
+<span class="lineNum">     275 </span>            :   and may either also fix final suggested changes, or create an issue
+<span class="lineNum">     276 </span>            :   with the suggested changes, which will be addressed in a subsequent
+<span class="lineNum">     277 </span>            :   pull request by the author.
+<span class="lineNum">     278 </span>            : - The SpECTRE core developer will merge the pull request once all
+<span class="lineNum">     279 </span>            :   comments have been addressed, the code passes CI, and all pull
+<span class="lineNum">     280 </span>            :   requests the pull request depends on have been merged.
+<span class="lineNum">     281 </span>            : 
+<span class="lineNum">     282 </span>            : Critical bug fixes (i.e. the code is broken) can be merged after two
+<span class="lineNum">     283 </span>            : expedited reviews by SpECTRE core developers.  If necessary, an issue
+<span class="lineNum">     284 </span>            : can be created if further changes are desired.
+<span class="lineNum">     285 </span>            : 
+<span class="lineNum">     286 </span>            : Pull requests that are designated `new design` are expected to have a
+<span class="lineNum">     287 </span>            : longer review period, including discussions during weekly SpECTRE
+<span class="lineNum">     288 </span>            : meetings.  SpECTRE core developers will provide reasonable review
+<span class="lineNum">     289 </span>            : deadlines once the new design is finalized.
+<span class="lineNum">     290 </span>            : 
+<span class="lineNum">     291 </span>            : If you would like feedback on a pull request prior to it being ready
+<span class="lineNum">     292 </span>            : for formal review, please label it with `in progress` and ping
+<span class="lineNum">     293 </span>            : whomever you wish to get feedback from.  As long as the `in progress`
+<span class="lineNum">     294 </span>            : label remains, no one should review the pull request.
+<span class="lineNum">     295 </span>            : 
+<span class="lineNum">     296 </span>            : 
+<span class="lineNum">     297 </span>            : ### Git Commit Message Guidelines {#git-commit-messages}
+<span class="lineNum">     298 </span>            : 
+<span class="lineNum">     299 </span>            : * Use the present tense (&quot;Add feature&quot; not &quot;Added feature&quot;)
+<span class="lineNum">     300 </span>            : * Use the imperative mood (&quot;Move cursor to...&quot; not &quot;Moves cursor to...&quot;)
+<span class="lineNum">     301 </span>            : * Limit the first line to 72 characters or less
+<span class="lineNum">     302 </span>            : * If needed, a blank second line followed by a more complete description
+<span class="lineNum">     303 </span>            : 
+<span class="lineNum">     304 </span>            : ### SpECTRE core developers {#core-developers}
+<span class="lineNum">     305 </span>            : 
+<span class="lineNum">     306 </span>            : SpECTRE core developers are people who are very familiar with the
+<span class="lineNum">     307 </span>            : entire code, comfortable with modern C++, and willing to take the
+<span class="lineNum">     308 </span>            : responsibility of overseeing the code as a whole.
+<span class="lineNum">     309 </span>            : [Current SpECTRE core
+<span class="lineNum">     310 </span>            : developers](https://github.com/orgs/sxs-collaboration/teams/spectre-core-devs)
+<span class="lineNum">     311 </span>            : can be pinged on GitHub at `@sxs-collaboration/spectre-core-devs`.  It
+<span class="lineNum">     312 </span>            : is expected that as more contributors become familiar with SpECTRE,
+<span class="lineNum">     313 </span>            : additional people will be added to the list of core developers.
+<span class="lineNum">     314 </span>            : 
+<span class="lineNum">     315 </span>            : 
+<span class="lineNum">     316 </span>            : [good-first-issue]:https://github.com/sxs-collaboration/spectre/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22+sort%3Acomments-desc
+<span class="lineNum">     317 </span>            : [help-wanted]:https://github.com/sxs-collaboration/spectre/issues?q=is%3Aopen+is%3Aissue+label%3A%22help+wanted%22+sort%3Acomments-desc
+<span class="lineNum">     318 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

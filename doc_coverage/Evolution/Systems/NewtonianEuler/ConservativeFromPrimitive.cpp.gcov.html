@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Evolution/Systems/NewtonianEuler/ConservativeFromPrimitive.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">Evolution/Systems/NewtonianEuler</a> - ConservativeFromPrimitive.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;Evolution/Systems/NewtonianEuler/ConservativeFromPrimitive.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &quot;DataStructures/DataVector.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">       7 </span>            : #include &quot;DataStructures/Tensor/EagerMath/DotProduct.hpp&quot;
+<span class="lineNum">       8 </span>            : #include &quot;DataStructures/Tensor/Tensor.hpp&quot;
+<span class="lineNum">       9 </span>            : #include &quot;Utilities/GenerateInstantiations.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : // IWYU pragma: no_include &lt;array&gt;
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            : // IWYU pragma: no_forward_declare Tensor
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : /// \cond
+<span class="lineNum">      17 </span>            : namespace NewtonianEuler {
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      20 </span>            : void ConservativeFromPrimitive&lt;Dim&gt;::apply(
+<span class="lineNum">      21 </span>            :     const gsl::not_null&lt;Scalar&lt;DataVector&gt;*&gt; mass_density_cons,
+<span class="lineNum">      22 </span>            :     const gsl::not_null&lt;tnsr::I&lt;DataVector, Dim&gt;*&gt; momentum_density,
+<span class="lineNum">      23 </span>            :     const gsl::not_null&lt;Scalar&lt;DataVector&gt;*&gt; energy_density,
+<span class="lineNum">      24 </span>            :     const Scalar&lt;DataVector&gt;&amp; mass_density,
+<span class="lineNum">      25 </span>            :     const tnsr::I&lt;DataVector, Dim&gt;&amp; velocity,
+<span class="lineNum">      26 </span>            :     const Scalar&lt;DataVector&gt;&amp; specific_internal_energy) noexcept {
+<span class="lineNum">      27 </span>            :   get(*mass_density_cons) = get(mass_density);
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            :   for (size_t i = 0; i &lt; Dim; ++i) {
+<span class="lineNum">      30 </span>            :     momentum_density-&gt;get(i) = get(mass_density) * velocity.get(i);
+<span class="lineNum">      31 </span>            :   }
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span>            :   get(*energy_density) =
+<span class="lineNum">      34 </span>            :       get(mass_density) * (0.5 * get(dot_product(velocity, velocity)) +
+<span class="lineNum">      35 </span>            :                            get(specific_internal_energy));
+<span class="lineNum">      36 </span>            : }
+<span class="lineNum">      37 </span>            : 
+<span class="lineNum">      38 </span>            : }  // namespace NewtonianEuler
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span>            : #define DIM(data) BOOST_PP_TUPLE_ELEM(0, data)
+<span class="lineNum">      41 </span>            : 
+<span class="lineNum">      42 </span>            : #define INSTANTIATE(_, data) \
+<span class="lineNum">      43 </span>            :   template struct NewtonianEuler::ConservativeFromPrimitive&lt;DIM(data)&gt;;
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span>            : GENERATE_INSTANTIATIONS(INSTANTIATE, (1, 2, 3))
+<span class="lineNum">      46 </span>            : 
+<span class="lineNum">      47 </span>            : #undef DIM
+<span class="lineNum">      48 </span>            : #undef INSTANTIATE
+<span class="lineNum">      49 </span>            : /// \endcond
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

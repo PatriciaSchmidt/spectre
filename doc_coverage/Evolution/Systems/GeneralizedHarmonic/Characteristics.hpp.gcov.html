@@ -1,0 +1,296 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Evolution/Systems/GeneralizedHarmonic/Characteristics.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">Evolution/Systems/GeneralizedHarmonic</a> - Characteristics.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntry">22</td>
+            <td class="headerCovTableEntryLo">18.2 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;array&gt;
+<span class="lineNum">       7 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : #include &quot;DataStructures/DataBox/DataBoxTag.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;DataStructures/Tensor/TypeAliases.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;Domain/FaceNormal.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;Evolution/Systems/GeneralizedHarmonic/Tags.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;PointwiseFunctions/GeneralRelativity/Tags.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : /// \cond
+<span class="lineNum">      17 </span>            : class DataVector;
+<span class="lineNum">      18 </span>            : namespace gsl {
+<span class="lineNum">      19 </span>            : template &lt;class T&gt;
+<span class="lineNum">      20 </span>            : class not_null;
+<span class="lineNum">      21 </span>            : }  // namespace gsl
+<span class="lineNum">      22 </span>            : namespace Tags {
+<span class="lineNum">      23 </span>            : template &lt;typename Tag&gt;
+<span class="lineNum">      24 </span>            : struct Normalized;
+<span class="lineNum">      25 </span>            : }  // namespace Tags
+<span class="lineNum">      26 </span>            : /// \endcond
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            : // IWYU pragma: no_forward_declare Tensor
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span>            : namespace GeneralizedHarmonic {
+<span class="lineNum">      31 </span>            : // @{
+<span class="lineNum">      32 </span>            : /*!
+<span class="lineNum">      33 </span>            :  * \ingroup GeneralizedHarmonic
+<span class="lineNum">      34 </span>            :  * \brief Compute the characteristic speeds for the generalized harmonic system.
+<span class="lineNum">      35 </span>            :  *
+<span class="lineNum">      36 </span>            :  * Computes the speeds as described in &quot;A New Generalized Harmonic
+<span class="lineNum">      37 </span>            :  * Evolution System&quot; by Lindblom et. al \cite Lindblom2005qh
+<span class="lineNum">      38 </span>            :  * [see text following Eq.(34)]. The characteristic fields' names used here
+<span class="lineNum">      39 </span>            :  * differ from this paper:
+<span class="lineNum">      40 </span>            :  *
+<span class="lineNum">      41 </span>            :  * \f{align*}
+<span class="lineNum">      42 </span>            :  * \mathrm{SpECTRE} &amp;&amp; \mathrm{Lindblom} \\
+<span class="lineNum">      43 </span>            :  * u^{\psi}_{ab} &amp;&amp; u^\hat{0}_{ab} \\
+<span class="lineNum">      44 </span>            :  * u^0_{iab} &amp;&amp; u^\hat{2}_{iab} \\
+<span class="lineNum">      45 </span>            :  * u^{\pm}_{ab} &amp;&amp; u^{\hat{1}\pm}_{ab}
+<span class="lineNum">      46 </span>            :  * \f}
+<span class="lineNum">      47 </span>            :  *
+<span class="lineNum">      48 </span>            :  * The corresponding characteristic speeds \f$v\f$ are given in the text between
+<span class="lineNum">      49 </span>            :  * Eq.(34) and Eq.(35) of \cite Lindblom2005qh :
+<span class="lineNum">      50 </span>            :  *
+<span class="lineNum">      51 </span>            :  * \f{align*}
+<span class="lineNum">      52 </span>            :  * v_{\psi} =&amp; -(1 + \gamma_1) n_k N^k \\
+<span class="lineNum">      53 </span>            :  * v_{0} =&amp; -n_k N^k \\
+<span class="lineNum">      54 </span>            :  * v_{\pm} =&amp; -n_k N^k \pm N
+<span class="lineNum">      55 </span>            :  * \f}
+<span class="lineNum">      56 </span>            :  *
+<span class="lineNum">      57 </span>            :  * where \f$N, N^k\f$ are the lapse and shift respectively, \f$\gamma_1\f$ is a
+<span class="lineNum">      58 </span>            :  * constraint damping parameter, and \f$n_k\f$ is the unit normal to the
+<span class="lineNum">      59 </span>            :  * surface.
+<span class="lineNum">      60 </span>            :  */
+<span class="lineNum">      61 </span>            : template &lt;size_t Dim, typename Frame&gt;
+<span class="lineNum">      62 </span>            : struct CharacteristicSpeedsCompute : Tags::CharacteristicSpeeds&lt;Dim, Frame&gt;,
+<span class="lineNum">      63 </span><span class="lineCov">          1 :                                      db::ComputeTag {</span>
+<span class="lineNum">      64 </span><span class="lineNoCov">          0 :   using base = Tags::CharacteristicSpeeds&lt;Dim, Frame&gt;;</span>
+<span class="lineNum">      65 </span><span class="lineNoCov">          0 :   using type = typename base::type;</span>
+<span class="lineNum">      66 </span><span class="lineNoCov">          0 :   using argument_tags = tmpl::list&lt;</span>
+<span class="lineNum">      67 </span>            :       Tags::ConstraintGamma1, gr::Tags::Lapse&lt;DataVector&gt;,
+<span class="lineNum">      68 </span>            :       gr::Tags::Shift&lt;Dim, Frame, DataVector&gt;,
+<span class="lineNum">      69 </span>            :       ::Tags::Normalized&lt;::Tags::UnnormalizedFaceNormal&lt;Dim, Frame&gt;&gt;&gt;;
+<span class="lineNum">      70 </span>            : 
+<span class="lineNum">      71 </span><span class="lineNoCov">          0 :   static typename Tags::CharacteristicSpeeds&lt;Dim, Frame&gt;::type function(</span>
+<span class="lineNum">      72 </span>            :       const Scalar&lt;DataVector&gt;&amp; gamma_1, const Scalar&lt;DataVector&gt;&amp; lapse,
+<span class="lineNum">      73 </span>            :       const tnsr::I&lt;DataVector, Dim, Frame&gt;&amp; shift,
+<span class="lineNum">      74 </span>            :       const tnsr::i&lt;DataVector, Dim, Frame&gt;&amp; unit_normal_one_form) noexcept;
+<span class="lineNum">      75 </span>            : };
+<span class="lineNum">      76 </span>            : 
+<span class="lineNum">      77 </span>            : template &lt;size_t Dim, typename Frame&gt;
+<span class="lineNum">      78 </span><span class="lineNoCov">          0 : void compute_characteristic_speeds(</span>
+<span class="lineNum">      79 </span>            :     gsl::not_null&lt;typename Tags::CharacteristicSpeeds&lt;Dim, Frame&gt;::type*&gt;
+<span class="lineNum">      80 </span>            :         char_speeds,
+<span class="lineNum">      81 </span>            :     const Scalar&lt;DataVector&gt;&amp; gamma_1, const Scalar&lt;DataVector&gt;&amp; lapse,
+<span class="lineNum">      82 </span>            :     const tnsr::I&lt;DataVector, Dim, Frame&gt;&amp; shift,
+<span class="lineNum">      83 </span>            :     const tnsr::i&lt;DataVector, Dim, Frame&gt;&amp; unit_normal_one_form) noexcept;
+<span class="lineNum">      84 </span>            : // @}
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span>            : // @{
+<span class="lineNum">      87 </span>            : /*!
+<span class="lineNum">      88 </span>            :  * \ingroup GeneralizedHarmonic
+<span class="lineNum">      89 </span>            :  * \brief Computes characteristic fields from evolved fields
+<span class="lineNum">      90 </span>            :  *
+<span class="lineNum">      91 </span>            :  * \ref CharacteristicFieldsCompute and
+<span class="lineNum">      92 </span>            :  * \ref EvolvedFieldsFromCharacteristicFieldsCompute convert between
+<span class="lineNum">      93 </span>            :  * characteristic and evolved fields for the generalized harmonic system.
+<span class="lineNum">      94 </span>            :  *
+<span class="lineNum">      95 </span>            :  * \ref CharacteristicFieldsCompute computes
+<span class="lineNum">      96 </span>            :  * characteristic fields as described in &quot;A New Generalized Harmonic
+<span class="lineNum">      97 </span>            :  * Evolution System&quot; by Lindblom et. al \cite Lindblom2005qh .
+<span class="lineNum">      98 </span>            :  * Their names used here differ from this paper:
+<span class="lineNum">      99 </span>            :  *
+<span class="lineNum">     100 </span>            :  * \f{align*}
+<span class="lineNum">     101 </span>            :  * \mathrm{SpECTRE} &amp;&amp; \mathrm{Lindblom} \\
+<span class="lineNum">     102 </span>            :  * u^{\psi}_{ab} &amp;&amp; u^\hat{0}_{ab} \\
+<span class="lineNum">     103 </span>            :  * u^0_{iab} &amp;&amp; u^\hat{2}_{iab} \\
+<span class="lineNum">     104 </span>            :  * u^{\pm}_{ab} &amp;&amp; u^{\hat{1}\pm}_{ab}
+<span class="lineNum">     105 </span>            :  * \f}
+<span class="lineNum">     106 </span>            :  *
+<span class="lineNum">     107 </span>            :  * The characteristic fields \f$u\f$ are given in terms of the evolved fields by
+<span class="lineNum">     108 </span>            :  * Eq.(32) - (34) of \cite Lindblom2005qh, respectively:
+<span class="lineNum">     109 </span>            :  * \f{align*}
+<span class="lineNum">     110 </span>            :  * u^{\psi}_{ab} =&amp; \psi_{ab} \\
+<span class="lineNum">     111 </span>            :  * u^0_{iab} =&amp; (\delta^k_i - n_i n^k) \Phi_{kab} := P^k_i \Phi_{kab} \\
+<span class="lineNum">     112 </span>            :  * u^{\pm}_{ab} =&amp; \Pi_{ab} \pm n^i \Phi_{iab} - \gamma_2\psi_{ab}
+<span class="lineNum">     113 </span>            :  * \f}
+<span class="lineNum">     114 </span>            :  *
+<span class="lineNum">     115 </span>            :  * where \f$\psi_{ab}\f$ is the spacetime metric, \f$\Pi_{ab}\f$ and
+<span class="lineNum">     116 </span>            :  * \f$\Phi_{iab}\f$ are evolved generalized harmonic fields introduced by first
+<span class="lineNum">     117 </span>            :  * derivatives of \f$\psi_{ab}\f$, \f$\gamma_2\f$ is a constraint damping
+<span class="lineNum">     118 </span>            :  * parameter, and \f$n_k\f$ is the unit normal to the surface.
+<span class="lineNum">     119 </span>            :  *
+<span class="lineNum">     120 </span>            :  * \ref EvolvedFieldsFromCharacteristicFieldsCompute computes evolved fields
+<span class="lineNum">     121 </span>            :  * \f$w\f$ in terms of the characteristic fields. This uses the inverse of
+<span class="lineNum">     122 </span>            :  * above relations:
+<span class="lineNum">     123 </span>            :  *
+<span class="lineNum">     124 </span>            :  * \f{align*}
+<span class="lineNum">     125 </span>            :  * \psi_{ab} =&amp; u^{\psi}_{ab}, \\
+<span class="lineNum">     126 </span>            :  * \Pi_{ab} =&amp; \frac{1}{2}(u^{+}_{ab} + u^{-}_{ab}) + \gamma_2 u^{\psi}_{ab}, \\
+<span class="lineNum">     127 </span>            :  * \Phi_{iab} =&amp; \frac{1}{2}(u^{+}_{ab} - u^{-}_{ab}) n_i + u^0_{iab}.
+<span class="lineNum">     128 </span>            :  * \f}
+<span class="lineNum">     129 </span>            :  *
+<span class="lineNum">     130 </span>            :  * The corresponding characteristic speeds \f$v\f$ are computed by
+<span class="lineNum">     131 </span>            :  * \ref CharacteristicSpeedsCompute .
+<span class="lineNum">     132 </span>            :  */
+<span class="lineNum">     133 </span>            : template &lt;size_t Dim, typename Frame&gt;
+<span class="lineNum">     134 </span>            : struct CharacteristicFieldsCompute : Tags::CharacteristicFields&lt;Dim, Frame&gt;,
+<span class="lineNum">     135 </span><span class="lineCov">          1 :                                      db::ComputeTag {</span>
+<span class="lineNum">     136 </span><span class="lineNoCov">          0 :   using base = Tags::CharacteristicFields&lt;Dim, Frame&gt;;</span>
+<span class="lineNum">     137 </span><span class="lineNoCov">          0 :   using type = typename base::type;</span>
+<span class="lineNum">     138 </span><span class="lineNoCov">          0 :   using argument_tags = tmpl::list&lt;</span>
+<span class="lineNum">     139 </span>            :       Tags::ConstraintGamma2,
+<span class="lineNum">     140 </span>            :       gr::Tags::InverseSpatialMetric&lt;Dim, Frame, DataVector&gt;,
+<span class="lineNum">     141 </span>            :       gr::Tags::SpacetimeMetric&lt;Dim, Frame, DataVector&gt;, Tags::Pi&lt;Dim, Frame&gt;,
+<span class="lineNum">     142 </span>            :       Tags::Phi&lt;Dim, Frame&gt;,
+<span class="lineNum">     143 </span>            :       ::Tags::Normalized&lt;::Tags::UnnormalizedFaceNormal&lt;Dim, Frame&gt;&gt;&gt;;
+<span class="lineNum">     144 </span>            : 
+<span class="lineNum">     145 </span><span class="lineNoCov">          0 :   static typename Tags::CharacteristicFields&lt;Dim, Frame&gt;::type function(</span>
+<span class="lineNum">     146 </span>            :       const Scalar&lt;DataVector&gt;&amp; gamma_2,
+<span class="lineNum">     147 </span>            :       const tnsr::II&lt;DataVector, Dim, Frame&gt;&amp; inverse_spatial_metric,
+<span class="lineNum">     148 </span>            :       const tnsr::aa&lt;DataVector, Dim, Frame&gt;&amp; spacetime_metric,
+<span class="lineNum">     149 </span>            :       const tnsr::aa&lt;DataVector, Dim, Frame&gt;&amp; pi,
+<span class="lineNum">     150 </span>            :       const tnsr::iaa&lt;DataVector, Dim, Frame&gt;&amp; phi,
+<span class="lineNum">     151 </span>            :       const tnsr::i&lt;DataVector, Dim, Frame&gt;&amp; unit_normal_one_form) noexcept;
+<span class="lineNum">     152 </span>            : };
+<span class="lineNum">     153 </span>            : 
+<span class="lineNum">     154 </span>            : template &lt;size_t Dim, typename Frame&gt;
+<span class="lineNum">     155 </span><span class="lineNoCov">          0 : void compute_characteristic_fields(</span>
+<span class="lineNum">     156 </span>            :     gsl::not_null&lt;typename Tags::CharacteristicFields&lt;Dim, Frame&gt;::type*&gt;
+<span class="lineNum">     157 </span>            :         char_fields,
+<span class="lineNum">     158 </span>            :     const Scalar&lt;DataVector&gt;&amp; gamma_2,
+<span class="lineNum">     159 </span>            :     const tnsr::II&lt;DataVector, Dim, Frame&gt;&amp; inverse_spatial_metric,
+<span class="lineNum">     160 </span>            :     const tnsr::aa&lt;DataVector, Dim, Frame&gt;&amp; spacetime_metric,
+<span class="lineNum">     161 </span>            :     const tnsr::aa&lt;DataVector, Dim, Frame&gt;&amp; pi,
+<span class="lineNum">     162 </span>            :     const tnsr::iaa&lt;DataVector, Dim, Frame&gt;&amp; phi,
+<span class="lineNum">     163 </span>            :     const tnsr::i&lt;DataVector, Dim, Frame&gt;&amp; unit_normal_one_form) noexcept;
+<span class="lineNum">     164 </span>            : // @}
+<span class="lineNum">     165 </span>            : 
+<span class="lineNum">     166 </span>            : // @{
+<span class="lineNum">     167 </span>            : /*!
+<span class="lineNum">     168 </span>            :  * \ingroup GeneralizedHarmonic
+<span class="lineNum">     169 </span>            :  * \brief For expressions used here to compute evolved fields from
+<span class="lineNum">     170 </span>            :  * characteristic ones, see \ref CharacteristicFieldsCompute.
+<span class="lineNum">     171 </span>            :  */
+<span class="lineNum">     172 </span>            : template &lt;size_t Dim, typename Frame&gt;
+<span class="lineNum">     173 </span>            : struct EvolvedFieldsFromCharacteristicFieldsCompute
+<span class="lineNum">     174 </span>            :     : Tags::EvolvedFieldsFromCharacteristicFields&lt;Dim, Frame&gt;,
+<span class="lineNum">     175 </span><span class="lineCov">          1 :       db::ComputeTag {</span>
+<span class="lineNum">     176 </span><span class="lineNoCov">          0 :   using base = Tags::EvolvedFieldsFromCharacteristicFields&lt;Dim, Frame&gt;;</span>
+<span class="lineNum">     177 </span><span class="lineNoCov">          0 :   using type = typename base::type;</span>
+<span class="lineNum">     178 </span><span class="lineNoCov">          0 :   using argument_tags = tmpl::list&lt;</span>
+<span class="lineNum">     179 </span>            :       Tags::ConstraintGamma2, Tags::UPsi&lt;Dim, Frame&gt;, Tags::UZero&lt;Dim, Frame&gt;,
+<span class="lineNum">     180 </span>            :       Tags::UPlus&lt;Dim, Frame&gt;, Tags::UMinus&lt;Dim, Frame&gt;,
+<span class="lineNum">     181 </span>            :       ::Tags::Normalized&lt;::Tags::UnnormalizedFaceNormal&lt;Dim, Frame&gt;&gt;&gt;;
+<span class="lineNum">     182 </span>            : 
+<span class="lineNum">     183 </span>            :   static typename Tags::EvolvedFieldsFromCharacteristicFields&lt;Dim, Frame&gt;::type
+<span class="lineNum">     184 </span><span class="lineNoCov">          0 :   function(</span>
+<span class="lineNum">     185 </span>            :       const Scalar&lt;DataVector&gt;&amp; gamma_2,
+<span class="lineNum">     186 </span>            :       const tnsr::aa&lt;DataVector, Dim, Frame&gt;&amp; u_psi,
+<span class="lineNum">     187 </span>            :       const tnsr::iaa&lt;DataVector, Dim, Frame&gt;&amp; u_zero,
+<span class="lineNum">     188 </span>            :       const tnsr::aa&lt;DataVector, Dim, Frame&gt;&amp; u_plus,
+<span class="lineNum">     189 </span>            :       const tnsr::aa&lt;DataVector, Dim, Frame&gt;&amp; u_minus,
+<span class="lineNum">     190 </span>            :       const tnsr::i&lt;DataVector, Dim, Frame&gt;&amp; unit_normal_one_form) noexcept;
+<span class="lineNum">     191 </span>            : };
+<span class="lineNum">     192 </span>            : 
+<span class="lineNum">     193 </span>            : template &lt;size_t Dim, typename Frame&gt;
+<span class="lineNum">     194 </span><span class="lineNoCov">          0 : void compute_evolved_fields_from_characteristic_fields(</span>
+<span class="lineNum">     195 </span>            :     gsl::not_null&lt;
+<span class="lineNum">     196 </span>            :         typename Tags::EvolvedFieldsFromCharacteristicFields&lt;Dim, Frame&gt;::type*&gt;
+<span class="lineNum">     197 </span>            :         evolved_fields,
+<span class="lineNum">     198 </span>            :     const Scalar&lt;DataVector&gt;&amp; gamma_2,
+<span class="lineNum">     199 </span>            :     const tnsr::aa&lt;DataVector, Dim, Frame&gt;&amp; u_psi,
+<span class="lineNum">     200 </span>            :     const tnsr::iaa&lt;DataVector, Dim, Frame&gt;&amp; u_zero,
+<span class="lineNum">     201 </span>            :     const tnsr::aa&lt;DataVector, Dim, Frame&gt;&amp; u_plus,
+<span class="lineNum">     202 </span>            :     const tnsr::aa&lt;DataVector, Dim, Frame&gt;&amp; u_minus,
+<span class="lineNum">     203 </span>            :     const tnsr::i&lt;DataVector, Dim, Frame&gt;&amp; unit_normal_one_form) noexcept;
+<span class="lineNum">     204 </span>            : 
+<span class="lineNum">     205 </span>            : // @}
+<span class="lineNum">     206 </span>            : 
+<span class="lineNum">     207 </span>            : /*!
+<span class="lineNum">     208 </span>            :  * \ingroup GeneralizedHarmonic
+<span class="lineNum">     209 </span>            :  * \brief Computes the largest magnitude of the characteristic speeds.
+<span class="lineNum">     210 </span>            :  */
+<span class="lineNum">     211 </span>            : template &lt;size_t Dim, typename Frame&gt;
+<span class="lineNum">     212 </span><span class="lineCov">          1 : struct ComputeLargestCharacteristicSpeed {</span>
+<span class="lineNum">     213 </span><span class="lineNoCov">          0 :   using argument_tags = tmpl::list&lt;Tags::CharacteristicSpeeds&lt;Dim, Frame&gt;&gt;;</span>
+<span class="lineNum">     214 </span><span class="lineNoCov">          0 :   static double apply(const std::array&lt;DataVector, 4&gt;&amp; char_speeds) noexcept;</span>
+<span class="lineNum">     215 </span>            : };
+<span class="lineNum">     216 </span>            : }  // namespace GeneralizedHarmonic
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

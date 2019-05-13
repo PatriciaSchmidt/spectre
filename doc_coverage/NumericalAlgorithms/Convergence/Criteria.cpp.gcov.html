@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - NumericalAlgorithms/Convergence/Criteria.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">NumericalAlgorithms/Convergence</a> - Criteria.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;NumericalAlgorithms/Convergence/Criteria.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;pup.h&gt;  // IWYU pragma: keep
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span><span class="lineNoCov">          0 : namespace Convergence {</span>
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : Criteria::Criteria(const size_t max_iterations_in,
+<span class="lineNum">      11 </span>            :                    const double absolute_residual_in,
+<span class="lineNum">      12 </span>            :                    const double relative_residual_in) noexcept
+<span class="lineNum">      13 </span>            :     : max_iterations(max_iterations_in),
+<span class="lineNum">      14 </span>            :       absolute_residual(absolute_residual_in),
+<span class="lineNum">      15 </span>            :       relative_residual(relative_residual_in) {}
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            : void Criteria::pup(PUP::er&amp; p) noexcept {
+<span class="lineNum">      18 </span>            :   p | max_iterations;
+<span class="lineNum">      19 </span>            :   p | absolute_residual;
+<span class="lineNum">      20 </span>            :   p | relative_residual;
+<span class="lineNum">      21 </span>            : }
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span><span class="lineNoCov">          0 : bool operator==(const Criteria&amp; lhs, const Criteria&amp; rhs) noexcept {</span>
+<span class="lineNum">      24 </span>            :   return lhs.max_iterations == rhs.max_iterations and
+<span class="lineNum">      25 </span>            :          lhs.absolute_residual == rhs.absolute_residual and
+<span class="lineNum">      26 </span>            :          lhs.relative_residual == rhs.relative_residual;
+<span class="lineNum">      27 </span>            : }
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span><span class="lineNoCov">          0 : bool operator!=(const Criteria&amp; lhs, const Criteria&amp; rhs) noexcept {</span>
+<span class="lineNum">      30 </span>            :   return not(lhs == rhs);
+<span class="lineNum">      31 </span>            : }
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span>            : }  // namespace Convergence
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

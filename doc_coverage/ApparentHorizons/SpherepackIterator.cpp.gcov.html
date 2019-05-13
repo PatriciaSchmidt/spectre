@@ -1,0 +1,256 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - ApparentHorizons/SpherepackIterator.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">ApparentHorizons</a> - SpherepackIterator.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : //
+<span class="lineNum">       5 </span>            : // SPHEREPACK memory layout
+<span class="lineNum">       6 </span>            : //
+<span class="lineNum">       7 </span>            : // For a surface of topology S2 with a spherical harmonic basis and a
+<span class="lineNum">       8 </span>            : // grid of n_th x n_ph points, the largest (partially) representable
+<span class="lineNum">       9 </span>            : // spherical-harmonic Ylm modes (l,m) are:
+<span class="lineNum">      10 </span>            : // * l_max = n_th-1
+<span class="lineNum">      11 </span>            : // * m_max = min(l_max, n_ph/2) [integer division]
+<span class="lineNum">      12 </span>            : //
+<span class="lineNum">      13 </span>            : // Given collocation values on this n_th x n_ph grid, SPHEREPACK
+<span class="lineNum">      14 </span>            : // stores the spectral coefficients in an array of length
+<span class="lineNum">      15 </span>            : // (l_max+1)*(m_max+1).  The layout of this array is, in a
+<span class="lineNum">      16 </span>            : // 2-dimensional representation
+<span class="lineNum">      17 </span>            : //
+<span class="lineNum">      18 </span>            : //                            m_max+1
+<span class="lineNum">      19 </span>            : //     -----------------------------------------------------
+<span class="lineNum">      20 </span>            : //     | (0,0)         x       x            x
+<span class="lineNum">      21 </span>            : //     | (1,0)       (1,1)     x            x         ARRAY
+<span class="lineNum">      22 </span>            : //     | (2,0)       (2,1)   (2,2)          x          &quot;a&quot;
+<span class="lineNum">      23 </span>            : //     |   :           :       :            x
+<span class="lineNum">      24 </span>            : //     | (m_max,  0)  ...            (m_max,   m_max)
+<span class="lineNum">      25 </span>            : //     | (m_max+1,0)  ...            (m_max+1, m_max)
+<span class="lineNum">      26 </span>            : //     |    :                  :            :
+<span class="lineNum">      27 </span>            : //     | (l_max, 0)                  (l_max,   m_max)
+<span class="lineNum">      28 </span>            : //     -----------------------------------------------------
+<span class="lineNum">      29 </span>            : //     |    x        x          x          x
+<span class="lineNum">      30 </span>            : //     |    x      (1,1)        x          x          ARRAY
+<span class="lineNum">      31 </span>            : //     |    x      (2,1)      (2,2)        x           &quot;b&quot;
+<span class="lineNum">      32 </span>            : //     |    :        :          :          x
+<span class="lineNum">      33 </span>            : //     |    x    (m_max,  1)..      (m_max,   m_max)
+<span class="lineNum">      34 </span>            : //     |    x    (m_max+1,1)..      (m_max+1, m_max)
+<span class="lineNum">      35 </span>            : //     |    :         :               :
+<span class="lineNum">      36 </span>            : //     |    x    (l_max,  1)..      (l_max,   m_max)
+<span class="lineNum">      37 </span>            : //     -----------------------------------------------------
+<span class="lineNum">      38 </span>            : //
+<span class="lineNum">      39 </span>            : //
+<span class="lineNum">      40 </span>            : // In this table,
+<span class="lineNum">      41 </span>            : //
+<span class="lineNum">      42 </span>            : // * There are 2*n_th rows and m_max+1 columns. The SPHEREPACK array
+<span class="lineNum">      43 </span>            : //   stores this data &quot;row by row&quot;, i.e. the numbers across a row vary
+<span class="lineNum">      44 </span>            : //   fastest.
+<span class="lineNum">      45 </span>            : //
+<span class="lineNum">      46 </span>            : // * There are no entries with negative m. SPHEREPACK uses positive m
+<span class="lineNum">      47 </span>            : //   only, but with complex spectral coefficients. The portions &quot;a&quot;
+<span class="lineNum">      48 </span>            : //   and &quot;b&quot; of the SPHEREPACK array hold the real and imaginary parts
+<span class="lineNum">      49 </span>            : //   of the spectral coefficients.
+<span class="lineNum">      50 </span>            : //
+<span class="lineNum">      51 </span>            : // * Each &quot;x&quot; stands for an entry that is not referenced by SPHEREPACK
+<span class="lineNum">      52 </span>            : //   (so SPHEREPACK wastes some storage space).  There is also one
+<span class="lineNum">      53 </span>            : //   complete unreferenced row in the middle: the first row of the &quot;b&quot;
+<span class="lineNum">      54 </span>            : //   array.
+<span class="lineNum">      55 </span>            : //
+<span class="lineNum">      56 </span>            : // Note that SPHEREPACK accepts arbitrary values of n_th and n_ph as
+<span class="lineNum">      57 </span>            : // input, and then computes the corresponding l_max, m_max.  However,
+<span class="lineNum">      58 </span>            : // some combinations of n_th and n_ph have strange properties:
+<span class="lineNum">      59 </span>            : // * The maximum M that is AT LEAST PARTIALLY represented by (n_th,n_ph)
+<span class="lineNum">      60 </span>            : //   is std::min(n_th-1,n_ph/2). This is called m_max here. But an arbitrary
+<span class="lineNum">      61 </span>            : //   (n_th,n_ph) does not necessarily fully represent all m's up to m_max,
+<span class="lineNum">      62 </span>            : //   because sin(m_max phi) might be zero at all collocation points, and
+<span class="lineNum">      63 </span>            : //   therefore sin(m_max phi) might not be representable on the grid.
+<span class="lineNum">      64 </span>            : // * The largest m that is fully represented by (n_th,n_ph) is
+<span class="lineNum">      65 </span>            : //   m_max_represented = std::min(n_th-1,(n_ph-1)/2).
+<span class="lineNum">      66 </span>            : // * Therefore, if n_ph is odd,  m_max = m_max_represented,
+<span class="lineNum">      67 </span>            : //              if n_ph is even, m_max = m_max_represented+1.
+<span class="lineNum">      68 </span>            : // * To fully represent a desired (l_max, m_max), the grid resolution
+<span class="lineNum">      69 </span>            : //   should satisfy
+<span class="lineNum">      70 </span>            : //     n_th = l_max+1
+<span class="lineNum">      71 </span>            : //     n_ph = 2*m_max_represented+1
+<span class="lineNum">      72 </span>            : //   which ensures that m_max = m_max_represented.
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span>            : #include &quot;ApparentHorizons/SpherepackIterator.hpp&quot;
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span>            : SpherepackIterator::SpherepackIterator(const size_t l_max_input,
+<span class="lineNum">      77 </span>            :                                        const size_t m_max_input,
+<span class="lineNum">      78 </span>            :                                        const size_t stride /*=1*/)
+<span class="lineNum">      79 </span>            :     : l_max_(l_max_input),
+<span class="lineNum">      80 </span>            :       m_max_(m_max_input),
+<span class="lineNum">      81 </span>            :       n_th_(l_max_ + 1),
+<span class="lineNum">      82 </span>            :       n_ph_(2 * m_max_ + 1),
+<span class="lineNum">      83 </span>            :       stride_(stride),
+<span class="lineNum">      84 </span>            :       number_of_valid_entries_in_a_((m_max_ + 1) * (m_max_ + 2) / 2 +
+<span class="lineNum">      85 </span>            :                                     (m_max_ + 1) * (l_max_ - m_max_)),
+<span class="lineNum">      86 </span>            :       current_compact_index_(0) {
+<span class="lineNum">      87 </span>            :   // fill offset_into_spherepack_array, compact_l_ and compact_m_ with the
+<span class="lineNum">      88 </span>            :   // indices, l-values and m-values of all valid points
+<span class="lineNum">      89 </span>            :   const size_t packed_size =
+<span class="lineNum">      90 </span>            :       (m_max_ + 1) * (m_max_ + 2) / 2 + m_max_ * (m_max_ + 1) / 2 +
+<span class="lineNum">      91 </span>            :       (m_max_ + 1) * (l_max_ - m_max_) + m_max_ * (l_max_ - m_max_);
+<span class="lineNum">      92 </span>            : 
+<span class="lineNum">      93 </span>            :   offset_into_spherepack_array.assign(packed_size, 0);
+<span class="lineNum">      94 </span>            :   compact_l_.assign(packed_size, 0);
+<span class="lineNum">      95 </span>            :   compact_m_.assign(packed_size, 0);
+<span class="lineNum">      96 </span>            : 
+<span class="lineNum">      97 </span>            :   // go through arrays and fill them
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span>            :   // index corresponding to strided coefficient array
+<span class="lineNum">     100 </span>            :   size_t idx = 0;
+<span class="lineNum">     101 </span>            :   // index for compact offset_into_spherepack_array, compact_l_, compact_m_
+<span class="lineNum">     102 </span>            :   size_t k = 0;
+<span class="lineNum">     103 </span>            :   for (size_t l = 0; l &lt;= l_max_; ++l) {
+<span class="lineNum">     104 </span>            :     for (size_t m = 0; m &lt;= m_max_; ++m) {
+<span class="lineNum">     105 </span>            :       // note: index m varies fastest in fortran array
+<span class="lineNum">     106 </span>            :       if (l &gt;= m) {  // valid entry in a
+<span class="lineNum">     107 </span>            :         offset_into_spherepack_array[k] = idx;
+<span class="lineNum">     108 </span>            :         compact_l_[k] = l;
+<span class="lineNum">     109 </span>            :         compact_m_[k] = m;
+<span class="lineNum">     110 </span>            :         ++k;
+<span class="lineNum">     111 </span>            :       }
+<span class="lineNum">     112 </span>            :       idx += stride;
+<span class="lineNum">     113 </span>            :     }
+<span class="lineNum">     114 </span>            :   }
+<span class="lineNum">     115 </span>            :   for (size_t l = 0; l &lt;= l_max_; ++l) {
+<span class="lineNum">     116 </span>            :     for (size_t m = 0; m &lt;= m_max_; ++m) {
+<span class="lineNum">     117 </span>            :       // note: index m varies fastest in fortran array
+<span class="lineNum">     118 </span>            :       if (m &gt;= 1 &amp;&amp; l &gt;= m) {  // valid entry in b
+<span class="lineNum">     119 </span>            :         offset_into_spherepack_array[k] = idx;
+<span class="lineNum">     120 </span>            :         compact_l_[k] = l;
+<span class="lineNum">     121 </span>            :         compact_m_[k] = m;
+<span class="lineNum">     122 </span>            :         ++k;
+<span class="lineNum">     123 </span>            :       }
+<span class="lineNum">     124 </span>            :       idx += stride;
+<span class="lineNum">     125 </span>            :     }
+<span class="lineNum">     126 </span>            :   }
+<span class="lineNum">     127 </span>            : }
+<span class="lineNum">     128 </span>            : 
+<span class="lineNum">     129 </span>            : SpherepackIterator&amp; SpherepackIterator::reset() noexcept {
+<span class="lineNum">     130 </span>            :   current_compact_index_ = 0;
+<span class="lineNum">     131 </span>            :   return *this;
+<span class="lineNum">     132 </span>            : }
+<span class="lineNum">     133 </span>            : 
+<span class="lineNum">     134 </span>            : SpherepackIterator&amp; SpherepackIterator::set(
+<span class="lineNum">     135 </span>            :     const size_t l_input, const size_t m_input,
+<span class="lineNum">     136 </span>            :     const CoefficientArray coefficient_array_input) noexcept {
+<span class="lineNum">     137 </span>            :   ASSERT(l_input &lt;= l_max_, &quot;SpherepackIterator l_input=&quot;
+<span class="lineNum">     138 </span>            :                                 &lt;&lt; l_input
+<span class="lineNum">     139 </span>            :                                 &lt;&lt; &quot; too large, should be &lt;= &quot; &lt;&lt; l_max_);
+<span class="lineNum">     140 </span>            :   ASSERT(l_input &gt;= m_input, &quot;SpherepackIterator m_input &quot;
+<span class="lineNum">     141 </span>            :                                  &lt;&lt; m_input &lt;&lt; &quot; greater than l_input &quot;
+<span class="lineNum">     142 </span>            :                                  &lt;&lt; l_input);
+<span class="lineNum">     143 </span>            :   ASSERT(m_input &lt;= m_max_,
+<span class="lineNum">     144 </span>            :          &quot;m_input &quot; &lt;&lt; m_input &lt;&lt; &quot; too large, should be &lt;= &quot; &lt;&lt; m_max_);
+<span class="lineNum">     145 </span>            :   if (coefficient_array_input == CoefficientArray::a) {
+<span class="lineNum">     146 </span>            :     // jump to first element with 'l_input'
+<span class="lineNum">     147 </span>            :     if (l_input &lt;= m_max_ + 1) {
+<span class="lineNum">     148 </span>            :       current_compact_index_ = (l_input * (l_input + 1)) / 2;
+<span class="lineNum">     149 </span>            :     } else {
+<span class="lineNum">     150 </span>            :       current_compact_index_ = (m_max_ + 1) * (m_max_ + 2) / 2 +
+<span class="lineNum">     151 </span>            :                                (l_input - m_max_ - 1) * (m_max_ + 1);
+<span class="lineNum">     152 </span>            :     }
+<span class="lineNum">     153 </span>            :     current_compact_index_ += m_input;
+<span class="lineNum">     154 </span>            :   } else {
+<span class="lineNum">     155 </span>            :     ASSERT(m_input != 0, &quot;Array b does not contain m_input=0&quot;);
+<span class="lineNum">     156 </span>            :     if (l_input &lt;= m_max_ + 1) {
+<span class="lineNum">     157 </span>            :       current_compact_index_ = (l_input * (l_input - 1)) / 2;
+<span class="lineNum">     158 </span>            :     } else {
+<span class="lineNum">     159 </span>            :       current_compact_index_ =
+<span class="lineNum">     160 </span>            :           m_max_ * (m_max_ + 1) / 2 + (l_input - m_max_ - 1) * m_max_;
+<span class="lineNum">     161 </span>            :     }
+<span class="lineNum">     162 </span>            :     current_compact_index_ += number_of_valid_entries_in_a_ + m_input - 1;
+<span class="lineNum">     163 </span>            :   }
+<span class="lineNum">     164 </span>            : 
+<span class="lineNum">     165 </span>            :   ASSERT(current_compact_index_ &lt; offset_into_spherepack_array.size(),
+<span class="lineNum">     166 </span>            :          &quot;Expected &quot; &lt;&lt; current_compact_index_ &lt;&lt; &quot; to be less than &quot;
+<span class="lineNum">     167 </span>            :                      &lt;&lt; offset_into_spherepack_array.size());
+<span class="lineNum">     168 </span>            :   ASSERT(l_input == compact_l_[current_compact_index_],
+<span class="lineNum">     169 </span>            :          &quot;Expected &quot; &lt;&lt; l_input &lt;&lt; &quot; but set produced &quot;
+<span class="lineNum">     170 </span>            :                      &lt;&lt; compact_l_[current_compact_index_]);
+<span class="lineNum">     171 </span>            :   ASSERT(m_input == compact_m_[current_compact_index_],
+<span class="lineNum">     172 </span>            :          &quot;Expected &quot; &lt;&lt; m_input &lt;&lt; &quot; but set produced &quot;
+<span class="lineNum">     173 </span>            :                      &lt;&lt; compact_m_[current_compact_index_]);
+<span class="lineNum">     174 </span>            : 
+<span class="lineNum">     175 </span>            :   return *this;
+<span class="lineNum">     176 </span>            : }
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

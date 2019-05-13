@@ -1,0 +1,148 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - PythonBindings/CharmCompatibility.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">PythonBindings</a> - CharmCompatibility.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntry">15</td>
+            <td class="headerCovTableEntryLo">40.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &lt;cstdarg&gt;
+<span class="lineNum">       5 </span>            : #include &lt;cstdio&gt;
+<span class="lineNum">       6 </span>            : #include &lt;cstdlib&gt;
+<span class="lineNum">       7 </span>            : #include &lt;string&gt;
+<span class="lineNum">       8 </span>            : #include &lt;vector&gt;
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : // In order to not get runtime errors that CmiPrintf, etc. are not defined we
+<span class="lineNum">      11 </span>            : // provide resonable replacements for them. Getting the correct Charm++ library
+<span class="lineNum">      12 </span>            : // linked is non-trivial since Charm++ generally wants you to use their `charmc`
+<span class="lineNum">      13 </span>            : // script, but we want to avoid that.
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span><span class="lineNoCov">          0 : __attribute__ ((format (printf, 1, 2)))</span>
+<span class="lineNum">      16 </span>            : // NOLINTNEXTLINE(cert-dcl50-cpp)
+<span class="lineNum">      17 </span>            : void CmiPrintf(const char* fmt, ...) {
+<span class="lineNum">      18 </span>            :   va_list args;
+<span class="lineNum">      19 </span>            :   // clang-tidy: cppcoreguidelines-pro-type-vararg,
+<span class="lineNum">      20 </span>            :   // cppcoreguidelines-pro-bounds-array-to-pointer-decay
+<span class="lineNum">      21 </span><span class="lineNoCov">          0 :   va_start(args, fmt);  // NOLINT</span>
+<span class="lineNum">      22 </span>            :   // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay,hicpp-no-array-decay)
+<span class="lineNum">      23 </span><span class="lineNoCov">          0 :   vprintf(fmt, args);</span>
+<span class="lineNum">      24 </span>            :   // clang-tidy: cppcoreguidelines-pro-type-vararg,
+<span class="lineNum">      25 </span>            :   // cppcoreguidelines-pro-bounds-array-to-pointer-decay
+<span class="lineNum">      26 </span><span class="lineNoCov">          0 :   va_end(args);  // NOLINT</span>
+<span class="lineNum">      27 </span>            : }
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            : __attribute__ ((format (printf, 1, 2)))
+<span class="lineNum">      30 </span>            : // NOLINTNEXTLINE(cert-dcl50-cpp)
+<span class="lineNum">      31 </span>            : void CmiError(const char* fmt, ...) {
+<span class="lineNum">      32 </span>            :   va_list args;
+<span class="lineNum">      33 </span>            :   // clang-tidy: cppcoreguidelines-pro-type-vararg,
+<span class="lineNum">      34 </span>            :   // cppcoreguidelines-pro-bounds-array-to-pointer-decay
+<span class="lineNum">      35 </span>            :   va_start(args, fmt);  // NOLINT
+<span class="lineNum">      36 </span>            :   // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay,hicpp-no-array-decay)
+<span class="lineNum">      37 </span><span class="lineNoCov">          0 :   vfprintf(stderr, fmt, args);</span>
+<span class="lineNum">      38 </span>            :   // clang-tidy: cppcoreguidelines-pro-type-vararg,
+<span class="lineNum">      39 </span>            :   // cppcoreguidelines-pro-bounds-array-to-pointer-decay
+<span class="lineNum">      40 </span>            :   va_end(args);  // NOLINT
+<span class="lineNum">      41 </span>            : }
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span><span class="lineNoCov">          0 : int CmiMyPe() { return 0; }</span>
+<span class="lineNum">      44 </span><span class="lineNoCov">          0 : int _Cmi_mynode = 0;</span>
+<span class="lineNum">      45 </span><span class="lineCov">          1 : std::string info_from_build() { return &quot;build_info&quot;; }</span>
+<span class="lineNum">      46 </span>            : #pragma GCC diagnostic push
+<span class="lineNum">      47 </span>            : #pragma GCC diagnostic ignored &quot;-Wmissing-noreturn&quot;
+<span class="lineNum">      48 </span><span class="lineNoCov">          0 : void CmiAbort(const char* msg) {</span>
+<span class="lineNum">      49 </span>            : #pragma GCC diagnostic pop
+<span class="lineNum">      50 </span>            :   // NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg,hicpp-vararg)
+<span class="lineNum">      51 </span>            :   fprintf(stderr, &quot;%s&quot;, msg);
+<span class="lineNum">      52 </span>            :   abort();
+<span class="lineNum">      53 </span>            : }
+<span class="lineNum">      54 </span><span class="lineCov">          1 : namespace formaline {</span>
+<span class="lineNum">      55 </span><span class="lineCov">          1 : std::vector&lt;char&gt; get_archive() noexcept {</span>
+<span class="lineNum">      56 </span>            :   return {'N', 'o', 't', ' ', 's', 'u', 'p', 'p', 'o', 'r', 't', 'e', 'd'};
+<span class="lineNum">      57 </span>            : }
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span><span class="lineCov">          1 : std::string get_environment_variables() noexcept {</span>
+<span class="lineNum">      60 </span>            :   return &quot;Not supported on macOS&quot;;
+<span class="lineNum">      61 </span>            : }
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span><span class="lineCov">          1 : std::string get_library_versions() noexcept {</span>
+<span class="lineNum">      64 </span>            :   return &quot;Not supported in python&quot;;
+<span class="lineNum">      65 </span>            : }
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span><span class="lineCov">          1 : std::string get_paths() noexcept { return &quot;Not supported in python.&quot;; }</span>
+<span class="lineNum">      68 </span>            : }  // namespace formaline
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,307 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Domain/CoordinateMaps/Frustum.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">Domain/CoordinateMaps</a> - Frustum.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">33</td>
+            <td class="headerCovTableEntryLo">6.1 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;array&gt;
+<span class="lineNum">       7 </span>            : #include &lt;boost/optional.hpp&gt;
+<span class="lineNum">       8 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       9 </span>            : #include &lt;limits&gt;
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : #include &quot;DataStructures/Tensor/TypeAliases.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;Domain/OrientationMap.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;Utilities/TypeTraits.hpp&quot;
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : /// \cond
+<span class="lineNum">      16 </span>            : namespace PUP {
+<span class="lineNum">      17 </span>            : class er;
+<span class="lineNum">      18 </span>            : }  // namespace PUP
+<span class="lineNum">      19 </span>            : /// \endcond
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : namespace domain {
+<span class="lineNum">      22 </span>            : namespace CoordinateMaps {
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : /*!
+<span class="lineNum">      25 </span>            :  * \ingroup CoordinateMapsGroup
+<span class="lineNum">      26 </span>            :  *
+<span class="lineNum">      27 </span>            :  * \brief A reorientable map from the cube to a frustum.
+<span class="lineNum">      28 </span>            :  * \image html frustum_table1.png &quot;A frustum with rectangular bases.&quot;
+<span class="lineNum">      29 </span>            :  *
+<span class="lineNum">      30 </span>            :  * ### Description and Specifiable Parameters
+<span class="lineNum">      31 </span>            :  * A map from the logical cube to the volume determined by interpolating between
+<span class="lineNum">      32 </span>            :  * two parallel rectangles each perpendicular to the \f$z\f$-axis. A Frustum map
+<span class="lineNum">      33 </span>            :  * \f$\vec{x}(\xi,\eta,\zeta)\f$ is determined by specifying two
+<span class="lineNum">      34 </span>            :  * heights \f$z_1 = \f$ `lower_bound` and \f$z_2 = \f$ `upper_bound` for the
+<span class="lineNum">      35 </span>            :  * positions of the rectangular bases of the frustum along the \f$z-\f$axis,
+<span class="lineNum">      36 </span>            :  * and the sizes of the rectangles are determined by the eight values passed to
+<span class="lineNum">      37 </span>            :  * `face_vertices`:
+<span class="lineNum">      38 </span>            :  *
+<span class="lineNum">      39 </span>            :  * \f{align*}{
+<span class="lineNum">      40 </span>            :  * &amp;\textrm{lower x upper base} : x^{+\zeta}_{-\xi,-\eta} = x(-1,-1,1)\\
+<span class="lineNum">      41 </span>            :  * &amp;\textrm{lower x lower base} : x^{-\zeta}_{-\xi,-\eta} = x(-1,-1,-1)\\
+<span class="lineNum">      42 </span>            :  * &amp;\textrm{upper x upper base} : x^{+\zeta}_{+\xi,+\eta} = x(1,1,1)\\
+<span class="lineNum">      43 </span>            :  * &amp;\textrm{upper x lower base} : x^{-\zeta}_{+\xi,+\eta} = x(1,1,-1)\\
+<span class="lineNum">      44 </span>            :  * &amp;\textrm{lower y upper base} : y^{+\zeta}_{-\xi,-\eta} = y(-1,-1,1)\\
+<span class="lineNum">      45 </span>            :  * &amp;\textrm{lower y lower base} : y^{-\zeta}_{-\xi,-\eta} = y(-1,-1,-1)\\
+<span class="lineNum">      46 </span>            :  * &amp;\textrm{upper y upper base} : y^{+\zeta}_{+\xi,+\eta} = y(1,1,1)\\
+<span class="lineNum">      47 </span>            :  * &amp;\textrm{upper y lower base} : y^{-\zeta}_{+\xi,+\eta} = y(1,1,-1)\f}
+<span class="lineNum">      48 </span>            :  *
+<span class="lineNum">      49 </span>            :  * \note As an example, consider a frustum along the z-axis, with the lower base
+<span class="lineNum">      50 </span>            :  * starting at (x,y) = (-2.0,3.0) and extending to
+<span class="lineNum">      51 </span>            :  * (2.0,5.0), and with the upper base extending from (0.0,1.0) to (1.0,3.0).
+<span class="lineNum">      52 </span>            :  * The corresponding value for `face_vertices` is `{{{{-2.0,3.0}}, {{2.0,5.0}},
+<span class="lineNum">      53 </span>            :  * {{0.0,1.0}}, {{1.0,3.0}}}}`.
+<span class="lineNum">      54 </span>            :  *
+<span class="lineNum">      55 </span>            :  * In the case where the two rectangles are geometrically similar, the volume
+<span class="lineNum">      56 </span>            :  * formed is a geometric frustum. However, this coordinate map generalizes to
+<span class="lineNum">      57 </span>            :  * rectangles which need not be similar.
+<span class="lineNum">      58 </span>            :  * The user may reorient the frustum by passing an OrientationMap to the
+<span class="lineNum">      59 </span>            :  * constructor. If `with_equiangular_map` is true, then this coordinate map
+<span class="lineNum">      60 </span>            :  * applies a tangent function mapping to the logical \f$\xi\f$ and \f$\eta\f$
+<span class="lineNum">      61 </span>            :  * coordinates. We then refer to the generalized
+<span class="lineNum">      62 </span>            :  * logical coordinates as \f$\Xi\f$ and \f$\mathrm{H}\f$. If
+<span class="lineNum">      63 </span>            :  * `projective_scale_factor` is set to a quantity other than unity, then this
+<span class="lineNum">      64 </span>            :  * coordinate map applies a rational function mapping to the logical \f$\zeta\f$
+<span class="lineNum">      65 </span>            :  * coordinate. This generalized logical coordinate is referred to as
+<span class="lineNum">      66 </span>            :  * \f$\mathrm{Z}\f$. If `auto_projective_scale_factor` is `true`, the
+<span class="lineNum">      67 </span>            :  * user-specified `projective_scale_factor` is ignored and an appropriate value
+<span class="lineNum">      68 </span>            :  * for `projective_scale_factor` is computed based on the values passed to
+<span class="lineNum">      69 </span>            :  * `face_vertices`. See the
+<span class="lineNum">      70 </span>            :  * [page on redistributing gridpoints](@ref redistributing_gridpoints)
+<span class="lineNum">      71 </span>            :  * to see more detailed information on equiangular variables and projective
+<span class="lineNum">      72 </span>            :  * scaling.
+<span class="lineNum">      73 </span>            :  *
+<span class="lineNum">      74 </span>            :  * ### Coordinate Map and Jacobian
+<span class="lineNum">      75 </span>            :  * In terms of the `face_vertices` variables, we define the
+<span class="lineNum">      76 </span>            :  * following auxiliary variables:
+<span class="lineNum">      77 </span>            :  *
+<span class="lineNum">      78 </span>            :  * \f{align*}{\Sigma^x &amp;= \frac{1}{4}(x^{+\zeta}_{-\xi,-\eta} +
+<span class="lineNum">      79 </span>            :  * x^{+\zeta}_{+\xi,+\eta} + x^{-\zeta}_{-\xi,-\eta} + x^{-\zeta}_{+\xi,+\eta})
+<span class="lineNum">      80 </span>            :  * \\
+<span class="lineNum">      81 </span>            :  * \Delta^x_{\zeta} &amp;= \frac{1}{4}(x^{+\zeta}_{-\xi,-\eta} +
+<span class="lineNum">      82 </span>            :  * x^{+\zeta}_{+\xi,+\eta} - x^{-\zeta}_{-\xi,-\eta} - x^{-\zeta}_{+\xi,+\eta})
+<span class="lineNum">      83 </span>            :  * \\
+<span class="lineNum">      84 </span>            :  * \Delta^x_{\xi} &amp;= \frac{1}{4}(x^{+\zeta}_{+\xi,+\eta} -
+<span class="lineNum">      85 </span>            :  * x^{+\zeta}_{-\xi,-\eta} + x^{-\zeta}_{+\xi,+\eta} - x^{-\zeta}_{-\xi,-\eta})
+<span class="lineNum">      86 </span>            :  * \\
+<span class="lineNum">      87 </span>            :  * \Delta^x_{\xi\zeta} &amp;= \frac{1}{4}(x^{+\zeta}_{+\xi,+\eta} -
+<span class="lineNum">      88 </span>            :  * x^{+\zeta}_{-\xi,-\eta} - x^{-\zeta}_{+\xi,+\eta} + x^{-\zeta}_{-\xi,-\eta})
+<span class="lineNum">      89 </span>            :  * \\
+<span class="lineNum">      90 </span>            :  * \Sigma^y &amp;= \frac{1}{4}(y^{+\zeta}_{-\xi,-\eta} +
+<span class="lineNum">      91 </span>            :  * y^{+\zeta}_{+\xi,+\eta} + y^{-\zeta}_{-\xi,-\eta} + y^{-\zeta}_{+\xi,+\eta})
+<span class="lineNum">      92 </span>            :  * \\
+<span class="lineNum">      93 </span>            :  * \Delta^y_{\zeta} &amp;= \frac{1}{4}(y^{+\zeta}_{-\xi,-\eta} +
+<span class="lineNum">      94 </span>            :  * y^{+\zeta}_{+\xi,+\eta} - y^{-\zeta}_{-\xi,-\eta} - y^{-\zeta}_{+\xi,+\eta})
+<span class="lineNum">      95 </span>            :  * \\
+<span class="lineNum">      96 </span>            :  * \Delta^y_{\eta} &amp;= \frac{1}{4}(y^{+\zeta}_{+\xi,+\eta} -
+<span class="lineNum">      97 </span>            :  * y^{+\zeta}_{-\xi,-\eta} + y^{-\zeta}_{+\xi,+\eta} - y^{-\zeta}_{-\xi,-\eta})
+<span class="lineNum">      98 </span>            :  * \\
+<span class="lineNum">      99 </span>            :  * \Delta^y_{\eta\zeta} &amp;= \frac{1}{4}(y^{+\zeta}_{+\xi,+\eta} -
+<span class="lineNum">     100 </span>            :  * y^{+\zeta}_{-\xi,-\eta} - y^{-\zeta}_{+\xi,+\eta} + y^{-\zeta}_{-\xi,-\eta})
+<span class="lineNum">     101 </span>            :  * \\
+<span class="lineNum">     102 </span>            :  * \Sigma^z &amp;= \frac{z_1 + z_2}{2}\\
+<span class="lineNum">     103 </span>            :  * \Delta^z &amp;= \frac{z_2 - z_1}{2}
+<span class="lineNum">     104 </span>            :  * \f}
+<span class="lineNum">     105 </span>            :  *
+<span class="lineNum">     106 </span>            :  * The full map is then given by:
+<span class="lineNum">     107 </span>            :  * \f[\vec{x}(\xi,\eta,\zeta) = \begin{bmatrix}
+<span class="lineNum">     108 </span>            :  * \Sigma^x + \Delta^x_{\xi}\Xi + (\Delta^x_{\zeta} +
+<span class="lineNum">     109 </span>            :  * \Delta^x_{\xi\zeta}\Xi)\mathrm{Z}\\
+<span class="lineNum">     110 </span>            :  * \Sigma^y + \Delta^y_{\eta}\mathrm{H} + (\Delta^y_{\zeta} +
+<span class="lineNum">     111 </span>            :  * \Delta^y_{\eta\zeta}\mathrm{H})\mathrm{Z}\\
+<span class="lineNum">     112 </span>            :  * \Sigma^z + \Delta^z\mathrm{Z}\\
+<span class="lineNum">     113 </span>            :  * \end{bmatrix}\f]
+<span class="lineNum">     114 </span>            :  *
+<span class="lineNum">     115 </span>            :  * With Jacobian: \f[J =
+<span class="lineNum">     116 </span>            :  * \begin{bmatrix}
+<span class="lineNum">     117 </span>            :  * (\Delta^x_{\xi} + \Delta^x_{\xi\zeta}\mathrm{Z})\Xi' &amp;
+<span class="lineNum">     118 </span>            :  * 0 &amp; (\Delta^x_{\zeta}+ \Delta^x_{\xi\zeta}\Xi)\mathrm{Z}' \\
+<span class="lineNum">     119 </span>            :  * 0 &amp; (\Delta^y_{\eta} + \Delta^y_{\eta\zeta}\mathrm{Z})\mathrm{H}' &amp;
+<span class="lineNum">     120 </span>            :  * (\Delta^y_{\zeta} + \Delta^y_{\eta\zeta}\mathrm{H})\mathrm{Z}'\\
+<span class="lineNum">     121 </span>            :  * 0 &amp; 0 &amp; \Delta^z\mathrm{Z}' \\
+<span class="lineNum">     122 </span>            :  * \end{bmatrix}
+<span class="lineNum">     123 </span>            :  * \f]
+<span class="lineNum">     124 </span>            :  *
+<span class="lineNum">     125 </span>            :  * ### Suggested values for the projective scale factor
+<span class="lineNum">     126 </span>            :  * \note This section assumes familiarity with projective scaling as discussed
+<span class="lineNum">     127 </span>            :  * on the [page on redistributing gridpoints](@ref redistributing_gridpoints).
+<span class="lineNum">     128 </span>            :  *
+<span class="lineNum">     129 </span>            :  * When constructing a Frustum map, it is not immediately obvious what value of
+<span class="lineNum">     130 </span>            :  * \f$w_{\delta}\f$ to use in the projective map; here we present a choice of
+<span class="lineNum">     131 </span>            :  * \f$w_{\delta}\f$ that will produce minimal grid distortion. We cover two
+<span class="lineNum">     132 </span>            :  * cases: the first is the special case in which the two rectangular Frustum
+<span class="lineNum">     133 </span>            :  * bases are related by a simple scale factor; the second is the general case.
+<span class="lineNum">     134 </span>            :  *
+<span class="lineNum">     135 </span>            :  * \image html ProjectionOfCube.png &quot;Trapezoids from squares. (Davide Cervone)&quot;
+<span class="lineNum">     136 </span>            :  *
+<span class="lineNum">     137 </span>            :  * As seen in Cervone's [Cubes and Hypercubes Rotating]
+<span class="lineNum">     138 </span>            :  * (http://www.math.union.edu/~dpvc/math/4D/rotation/welcome.html), there is a
+<span class="lineNum">     139 </span>            :  * special case in which the inverse projection of a trapezoid is not another
+<span class="lineNum">     140 </span>            :  * trapezoid, but a rectangle where the bases are congruent.
+<span class="lineNum">     141 </span>            :  * Most often one will want to use the special value of \f$w_{\delta}\f$ where
+<span class="lineNum">     142 </span>            :  * this occurs. This value of \f$w_{\delta}\f$ corresponds to the projective
+<span class="lineNum">     143 </span>            :  * transformation mapping a rectangular prism in an ambient 4D space with
+<span class="lineNum">     144 </span>            :  * congruent faces at \f$w=1\f$ and \f$w=w_{\delta}\f$ to the frustum in the
+<span class="lineNum">     145 </span>            :  * plane \f$w=1\f$:
+<span class="lineNum">     146 </span>            :  *
+<span class="lineNum">     147 </span>            :  * \f[w_{\delta} = \frac{L_1}{L_2}\f]
+<span class="lineNum">     148 </span>            :  *
+<span class="lineNum">     149 </span>            :  * where \f$\frac{L_1}{L_2}\f$ is the ratio between any pair of
+<span class="lineNum">     150 </span>            :  * corresponding side lengths of the \f$z_1\f$ and \f$z_2\f$-bases of the
+<span class="lineNum">     151 </span>            :  * frustum, respectively.
+<span class="lineNum">     152 </span>            :  *
+<span class="lineNum">     153 </span>            :  * For the general case one will want to use the value:
+<span class="lineNum">     154 </span>            :  * \f[w_{\delta} =
+<span class="lineNum">     155 </span>            :  * \frac{\sqrt{(x^{-\zeta}_{+\xi,+\eta} - x^{-\zeta}_{-\xi,+\eta})
+<span class="lineNum">     156 </span>            :  *             (y^{-\zeta}_{+\xi,+\eta} - y^{-\zeta}_{+\xi,-\eta})}}
+<span class="lineNum">     157 </span>            :  * {\sqrt{(x^{+\zeta}_{+\xi,+\eta} - x^{+\zeta}_{-\xi,+\eta})
+<span class="lineNum">     158 </span>            :  *        (y^{+\zeta}_{+\xi,+\eta} - y^{+\zeta}_{+\xi,-\eta})}}\f]
+<span class="lineNum">     159 </span>            :  *
+<span class="lineNum">     160 </span>            :  * This is the value for \f$w_{\delta}\f$ used by this CoordinateMap when
+<span class="lineNum">     161 </span>            :  * `auto_projective_scale_factor` is `true`.
+<span class="lineNum">     162 </span>            :  *
+<span class="lineNum">     163 </span>            :  */
+<span class="lineNum">     164 </span><span class="lineCov">          1 : class Frustum {</span>
+<span class="lineNum">     165 </span>            :  public:
+<span class="lineNum">     166 </span><span class="lineNoCov">          0 :   static constexpr size_t dim = 3;</span>
+<span class="lineNum">     167 </span><span class="lineNoCov">          0 :   Frustum(const std::array&lt;std::array&lt;double, 2&gt;, 4&gt;&amp; face_vertices,</span>
+<span class="lineNum">     168 </span>            :           double lower_bound, double upper_bound,
+<span class="lineNum">     169 </span>            :           OrientationMap&lt;3&gt; orientation_of_frustum,
+<span class="lineNum">     170 </span>            :           bool with_equiangular_map = false,
+<span class="lineNum">     171 </span>            :           double projective_scale_factor = 1.0,
+<span class="lineNum">     172 </span>            :           bool auto_projective_scale_factor = false) noexcept;
+<span class="lineNum">     173 </span><span class="lineNoCov">          0 :   Frustum() = default;</span>
+<span class="lineNum">     174 </span><span class="lineNoCov">          0 :   ~Frustum() = default;</span>
+<span class="lineNum">     175 </span><span class="lineNoCov">          0 :   Frustum(Frustum&amp;&amp;) = default;</span>
+<span class="lineNum">     176 </span><span class="lineNoCov">          0 :   Frustum(const Frustum&amp;) = default;</span>
+<span class="lineNum">     177 </span><span class="lineNoCov">          0 :   Frustum&amp; operator=(const Frustum&amp;) = default;</span>
+<span class="lineNum">     178 </span><span class="lineNoCov">          0 :   Frustum&amp; operator=(Frustum&amp;&amp;) = default;</span>
+<span class="lineNum">     179 </span>            : 
+<span class="lineNum">     180 </span>            :   template &lt;typename T&gt;
+<span class="lineNum">     181 </span><span class="lineNoCov">          0 :   std::array&lt;tt::remove_cvref_wrap_t&lt;T&gt;, 3&gt; operator()(</span>
+<span class="lineNum">     182 </span>            :       const std::array&lt;T, 3&gt;&amp; source_coords) const noexcept;
+<span class="lineNum">     183 </span>            : 
+<span class="lineNum">     184 </span>            :   /// Returns boost::none if \f$z\f$ is at or beyond the \f$z\f$-coordinate of
+<span class="lineNum">     185 </span>            :   /// the apex of the pyramid, tetrahedron, or triangular prism that is
+<span class="lineNum">     186 </span>            :   /// formed by extending the `Frustum` (for a
+<span class="lineNum">     187 </span>            :   /// \f$z\f$-oriented `Frustum`).
+<span class="lineNum">     188 </span><span class="lineCov">          1 :   boost::optional&lt;std::array&lt;double, 3&gt;&gt; inverse(</span>
+<span class="lineNum">     189 </span>            :       const std::array&lt;double, 3&gt;&amp; target_coords) const noexcept;
+<span class="lineNum">     190 </span>            : 
+<span class="lineNum">     191 </span>            :   template &lt;typename T&gt;
+<span class="lineNum">     192 </span><span class="lineNoCov">          0 :   tnsr::Ij&lt;tt::remove_cvref_wrap_t&lt;T&gt;, 3, Frame::NoFrame&gt; jacobian(</span>
+<span class="lineNum">     193 </span>            :       const std::array&lt;T, 3&gt;&amp; source_coords) const noexcept;
+<span class="lineNum">     194 </span>            : 
+<span class="lineNum">     195 </span>            :   template &lt;typename T&gt;
+<span class="lineNum">     196 </span><span class="lineNoCov">          0 :   tnsr::Ij&lt;tt::remove_cvref_wrap_t&lt;T&gt;, 3, Frame::NoFrame&gt; inv_jacobian(</span>
+<span class="lineNum">     197 </span>            :       const std::array&lt;T, 3&gt;&amp; source_coords) const noexcept;
+<span class="lineNum">     198 </span>            : 
+<span class="lineNum">     199 </span>            :   // clang-tidy: google runtime references
+<span class="lineNum">     200 </span><span class="lineNoCov">          0 :   void pup(PUP::er&amp; p) noexcept;  // NOLINT</span>
+<span class="lineNum">     201 </span>            : 
+<span class="lineNum">     202 </span><span class="lineNoCov">          0 :   bool is_identity() const noexcept { return is_identity_; }</span>
+<span class="lineNum">     203 </span>            : 
+<span class="lineNum">     204 </span>            :  private:
+<span class="lineNum">     205 </span><span class="lineNoCov">          0 :   friend bool operator==(const Frustum&amp; lhs, const Frustum&amp; rhs) noexcept;</span>
+<span class="lineNum">     206 </span>            : 
+<span class="lineNum">     207 </span><span class="lineNoCov">          0 :   OrientationMap&lt;3&gt; orientation_of_frustum_{};</span>
+<span class="lineNum">     208 </span><span class="lineNoCov">          0 :   bool with_equiangular_map_{false};</span>
+<span class="lineNum">     209 </span><span class="lineNoCov">          0 :   bool is_identity_{false};</span>
+<span class="lineNum">     210 </span><span class="lineNoCov">          0 :   bool with_projective_map_{false};</span>
+<span class="lineNum">     211 </span><span class="lineNoCov">          0 :   double sigma_x_{std::numeric_limits&lt;double&gt;::signaling_NaN()};</span>
+<span class="lineNum">     212 </span><span class="lineNoCov">          0 :   double delta_x_zeta_{std::numeric_limits&lt;double&gt;::signaling_NaN()};</span>
+<span class="lineNum">     213 </span><span class="lineNoCov">          0 :   double delta_x_xi_{std::numeric_limits&lt;double&gt;::signaling_NaN()};</span>
+<span class="lineNum">     214 </span><span class="lineNoCov">          0 :   double delta_x_xi_zeta_{std::numeric_limits&lt;double&gt;::signaling_NaN()};</span>
+<span class="lineNum">     215 </span><span class="lineNoCov">          0 :   double sigma_y_{std::numeric_limits&lt;double&gt;::signaling_NaN()};</span>
+<span class="lineNum">     216 </span><span class="lineNoCov">          0 :   double delta_y_zeta_{std::numeric_limits&lt;double&gt;::signaling_NaN()};</span>
+<span class="lineNum">     217 </span><span class="lineNoCov">          0 :   double delta_y_eta_{std::numeric_limits&lt;double&gt;::signaling_NaN()};</span>
+<span class="lineNum">     218 </span><span class="lineNoCov">          0 :   double delta_y_eta_zeta_{std::numeric_limits&lt;double&gt;::signaling_NaN()};</span>
+<span class="lineNum">     219 </span><span class="lineNoCov">          0 :   double sigma_z_{std::numeric_limits&lt;double&gt;::signaling_NaN()};</span>
+<span class="lineNum">     220 </span><span class="lineNoCov">          0 :   double delta_z_zeta_{std::numeric_limits&lt;double&gt;::signaling_NaN()};</span>
+<span class="lineNum">     221 </span><span class="lineNoCov">          0 :   double w_plus_{std::numeric_limits&lt;double&gt;::signaling_NaN()};</span>
+<span class="lineNum">     222 </span><span class="lineNoCov">          0 :   double w_minus_{std::numeric_limits&lt;double&gt;::signaling_NaN()};</span>
+<span class="lineNum">     223 </span>            : };
+<span class="lineNum">     224 </span>            : 
+<span class="lineNum">     225 </span>            : bool operator!=(const Frustum&amp; lhs, const Frustum&amp; rhs) noexcept;
+<span class="lineNum">     226 </span>            : }  // namespace CoordinateMaps
+<span class="lineNum">     227 </span>            : }  // namespace domain
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

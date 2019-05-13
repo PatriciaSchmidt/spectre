@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - /work/build_Debug_clang/docs/xml/profiling_with_projections.xml</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">work/build_Debug_clang/docs/xml</a> - profiling_with_projections.xml</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineCov">          1 : &lt;?xml version='1.0' encoding='UTF-8' standalone='no'?&gt;</span>
+<span class="lineNum">       2 </span>            : &lt;doxygen xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:noNamespaceSchemaLocation=&quot;compound.xsd&quot; version=&quot;1.8.13&quot;&gt;
+<span class="lineNum">       3 </span>            :   &lt;compounddef id=&quot;profiling_with_projections&quot; kind=&quot;page&quot;&gt;
+<span class="lineNum">       4 </span>            :     &lt;compoundname&gt;profiling_with_projections&lt;/compoundname&gt;
+<span class="lineNum">       5 </span>            :     &lt;title&gt;Profiling With Charm++ Projections&lt;/title&gt;
+<span class="lineNum">       6 </span>            :     &lt;detaileddescription&gt;
+<span class="lineNum">       7 </span>            : &lt;para&gt;&lt;heading level=&quot;2&quot;&gt;Basic Setup and Compilation&lt;/heading&gt;
+<span class="lineNum">       8 </span>            : &lt;/para&gt;&lt;para&gt;To view trace data after a profiling run you must download Charm++&amp;apos;s Projections software from their &lt;ulink url=&quot;http://charm.cs.illinois.edu/&quot;&gt;website&lt;/ulink&gt;. If you encounter issues it may be necessary to clone the git repository and build the correct version from scratch. Note that the version of Charm++ used to compile SpECTRE should match the version of Projections used to analyze the trace data. You can collect the trace data on a different machine than the one you will be analyzing the data on. For example, you can collect the data on a supercomputer and analyze it on your desktop or laptop.&lt;/para&gt;&lt;para&gt;For profiling you will want to use a production build of Charm++, which means compiling Charm++ with the &lt;computeroutput&gt;--with-production&lt;/computeroutput&gt; flag. To enable trace collecting you must build with the &lt;computeroutput&gt;--enable-tracing&lt;/computeroutput&gt; flag as well. For example, on a multicore 64-bit Linux machine the build command would be &lt;programlisting&gt;&lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;./build&lt;sp/&gt;charm++&lt;sp/&gt;multicore-linux64&lt;sp/&gt;gcc&lt;sp/&gt;-j8&lt;sp/&gt;--with-production&lt;sp/&gt;--enable-tracing&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">       9 </span>            : &lt;/programlisting&gt;&lt;/para&gt;&lt;para&gt;When building SpECTRE for profiling there are several options to control what is profiled. First, you&amp;apos;ll want to compile in Release mode by specifying &lt;computeroutput&gt;-D CMAKE_BUILD_TYPE=Release&lt;/computeroutput&gt;. To enable tracing with Projections you must specify the CMake variable &lt;computeroutput&gt;-D PROJECTIONS=ON&lt;/computeroutput&gt;. By default only Charm++ entry methods will be profiled, which will not provide very much insight because the AlgorithmChare infrastructure has only one entry method, which happens to be a function template. You must specify a typelist of which Actions you would like to profile before the first time &lt;computeroutput&gt;Evolution/EvolveSystem.hpp&lt;/computeroutput&gt; is included in the main executable. This typically means right after the &lt;computeroutput&gt;the_ordered_actions_list&lt;/computeroutput&gt; list is defined in the main executable. For example,&lt;/para&gt;&lt;para&gt;&lt;programlisting&gt;&lt;codeline&gt;&lt;highlight class=&quot;keyword&quot;&gt;using&lt;/highlight&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;sp/&gt;the_ordered_actions_list&lt;sp/&gt;=&lt;sp/&gt;tmpl::list&amp;lt;&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      10 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;sp/&gt;&lt;sp/&gt;&lt;sp/&gt;&lt;sp/&gt;Algorithms::CheckTriggers&amp;lt;the_system,&lt;sp/&gt;the_volume_dim&amp;gt;,&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      11 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;sp/&gt;&lt;sp/&gt;&lt;sp/&gt;&lt;sp/&gt;Algorithms::SendDataForFluxes&amp;lt;the_system,&lt;sp/&gt;the_volume_dim&amp;gt;,&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      12 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;sp/&gt;&lt;sp/&gt;&lt;sp/&gt;&lt;sp/&gt;Algorithms::ComputeVolumeDtU&amp;lt;the_system,&lt;sp/&gt;the_volume_dim&amp;gt;,&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      13 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;sp/&gt;&lt;sp/&gt;&lt;sp/&gt;&lt;sp/&gt;Algorithms::ComputeBoundaryFlux&amp;lt;the_system,&lt;sp/&gt;the_volume_dim&amp;gt;,&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      14 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;sp/&gt;&lt;sp/&gt;&lt;sp/&gt;&lt;sp/&gt;Algorithms::ImposeExternalBoundaryConditions&amp;lt;the_system,&lt;sp/&gt;the_volume_dim&amp;gt;,&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      15 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;sp/&gt;&lt;sp/&gt;&lt;sp/&gt;&lt;sp/&gt;Algorithms::ComputeU&amp;lt;the_system,&lt;sp/&gt;the_volume_dim&amp;gt;,&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      16 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;sp/&gt;&lt;sp/&gt;&lt;sp/&gt;&lt;sp/&gt;Algorithms::AdvanceSlab&amp;lt;the_system,&lt;sp/&gt;the_volume_dim&amp;gt;,&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      17 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;sp/&gt;&lt;sp/&gt;&lt;sp/&gt;&lt;sp/&gt;Algorithms::UpdateInstance&amp;lt;the_system,&lt;sp/&gt;the_volume_dim&amp;gt;&amp;gt;;&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      18 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      19 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;/highlight&gt;&lt;highlight class=&quot;keyword&quot;&gt;using&lt;/highlight&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;sp/&gt;the_trace_actions_list&lt;sp/&gt;=&lt;sp/&gt;tmpl::list&amp;lt;&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      20 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;sp/&gt;&lt;sp/&gt;&lt;sp/&gt;&lt;sp/&gt;Algorithms::CheckTriggers&amp;lt;the_system,&lt;sp/&gt;the_volume_dim&amp;gt;,&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      21 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;sp/&gt;&lt;sp/&gt;&lt;sp/&gt;&lt;sp/&gt;Algorithms::ComputeVolumeDtU&amp;lt;the_system,&lt;sp/&gt;the_volume_dim&amp;gt;,&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      22 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;sp/&gt;&lt;sp/&gt;&lt;sp/&gt;&lt;sp/&gt;Algorithms::ComputeBoundaryFlux&amp;lt;the_system,&lt;sp/&gt;the_volume_dim&amp;gt;,&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      23 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;sp/&gt;&lt;sp/&gt;&lt;sp/&gt;&lt;sp/&gt;Algorithms::ImposeExternalBoundaryConditions&amp;lt;the_system,&lt;sp/&gt;the_volume_dim&amp;gt;,&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      24 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;sp/&gt;&lt;sp/&gt;&lt;sp/&gt;&lt;sp/&gt;Algorithms::ComputeU&amp;lt;the_system,&lt;sp/&gt;the_volume_dim&amp;gt;&amp;gt;;&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      25 </span>            : &lt;/programlisting&gt;&lt;/para&gt;&lt;para&gt;Actions not in &lt;computeroutput&gt;the_trace_actions_list&lt;/computeroutput&gt; will not be traced but will still be executed. The code also records time in the AlgorithmChare&amp;apos;s &lt;computeroutput&gt;receive_data&lt;/computeroutput&gt; method that is not taken up by Actions (typically checking if all data needed for the next Action has been received) and also time spent saving the received data into local memory.&lt;/para&gt;&lt;para&gt;&lt;heading level=&quot;2&quot;&gt;Using PAPI With Projections&lt;/heading&gt;
+<span class="lineNum">      26 </span>            : &lt;/para&gt;&lt;para&gt;&lt;simplesect kind=&quot;warning&quot;&gt;&lt;para&gt;Using PAPI with Projections&amp;apos;s stat counters requires Charm++ v6.8.0 or newer.&lt;/para&gt;&lt;/simplesect&gt;
+<span class="lineNum">      27 </span>            : It is possible to collect information from hardware counters using PAPI for the Actions by specifying &lt;computeroutput&gt;-D PROJECTIONS_PAPI_COUNTERS=&amp;quot;PAPI_L1_DCM,PAPI_L2_DCM&amp;quot;&lt;/computeroutput&gt;. That is, a comma separated list of PAPI counters to record. To see the list of available counters on your hardware run &lt;computeroutput&gt;papi_avail -a&lt;/computeroutput&gt;. The recorded user statistics can then be analyzed inside Charm++ Projections. It is also possible to record custom user statistics using Charm++ by specifying &lt;computeroutput&gt;-D PROJECTIONS_USER_STATS=ON&lt;/computeroutput&gt; and defining the variable &lt;computeroutput&gt;user_stat_names&lt;/computeroutput&gt; as&lt;/para&gt;&lt;para&gt;&lt;programlisting&gt;&lt;codeline&gt;&lt;highlight class=&quot;keyword&quot;&gt;static&lt;/highlight&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;sp/&gt;constexpr&lt;sp/&gt;&lt;ref refid=&quot;cpp/container/array&quot; kindref=&quot;compound&quot; external=&quot;/work/spectre/docs/config/cppreference-doxygen-web.tag.xml&quot;&gt;std::array&amp;lt;const char*, 2&amp;gt;&lt;/ref&gt;&lt;sp/&gt;user_stat_names{&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      28 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;sp/&gt;&lt;sp/&gt;&lt;sp/&gt;&lt;sp/&gt;{&lt;/highlight&gt;&lt;highlight class=&quot;stringliteral&quot;&gt;&amp;quot;name_1&amp;quot;&lt;/highlight&gt;&lt;highlight class=&quot;normal&quot;&gt;,&lt;sp/&gt;&lt;/highlight&gt;&lt;highlight class=&quot;stringliteral&quot;&gt;&amp;quot;name_2&amp;quot;&lt;/highlight&gt;&lt;highlight class=&quot;normal&quot;&gt;}};&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      29 </span>            : &lt;/programlisting&gt;&lt;/para&gt;&lt;para&gt;The variable needs to be defined before &lt;computeroutput&gt;Evolution/EvolveSystem.hpp&lt;/computeroutput&gt; is included. To record statistics of PAPI counters it is recommended you disable counters for Actions (you can still time profile them, though) and specify the CMake variable &lt;computeroutput&gt;-D USE_PAPI=ON&lt;/computeroutput&gt;. An example of how to record statistics from PAPI counters is given below.&lt;/para&gt;&lt;para&gt;To provide a concrete example of tracing and analyzing hardware PMUs using PAPI for only a subset of functions in an Action we will profile the function &lt;computeroutput&gt;ScalarWaveEquations&amp;lt;Dim&amp;gt;::compute_volume_dt_u&lt;/computeroutput&gt;. There are several helper functions provided in &lt;computeroutput&gt;Utilities/PAPI.hpp&lt;/computeroutput&gt; that will come in useful. To start the PAPI counters and record the time at the beginning of the function we call&lt;/para&gt;&lt;para&gt;&lt;programlisting&gt;&lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;start_papi_counters(&lt;ref refid=&quot;cpp/container/array&quot; kindref=&quot;compound&quot; external=&quot;/work/spectre/docs/config/cppreference-doxygen-web.tag.xml&quot;&gt;std::array&amp;lt;int, 2&amp;gt;&lt;/ref&gt;{{PAPI_L1_DCM,&lt;sp/&gt;PAPI_L2_DCM}});&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      30 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;/highlight&gt;&lt;highlight class=&quot;keyword&quot;&gt;const&lt;/highlight&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;sp/&gt;&lt;/highlight&gt;&lt;highlight class=&quot;keywordtype&quot;&gt;double&lt;/highlight&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;sp/&gt;start_time&lt;sp/&gt;=&lt;sp/&gt;get_time_from_papi();&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      31 </span>            : &lt;/programlisting&gt;&lt;/para&gt;&lt;para&gt;and wherever we want to finish recording we run&lt;/para&gt;&lt;para&gt;&lt;programlisting&gt;&lt;codeline&gt;&lt;highlight class=&quot;keyword&quot;&gt;const&lt;/highlight&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;sp/&gt;&lt;/highlight&gt;&lt;highlight class=&quot;keywordtype&quot;&gt;double&lt;/highlight&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;sp/&gt;stop_time&lt;sp/&gt;=&lt;sp/&gt;get_time_from_papi();&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      32 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;/highlight&gt;&lt;highlight class=&quot;keyword&quot;&gt;auto&lt;/highlight&gt;&lt;highlight class=&quot;normal&quot;&gt;&lt;sp/&gt;counters&lt;sp/&gt;=&lt;sp/&gt;stop_papi_counters&amp;lt;2&amp;gt;();&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      33 </span>            : &lt;/programlisting&gt;&lt;/para&gt;&lt;para&gt;The template parameter to &lt;computeroutput&gt;stop_papi_counters&lt;/computeroutput&gt; must be the number of PAPI counters being recorded, two in our example. The function &lt;computeroutput&gt;get_time_from_papi&lt;/computeroutput&gt; returns the time in seconds and &lt;computeroutput&gt;stop_time - start_time&lt;/computeroutput&gt; gives the elapsed time in seconds between the two calls. Using &lt;computeroutput&gt;get_time_from_papi&lt;/computeroutput&gt; it is possible to compute FLOP/s, or any other metric related to time. Finally, to store the counter read outs into Projections&amp;apos;s stat counter we use&lt;/para&gt;&lt;para&gt;&lt;programlisting&gt;&lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;updateStat(projections_user_stat_offset,&lt;sp/&gt;counters[0]);&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      34 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;updateStat(projections_user_stat_offset&lt;sp/&gt;+&lt;sp/&gt;1,&lt;sp/&gt;counters[1]);&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      35 </span>            : &lt;/programlisting&gt;&lt;/para&gt;&lt;para&gt;The variable &lt;computeroutput&gt;projections_user_stat_offset&lt;/computeroutput&gt; is used to ensure that the stat numbers used by Charm++ internally do not collide with any used in the Actions, unless you have over 9000 Actions.&lt;/para&gt;&lt;para&gt;&lt;heading level=&quot;2&quot;&gt;Running SpECTRE With Trace Output&lt;/heading&gt;
+<span class="lineNum">      36 </span>            : &lt;/para&gt;&lt;para&gt;When running SpECTRE you must specify a directory to output trace data into. This is done by adding the command line argument &lt;computeroutput&gt;+traceroot DIR&lt;/computeroutput&gt; where &lt;computeroutput&gt;DIR&lt;/computeroutput&gt; is the directory to dump the trace data into. Note that &lt;computeroutput&gt;DIR&lt;/computeroutput&gt; must already exist, the application will not create it. For example, to run the 3D scalar wave executable on a multicore build with tracing enabled use&lt;/para&gt;&lt;para&gt;&lt;programlisting&gt;&lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;./Evolve3DScalarWave&lt;sp/&gt;+p4&lt;sp/&gt;+traceroot&lt;sp/&gt;./traces&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      37 </span>            : &lt;/programlisting&gt;&lt;/para&gt;&lt;para&gt;For more information on runtime options to control trace data see the &lt;ulink url=&quot;http://charm.cs.illinois.edu/manuals/html/projections/1.html&quot;&gt;Charm++ Projections manual&lt;/ulink&gt;.&lt;/para&gt;&lt;para&gt;&lt;heading level=&quot;2&quot;&gt;Visualizing Trace Data In Projections&lt;/heading&gt;
+<span class="lineNum">      38 </span>            : &lt;/para&gt;&lt;para&gt;See the &lt;ulink url=&quot;http://charm.cs.illinois.edu/manuals/html/projections/2.html&quot;&gt;Charm++ Projections manual&lt;/ulink&gt; for details. &lt;/para&gt;    &lt;/detaileddescription&gt;
+<span class="lineNum">      39 </span>            :   &lt;/compounddef&gt;
+<span class="lineNum">      40 </span>            : &lt;/doxygen&gt;
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

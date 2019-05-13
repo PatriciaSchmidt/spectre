@@ -1,0 +1,168 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - /work/spectre/docs/DevGuide/Tmp.md</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">work/spectre/docs/DevGuide</a> - Tmp.md</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : \cond NEVER</span>
+<span class="lineNum">       2 </span>            : Distributed under the MIT License.
+<span class="lineNum">       3 </span>            : See LICENSE.txt for details.
+<span class="lineNum">       4 </span>            : \endcond
+<span class="lineNum">       5 </span>            : # SFINAE {#sfinae}
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            : SFINAE, Substitution Failure Is Not An Error, means that if a deduced template
+<span class="lineNum">       8 </span>            : substitution fails, compilation must continue. This can be exploited to make
+<span class="lineNum">       9 </span>            : decisions at compile time. See [here](http://nilsdeppe.com/posts/tmpl-part1)
+<span class="lineNum">      10 </span>            : for a discussion using `std::enable_if` to remove certain functions from
+<span class="lineNum">      11 </span>            : overload resolution or certain template specializations from name lookup.
+<span class="lineNum">      12 </span>            : Another method of controlling name lookup resolution is using `std::void_t`
+<span class="lineNum">      13 </span>            : which is implemented as `cpp17::void_t` in SpECTRE. `void_t` is a metafunction
+<span class="lineNum">      14 </span>            : from types to `void`, that is
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : ```cpp
+<span class="lineNum">      17 </span>            : template &lt;typename... Args&gt;
+<span class="lineNum">      18 </span>            : using void_t = void;
+<span class="lineNum">      19 </span>            : ```
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : `void_t` is useful when used in combination with `decltype` and `std::declval`
+<span class="lineNum">      22 </span>            : to probe if a type has certain members. For example, we can implement a type
+<span class="lineNum">      23 </span>            : trait to check if a type `T` is iterable by first have the general definition
+<span class="lineNum">      24 </span>            : inherit from `std::false_type` as follows,
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            : ```cpp
+<span class="lineNum">      27 </span>            : template &lt;typename T, typename = void&gt;
+<span class="lineNum">      28 </span>            : struct is_iterable : std::false_type {};
+<span class="lineNum">      29 </span>            : ```
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span>            : Next we will have specialization that uses `void_t` to check if the type `T`
+<span class="lineNum">      32 </span>            : has a `begin()` and `end()` function.
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            : ```cpp
+<span class="lineNum">      35 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      36 </span>            : struct is_iterable&lt;T, cpp17::void_t&lt;decltype(std::declval&lt;T&gt;().begin(),
+<span class="lineNum">      37 </span>            :                                              std::declval&lt;T&gt;().end())&gt;&gt;
+<span class="lineNum">      38 </span>            :     : std::true_type {};
+<span class="lineNum">      39 </span>            : ```
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            : What is happening here? Well, we use `std::declval` to convert the type `T`
+<span class="lineNum">      42 </span>            : to a reference type, which allows us to call member functions inside `decltype`
+<span class="lineNum">      43 </span>            : expressions without having to construct an object. First we try to call the
+<span class="lineNum">      44 </span>            : member function `begin()` on `std::declval&lt;T&gt;()`, and if that succeeds we
+<span class="lineNum">      45 </span>            : throw away the result using the comma operator. Next we try to call `end()`
+<span class="lineNum">      46 </span>            : on `std::declval&lt;T&gt;()`, which, if it succeeds we get the return type of
+<span class="lineNum">      47 </span>            : using `decltype`. Note that `decltype` is important because we can only call
+<span class="lineNum">      48 </span>            : member functions on reference types inside of `decltype`, not just anywhere.
+<span class="lineNum">      49 </span>            : Finally, if all this succeeded use `void_t` to metareturn `void`, otherwise
+<span class="lineNum">      50 </span>            : the template parameters of `void_t` fail to evaluate and the specialization
+<span class="lineNum">      51 </span>            : cannot be resolved during name lookup. We could just as well use
+<span class="lineNum">      52 </span>            : 
+<span class="lineNum">      53 </span>            : ```cpp
+<span class="lineNum">      54 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      55 </span>            : struct is_iterable&lt;T, cpp17::void_t&lt;decltype(std::declval&lt;T&gt;().begin()),
+<span class="lineNum">      56 </span>            :                                     decltype(std::declval&lt;T&gt;().end())&gt;&gt;
+<span class="lineNum">      57 </span>            :     : std::true_type {};
+<span class="lineNum">      58 </span>            : ```
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span>            : Which of the two implementations of the `is_iterable` is preferred is simply
+<span class="lineNum">      61 </span>            : a matter of taste, both behave correctly.
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span>            : If you're reading closely you might wonder why the `void_t` is necessary at
+<span class="lineNum">      64 </span>            : all, why not just `decltype(...)`? Well the reason is that since the default
+<span class="lineNum">      65 </span>            : template parameter metavalue is `void`, the specialization cannot be resolved
+<span class="lineNum">      66 </span>            : during name lookup unless the second template parameter in the specialization
+<span class="lineNum">      67 </span>            : is either `void` as well or is explicitly specified when the class template
+<span class="lineNum">      68 </span>            : is being invoked. Thus, the clearest implementation probably is
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span>            : ```cpp
+<span class="lineNum">      71 </span>            : template &lt;typename T, typename = cpp17::void_t&lt;&gt;&gt;
+<span class="lineNum">      72 </span>            : struct is_iterable : std::false_type {};
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      75 </span>            : struct is_iterable&lt;T, cpp17::void_t&lt;decltype(std::declval&lt;T&gt;().begin(),
+<span class="lineNum">      76 </span>            :                                              std::declval&lt;T&gt;().end())&gt;&gt;
+<span class="lineNum">      77 </span>            :     : std::true_type {};
+<span class="lineNum">      78 </span>            : ```
+<span class="lineNum">      79 </span>            : 
+<span class="lineNum">      80 </span>            : You could now also define a helper type alias and constexpr boolean
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span>            : ```cpp
+<span class="lineNum">      83 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      84 </span>            : using is_iterable_t = typename is_iterable&lt;T&gt;::type;
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      87 </span>            : constexpr bool is_iterable_v = is_iterable&lt;T&gt;::value;
+<span class="lineNum">      88 </span>            : ```
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

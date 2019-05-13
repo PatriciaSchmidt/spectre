@@ -1,0 +1,276 @@
+<!-- HTML header for doxygen 1.8.10-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=9"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="SXS Collaboration">
+    <meta name="generator" content="Doxygen 1.8.13"/>
+    <style>
+        /*!
+         * IE10 viewport hack for Surface/desktop Windows 8 bug
+         * Copyright 2014-2015 Twitter, Inc.
+         * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+         */
+        @-webkit-viewport { width: device-width; }
+        @-moz-viewport    { width: device-width; }
+        @-ms-viewport     { width: device-width; }
+        @-o-viewport      { width: device-width; }
+        @viewport         { width: device-width; }
+      </style>
+  <title>SpECTRE: intrp::Actions::ApparentHorizon&lt; InterpolationTargetTag, Frame &gt; Struct Template Reference</title>
+  <link href="tabs.css" rel="stylesheet" type="text/css"/>
+  <script type="text/javascript" src="jquery.js"></script>
+  <script type="text/javascript" src="dynsections.js"></script>
+  <link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js", "color.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+});
+MathJax.Hub.Config({
+    TeX: { equationNumbers: { autoNumber: "AMS" } }
+});
+MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['^^','^^'], ['\\(', '\\)']]}
+});
+</script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js"></script>
+  <link href="octicons.css" rel="stylesheet">
+  <link href="bootstrap.min.css" rel="stylesheet">
+  <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <script type="text/javascript" src="jquery.js"></script>
+  <script type="text/javascript" src="popper.min.js"></script>
+  <script type="text/javascript" src="bootstrap.min.js"></script>
+  <script type="text/javascript" src="spectre.js"></script>
+  </head>
+  <body>
+  <div id="top" class="navbar-fixed-top"><!-- do not remove this div, it is closed by doxygen! -->
+  <!-- BEGIN TITLEAREA -->
+  <div id="titlearea">
+  <script type="text/javascript">
+  var searchBox = new SearchBox("searchBox", "search",false,'Search');
+  </script>
+  <div id="main-nav">
+    <ul class="sm sm-dox" id="main-menu">
+      <li>
+      <a href="index.html">
+      SpECTRE &#160;
+        <span id="projectnumber">v0.0.0</span>
+      </a>
+      </li>
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="selected">
+          <span id="selected">
+            <i class="octicon octicon-book"></i><span>Documentation</span>
+          </span>
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li style="min-width: 135px;">
+            <a href="index.html">
+            <i class="octicon octicon-book"></i><span>Introduction</span></a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="installation.html">
+              <i class="octicon octicon-desktop-download"></i><span>Installation</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="tutorials.html">
+              <i class="octicon octicon-mortar-board"></i><span>User Tutorials</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="dev_guide.html">
+              <i class="octicon octicon-gist-secret"></i><span>Dev Guide</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="code_of_conduct.html">
+              <i class="octicon octicon-comment-discussion"></i><span>Code of Conduct</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="contributing_to_spectre.html">
+              <i class="octicon octicon-git-pull-request"></i><span>Contributing Guide</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="selected">
+          <span id="selected">
+            <i class="octicon octicon-code"></i>
+              <span>Code Reference</span>
+          </span>
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li style="min-width: 130px;">
+            <a href="modules.html">
+              <i class="octicon octicon-code"></i>
+              <span>Topics</span>
+            </a>
+          </li>
+          <li style="min-width: 130px;">
+            <a href="namespaces.html">
+              <i class="octicon octicon-gist"></i>
+              <span>Namespaces</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <a href="files.html">
+          <i class="octicon octicon-file-directory"></i><span>Files</span>
+        </a>
+      </li>
+      <li>
+        <a href="citelist.html">
+          <i class="octicon octicon-file-text"></i><span>Bibliography</span>
+        </a>
+      </li>
+      <li>
+        <a href="https://github.com/sxs-collaboration/spectre" target="_blank">
+          <i class="octicon octicon-mark-github"></i><span>View on GitHub</span>
+        </a>
+      </li>
+      <!--The Search <li> is added by doxygen later-->
+    </ul>
+  </div><!-- main-nav -->
+  </div><!-- titlearea -->
+  <!-- window showing the filter options -->
+  <div id="MSearchSelectWindow"  style="position: fixed;"
+       onmouseover="return searchBox.OnSearchSelectShow()"
+       onmouseout="return searchBox.OnSearchSelectHide()"
+       onkeydown="return searchBox.OnSearchSelectKey(event)">
+  </div>
+  <!-- iframe showing the search results (closed by default) -->
+  <div id="MSearchResultsWindow"  style="position: fixed;">
+  <iframe src="javascript:void(0)" frameborder="0"
+          name="MSearchResults" id="MSearchResults">
+  </iframe>
+  </div>
+<!-- Generated by Doxygen 1.8.13 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search",false,'Search');
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><b>intrp</b></li><li class="navelem"><a class="el" href="namespaceintrp_1_1Actions.html">Actions</a></li><li class="navelem"><a class="el" href="structintrp_1_1Actions_1_1ApparentHorizon.html">ApparentHorizon</a></li>  </ul>
+</div>
+</div><!-- top -->
+<div class="header">
+  <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
+<a href="structintrp_1_1Actions_1_1ApparentHorizon-members.html">List of all members</a>  </div>
+  <div class="headertitle">
+<div class="title">intrp::Actions::ApparentHorizon&lt; InterpolationTargetTag, Frame &gt; Struct Template Reference<div class="ingroups"><a class="el" href="group__ActionsGroup.html">Actions</a></div></div>  </div>
+</div><!--header-->
+<div class="contents">
+
+<p>Sends points on a trial apparent horizon to an <code><a class="el" href="structintrp_1_1Interpolator.html" title="ParallelComponent responsible for collecting data from Elements and interpolating it onto Interpolati...">Interpolator</a></code>.  
+ <a href="structintrp_1_1Actions_1_1ApparentHorizon.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="InterpolationTargetApparentHorizon_8hpp_source.html">InterpolationTargetApparentHorizon.hpp</a>&gt;</code></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:aaa340e1e6e11e59202fbd82b68008528"><td class="memItemLeft" align="right" valign="top"><a id="aaa340e1e6e11e59202fbd82b68008528"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>options_type</b> = <a class="el" href="structintrp_1_1OptionHolders_1_1ApparentHorizon.html">OptionHolders::ApparentHorizon</a>&lt; Frame &gt;</td></tr>
+<tr class="separator:aaa340e1e6e11e59202fbd82b68008528"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace1aff2062a81449db9cc4c030416d45"><td class="memItemLeft" align="right" valign="top"><a id="ace1aff2062a81449db9cc4c030416d45"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>const_global_cache_tags</b> = tmpl::list&lt; InterpolationTargetTag &gt;</td></tr>
+<tr class="separator:ace1aff2062a81449db9cc4c030416d45"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a82e2fe3c3f9bad41d02fe0987ffc5712"><td class="memItemLeft" align="right" valign="top"><a id="a82e2fe3c3f9bad41d02fe0987ffc5712"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>initialization_tags</b> = tmpl::append&lt; StrahlkorperTags::items_tags&lt; Frame &gt;, tmpl::list&lt;::<a class="el" href="structah_1_1Tags_1_1FastFlow.html">ah::Tags::FastFlow</a>, ::<a class="el" href="structTags_1_1Verbosity.html">Tags::Verbosity</a> &gt;, StrahlkorperTags::compute_items_tags&lt; Frame &gt; &gt;</td></tr>
+<tr class="separator:a82e2fe3c3f9bad41d02fe0987ffc5712"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a982875bb1d5e9b16bbb7818d423f322a"><td class="memTemplParams" colspan="2"><a id="a982875bb1d5e9b16bbb7818d423f322a"></a>
+template&lt;typename DbTags , typename Metavariables &gt; </td></tr>
+<tr class="memitem:a982875bb1d5e9b16bbb7818d423f322a"><td class="memTemplItemLeft" align="right" valign="top">static auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>initialize</b> (<a class="el" href="classdb_1_1DataBox.html">db::DataBox</a>&lt; DbTags &gt; &amp;&amp;box, const <a class="el" href="classParallel_1_1ConstGlobalCache.html">Parallel::ConstGlobalCache</a>&lt; <a class="el" href="structMetavariables.html">Metavariables</a> &gt; &amp;cache) noexcept</td></tr>
+<tr class="separator:a982875bb1d5e9b16bbb7818d423f322a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe912cb6fa127f1799f466bc27c9cd50"><td class="memTemplParams" colspan="2"><a id="abe912cb6fa127f1799f466bc27c9cd50"></a>
+template&lt;typename DbTags , typename... InboxTags, typename Metavariables , typename ArrayIndex , typename ActionList , typename ParallelComponent , Requires&lt; tmpl::list_contains_v&lt; DbTags, typename Tags::TemporalIds&lt; Metavariables &gt;&gt;&gt;  = nullptr&gt; </td></tr>
+<tr class="memitem:abe912cb6fa127f1799f466bc27c9cd50"><td class="memTemplItemLeft" align="right" valign="top">static void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>apply</b> (<a class="el" href="classdb_1_1DataBox.html">db::DataBox</a>&lt; DbTags &gt; &amp;box, const <a class="el" href="classtuples_1_1TaggedTuple.html">tuples::TaggedTuple</a>&lt; InboxTags... &gt; &amp;, <a class="el" href="classParallel_1_1ConstGlobalCache.html">Parallel::ConstGlobalCache</a>&lt; <a class="el" href="structMetavariables.html">Metavariables</a> &gt; &amp;cache, const ArrayIndex &amp;, const ActionList, const ParallelComponent *const, const typename Metavariables::temporal_id::type &amp;temporal_id) noexcept</td></tr>
+<tr class="separator:abe912cb6fa127f1799f466bc27c9cd50"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;typename InterpolationTargetTag, typename Frame&gt;<br />
+struct intrp::Actions::ApparentHorizon&lt; InterpolationTargetTag, Frame &gt;</h3>
+
+<p>Sends points on a trial apparent horizon to an <code><a class="el" href="structintrp_1_1Interpolator.html" title="ParallelComponent responsible for collecting data from Elements and interpolating it onto Interpolati...">Interpolator</a></code>. </p>
+<p>This differs from <code><a class="el" href="structintrp_1_1Actions_1_1KerrHorizon.html" title="Sends points on a Kerr horizon to an Interpolator. ">KerrHorizon</a></code> in the following ways:</p><ul>
+<li>It supplies points on a prolonged <a class="el" href="classStrahlkorper.html" title="A star-shaped surface expanded in spherical harmonics. ">Strahlkorper</a>, at a higher resolution than the <a class="el" href="classStrahlkorper.html" title="A star-shaped surface expanded in spherical harmonics. ">Strahlkorper</a> in the DataBox, as needed for horizon finding.</li>
+<li>It uses a <code><a class="el" href="classFastFlow.html" title="Fast flow method for finding apparent horizons. ">FastFlow</a></code> in the DataBox.</li>
+<li>It has different options (including those for <code><a class="el" href="classFastFlow.html" title="Fast flow method for finding apparent horizons. ">FastFlow</a></code>).</li>
+</ul>
+<p>Uses:</p><ul>
+<li>DataBox:<ul>
+<li><code><a class="el" href="structTags_1_1Domain.html" title="The Domain. ">Tags::Domain</a>&lt;VolumeDim, <a class="el" href="namespaceFrame.html" title="Indicates the Frame that a TensorIndexType is in. ">Frame</a>&gt;</code></li>
+<li><code><a class="el" href="structah_1_1Tags_1_1FastFlow.html">ah::Tags::FastFlow</a></code></li>
+<li><code><a class="el" href="structStrahlkorperTags_1_1CartesianCoords.html" title="CartesianCoords(i) is , the vector of  coordinates of each point on the surface. ">StrahlkorperTags::CartesianCoords</a>&lt;<a class="el" href="namespaceFrame.html" title="Indicates the Frame that a TensorIndexType is in. ">Frame</a>&gt;</code></li>
+<li><code><a class="el" href="structTags_1_1Variables.html">Tags::Variables</a>&lt;typename InterpolationTargetTag::vars_to_interpolate_to_target&gt;</code></li>
+</ul>
+</li>
+</ul>
+<p>DataBox changes:</p><ul>
+<li>Adds: nothing</li>
+<li>Removes: nothing</li>
+<li>Modifies:<ul>
+<li><code><a class="el" href="structintrp_1_1Tags_1_1IndicesOfFilledInterpPoints.html" title="Keeps track of which points have been filled with interpolated data. ">Tags::IndicesOfFilledInterpPoints</a></code></li>
+<li><code><a class="el" href="structTags_1_1Variables.html">Tags::Variables</a>&lt;typename InterpolationTargetTag::vars_to_interpolate_to_target&gt;</code></li>
+</ul>
+</li>
+</ul>
+<p>This Action also has an initialize function that adds to the DataBox:</p><ul>
+<li><code>StrahlkorperTags::items_tags&lt;<a class="el" href="namespaceFrame.html" title="Indicates the Frame that a TensorIndexType is in. ">Frame</a>&gt;</code></li>
+<li><code>StrahlkorperTags::compute_items_tags&lt;<a class="el" href="namespaceFrame.html" title="Indicates the Frame that a TensorIndexType is in. ">Frame</a>&gt;</code></li>
+<li><code><a class="el" href="structah_1_1Tags_1_1FastFlow.html">ah::Tags::FastFlow</a></code></li>
+<li><code><a class="el" href="structTags_1_1Verbosity.html" title="Tag for putting Verbosity in a DataBox. ">Tags::Verbosity</a></code></li>
+</ul>
+<p>For requirements on InterpolationTargetTag, see <a class="el" href="structintrp_1_1InterpolationTarget.html" title="ParallelComponent representing a set of points to be interpolated to and a function to call upon inte...">InterpolationTarget</a> </p>
+</div><hr/>The documentation for this struct was generated from the following file:<ul>
+<li>src/NumericalAlgorithms/Interpolation/<a class="el" href="InterpolationTargetApparentHorizon_8hpp_source.html">InterpolationTargetApparentHorizon.hpp</a></li>
+</ul>
+</div><!-- contents -->
+<!-- HTML footer for doxygen 1.8.10-->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+&copy; Copyright 2017 - 2019
+<a href="https://black-holes.org">SXS Collaboration</a>,
+<a href="LICENSE.txt" target="_blank">
+<span class="hidden-xs">Distributed under the</span>
+MIT License</a>
+</small></address>
+</body>
+</html>

@@ -1,0 +1,402 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - IO/Observer/Actions.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">IO/Observer</a> - Actions.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntry">13</td>
+            <td class="headerCovTableEntryLo">46.2 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       7 </span>            : #include &lt;unordered_map&gt;
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : #include &quot;DataStructures/DataBox/DataBox.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;DataStructures/DataBox/DataBoxTag.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;DataStructures/Index.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;IO/Observer/ArrayComponentId.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;IO/Observer/ObserverComponent.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;IO/Observer/Tags.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;IO/Observer/TypeOfObservation.hpp&quot;
+<span class="lineNum">      16 </span>            : #include &quot;Parallel/ConstGlobalCache.hpp&quot;
+<span class="lineNum">      17 </span>            : #include &quot;Parallel/Info.hpp&quot;
+<span class="lineNum">      18 </span>            : #include &quot;Parallel/Invoke.hpp&quot;
+<span class="lineNum">      19 </span>            : #include &quot;Utilities/TaggedTuple.hpp&quot;
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span><span class="lineNoCov">          0 : namespace observers {</span>
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : /*!
+<span class="lineNum">      24 </span>            :  * \ingroup ObserversGroup
+<span class="lineNum">      25 </span>            :  * \brief %Actions used by the observer parallel component
+<span class="lineNum">      26 </span>            :  */
+<span class="lineNum">      27 </span><span class="lineCov">          1 : namespace Actions {</span>
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            : /// \brief Register a class that will call
+<span class="lineNum">      30 </span>            : /// `observers::ThreadedActions::ContributeVolumeData`.
+<span class="lineNum">      31 </span>            : ///
+<span class="lineNum">      32 </span>            : /// Should be invoked on ObserverWriter.
+<span class="lineNum">      33 </span><span class="lineCov">          1 : struct RegisterVolumeContributorWithObserverWriter {</span>
+<span class="lineNum">      34 </span>            :  public:
+<span class="lineNum">      35 </span>            :   template &lt;typename... DbTags, typename... InboxTags, typename Metavariables,
+<span class="lineNum">      36 </span>            :             typename ArrayIndex, typename ActionList,
+<span class="lineNum">      37 </span>            :             typename ParallelComponent, typename... ReductionDatums,
+<span class="lineNum">      38 </span>            :             Requires&lt;sizeof...(DbTags) != 0&gt; = nullptr&gt;
+<span class="lineNum">      39 </span><span class="lineNoCov">          0 :   static void apply(db::DataBox&lt;tmpl::list&lt;DbTags...&gt;&gt;&amp; box,</span>
+<span class="lineNum">      40 </span>            :                     tuples::TaggedTuple&lt;InboxTags...&gt;&amp; /*inboxes*/,
+<span class="lineNum">      41 </span>            :                     const Parallel::ConstGlobalCache&lt;Metavariables&gt;&amp; /*cache*/,
+<span class="lineNum">      42 </span>            :                     const ArrayIndex&amp; /*array_index*/,
+<span class="lineNum">      43 </span>            :                     const ActionList /*meta*/,
+<span class="lineNum">      44 </span>            :                     const ParallelComponent* const /*meta*/,
+<span class="lineNum">      45 </span>            :                     const observers::ObservationId&amp; observation_id,
+<span class="lineNum">      46 </span>            :                     const size_t processing_element) noexcept {
+<span class="lineNum">      47 </span>            :     db::mutate&lt;Tags::VolumeObserversRegistered&gt;(
+<span class="lineNum">      48 </span>            :         make_not_null(&amp;box),
+<span class="lineNum">      49 </span>            :         [&amp;observation_id, &amp;processing_element ](
+<span class="lineNum">      50 </span>            :             const gsl::not_null&lt;std::unordered_map&lt;size_t, std::set&lt;size_t&gt;&gt;*&gt;
+<span class="lineNum">      51 </span>            :                 volume_observers_registered) noexcept {
+<span class="lineNum">      52 </span>            :           // Currently the only part of the observation_id that is used is the
+<span class="lineNum">      53 </span>            :           // `observation_type_hash()`. But in the future with load balancing
+<span class="lineNum">      54 </span>            :           // we will use the full observation_id, and elements will need
+<span class="lineNum">      55 </span>            :           // to register and unregister themselves at specific times.
+<span class="lineNum">      56 </span>            :           const size_t hash = observation_id.observation_type_hash();
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span>            :           if (volume_observers_registered-&gt;count(hash) == 0) {
+<span class="lineNum">      59 </span>            :             (*volume_observers_registered)[hash] = std::set&lt;size_t&gt;{};
+<span class="lineNum">      60 </span>            :           }
+<span class="lineNum">      61 </span>            :           // We don't care if we insert the same processing element
+<span class="lineNum">      62 </span>            :           // more than once. We care only about which processing
+<span class="lineNum">      63 </span>            :           // elements have registered.
+<span class="lineNum">      64 </span>            :           volume_observers_registered-&gt;at(hash).insert(processing_element);
+<span class="lineNum">      65 </span>            :         });
+<span class="lineNum">      66 </span>            :   }
+<span class="lineNum">      67 </span>            : };
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span>            : /// \brief Register a class that will call
+<span class="lineNum">      70 </span>            : /// `observers::ThreadedActions::WriteReductionData` or
+<span class="lineNum">      71 </span>            : /// `observers::ThreadedActions::ContributeReductionData`.
+<span class="lineNum">      72 </span>            : ///
+<span class="lineNum">      73 </span>            : /// Should be invoked on ObserverWriter.
+<span class="lineNum">      74 </span><span class="lineCov">          1 : struct RegisterReductionContributorWithObserverWriter {</span>
+<span class="lineNum">      75 </span>            :  public:
+<span class="lineNum">      76 </span>            :   template &lt;typename... DbTags, typename... InboxTags, typename Metavariables,
+<span class="lineNum">      77 </span>            :             typename ArrayIndex, typename ActionList,
+<span class="lineNum">      78 </span>            :             typename ParallelComponent, typename... ReductionDatums,
+<span class="lineNum">      79 </span>            :             Requires&lt;sizeof...(DbTags) != 0&gt; = nullptr&gt;
+<span class="lineNum">      80 </span><span class="lineNoCov">          0 :   static void apply(db::DataBox&lt;tmpl::list&lt;DbTags...&gt;&gt;&amp; box,</span>
+<span class="lineNum">      81 </span>            :                     tuples::TaggedTuple&lt;InboxTags...&gt;&amp; /*inboxes*/,
+<span class="lineNum">      82 </span>            :                     Parallel::ConstGlobalCache&lt;Metavariables&gt;&amp; cache,
+<span class="lineNum">      83 </span>            :                     const ArrayIndex&amp; /*array_index*/,
+<span class="lineNum">      84 </span>            :                     const ActionList /*meta*/,
+<span class="lineNum">      85 </span>            :                     const ParallelComponent* const /*meta*/,
+<span class="lineNum">      86 </span>            :                     const observers::ObservationId&amp; observation_id,
+<span class="lineNum">      87 </span>            :                     const size_t processing_element_or_node,
+<span class="lineNum">      88 </span>            :                     const bool called_from_other_node = false) noexcept {
+<span class="lineNum">      89 </span>            :     const auto node_id = static_cast&lt;size_t&gt;(Parallel::my_node());
+<span class="lineNum">      90 </span>            :     if (not called_from_other_node) {
+<span class="lineNum">      91 </span>            :       // processing_element_or_node is the processing element of the caller.
+<span class="lineNum">      92 </span>            :       db::mutate&lt;Tags::ReductionObserversRegistered&gt;(
+<span class="lineNum">      93 </span>            :           make_not_null(&amp;box),
+<span class="lineNum">      94 </span>            :           [&amp;cache, &amp;node_id, &amp;observation_id, &amp;processing_element_or_node ](
+<span class="lineNum">      95 </span>            :               const gsl::not_null&lt;std::unordered_map&lt;size_t, std::set&lt;size_t&gt;&gt;*&gt;
+<span class="lineNum">      96 </span>            :                   reduction_observers_registered) noexcept {
+<span class="lineNum">      97 </span>            :             // Currently the only part of the observation_id that is used is the
+<span class="lineNum">      98 </span>            :             // `observation_type_hash()`. But in the future with load balancing
+<span class="lineNum">      99 </span>            :             // we will use the full observation_id, and elements will need
+<span class="lineNum">     100 </span>            :             // to register and unregister themselves at specific times.
+<span class="lineNum">     101 </span>            :             const size_t hash = observation_id.observation_type_hash();
+<span class="lineNum">     102 </span>            : 
+<span class="lineNum">     103 </span>            :             if (reduction_observers_registered-&gt;count(hash) == 0) {
+<span class="lineNum">     104 </span>            :               (*reduction_observers_registered)[hash] = std::set&lt;size_t&gt;{};
+<span class="lineNum">     105 </span>            : 
+<span class="lineNum">     106 </span>            :               // If this is not node 0, call this Action on node 0 to register
+<span class="lineNum">     107 </span>            :               // the nodes that we expect reductions to be called on.
+<span class="lineNum">     108 </span>            :               if (node_id != 0) {
+<span class="lineNum">     109 </span>            :                 Parallel::simple_action&lt;
+<span class="lineNum">     110 </span>            :                     Actions::RegisterReductionContributorWithObserverWriter&gt;(
+<span class="lineNum">     111 </span>            :                     Parallel::get_parallel_component&lt;
+<span class="lineNum">     112 </span>            :                         ObserverWriter&lt;Metavariables&gt;&gt;(cache)[0],
+<span class="lineNum">     113 </span>            :                     observation_id, node_id, true);
+<span class="lineNum">     114 </span>            :               }
+<span class="lineNum">     115 </span>            :             }
+<span class="lineNum">     116 </span>            : 
+<span class="lineNum">     117 </span>            :             // We don't care if we insert the same processing element
+<span class="lineNum">     118 </span>            :             // more than once. We care only about which processing
+<span class="lineNum">     119 </span>            :             // elements have registered.
+<span class="lineNum">     120 </span>            :             reduction_observers_registered-&gt;at(hash).insert(
+<span class="lineNum">     121 </span>            :                 processing_element_or_node);
+<span class="lineNum">     122 </span>            :           });
+<span class="lineNum">     123 </span>            :     } else if (called_from_other_node) {
+<span class="lineNum">     124 </span>            :       // processing_element_or_node is the node_id of the caller.
+<span class="lineNum">     125 </span>            : 
+<span class="lineNum">     126 </span>            :       ASSERT(node_id == 0, &quot;Only node zero, not node &quot;
+<span class="lineNum">     127 </span>            :                                &lt;&lt; node_id
+<span class="lineNum">     128 </span>            :                                &lt;&lt; &quot;, should be called from another node&quot;);
+<span class="lineNum">     129 </span>            : 
+<span class="lineNum">     130 </span>            :       db::mutate&lt;Tags::ReductionObserversRegisteredNodes&gt;(
+<span class="lineNum">     131 </span>            :           make_not_null(&amp;box),
+<span class="lineNum">     132 </span>            :           [&amp;processing_element_or_node, &amp;observation_id ](
+<span class="lineNum">     133 </span>            :               const gsl::not_null&lt;std::unordered_map&lt;size_t, std::set&lt;size_t&gt;&gt;*&gt;
+<span class="lineNum">     134 </span>            :                   reduction_observers_registered_nodes) noexcept {
+<span class="lineNum">     135 </span>            :             const size_t hash = observation_id.observation_type_hash();
+<span class="lineNum">     136 </span>            : 
+<span class="lineNum">     137 </span>            :             if (reduction_observers_registered_nodes-&gt;count(hash) == 0) {
+<span class="lineNum">     138 </span>            :               (*reduction_observers_registered_nodes)[hash] =
+<span class="lineNum">     139 </span>            :                   std::set&lt;size_t&gt;{};
+<span class="lineNum">     140 </span>            :             }
+<span class="lineNum">     141 </span>            :             reduction_observers_registered_nodes-&gt;at(hash).insert(
+<span class="lineNum">     142 </span>            :                 processing_element_or_node);
+<span class="lineNum">     143 </span>            :           });
+<span class="lineNum">     144 </span>            :     }
+<span class="lineNum">     145 </span>            :   }
+<span class="lineNum">     146 </span>            : };
+<span class="lineNum">     147 </span>            : 
+<span class="lineNum">     148 </span>            : /*!
+<span class="lineNum">     149 </span>            :  * \brief Action that is called on the Observer parallel component to register
+<span class="lineNum">     150 </span>            :  * the parallel component that will send the data to the observer
+<span class="lineNum">     151 </span>            :  */
+<span class="lineNum">     152 </span><span class="lineCov">          1 : struct RegisterSenderWithSelf {</span>
+<span class="lineNum">     153 </span>            :   template &lt;
+<span class="lineNum">     154 </span>            :       typename DbTagList, typename... InboxTags, typename Metavariables,
+<span class="lineNum">     155 </span>            :       typename ArrayIndex, typename ActionList, typename ParallelComponent,
+<span class="lineNum">     156 </span>            :       Requires&lt;tmpl::list_contains_v&lt;
+<span class="lineNum">     157 </span>            :                    DbTagList, observers::Tags::ReductionArrayComponentIds&gt; and
+<span class="lineNum">     158 </span>            :                tmpl::list_contains_v&lt;
+<span class="lineNum">     159 </span>            :                    DbTagList, observers::Tags::VolumeArrayComponentIds&gt;&gt; =
+<span class="lineNum">     160 </span>            :           nullptr&gt;
+<span class="lineNum">     161 </span><span class="lineNoCov">          0 :   static void apply(db::DataBox&lt;DbTagList&gt;&amp; box,</span>
+<span class="lineNum">     162 </span>            :                     const tuples::TaggedTuple&lt;InboxTags...&gt;&amp; /*inboxes*/,
+<span class="lineNum">     163 </span>            :                     Parallel::ConstGlobalCache&lt;Metavariables&gt;&amp; cache,
+<span class="lineNum">     164 </span>            :                     const ArrayIndex&amp; /*array_index*/,
+<span class="lineNum">     165 </span>            :                     const ActionList /*meta*/,
+<span class="lineNum">     166 </span>            :                     const ParallelComponent* const /*meta*/,
+<span class="lineNum">     167 </span>            :                     const observers::ObservationId&amp; observation_id,
+<span class="lineNum">     168 </span>            :                     const observers::ArrayComponentId&amp; component_id,
+<span class="lineNum">     169 </span>            :                     const TypeOfObservation&amp; type_of_observation) noexcept {
+<span class="lineNum">     170 </span>            :     const auto register_reduction =
+<span class="lineNum">     171 </span>            :         [&amp;box, &amp;cache, &amp;component_id, &amp;observation_id ]() noexcept {
+<span class="lineNum">     172 </span>            :       db::mutate&lt;observers::Tags::ReductionArrayComponentIds&gt;(
+<span class="lineNum">     173 </span>            :           make_not_null(&amp;box), [&amp;component_id](
+<span class="lineNum">     174 </span>            :                                    const auto array_component_ids) noexcept {
+<span class="lineNum">     175 </span>            :             ASSERT(array_component_ids-&gt;count(component_id) == 0,
+<span class="lineNum">     176 </span>            :                    &quot;Trying to insert a component_id more than once for &quot;
+<span class="lineNum">     177 </span>            :                    &quot;reduction. This means an element is registering itself &quot;
+<span class="lineNum">     178 </span>            :                    &quot;with the observers more than once.&quot;);
+<span class="lineNum">     179 </span>            :             array_component_ids-&gt;insert(component_id);
+<span class="lineNum">     180 </span>            :           });
+<span class="lineNum">     181 </span>            :       const auto my_proc = static_cast&lt;size_t&gt;(Parallel::my_proc());
+<span class="lineNum">     182 </span>            :       auto&amp; observer_writer =
+<span class="lineNum">     183 </span>            :           *Parallel::get_parallel_component&lt;
+<span class="lineNum">     184 </span>            :                observers::ObserverWriter&lt;Metavariables&gt;&gt;(cache)
+<span class="lineNum">     185 </span>            :                .ckLocalBranch();
+<span class="lineNum">     186 </span>            :       Parallel::simple_action&lt;
+<span class="lineNum">     187 </span>            :           Actions::RegisterReductionContributorWithObserverWriter&gt;(
+<span class="lineNum">     188 </span>            :           observer_writer, observation_id, my_proc);
+<span class="lineNum">     189 </span>            :     };
+<span class="lineNum">     190 </span>            :     const auto register_volume =
+<span class="lineNum">     191 </span>            :         [&amp;box, &amp;cache, &amp;component_id, &amp;observation_id ]() noexcept {
+<span class="lineNum">     192 </span>            :       db::mutate&lt;observers::Tags::VolumeArrayComponentIds&gt;(
+<span class="lineNum">     193 </span>            :           make_not_null(&amp;box), [&amp;component_id](
+<span class="lineNum">     194 </span>            :                                    const auto array_component_ids) noexcept {
+<span class="lineNum">     195 </span>            :             ASSERT(array_component_ids-&gt;count(component_id) == 0,
+<span class="lineNum">     196 </span>            :                    &quot;Trying to insert a component_id more than once for &quot;
+<span class="lineNum">     197 </span>            :                    &quot;volume observation. This means an element is registering &quot;
+<span class="lineNum">     198 </span>            :                    &quot;itself with the observers more than once.&quot;);
+<span class="lineNum">     199 </span>            :             array_component_ids-&gt;insert(component_id);
+<span class="lineNum">     200 </span>            :           });
+<span class="lineNum">     201 </span>            :       const auto my_proc = static_cast&lt;size_t&gt;(Parallel::my_proc());
+<span class="lineNum">     202 </span>            :       auto&amp; observer_writer =
+<span class="lineNum">     203 </span>            :           *Parallel::get_parallel_component&lt;
+<span class="lineNum">     204 </span>            :                observers::ObserverWriter&lt;Metavariables&gt;&gt;(cache)
+<span class="lineNum">     205 </span>            :                .ckLocalBranch();
+<span class="lineNum">     206 </span>            :       Parallel::simple_action&lt;
+<span class="lineNum">     207 </span>            :           Actions::RegisterVolumeContributorWithObserverWriter&gt;(
+<span class="lineNum">     208 </span>            :           observer_writer, observation_id, my_proc);
+<span class="lineNum">     209 </span>            :     };
+<span class="lineNum">     210 </span>            : 
+<span class="lineNum">     211 </span>            :     switch (type_of_observation) {
+<span class="lineNum">     212 </span>            :       case TypeOfObservation::ReductionAndVolume:
+<span class="lineNum">     213 </span>            :         register_reduction();
+<span class="lineNum">     214 </span>            :         register_volume();
+<span class="lineNum">     215 </span>            :         return;
+<span class="lineNum">     216 </span>            :       case TypeOfObservation::Reduction:
+<span class="lineNum">     217 </span>            :         register_reduction();
+<span class="lineNum">     218 </span>            :         return;
+<span class="lineNum">     219 </span>            :       case TypeOfObservation::Volume:
+<span class="lineNum">     220 </span>            :         register_volume();
+<span class="lineNum">     221 </span>            :         return;
+<span class="lineNum">     222 </span>            :       default:
+<span class="lineNum">     223 </span>            :         ERROR(
+<span class="lineNum">     224 </span>            :             &quot;Registering an unknown TypeOfObservation. Should be one of &quot;
+<span class="lineNum">     225 </span>            :             &quot;'Reduction', 'Volume', or 'ReductionAndVolume'&quot;);
+<span class="lineNum">     226 </span>            :     };
+<span class="lineNum">     227 </span>            :   }
+<span class="lineNum">     228 </span>            : };
+<span class="lineNum">     229 </span>            : 
+<span class="lineNum">     230 </span>            : /*!
+<span class="lineNum">     231 </span>            :  * \brief Registers itself with the local observer parallel component so the
+<span class="lineNum">     232 </span>            :  * observer knows to expect data from this component, and also whether to expect
+<span class="lineNum">     233 </span>            :  * Reduction, Volume, or both Reduction and Volume data observation calls.
+<span class="lineNum">     234 </span>            :  */
+<span class="lineNum">     235 </span>            : template &lt;observers::TypeOfObservation TypeOfObservation&gt;
+<span class="lineNum">     236 </span><span class="lineCov">          1 : struct RegisterWithObservers {</span>
+<span class="lineNum">     237 </span>            :   template &lt;typename DbTagList, typename... InboxTags, typename Metavariables,
+<span class="lineNum">     238 </span>            :             typename ArrayIndex, typename ActionList,
+<span class="lineNum">     239 </span>            :             typename ParallelComponent&gt;
+<span class="lineNum">     240 </span><span class="lineNoCov">          0 :   static void apply(const db::DataBox&lt;DbTagList&gt;&amp; /*box*/,</span>
+<span class="lineNum">     241 </span>            :                     const tuples::TaggedTuple&lt;InboxTags...&gt;&amp; /*inboxes*/,
+<span class="lineNum">     242 </span>            :                     Parallel::ConstGlobalCache&lt;Metavariables&gt;&amp; cache,
+<span class="lineNum">     243 </span>            :                     const ArrayIndex&amp; array_index, const ActionList /*meta*/,
+<span class="lineNum">     244 </span>            :                     const ParallelComponent* const /*meta*/,
+<span class="lineNum">     245 </span>            :                     const observers::ObservationId&amp; observation_id) noexcept {
+<span class="lineNum">     246 </span>            :     auto&amp; observer =
+<span class="lineNum">     247 </span>            :         *Parallel::get_parallel_component&lt;observers::Observer&lt;Metavariables&gt;&gt;(
+<span class="lineNum">     248 </span>            :              cache)
+<span class="lineNum">     249 </span>            :              .ckLocalBranch();
+<span class="lineNum">     250 </span>            :     // TODO(): We should really loop through all the events, check if there are
+<span class="lineNum">     251 </span>            :     // any reduction observers, and any volume observers, if so, then we
+<span class="lineNum">     252 </span>            :     // register us as having one of:
+<span class="lineNum">     253 </span>            :     // - TypeOfObservation::Reduction
+<span class="lineNum">     254 </span>            :     // - TypeOfObservation::Volume
+<span class="lineNum">     255 </span>            :     // - TypeOfObservation::ReductionAndVolume
+<span class="lineNum">     256 </span>            :     //
+<span class="lineNum">     257 </span>            :     // At that point we won't need the template parameter on the class anymore
+<span class="lineNum">     258 </span>            :     // and everything can be read from an input file.
+<span class="lineNum">     259 </span>            :     Parallel::simple_action&lt;RegisterSenderWithSelf&gt;(
+<span class="lineNum">     260 </span>            :         observer, observation_id,
+<span class="lineNum">     261 </span>            :         observers::ArrayComponentId(
+<span class="lineNum">     262 </span>            :             std::add_pointer_t&lt;ParallelComponent&gt;{nullptr},
+<span class="lineNum">     263 </span>            :             Parallel::ArrayIndex&lt;std::decay_t&lt;ArrayIndex&gt;&gt;{array_index}),
+<span class="lineNum">     264 </span>            :         TypeOfObservation);
+<span class="lineNum">     265 </span>            :   }
+<span class="lineNum">     266 </span>            : };
+<span class="lineNum">     267 </span>            : 
+<span class="lineNum">     268 </span>            : /*!
+<span class="lineNum">     269 </span>            :  * \brief Registers a singleton with the ObserverWriter.
+<span class="lineNum">     270 </span>            :  *
+<span class="lineNum">     271 </span>            :  * The singleton that observes is expected to call WriteReductionData
+<span class="lineNum">     272 </span>            :  * on node 0. An example of how to do this is
+<span class="lineNum">     273 </span>            :  *```
+<span class="lineNum">     274 </span>            :  * template &lt;typename DbTags, typename Metavariables&gt;
+<span class="lineNum">     275 </span>            :  * static void apply(
+<span class="lineNum">     276 </span>            :  *     const db::DataBox&lt;DbTags&gt;&amp; box,
+<span class="lineNum">     277 </span>            :  *     Parallel::ConstGlobalCache&lt;Metavariables&gt;&amp; cache,
+<span class="lineNum">     278 </span>            :  *     const typename Metavariables::temporal_id::type&amp; temporal_id) noexcept {
+<span class="lineNum">     279 </span>            :  *   auto&amp; proxy = Parallel::get_parallel_component&lt;
+<span class="lineNum">     280 </span>            :  *       observers::ObserverWriter&lt;Metavariables&gt;&gt;(cache);
+<span class="lineNum">     281 </span>            :  *
+<span class="lineNum">     282 </span>            :  *   // We call this on proxy[0] because the 0th element of a NodeGroup is
+<span class="lineNum">     283 </span>            :  *   // always guaranteed to be present.
+<span class="lineNum">     284 </span>            :  *   Parallel::threaded_action&lt;observers::ThreadedActions::WriteReductionData&gt;(
+<span class="lineNum">     285 </span>            :  *       proxy[0],
+<span class="lineNum">     286 </span>            :  *       observers::ObservationId(temporal_id.time(), ObservationType{}),
+<span class="lineNum">     287 </span>            :  *       std::string{&quot;/&quot; + pretty_type::short_name&lt;InterpolationTargetTag&gt;()},
+<span class="lineNum">     288 </span>            :  *       detail::make_legend(TagsToObserve{}),
+<span class="lineNum">     289 </span>            :  *       detail::make_reduction_data(box, temporal_id.time().value(),
+<span class="lineNum">     290 </span>            :  *                                   TagsToObserve{}));
+<span class="lineNum">     291 </span>            :  * }
+<span class="lineNum">     292 </span>            :  *
+<span class="lineNum">     293 </span>            :  *```
+<span class="lineNum">     294 </span>            :  *
+<span class="lineNum">     295 </span>            :  */
+<span class="lineNum">     296 </span><span class="lineCov">          1 : struct RegisterSingletonWithObserverWriter {</span>
+<span class="lineNum">     297 </span>            :   template &lt;typename DbTagList, typename... InboxTags, typename Metavariables,
+<span class="lineNum">     298 </span>            :             typename ArrayIndex, typename ActionList,
+<span class="lineNum">     299 </span>            :             typename ParallelComponent&gt;
+<span class="lineNum">     300 </span><span class="lineNoCov">          0 :   static void apply(const db::DataBox&lt;DbTagList&gt;&amp; /*box*/,</span>
+<span class="lineNum">     301 </span>            :                     const tuples::TaggedTuple&lt;InboxTags...&gt;&amp; /*inboxes*/,
+<span class="lineNum">     302 </span>            :                     Parallel::ConstGlobalCache&lt;Metavariables&gt;&amp; cache,
+<span class="lineNum">     303 </span>            :                     const ArrayIndex&amp; /*array_index*/,
+<span class="lineNum">     304 </span>            :                     const ActionList /*meta*/,
+<span class="lineNum">     305 </span>            :                     const ParallelComponent* const /*meta*/,
+<span class="lineNum">     306 </span>            :                     const observers::ObservationId&amp; observation_id) noexcept {
+<span class="lineNum">     307 </span>            :     // The actual value of the processing element doesn't matter
+<span class="lineNum">     308 </span>            :     // here; it is used only to give an ObserverWriter a count of how many
+<span class="lineNum">     309 </span>            :     // times it will be called.
+<span class="lineNum">     310 </span>            :     constexpr size_t fake_processing_element = 0;
+<span class="lineNum">     311 </span>            : 
+<span class="lineNum">     312 </span>            :     // We call only on node 0; the observation call will occur only
+<span class="lineNum">     313 </span>            :     // on node 0.
+<span class="lineNum">     314 </span>            :     Parallel::simple_action&lt;
+<span class="lineNum">     315 </span>            :         Actions::RegisterReductionContributorWithObserverWriter&gt;(
+<span class="lineNum">     316 </span>            :         Parallel::get_parallel_component&lt;
+<span class="lineNum">     317 </span>            :             observers::ObserverWriter&lt;Metavariables&gt;&gt;(cache)[0],
+<span class="lineNum">     318 </span>            :         observation_id, fake_processing_element);
+<span class="lineNum">     319 </span>            :   }
+<span class="lineNum">     320 </span>            : };
+<span class="lineNum">     321 </span>            : }  // namespace Actions
+<span class="lineNum">     322 </span>            : }  // namespace observers
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Evolution/Systems/RelativisticEuler/Valencia/Fluxes.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">Evolution/Systems/RelativisticEuler/Valencia</a> - Fluxes.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;Evolution/Systems/RelativisticEuler/Valencia/Fluxes.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &quot;DataStructures/DataVector.hpp&quot;
+<span class="lineNum">       7 </span>            : #include &quot;DataStructures/Tensor/Tensor.hpp&quot;
+<span class="lineNum">       8 </span>            : #include &quot;Utilities/GenerateInstantiations.hpp&quot;
+<span class="lineNum">       9 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : // IWYU pragma: no_include &lt;array&gt;
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            : // IWYU pragma: no_forward_declare Tensor
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : /// \cond
+<span class="lineNum">      16 </span>            : namespace RelativisticEuler {
+<span class="lineNum">      17 </span>            : namespace Valencia {
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      20 </span>            : void fluxes(const gsl::not_null&lt;tnsr::I&lt;DataVector, Dim, Frame::Inertial&gt;*&gt;
+<span class="lineNum">      21 </span>            :                 tilde_d_flux,
+<span class="lineNum">      22 </span>            :             const gsl::not_null&lt;tnsr::I&lt;DataVector, Dim, Frame::Inertial&gt;*&gt;
+<span class="lineNum">      23 </span>            :                 tilde_tau_flux,
+<span class="lineNum">      24 </span>            :             const gsl::not_null&lt;tnsr::Ij&lt;DataVector, Dim, Frame::Inertial&gt;*&gt;
+<span class="lineNum">      25 </span>            :                 tilde_s_flux,
+<span class="lineNum">      26 </span>            :             const Scalar&lt;DataVector&gt;&amp; tilde_d,
+<span class="lineNum">      27 </span>            :             const Scalar&lt;DataVector&gt;&amp; tilde_tau,
+<span class="lineNum">      28 </span>            :             const tnsr::i&lt;DataVector, Dim, Frame::Inertial&gt;&amp; tilde_s,
+<span class="lineNum">      29 </span>            :             const Scalar&lt;DataVector&gt;&amp; lapse,
+<span class="lineNum">      30 </span>            :             const tnsr::I&lt;DataVector, Dim, Frame::Inertial&gt;&amp; shift,
+<span class="lineNum">      31 </span>            :             const Scalar&lt;DataVector&gt;&amp; sqrt_det_spatial_metric,
+<span class="lineNum">      32 </span>            :             const Scalar&lt;DataVector&gt;&amp; pressure,
+<span class="lineNum">      33 </span>            :             const tnsr::I&lt;DataVector, Dim, Frame::Inertial&gt;&amp;
+<span class="lineNum">      34 </span>            :                 spatial_velocity) noexcept {
+<span class="lineNum">      35 </span>            :   const DataVector p_alpha_sqrt_det_g =
+<span class="lineNum">      36 </span>            :       get(sqrt_det_spatial_metric) * get(lapse) * get(pressure);
+<span class="lineNum">      37 </span>            :   // Outside the loop to save allocations
+<span class="lineNum">      38 </span>            :   DataVector transport_velocity_I(p_alpha_sqrt_det_g.size());
+<span class="lineNum">      39 </span>            :   for (size_t i = 0; i &lt; Dim; ++i) {
+<span class="lineNum">      40 </span>            :     transport_velocity_I = get(lapse) * spatial_velocity.get(i) - shift.get(i);
+<span class="lineNum">      41 </span>            :     tilde_d_flux-&gt;get(i) = get(tilde_d) * transport_velocity_I;
+<span class="lineNum">      42 </span>            :     tilde_tau_flux-&gt;get(i) = get(tilde_tau) * transport_velocity_I +
+<span class="lineNum">      43 </span>            :                              p_alpha_sqrt_det_g * spatial_velocity.get(i);
+<span class="lineNum">      44 </span>            :     for (size_t j = 0; j &lt; Dim; ++j) {
+<span class="lineNum">      45 </span>            :       tilde_s_flux-&gt;get(i, j) = tilde_s.get(j) * transport_velocity_I;
+<span class="lineNum">      46 </span>            :     }
+<span class="lineNum">      47 </span>            :     tilde_s_flux-&gt;get(i, i) += p_alpha_sqrt_det_g;
+<span class="lineNum">      48 </span>            :   }
+<span class="lineNum">      49 </span>            : }
+<span class="lineNum">      50 </span>            : }  // namespace Valencia
+<span class="lineNum">      51 </span>            : }  // namespace RelativisticEuler
+<span class="lineNum">      52 </span>            : 
+<span class="lineNum">      53 </span>            : #define DIM(data) BOOST_PP_TUPLE_ELEM(0, data)
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span>            : #define INSTANTIATION(_, data)                                                \
+<span class="lineNum">      56 </span>            :   template void RelativisticEuler::Valencia::fluxes(                          \
+<span class="lineNum">      57 </span>            :       const gsl::not_null&lt;tnsr::I&lt;DataVector, DIM(data), Frame::Inertial&gt;*&gt;   \
+<span class="lineNum">      58 </span>            :           tilde_d_flux,                                                       \
+<span class="lineNum">      59 </span>            :       const gsl::not_null&lt;tnsr::I&lt;DataVector, DIM(data), Frame::Inertial&gt;*&gt;   \
+<span class="lineNum">      60 </span>            :           tilde_tau_flux,                                                     \
+<span class="lineNum">      61 </span>            :       const gsl::not_null&lt;tnsr::Ij&lt;DataVector, DIM(data), Frame::Inertial&gt;*&gt;  \
+<span class="lineNum">      62 </span>            :           tilde_s_flux,                                                       \
+<span class="lineNum">      63 </span>            :       const Scalar&lt;DataVector&gt;&amp; tilde_d, const Scalar&lt;DataVector&gt;&amp; tilde_tau, \
+<span class="lineNum">      64 </span>            :       const tnsr::i&lt;DataVector, DIM(data), Frame::Inertial&gt;&amp; tilde_s,         \
+<span class="lineNum">      65 </span>            :       const Scalar&lt;DataVector&gt;&amp; lapse,                                        \
+<span class="lineNum">      66 </span>            :       const tnsr::I&lt;DataVector, DIM(data), Frame::Inertial&gt;&amp; shift,           \
+<span class="lineNum">      67 </span>            :       const Scalar&lt;DataVector&gt;&amp; sqrt_det_spatial_metric,                      \
+<span class="lineNum">      68 </span>            :       const Scalar&lt;DataVector&gt;&amp; pressure,                                     \
+<span class="lineNum">      69 </span>            :       const tnsr::I&lt;DataVector, DIM(data), Frame::Inertial&gt;&amp;                  \
+<span class="lineNum">      70 </span>            :           spatial_velocity) noexcept;
+<span class="lineNum">      71 </span>            : 
+<span class="lineNum">      72 </span>            : GENERATE_INSTANTIATIONS(INSTANTIATION, (1, 2, 3))
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span>            : #undef INSTANTIATION
+<span class="lineNum">      75 </span>            : #undef DIM
+<span class="lineNum">      76 </span>            : /// \endcond
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

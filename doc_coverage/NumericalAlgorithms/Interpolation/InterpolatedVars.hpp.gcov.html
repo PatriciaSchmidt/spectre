@@ -1,0 +1,174 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - NumericalAlgorithms/Interpolation/InterpolatedVars.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">NumericalAlgorithms/Interpolation</a> - InterpolatedVars.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntry">12</td>
+            <td class="headerCovTableEntryLo">66.7 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       7 </span>            : #include &lt;unordered_map&gt;
+<span class="lineNum">       8 </span>            : #include &lt;unordered_set&gt;
+<span class="lineNum">       9 </span>            : #include &lt;vector&gt;
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : #include &quot;DataStructures/IdPair.hpp&quot; // IWYU pragma: keep
+<span class="lineNum">      12 </span>            : #include &quot;DataStructures/Tensor/TypeAliases.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;Domain/BlockId.hpp&quot; // IWYU pragma: keep
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : /// \cond
+<span class="lineNum">      16 </span>            : template &lt;size_t VolumeDim&gt;
+<span class="lineNum">      17 </span>            : class ElementId;
+<span class="lineNum">      18 </span>            : template &lt;typename TagsList&gt;
+<span class="lineNum">      19 </span>            : class Variables;
+<span class="lineNum">      20 </span>            : /// \endcond
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : namespace intrp {
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : /// Data structures holding quantities that are interpolated by
+<span class="lineNum">      25 </span>            : /// `Interpolator` for use by `InterpolationTarget`s
+<span class="lineNum">      26 </span><span class="lineCov">          1 : namespace Vars {</span>
+<span class="lineNum">      27 </span>            : /// \brief Holds a `Variables` interpolated onto a list of points, and
+<span class="lineNum">      28 </span>            : /// information about those points, for a local `Interpolator`.
+<span class="lineNum">      29 </span>            : ///
+<span class="lineNum">      30 </span>            : /// `TagList` is a `tmpl::list` of tags that go into the `Variables`.
+<span class="lineNum">      31 </span>            : template &lt;size_t VolumeDim, typename TagList&gt;
+<span class="lineNum">      32 </span><span class="lineCov">          1 : struct Info {</span>
+<span class="lineNum">      33 </span>            :   /// `block_coord_holders` holds the list of all points (in block
+<span class="lineNum">      34 </span>            :   /// logical coordinates) that need to be interpolated onto for a
+<span class="lineNum">      35 </span>            :   /// given `InterpolationTarget`.
+<span class="lineNum">      36 </span>            :   ///
+<span class="lineNum">      37 </span>            :   /// The number of interpolated points for which results are stored
+<span class="lineNum">      38 </span>            :   /// in this `Info` (in `vars` and `global_offsets` below)
+<span class="lineNum">      39 </span>            :   /// corresponds to only the subset of the points in
+<span class="lineNum">      40 </span>            :   /// `block_coord_holders` that are contained in local `Element`s.
+<span class="lineNum">      41 </span>            :   /// Moreover, the number of interpolated points stored in this
+<span class="lineNum">      42 </span>            :   /// `Info` will change as more `Elements` send data to this
+<span class="lineNum">      43 </span>            :   /// `Interpolator`, and will be less than or equal to the size of
+<span class="lineNum">      44 </span>            :   /// `block_coord_holders` even after all `Element`s have sent their
+<span class="lineNum">      45 </span>            :   /// data (this is because this `Info` lives only on a single core,
+<span class="lineNum">      46 </span>            :   /// and this core will have access only to the local `Element`s).
+<span class="lineNum">      47 </span>            :   std::vector&lt;IdPair&lt;domain::BlockId,
+<span class="lineNum">      48 </span>            :                      tnsr::I&lt;double, VolumeDim, typename ::Frame::Logical&gt;&gt;&gt;
+<span class="lineNum">      49 </span><span class="lineCov">          1 :       block_coord_holders;</span>
+<span class="lineNum">      50 </span>            :   /// `vars` holds the interpolated `Variables` on some subset of the
+<span class="lineNum">      51 </span>            :   /// points in `block_coord_holders`.  The grid points inside vars
+<span class="lineNum">      52 </span>            :   /// are indexed according to `global_offsets` below.  The size of
+<span class="lineNum">      53 </span>            :   /// `vars` changes as more `Element`s send data to this `Interpolator`.
+<span class="lineNum">      54 </span><span class="lineCov">          1 :   std::vector&lt;Variables&lt;TagList&gt;&gt; vars{};</span>
+<span class="lineNum">      55 </span>            :   /// `global_offsets[j][i]` is the index into `block_coord_holders` that
+<span class="lineNum">      56 </span>            :   /// corresponds to the index `i` of the `DataVector` held in `vars[j]`.
+<span class="lineNum">      57 </span>            :   /// The size of `global_offsets` changes as more `Element`s
+<span class="lineNum">      58 </span>            :   /// send data to this `Interpolator`.
+<span class="lineNum">      59 </span><span class="lineCov">          1 :   std::vector&lt;std::vector&lt;size_t&gt;&gt; global_offsets{};</span>
+<span class="lineNum">      60 </span>            :   /// Holds the `ElementId`s of `Element`s for which interpolation has
+<span class="lineNum">      61 </span>            :   /// already been done for this `Info`.
+<span class="lineNum">      62 </span>            :   std::unordered_set&lt;ElementId&lt;VolumeDim&gt;&gt;
+<span class="lineNum">      63 </span><span class="lineCov">          1 :       interpolation_is_done_for_these_elements{};</span>
+<span class="lineNum">      64 </span>            : };
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span>            : /// Holds `Info`s at all `temporal_id`s for a given
+<span class="lineNum">      67 </span>            : /// `InterpolationTargetTag`.  Also holds `temporal_id`s when data has
+<span class="lineNum">      68 </span>            : /// been interpolated; this is used for cleanup purposes.  All
+<span class="lineNum">      69 </span>            : /// `Holder`s for all `InterpolationTargetTags` are held in a single
+<span class="lineNum">      70 </span>            : /// `TaggedTuple` that is in the `Interpolator`'s `DataBox` with the
+<span class="lineNum">      71 </span>            : /// tag `Tags::InterpolatedVarsHolders`.
+<span class="lineNum">      72 </span>            : template &lt;typename Metavariables,
+<span class="lineNum">      73 </span>            :           typename InterpolationTargetTag, typename TagList&gt;
+<span class="lineNum">      74 </span><span class="lineCov">          1 : struct Holder {</span>
+<span class="lineNum">      75 </span>            :   std::unordered_map&lt;
+<span class="lineNum">      76 </span>            :       typename Metavariables::temporal_id::type,
+<span class="lineNum">      77 </span>            :       Info&lt;Metavariables::domain_dim, TagList&gt;&gt;
+<span class="lineNum">      78 </span><span class="lineNoCov">          0 :       infos;</span>
+<span class="lineNum">      79 </span>            :   std::unordered_set&lt;typename Metavariables::temporal_id::type&gt;
+<span class="lineNum">      80 </span><span class="lineNoCov">          0 :       temporal_ids_when_data_has_been_interpolated;</span>
+<span class="lineNum">      81 </span>            : };
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span>            : /// Indexes a particular `Holder` in the `TaggedTuple` that is
+<span class="lineNum">      84 </span>            : /// accessed from the `Interpolator`'s `DataBox` with tag
+<span class="lineNum">      85 </span>            : /// `Tags::InterpolatedVarsHolders`.
+<span class="lineNum">      86 </span>            : template &lt;typename InterpolationTargetTag, typename Metavariables&gt;
+<span class="lineNum">      87 </span><span class="lineCov">          1 : struct HolderTag {</span>
+<span class="lineNum">      88 </span><span class="lineNoCov">          0 :   using type =</span>
+<span class="lineNum">      89 </span>            :       Holder&lt;Metavariables, InterpolationTargetTag,
+<span class="lineNum">      90 </span>            :              typename InterpolationTargetTag::vars_to_interpolate_to_target&gt;;
+<span class="lineNum">      91 </span>            : };
+<span class="lineNum">      92 </span>            : 
+<span class="lineNum">      93 </span>            : }  // namespace Vars
+<span class="lineNum">      94 </span>            : }  // namespace intrp
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

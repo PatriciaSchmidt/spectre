@@ -1,0 +1,312 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - PointwiseFunctions/AnalyticData/GrMhd/CylindricalBlastWave.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">PointwiseFunctions/AnalyticData/GrMhd</a> - CylindricalBlastWave.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;PointwiseFunctions/AnalyticData/GrMhd/CylindricalBlastWave.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;cmath&gt;
+<span class="lineNum">       7 </span>            : #include &lt;ostream&gt;
+<span class="lineNum">       8 </span>            : #include &lt;pup.h&gt;
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : #include &quot;DataStructures/DataBox/DataBoxTag.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;DataStructures/DataVector.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      12 </span>            : #include &quot;Parallel/PupStlCpp11.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;Utilities/ConstantExpressions.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      14 </span>            : #include &quot;Utilities/GenerateInstantiations.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      16 </span>            : #include &quot;Utilities/MakeWithValue.hpp&quot;
+<span class="lineNum">      17 </span>            : #include &quot;Utilities/Math.hpp&quot; // IWYU pragma: keep
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span><span class="lineNoCov">          0 : namespace {</span>
+<span class="lineNum">      20 </span>            : template &lt;typename DataType&gt;
+<span class="lineNum">      21 </span>            : Scalar&lt;DataType&gt; compute_piecewise(
+<span class="lineNum">      22 </span>            :     const tnsr::I&lt;DataType, 3, Frame::Inertial&gt;&amp; x, const double&amp; inner_radius,
+<span class="lineNum">      23 </span>            :     const double&amp; outer_radius, const double&amp; inner_value,
+<span class="lineNum">      24 </span>            :     const double&amp; outer_value) noexcept {
+<span class="lineNum">      25 </span>            :   const DataType cylindrical_radius =
+<span class="lineNum">      26 </span>            :       sqrt(square(get&lt;0&gt;(x)) + square(get&lt;1&gt;(x)));
+<span class="lineNum">      27 </span>            :   auto piecewise_scalar = make_with_value&lt;Scalar&lt;DataType&gt;&gt;(x, 0.0);
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            :   // piecewise_scalar should equal inner_value for r &lt; inner_radius,
+<span class="lineNum">      30 </span>            :   // should equal outer_value for r &gt; outer_radius, and should transition
+<span class="lineNum">      31 </span>            :   // in between. Here, use step_function() to compute the result
+<span class="lineNum">      32 </span>            :   // in each region separately.
+<span class="lineNum">      33 </span>            :   get(piecewise_scalar) +=
+<span class="lineNum">      34 </span>            :       step_function(inner_radius - cylindrical_radius) * inner_value;
+<span class="lineNum">      35 </span>            :   get(piecewise_scalar) +=
+<span class="lineNum">      36 </span>            :       step_function(cylindrical_radius - outer_radius) * outer_value;
+<span class="lineNum">      37 </span>            :   get(piecewise_scalar) +=
+<span class="lineNum">      38 </span>            :       // Blaze's step_function() at 0.0 is 1.0. So to get a mask that
+<span class="lineNum">      39 </span>            :       // is the inverse of the masks used above for inner_radius and
+<span class="lineNum">      40 </span>            :       // outer_radius without double-counting points on the boundary,
+<span class="lineNum">      41 </span>            :       // use 1.0 - stepfunction(x) instead of stepfunction(-x) here
+<span class="lineNum">      42 </span>            :       (1.0 - step_function(inner_radius - cylindrical_radius)) *
+<span class="lineNum">      43 </span>            :       (1.0 - step_function(cylindrical_radius - outer_radius)) *
+<span class="lineNum">      44 </span>            :       exp(((-1.0 * cylindrical_radius + inner_radius) * log(outer_value) +
+<span class="lineNum">      45 </span>            :            (cylindrical_radius - outer_radius) * log(inner_value)) /
+<span class="lineNum">      46 </span>            :           (inner_radius - outer_radius));
+<span class="lineNum">      47 </span>            :   return piecewise_scalar;
+<span class="lineNum">      48 </span>            : }
+<span class="lineNum">      49 </span>            : }  // namespace
+<span class="lineNum">      50 </span>            : 
+<span class="lineNum">      51 </span>            : /// \cond
+<span class="lineNum">      52 </span>            : namespace grmhd {
+<span class="lineNum">      53 </span>            : namespace AnalyticData {
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span>            : CylindricalBlastWave::CylindricalBlastWave(
+<span class="lineNum">      56 </span>            :     const InnerRadius::type inner_radius, const OuterRadius::type outer_radius,
+<span class="lineNum">      57 </span>            :     const InnerDensity::type inner_density,
+<span class="lineNum">      58 </span>            :     const OuterDensity::type outer_density,
+<span class="lineNum">      59 </span>            :     const InnerPressure::type inner_pressure,
+<span class="lineNum">      60 </span>            :     const OuterPressure::type outer_pressure,
+<span class="lineNum">      61 </span>            :     const MagneticField::type magnetic_field,
+<span class="lineNum">      62 </span>            :     const AdiabaticIndex::type adiabatic_index, const OptionContext&amp; context)
+<span class="lineNum">      63 </span>            :     : inner_radius_(inner_radius),
+<span class="lineNum">      64 </span>            :       outer_radius_(outer_radius),
+<span class="lineNum">      65 </span>            :       inner_density_(inner_density),
+<span class="lineNum">      66 </span>            :       outer_density_(outer_density),
+<span class="lineNum">      67 </span>            :       inner_pressure_(inner_pressure),
+<span class="lineNum">      68 </span>            :       outer_pressure_(outer_pressure),
+<span class="lineNum">      69 </span>            :       magnetic_field_(magnetic_field),
+<span class="lineNum">      70 </span>            :       adiabatic_index_(adiabatic_index),
+<span class="lineNum">      71 </span>            :       equation_of_state_(adiabatic_index) {
+<span class="lineNum">      72 </span>            :   if (inner_radius &gt;= outer_radius) {
+<span class="lineNum">      73 </span>            :     PARSE_ERROR(context,
+<span class="lineNum">      74 </span>            :                 &quot;CylindricalBlastWave expects InnerRadius &lt; OuterRadius, &quot;
+<span class="lineNum">      75 </span>            :                 &quot;but InnerRadius = &quot;
+<span class="lineNum">      76 </span>            :                     &lt;&lt; inner_radius &lt;&lt; &quot; and OuterRadius = &quot; &lt;&lt; outer_radius);
+<span class="lineNum">      77 </span>            :   }
+<span class="lineNum">      78 </span>            : }
+<span class="lineNum">      79 </span>            : 
+<span class="lineNum">      80 </span>            : void CylindricalBlastWave::pup(PUP::er&amp; p) noexcept {
+<span class="lineNum">      81 </span>            :   p | inner_radius_;
+<span class="lineNum">      82 </span>            :   p | outer_radius_;
+<span class="lineNum">      83 </span>            :   p | inner_density_;
+<span class="lineNum">      84 </span>            :   p | outer_density_;
+<span class="lineNum">      85 </span>            :   p | inner_pressure_;
+<span class="lineNum">      86 </span>            :   p | outer_pressure_;
+<span class="lineNum">      87 </span>            :   p | magnetic_field_;
+<span class="lineNum">      88 </span>            :   p | adiabatic_index_;
+<span class="lineNum">      89 </span>            :   p | equation_of_state_;
+<span class="lineNum">      90 </span>            :   p | background_spacetime_;
+<span class="lineNum">      91 </span>            : }
+<span class="lineNum">      92 </span>            : 
+<span class="lineNum">      93 </span>            : template &lt;typename DataType&gt;
+<span class="lineNum">      94 </span>            : tuples::TaggedTuple&lt;hydro::Tags::RestMassDensity&lt;DataType&gt;&gt;
+<span class="lineNum">      95 </span>            : CylindricalBlastWave::variables(
+<span class="lineNum">      96 </span>            :     const tnsr::I&lt;DataType, 3, Frame::Inertial&gt;&amp; x,
+<span class="lineNum">      97 </span>            :     tmpl::list&lt;hydro::Tags::RestMassDensity&lt;DataType&gt;&gt; /*meta*/) const
+<span class="lineNum">      98 </span>            :     noexcept {
+<span class="lineNum">      99 </span>            :   return compute_piecewise(x, inner_radius_, outer_radius_, inner_density_,
+<span class="lineNum">     100 </span>            :                            outer_density_);
+<span class="lineNum">     101 </span>            : }
+<span class="lineNum">     102 </span>            : 
+<span class="lineNum">     103 </span>            : template &lt;typename DataType&gt;
+<span class="lineNum">     104 </span>            : tuples::TaggedTuple&lt;hydro::Tags::SpatialVelocity&lt;DataType, 3&gt;&gt;
+<span class="lineNum">     105 </span>            : CylindricalBlastWave::variables(
+<span class="lineNum">     106 </span>            :     const tnsr::I&lt;DataType, 3, Frame::Inertial&gt;&amp; x,
+<span class="lineNum">     107 </span>            :     tmpl::list&lt;hydro::Tags::SpatialVelocity&lt;DataType, 3&gt;&gt; /*meta*/) const
+<span class="lineNum">     108 </span>            :     noexcept {
+<span class="lineNum">     109 </span>            :   return {make_with_value&lt;db::item_type&lt;
+<span class="lineNum">     110 </span>            :       hydro::Tags::SpatialVelocity&lt;DataType, 3, Frame::Inertial&gt;&gt;&gt;(x, 0.0)};
+<span class="lineNum">     111 </span>            : }
+<span class="lineNum">     112 </span>            : 
+<span class="lineNum">     113 </span>            : template &lt;typename DataType&gt;
+<span class="lineNum">     114 </span>            : tuples::TaggedTuple&lt;hydro::Tags::SpecificInternalEnergy&lt;DataType&gt;&gt;
+<span class="lineNum">     115 </span>            : CylindricalBlastWave::variables(
+<span class="lineNum">     116 </span>            :     const tnsr::I&lt;DataType, 3, Frame::Inertial&gt;&amp; x,
+<span class="lineNum">     117 </span>            :     tmpl::list&lt;hydro::Tags::SpecificInternalEnergy&lt;DataType&gt;&gt; /*meta*/) const
+<span class="lineNum">     118 </span>            :     noexcept {
+<span class="lineNum">     119 </span>            :   return equation_of_state_.specific_internal_energy_from_density_and_pressure(
+<span class="lineNum">     120 </span>            :       get&lt;hydro::Tags::RestMassDensity&lt;DataType&gt;&gt;(
+<span class="lineNum">     121 </span>            :           variables(x, tmpl::list&lt;hydro::Tags::RestMassDensity&lt;DataType&gt;&gt;{})),
+<span class="lineNum">     122 </span>            :       get&lt;hydro::Tags::Pressure&lt;DataType&gt;&gt;(
+<span class="lineNum">     123 </span>            :           variables(x, tmpl::list&lt;hydro::Tags::Pressure&lt;DataType&gt;&gt;{})));
+<span class="lineNum">     124 </span>            : }
+<span class="lineNum">     125 </span>            : 
+<span class="lineNum">     126 </span>            : template &lt;typename DataType&gt;
+<span class="lineNum">     127 </span>            : tuples::TaggedTuple&lt;hydro::Tags::Pressure&lt;DataType&gt;&gt;
+<span class="lineNum">     128 </span>            : CylindricalBlastWave::variables(
+<span class="lineNum">     129 </span>            :     const tnsr::I&lt;DataType, 3, Frame::Inertial&gt;&amp; x,
+<span class="lineNum">     130 </span>            :     tmpl::list&lt;hydro::Tags::Pressure&lt;DataType&gt;&gt; /*meta*/) const noexcept {
+<span class="lineNum">     131 </span>            :   return compute_piecewise(x, inner_radius_, outer_radius_, inner_pressure_,
+<span class="lineNum">     132 </span>            :                            outer_pressure_);
+<span class="lineNum">     133 </span>            :   ;
+<span class="lineNum">     134 </span>            : }
+<span class="lineNum">     135 </span>            : 
+<span class="lineNum">     136 </span>            : template &lt;typename DataType&gt;
+<span class="lineNum">     137 </span>            : tuples::TaggedTuple&lt;hydro::Tags::MagneticField&lt;DataType, 3&gt;&gt;
+<span class="lineNum">     138 </span>            : CylindricalBlastWave::variables(
+<span class="lineNum">     139 </span>            :     const tnsr::I&lt;DataType, 3, Frame::Inertial&gt;&amp; x,
+<span class="lineNum">     140 </span>            :     tmpl::list&lt;hydro::Tags::MagneticField&lt;DataType, 3&gt;&gt; /*meta*/) const
+<span class="lineNum">     141 </span>            :     noexcept {
+<span class="lineNum">     142 </span>            :   auto magnetic_field =
+<span class="lineNum">     143 </span>            :       make_with_value&lt;typename hydro::Tags::MagneticField&lt;DataType, 3&gt;::type&gt;(
+<span class="lineNum">     144 </span>            :           get&lt;0&gt;(x), 0.0);
+<span class="lineNum">     145 </span>            :   get&lt;0&gt;(magnetic_field) = gsl::at(magnetic_field_, 0);
+<span class="lineNum">     146 </span>            :   get&lt;1&gt;(magnetic_field) = gsl::at(magnetic_field_, 1);
+<span class="lineNum">     147 </span>            :   get&lt;2&gt;(magnetic_field) = gsl::at(magnetic_field_, 2);
+<span class="lineNum">     148 </span>            :   return magnetic_field;
+<span class="lineNum">     149 </span>            : }
+<span class="lineNum">     150 </span>            : 
+<span class="lineNum">     151 </span>            : template &lt;typename DataType&gt;
+<span class="lineNum">     152 </span>            : tuples::TaggedTuple&lt;hydro::Tags::DivergenceCleaningField&lt;DataType&gt;&gt;
+<span class="lineNum">     153 </span>            : CylindricalBlastWave::variables(
+<span class="lineNum">     154 </span>            :     const tnsr::I&lt;DataType, 3, Frame::Inertial&gt;&amp; x,
+<span class="lineNum">     155 </span>            :     tmpl::list&lt;hydro::Tags::DivergenceCleaningField&lt;DataType&gt;&gt; /*meta*/) const
+<span class="lineNum">     156 </span>            :     noexcept {
+<span class="lineNum">     157 </span>            :   return {make_with_value&lt;
+<span class="lineNum">     158 </span>            :       db::item_type&lt;hydro::Tags::DivergenceCleaningField&lt;DataType&gt;&gt;&gt;(x, 0.0)};
+<span class="lineNum">     159 </span>            : }
+<span class="lineNum">     160 </span>            : 
+<span class="lineNum">     161 </span>            : template &lt;typename DataType&gt;
+<span class="lineNum">     162 </span>            : tuples::TaggedTuple&lt;hydro::Tags::LorentzFactor&lt;DataType&gt;&gt;
+<span class="lineNum">     163 </span>            : CylindricalBlastWave::variables(
+<span class="lineNum">     164 </span>            :     const tnsr::I&lt;DataType, 3, Frame::Inertial&gt;&amp; x,
+<span class="lineNum">     165 </span>            :     tmpl::list&lt;hydro::Tags::LorentzFactor&lt;DataType&gt;&gt; /*meta*/) const noexcept {
+<span class="lineNum">     166 </span>            :   return {make_with_value&lt;
+<span class="lineNum">     167 </span>            :       db::item_type&lt;hydro::Tags::LorentzFactor&lt;DataType&gt;&gt;&gt;(x, 1.0)};
+<span class="lineNum">     168 </span>            : }
+<span class="lineNum">     169 </span>            : 
+<span class="lineNum">     170 </span>            : template &lt;typename DataType&gt;
+<span class="lineNum">     171 </span>            : tuples::TaggedTuple&lt;hydro::Tags::SpecificEnthalpy&lt;DataType&gt;&gt;
+<span class="lineNum">     172 </span>            : CylindricalBlastWave::variables(
+<span class="lineNum">     173 </span>            :     const tnsr::I&lt;DataType, 3, Frame::Inertial&gt;&amp; x,
+<span class="lineNum">     174 </span>            :     tmpl::list&lt;hydro::Tags::SpecificEnthalpy&lt;DataType&gt;&gt; /*meta*/) const
+<span class="lineNum">     175 </span>            :     noexcept {
+<span class="lineNum">     176 </span>            :   return equation_of_state_.specific_enthalpy_from_density_and_energy(
+<span class="lineNum">     177 </span>            :       get&lt;hydro::Tags::RestMassDensity&lt;DataType&gt;&gt;(
+<span class="lineNum">     178 </span>            :           variables(x, tmpl::list&lt;hydro::Tags::RestMassDensity&lt;DataType&gt;&gt;{})),
+<span class="lineNum">     179 </span>            :       get&lt;hydro::Tags::SpecificInternalEnergy&lt;DataType&gt;&gt;(variables(
+<span class="lineNum">     180 </span>            :           x, tmpl::list&lt;hydro::Tags::SpecificInternalEnergy&lt;DataType&gt;&gt;{})));
+<span class="lineNum">     181 </span>            : }
+<span class="lineNum">     182 </span>            : 
+<span class="lineNum">     183 </span>            : bool operator==(const CylindricalBlastWave&amp; lhs,
+<span class="lineNum">     184 </span>            :                 const CylindricalBlastWave&amp; rhs) noexcept {
+<span class="lineNum">     185 </span>            :   return lhs.inner_radius_ == rhs.inner_radius_ and
+<span class="lineNum">     186 </span>            :          lhs.outer_radius_ == rhs.outer_radius_ and
+<span class="lineNum">     187 </span>            :          lhs.inner_density_ == rhs.inner_density_ and
+<span class="lineNum">     188 </span>            :          lhs.outer_density_ == rhs.outer_density_ and
+<span class="lineNum">     189 </span>            :          lhs.inner_pressure_ == rhs.inner_pressure_ and
+<span class="lineNum">     190 </span>            :          lhs.outer_pressure_ == rhs.outer_pressure_ and
+<span class="lineNum">     191 </span>            :          lhs.magnetic_field_ == rhs.magnetic_field_ and
+<span class="lineNum">     192 </span>            :          lhs.adiabatic_index_ == rhs.adiabatic_index_;
+<span class="lineNum">     193 </span>            : }
+<span class="lineNum">     194 </span>            : 
+<span class="lineNum">     195 </span>            : bool operator!=(const CylindricalBlastWave&amp; lhs,
+<span class="lineNum">     196 </span>            :                 const CylindricalBlastWave&amp; rhs) noexcept {
+<span class="lineNum">     197 </span>            :   return not(lhs == rhs);
+<span class="lineNum">     198 </span>            : }
+<span class="lineNum">     199 </span>            : 
+<span class="lineNum">     200 </span>            : #define DTYPE(data) BOOST_PP_TUPLE_ELEM(0, data)
+<span class="lineNum">     201 </span>            : #define TAG(data) BOOST_PP_TUPLE_ELEM(1, data)
+<span class="lineNum">     202 </span>            : 
+<span class="lineNum">     203 </span>            : #define INSTANTIATE_SCALARS(_, data)                         \
+<span class="lineNum">     204 </span>            :   template tuples::TaggedTuple&lt;TAG(data) &lt; DTYPE(data)&gt;&gt;     \
+<span class="lineNum">     205 </span>            :       CylindricalBlastWave::variables(                       \
+<span class="lineNum">     206 </span>            :           const tnsr::I&lt;DTYPE(data), 3, Frame::Inertial&gt;&amp; x, \
+<span class="lineNum">     207 </span>            :           tmpl::list&lt;TAG(data) &lt; DTYPE(data)&gt;&gt; /*meta*/) const noexcept;
+<span class="lineNum">     208 </span>            : 
+<span class="lineNum">     209 </span>            : GENERATE_INSTANTIATIONS(
+<span class="lineNum">     210 </span>            :     INSTANTIATE_SCALARS, (double, DataVector),
+<span class="lineNum">     211 </span>            :     (hydro::Tags::RestMassDensity, hydro::Tags::SpecificInternalEnergy,
+<span class="lineNum">     212 </span>            :      hydro::Tags::Pressure, hydro::Tags::DivergenceCleaningField,
+<span class="lineNum">     213 </span>            :      hydro::Tags::LorentzFactor, hydro::Tags::SpecificEnthalpy))
+<span class="lineNum">     214 </span>            : 
+<span class="lineNum">     215 </span>            : #define INSTANTIATE_VECTORS(_, data)                                         \
+<span class="lineNum">     216 </span>            :   template tuples::TaggedTuple&lt;TAG(data) &lt; DTYPE(data), 3&gt;&gt;                  \
+<span class="lineNum">     217 </span>            :       CylindricalBlastWave::variables(                                       \
+<span class="lineNum">     218 </span>            :           const tnsr::I&lt;DTYPE(data), 3, Frame::Inertial&gt;&amp; x,                 \
+<span class="lineNum">     219 </span>            :           tmpl::list&lt;TAG(data) &lt; DTYPE(data), 3, Frame::Inertial&gt;&gt; /*meta*/) \
+<span class="lineNum">     220 </span>            :           const noexcept;
+<span class="lineNum">     221 </span>            : 
+<span class="lineNum">     222 </span>            : GENERATE_INSTANTIATIONS(INSTANTIATE_VECTORS, (double, DataVector),
+<span class="lineNum">     223 </span>            :                         (hydro::Tags::SpatialVelocity,
+<span class="lineNum">     224 </span>            :                          hydro::Tags::MagneticField))
+<span class="lineNum">     225 </span>            : 
+<span class="lineNum">     226 </span>            : #undef DTYPE
+<span class="lineNum">     227 </span>            : #undef TAG
+<span class="lineNum">     228 </span>            : #undef INSTANTIATE_SCALARS
+<span class="lineNum">     229 </span>            : #undef INSTANTIATE_VECTORS
+<span class="lineNum">     230 </span>            : }  // namespace AnalyticData
+<span class="lineNum">     231 </span>            : }  // namespace grmhd
+<span class="lineNum">     232 </span>            : /// \endcond
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

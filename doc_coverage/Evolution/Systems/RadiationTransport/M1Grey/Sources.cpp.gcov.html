@@ -1,0 +1,170 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Evolution/Systems/RadiationTransport/M1Grey/Sources.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">Evolution/Systems/RadiationTransport/M1Grey</a> - Sources.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;Evolution/Systems/RadiationTransport/M1Grey/Sources.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;array&gt;
+<span class="lineNum">       7 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : #include &quot;DataStructures/DataVector.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;DataStructures/Tensor/Tensor.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;DataStructures/Variables.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;PointwiseFunctions/GeneralRelativity/IndexManipulation.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;PointwiseFunctions/GeneralRelativity/Tags.hpp&quot; // IWYU pragma: keep
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : // IWYU pragma: no_forward_declare Tensor
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span><span class="lineNoCov">          0 : namespace {</span>
+<span class="lineNum">      18 </span>            : struct AlphaTildeP {
+<span class="lineNum">      19 </span>            :   using type = tnsr::II&lt;DataVector, 3, Frame::Inertial&gt;;
+<span class="lineNum">      20 </span>            : };
+<span class="lineNum">      21 </span>            : }  //  namespace
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : namespace RadiationTransport {
+<span class="lineNum">      24 </span>            : namespace M1Grey {
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            : namespace detail {
+<span class="lineNum">      27 </span>            : void compute_sources_impl(
+<span class="lineNum">      28 </span>            :     const gsl::not_null&lt;Scalar&lt;DataVector&gt;*&gt; source_tilde_e,
+<span class="lineNum">      29 </span>            :     const gsl::not_null&lt;tnsr::i&lt;DataVector, 3, Frame::Inertial&gt;*&gt;
+<span class="lineNum">      30 </span>            :         source_tilde_s,
+<span class="lineNum">      31 </span>            :     const Scalar&lt;DataVector&gt;&amp; tilde_e,
+<span class="lineNum">      32 </span>            :     const tnsr::i&lt;DataVector, 3, Frame::Inertial&gt;&amp; tilde_s,
+<span class="lineNum">      33 </span>            :     const tnsr::II&lt;DataVector, 3, Frame::Inertial&gt;&amp; tilde_p,
+<span class="lineNum">      34 </span>            :     const Scalar&lt;DataVector&gt;&amp; lapse,
+<span class="lineNum">      35 </span>            :     const tnsr::i&lt;DataVector, 3, Frame::Inertial&gt;&amp; d_lapse,
+<span class="lineNum">      36 </span>            :     const tnsr::iJ&lt;DataVector, 3, Frame::Inertial&gt;&amp; d_shift,
+<span class="lineNum">      37 </span>            :     const tnsr::ijj&lt;DataVector, 3, Frame::Inertial&gt;&amp; d_spatial_metric,
+<span class="lineNum">      38 </span>            :     const tnsr::II&lt;DataVector, 3, Frame::Inertial&gt;&amp; inv_spatial_metric,
+<span class="lineNum">      39 </span>            :     const tnsr::ii&lt;DataVector, 3, Frame::Inertial&gt;&amp;
+<span class="lineNum">      40 </span>            :         extrinsic_curvature) noexcept {
+<span class="lineNum">      41 </span>            :   Variables&lt;tmpl::list&lt;Tags::TildeSVector&lt;Frame::Inertial&gt;, AlphaTildeP&gt;&gt;
+<span class="lineNum">      42 </span>            :       temp_tensors(get(tilde_e).size());
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span>            :   constexpr size_t spatial_dim = 3;
+<span class="lineNum">      45 </span>            : 
+<span class="lineNum">      46 </span>            :   auto&amp; tilde_s_M = get&lt;Tags::TildeSVector&lt;Frame::Inertial&gt;&gt;(temp_tensors);
+<span class="lineNum">      47 </span>            :   raise_or_lower_index(make_not_null(&amp;tilde_s_M), tilde_s, inv_spatial_metric);
+<span class="lineNum">      48 </span>            :   auto&amp; alpha_tilde_p = get&lt;AlphaTildeP&gt;(temp_tensors);
+<span class="lineNum">      49 </span>            :   for (size_t i = 0; i &lt; spatial_dim; ++i) {
+<span class="lineNum">      50 </span>            :     for (size_t j = 0; j &lt; spatial_dim; ++j) {
+<span class="lineNum">      51 </span>            :       alpha_tilde_p.get(i, j) = tilde_p.get(i, j) * get(lapse);
+<span class="lineNum">      52 </span>            :     }
+<span class="lineNum">      53 </span>            :   }
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span>            :   // unroll contributions from m=0 and n=0 to avoid initializing
+<span class="lineNum">      56 </span>            :   // source terms to zero
+<span class="lineNum">      57 </span>            :   get(*source_tilde_e) =
+<span class="lineNum">      58 </span>            :       get&lt;0, 0&gt;(extrinsic_curvature) * get&lt;0, 0&gt;(alpha_tilde_p) -
+<span class="lineNum">      59 </span>            :       get&lt;0&gt;(tilde_s_M) * get&lt;0&gt;(d_lapse);
+<span class="lineNum">      60 </span>            :   for (size_t m = 1; m &lt; spatial_dim; ++m) {
+<span class="lineNum">      61 </span>            :     get(*source_tilde_e) +=
+<span class="lineNum">      62 </span>            :         extrinsic_curvature.get(0, m) * alpha_tilde_p.get(0, m) +
+<span class="lineNum">      63 </span>            :         extrinsic_curvature.get(m, 0) * alpha_tilde_p.get(m, 0) -
+<span class="lineNum">      64 </span>            :         tilde_s_M.get(m) * d_lapse.get(m);
+<span class="lineNum">      65 </span>            :     for (size_t n = 1; n &lt; spatial_dim; ++n) {
+<span class="lineNum">      66 </span>            :       get(*source_tilde_e) +=
+<span class="lineNum">      67 </span>            :           extrinsic_curvature.get(m, n) * alpha_tilde_p.get(m, n);
+<span class="lineNum">      68 </span>            :     }
+<span class="lineNum">      69 </span>            :   }
+<span class="lineNum">      70 </span>            : 
+<span class="lineNum">      71 </span>            :   for (size_t i = 0; i &lt; spatial_dim; ++i) {
+<span class="lineNum">      72 </span>            :     source_tilde_s-&gt;get(i) =
+<span class="lineNum">      73 </span>            :         -get(tilde_e) * d_lapse.get(i) + get&lt;0&gt;(tilde_s) * d_shift.get(i, 0) +
+<span class="lineNum">      74 </span>            :         0.5 * get&lt;0, 0&gt;(alpha_tilde_p) * d_spatial_metric.get(i, 0, 0);
+<span class="lineNum">      75 </span>            :     for (size_t m = 1; m &lt; spatial_dim; ++m) {
+<span class="lineNum">      76 </span>            :       source_tilde_s-&gt;get(i) +=
+<span class="lineNum">      77 </span>            :           tilde_s.get(m) * d_shift.get(i, m) +
+<span class="lineNum">      78 </span>            :           0.5 * (alpha_tilde_p.get(0, m) * d_spatial_metric.get(i, 0, m) +
+<span class="lineNum">      79 </span>            :                  alpha_tilde_p.get(m, 0) * d_spatial_metric.get(i, m, 0));
+<span class="lineNum">      80 </span>            :       for (size_t n = 1; n &lt; spatial_dim; ++n) {
+<span class="lineNum">      81 </span>            :         source_tilde_s-&gt;get(i) +=
+<span class="lineNum">      82 </span>            :             0.5 * alpha_tilde_p.get(m, n) * d_spatial_metric.get(i, m, n);
+<span class="lineNum">      83 </span>            :       }
+<span class="lineNum">      84 </span>            :     }
+<span class="lineNum">      85 </span>            :   }
+<span class="lineNum">      86 </span>            : }
+<span class="lineNum">      87 </span>            : 
+<span class="lineNum">      88 </span>            : }  // namespace detail
+<span class="lineNum">      89 </span>            : }  // namespace M1Grey
+<span class="lineNum">      90 </span>            : }  // namespace RadiationTransport
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

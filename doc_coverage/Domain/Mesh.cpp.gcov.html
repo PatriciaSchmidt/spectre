@@ -1,0 +1,202 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - Domain/Mesh.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">Domain</a> - Mesh.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;Domain/Mesh.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;algorithm&gt;
+<span class="lineNum">       7 </span>            : #include &lt;ostream&gt;
+<span class="lineNum">       8 </span>            : #include &lt;pup.h&gt;  // IWYU pragma: keep
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : #include &quot;ErrorHandling/Assert.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;Parallel/PupStlCpp11.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      12 </span>            : #include &quot;Utilities/GenerateInstantiations.hpp&quot;
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      15 </span>            : // clang-tidy: incorrectly reported redundancy in template expression
+<span class="lineNum">      16 </span>            : template &lt;size_t N, Requires&lt;(N &gt; 0 and N == Dim)&gt;&gt;  // NOLINT
+<span class="lineNum">      17 </span>            : Mesh&lt;Dim - 1&gt; Mesh&lt;Dim&gt;::slice_away(const size_t d) const noexcept {
+<span class="lineNum">      18 </span>            :   ASSERT(d &lt; Dim, &quot;Tried to slice away non-existing dimension &quot;
+<span class="lineNum">      19 </span>            :                       &lt;&lt; d &lt;&lt; &quot; of &quot; &lt;&lt; Dim &lt;&lt; &quot;-dimensional mesh.&quot;);
+<span class="lineNum">      20 </span>            :   std::array&lt;size_t, Dim - 1&gt; dims{};
+<span class="lineNum">      21 </span>            :   for (size_t dim = 0; dim &lt; d; dim++) {
+<span class="lineNum">      22 </span>            :     gsl::at(dims, dim) = dim;
+<span class="lineNum">      23 </span>            :   }
+<span class="lineNum">      24 </span>            :   for (size_t dim = d + 1; dim &lt; Dim; dim++) {
+<span class="lineNum">      25 </span>            :     gsl::at(dims, dim - 1) = dim;
+<span class="lineNum">      26 </span>            :   }
+<span class="lineNum">      27 </span>            :   return slice_through(dims);
+<span class="lineNum">      28 </span>            : }
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      31 </span>            : template &lt;size_t SliceDim, Requires&lt;(SliceDim &lt;= Dim)&gt;&gt;
+<span class="lineNum">      32 </span>            : Mesh&lt;SliceDim&gt; Mesh&lt;Dim&gt;::slice_through(
+<span class="lineNum">      33 </span>            :     const std::array&lt;size_t, SliceDim&gt;&amp; dims) const noexcept {
+<span class="lineNum">      34 </span>            :   // Check for duplicates in `dims`
+<span class="lineNum">      35 </span>            :   auto sorted_dims = dims;
+<span class="lineNum">      36 </span>            :   std::sort(sorted_dims.begin(), sorted_dims.end());
+<span class="lineNum">      37 </span>            :   auto last_unique = std::unique(sorted_dims.begin(), sorted_dims.end());
+<span class="lineNum">      38 </span>            :   ASSERT(last_unique == sorted_dims.end(),
+<span class="lineNum">      39 </span>            :          &quot;Dimensions to slice through contain duplicates.&quot;);
+<span class="lineNum">      40 </span>            :   std::array&lt;size_t, SliceDim&gt; slice_extents{};
+<span class="lineNum">      41 </span>            :   std::array&lt;Spectral::Basis, SliceDim&gt; slice_bases{};
+<span class="lineNum">      42 </span>            :   std::array&lt;Spectral::Quadrature, SliceDim&gt; slice_quadratures{};
+<span class="lineNum">      43 </span>            :   for (size_t i = 0; i &lt; SliceDim; ++i) {
+<span class="lineNum">      44 </span>            :     const auto&amp; dim = gsl::at(dims, i);
+<span class="lineNum">      45 </span>            :     ASSERT(dim &lt; Dim, &quot;Tried to slice through non-existing dimension &quot;
+<span class="lineNum">      46 </span>            :                           &lt;&lt; dim &lt;&lt; &quot; of &quot; &lt;&lt; Dim &lt;&lt; &quot;-dimensional mesh.&quot;);
+<span class="lineNum">      47 </span>            :     gsl::at(slice_extents, i) = gsl::at(extents_.indices(), dim);
+<span class="lineNum">      48 </span>            :     gsl::at(slice_bases, i) = gsl::at(bases_, gsl::at(dims, i));
+<span class="lineNum">      49 </span>            :     gsl::at(slice_quadratures, i) = gsl::at(quadratures_, gsl::at(dims, i));
+<span class="lineNum">      50 </span>            :   }
+<span class="lineNum">      51 </span>            :   return Mesh&lt;SliceDim&gt;(std::move(slice_extents), std::move(slice_bases),
+<span class="lineNum">      52 </span>            :                         std::move(slice_quadratures));
+<span class="lineNum">      53 </span>            : }
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      56 </span>            : std::array&lt;Mesh&lt;1&gt;, Dim&gt; Mesh&lt;Dim&gt;::slices() const noexcept {
+<span class="lineNum">      57 </span>            :   std::array&lt;Mesh&lt;1&gt;, Dim&gt; result{};
+<span class="lineNum">      58 </span>            :   for (size_t d = 0; d &lt; Dim; ++d) {
+<span class="lineNum">      59 </span>            :     gsl::at(result, d) = Mesh&lt;1&gt;(extents(d), basis(d), quadrature(d));
+<span class="lineNum">      60 </span>            :   }
+<span class="lineNum">      61 </span>            :   return result;
+<span class="lineNum">      62 </span>            : }
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span>            : /// \cond HIDDEN_SYMBOLS
+<span class="lineNum">      65 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      66 </span>            : void Mesh&lt;Dim&gt;::pup(PUP::er&amp; p) noexcept {
+<span class="lineNum">      67 </span>            :   p | extents_;
+<span class="lineNum">      68 </span>            :   p | bases_;
+<span class="lineNum">      69 </span>            :   p | quadratures_;
+<span class="lineNum">      70 </span>            : }
+<span class="lineNum">      71 </span>            : 
+<span class="lineNum">      72 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      73 </span>            : bool operator==(const Mesh&lt;Dim&gt;&amp; lhs, const Mesh&lt;Dim&gt;&amp; rhs) noexcept {
+<span class="lineNum">      74 </span>            :   return lhs.extents() == rhs.extents() and lhs.basis() == rhs.basis() and
+<span class="lineNum">      75 </span>            :          lhs.quadrature() == rhs.quadrature();
+<span class="lineNum">      76 </span>            : }
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      79 </span>            : bool operator!=(const Mesh&lt;Dim&gt;&amp; lhs, const Mesh&lt;Dim&gt;&amp; rhs) noexcept {
+<span class="lineNum">      80 </span>            :   return not(lhs == rhs);
+<span class="lineNum">      81 </span>            : }
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span>            : #define DIM(data) BOOST_PP_TUPLE_ELEM(0, data)
+<span class="lineNum">      84 </span>            : #define GEN_OP(op, dim)                           \
+<span class="lineNum">      85 </span>            :   template bool operator op(const Mesh&lt;dim&gt;&amp; lhs, \
+<span class="lineNum">      86 </span>            :                             const Mesh&lt;dim&gt;&amp; rhs) noexcept;
+<span class="lineNum">      87 </span>            : #define INSTANTIATE_MESH(_, data) \
+<span class="lineNum">      88 </span>            :   template class Mesh&lt;DIM(data)&gt;; \
+<span class="lineNum">      89 </span>            :   GEN_OP(==, DIM(data))           \
+<span class="lineNum">      90 </span>            :   GEN_OP(!=, DIM(data))
+<span class="lineNum">      91 </span>            : #define INSTANTIATE_SLICE_AWAY(_, data)                                  \
+<span class="lineNum">      92 </span>            :   template Mesh&lt;DIM(data) - 1&gt; Mesh&lt;DIM(data)&gt;::slice_away(const size_t) \
+<span class="lineNum">      93 </span>            :       const noexcept;
+<span class="lineNum">      94 </span>            : template Mesh&lt;0&gt; Mesh&lt;0&gt;::slice_through(const std::array&lt;size_t, 0&gt;&amp;) const
+<span class="lineNum">      95 </span>            :     noexcept;
+<span class="lineNum">      96 </span>            : template Mesh&lt;0&gt; Mesh&lt;1&gt;::slice_through(const std::array&lt;size_t, 0&gt;&amp;) const
+<span class="lineNum">      97 </span>            :     noexcept;
+<span class="lineNum">      98 </span>            : template Mesh&lt;1&gt; Mesh&lt;1&gt;::slice_through(const std::array&lt;size_t, 1&gt;&amp;) const
+<span class="lineNum">      99 </span>            :     noexcept;
+<span class="lineNum">     100 </span>            : template Mesh&lt;0&gt; Mesh&lt;2&gt;::slice_through(const std::array&lt;size_t, 0&gt;&amp;) const
+<span class="lineNum">     101 </span>            :     noexcept;
+<span class="lineNum">     102 </span>            : template Mesh&lt;1&gt; Mesh&lt;2&gt;::slice_through(const std::array&lt;size_t, 1&gt;&amp;) const
+<span class="lineNum">     103 </span>            :     noexcept;
+<span class="lineNum">     104 </span>            : template Mesh&lt;2&gt; Mesh&lt;2&gt;::slice_through(const std::array&lt;size_t, 2&gt;&amp;) const
+<span class="lineNum">     105 </span>            :     noexcept;
+<span class="lineNum">     106 </span>            : template Mesh&lt;0&gt; Mesh&lt;3&gt;::slice_through(const std::array&lt;size_t, 0&gt;&amp;) const
+<span class="lineNum">     107 </span>            :     noexcept;
+<span class="lineNum">     108 </span>            : template Mesh&lt;1&gt; Mesh&lt;3&gt;::slice_through(const std::array&lt;size_t, 1&gt;&amp;) const
+<span class="lineNum">     109 </span>            :     noexcept;
+<span class="lineNum">     110 </span>            : template Mesh&lt;2&gt; Mesh&lt;3&gt;::slice_through(const std::array&lt;size_t, 2&gt;&amp;) const
+<span class="lineNum">     111 </span>            :     noexcept;
+<span class="lineNum">     112 </span>            : template Mesh&lt;3&gt; Mesh&lt;3&gt;::slice_through(const std::array&lt;size_t, 3&gt;&amp;) const
+<span class="lineNum">     113 </span>            :     noexcept;
+<span class="lineNum">     114 </span>            : 
+<span class="lineNum">     115 </span>            : GENERATE_INSTANTIATIONS(INSTANTIATE_MESH, (0, 1, 2, 3))
+<span class="lineNum">     116 </span>            : GENERATE_INSTANTIATIONS(INSTANTIATE_SLICE_AWAY, (1, 2, 3))
+<span class="lineNum">     117 </span>            : 
+<span class="lineNum">     118 </span>            : #undef DIM
+<span class="lineNum">     119 </span>            : #undef GEN_OP
+<span class="lineNum">     120 </span>            : #undef INSTANTIATE_MESH
+<span class="lineNum">     121 </span>            : #undef INSTANTIATE_SLICE_AWAY
+<span class="lineNum">     122 </span>            : /// \endcond
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

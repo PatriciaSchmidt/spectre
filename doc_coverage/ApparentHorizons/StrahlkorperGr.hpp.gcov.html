@@ -1,0 +1,431 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - ApparentHorizons/StrahlkorperGr.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">ApparentHorizons</a> - StrahlkorperGr.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">15</td>
+            <td class="headerCovTableEntry">16</td>
+            <td class="headerCovTableEntryHi">93.8 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;array&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : #include &quot;ApparentHorizons/TagsTypeAliases.hpp&quot;
+<span class="lineNum">       9 </span>            : #include &quot;DataStructures/Tensor/TypeAliases.hpp&quot;
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : /// \cond
+<span class="lineNum">      12 </span>            : class DataVector;
+<span class="lineNum">      13 </span>            : class YlmSpherepack;
+<span class="lineNum">      14 </span>            : template &lt;typename Frame&gt;
+<span class="lineNum">      15 </span>            : class Strahlkorper;
+<span class="lineNum">      16 </span>            : template &lt;typename X, typename Symm, typename IndexList&gt;
+<span class="lineNum">      17 </span>            : class Tensor;
+<span class="lineNum">      18 </span>            : /// \endcond
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : /// \ingroup SurfacesGroup
+<span class="lineNum">      21 </span>            : /// Contains functions that depend both on a Strahlkorper and a metric.
+<span class="lineNum">      22 </span><span class="lineCov">          1 : namespace StrahlkorperGr {</span>
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : /// \ingroup SurfacesGroup
+<span class="lineNum">      25 </span>            : /// \brief Computes normalized unit normal one-form to a Strahlkorper.
+<span class="lineNum">      26 </span>            : ///
+<span class="lineNum">      27 </span>            : /// \details The input argument `normal_one_form` \f$n_i\f$ is the
+<span class="lineNum">      28 </span>            : /// unnormalized surface one-form; it depends on a Strahlkorper but
+<span class="lineNum">      29 </span>            : /// not on a metric.  The input argument `one_over_one_form_magnitude`
+<span class="lineNum">      30 </span>            : /// is \f$1/\sqrt{g^{ij}n_i n_j}\f$, which can be computed using (one
+<span class="lineNum">      31 </span>            : /// over) the `magnitude` function.
+<span class="lineNum">      32 </span>            : template &lt;typename Frame&gt;
+<span class="lineNum">      33 </span><span class="lineCov">          1 : tnsr::i&lt;DataVector, 3, Frame&gt; unit_normal_one_form(</span>
+<span class="lineNum">      34 </span>            :     const tnsr::i&lt;DataVector, 3, Frame&gt;&amp; normal_one_form,
+<span class="lineNum">      35 </span>            :     const DataVector&amp; one_over_one_form_magnitude) noexcept;
+<span class="lineNum">      36 </span>            : 
+<span class="lineNum">      37 </span>            : /// \ingroup SurfacesGroup
+<span class="lineNum">      38 </span>            : /// \brief Computes 3-covariant gradient \f$D_i S_j\f$ of a
+<span class="lineNum">      39 </span>            : /// Strahlkorper's normal.
+<span class="lineNum">      40 </span>            : ///
+<span class="lineNum">      41 </span>            : /// \details See Eqs. (1--9) of \cite Baumgarte1996hh.
+<span class="lineNum">      42 </span>            : /// Here \f$S_j\f$ is the (normalized) unit one-form to the surface,
+<span class="lineNum">      43 </span>            : /// and \f$D_i\f$ is the spatial covariant derivative.  Note that this
+<span class="lineNum">      44 </span>            : /// object is symmetric, even though this is not obvious from the
+<span class="lineNum">      45 </span>            : /// definition.  The input arguments `r_hat`, `radius`, and
+<span class="lineNum">      46 </span>            : /// `d2x_radius` depend on the Strahlkorper but not on the metric, and
+<span class="lineNum">      47 </span>            : /// can be computed from a Strahlkorper using ComputeItems in
+<span class="lineNum">      48 </span>            : /// `StrahlkorperTags`.  The input argument
+<span class="lineNum">      49 </span>            : /// `one_over_one_form_magnitude` is \f$1/\sqrt{g^{ij}n_i n_j}\f$,
+<span class="lineNum">      50 </span>            : /// where \f$n_i\f$ is `StrahlkorperTags::NormalOneForm` (i.e.  the
+<span class="lineNum">      51 </span>            : /// unnormalized one-form to the Strahlkorper); it can be computed
+<span class="lineNum">      52 </span>            : /// using (one over) the `magnitude` function.  The input argument
+<span class="lineNum">      53 </span>            : /// `unit_normal_one_form` is \f$S_j\f$,the normalized one-form.
+<span class="lineNum">      54 </span>            : template &lt;typename Frame&gt;
+<span class="lineNum">      55 </span><span class="lineCov">          1 : tnsr::ii&lt;DataVector, 3, Frame&gt; grad_unit_normal_one_form(</span>
+<span class="lineNum">      56 </span>            :     const tnsr::i&lt;DataVector, 3, Frame&gt;&amp; r_hat, const DataVector&amp; radius,
+<span class="lineNum">      57 </span>            :     const tnsr::i&lt;DataVector, 3, Frame&gt;&amp; unit_normal_one_form,
+<span class="lineNum">      58 </span>            :     const tnsr::ii&lt;DataVector, 3, Frame&gt;&amp; d2x_radius,
+<span class="lineNum">      59 </span>            :     const DataVector&amp; one_over_one_form_magnitude,
+<span class="lineNum">      60 </span>            :     const tnsr::Ijj&lt;DataVector, 3, Frame&gt;&amp; christoffel_2nd_kind) noexcept;
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span>            : /// \ingroup SurfacesGroup
+<span class="lineNum">      63 </span>            : /// \brief Computes inverse 2-metric \f$g^{ij}-S^i S^j\f$ of a Strahlkorper.
+<span class="lineNum">      64 </span>            : ///
+<span class="lineNum">      65 </span>            : /// \details See Eqs. (1--9) of \cite Baumgarte1996hh.
+<span class="lineNum">      66 </span>            : /// Here \f$S^i\f$ is the (normalized) unit vector to the surface,
+<span class="lineNum">      67 </span>            : /// and \f$g^{ij}\f$ is the 3-metric.  This object is expressed in the
+<span class="lineNum">      68 </span>            : /// usual 3-d Cartesian basis, so it is written as a 3-dimensional tensor.
+<span class="lineNum">      69 </span>            : /// But because it is orthogonal to \f$S_i\f$, it has only 3 independent
+<span class="lineNum">      70 </span>            : /// degrees of freedom, and could be expressed as a 2-d tensor with an
+<span class="lineNum">      71 </span>            : /// appropriate choice of basis. The input argument `unit_normal_vector` is
+<span class="lineNum">      72 </span>            : /// \f$S^i = g^{ij} S_j\f$, where \f$S_j\f$ is the unit normal one form.
+<span class="lineNum">      73 </span>            : template &lt;typename Frame&gt;
+<span class="lineNum">      74 </span><span class="lineCov">          1 : tnsr::II&lt;DataVector, 3, Frame&gt; inverse_surface_metric(</span>
+<span class="lineNum">      75 </span>            :     const tnsr::I&lt;DataVector, 3, Frame&gt;&amp; unit_normal_vector,
+<span class="lineNum">      76 </span>            :     const tnsr::II&lt;DataVector, 3, Frame&gt;&amp; upper_spatial_metric) noexcept;
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span>            : /// \ingroup SurfacesGroup
+<span class="lineNum">      79 </span>            : /// \brief Expansion of a `Strahlkorper`. Should be zero on apparent horizons.
+<span class="lineNum">      80 </span>            : ///
+<span class="lineNum">      81 </span>            : /// \details Implements Eq. (5) in \cite Baumgarte1996hh.  The input argument
+<span class="lineNum">      82 </span>            : /// `grad_normal` is the quantity returned by
+<span class="lineNum">      83 </span>            : /// `StrahlkorperGr::grad_unit_normal_one_form`, and `inverse_surface_metric`
+<span class="lineNum">      84 </span>            : /// is the quantity returned by `StrahlkorperGr::inverse_surface_metric`.
+<span class="lineNum">      85 </span>            : template &lt;typename Frame&gt;
+<span class="lineNum">      86 </span><span class="lineCov">          1 : Scalar&lt;DataVector&gt; expansion(</span>
+<span class="lineNum">      87 </span>            :     const tnsr::ii&lt;DataVector, 3, Frame&gt;&amp; grad_normal,
+<span class="lineNum">      88 </span>            :     const tnsr::II&lt;DataVector, 3, Frame&gt;&amp; inverse_surface_metric,
+<span class="lineNum">      89 </span>            :     const tnsr::ii&lt;DataVector, 3, Frame&gt;&amp; extrinsic_curvature) noexcept;
+<span class="lineNum">      90 </span>            : 
+<span class="lineNum">      91 </span>            : /*!
+<span class="lineNum">      92 </span>            :  * \ingroup SurfacesGroup
+<span class="lineNum">      93 </span>            :  * \brief Extrinsic curvature of a 2D `Strahlkorper` embedded in a 3D space.
+<span class="lineNum">      94 </span>            :  *
+<span class="lineNum">      95 </span>            :  * \details Implements Eq. (D.43) of Carroll's Spacetime and Geometry text.
+<span class="lineNum">      96 </span>            :  * Specifically,
+<span class="lineNum">      97 </span>            :  * \f$ K_{ij} = P^k_i P^l_j \nabla_{(k} S_{l)} \f$, where
+<span class="lineNum">      98 </span>            :  * \f$ P^k_i = \delta^k_i - S^k S_i \f$,
+<span class="lineNum">      99 </span>            :  * `grad_normal` is the quantity \f$ \nabla_k S_l \f$ returned by
+<span class="lineNum">     100 </span>            :  * `StrahlkorperGr::grad_unit_normal_one_form`, and `unit_normal_vector` is
+<span class="lineNum">     101 </span>            :  * \f$S^i = g^{ij} S_j\f$ where \f$S_j\f$ is the unit normal one form.
+<span class="lineNum">     102 </span>            :  * Not to be confused with the extrinsic curvature of a 3D spatial slice
+<span class="lineNum">     103 </span>            :  * embedded in 3+1 spacetime.
+<span class="lineNum">     104 </span>            :  * Because StrahlkorperGr::grad_unit_normal_one_form is symmetric, this
+<span class="lineNum">     105 </span>            :  * can be expanded into
+<span class="lineNum">     106 </span>            :  * \f$ K_{ij} = \nabla_{i}S_{j} - 2 S^k S_{(i}\nabla_{j)}S_k
+<span class="lineNum">     107 </span>            :  * + S_i S_j S^k S^l \nabla_{k} n_{l}\f$.
+<span class="lineNum">     108 </span>            :  */
+<span class="lineNum">     109 </span>            : template &lt;typename Frame&gt;
+<span class="lineNum">     110 </span><span class="lineCov">          1 : tnsr::ii&lt;DataVector, 3, Frame&gt; extrinsic_curvature(</span>
+<span class="lineNum">     111 </span>            :     const tnsr::ii&lt;DataVector, 3, Frame&gt;&amp; grad_normal,
+<span class="lineNum">     112 </span>            :     const tnsr::i&lt;DataVector, 3, Frame&gt;&amp; unit_normal_one_form,
+<span class="lineNum">     113 </span>            :     const tnsr::I&lt;DataVector, 3, Frame&gt;&amp; unit_normal_vector) noexcept;
+<span class="lineNum">     114 </span>            : 
+<span class="lineNum">     115 </span>            : /// \ingroup SurfacesGroup
+<span class="lineNum">     116 </span>            : /// \brief Intrinsic Ricci scalar of a 2D `Strahlkorper`.
+<span class="lineNum">     117 </span>            : ///
+<span class="lineNum">     118 </span>            : /// \details Implements Eq. (D.51) of
+<span class="lineNum">     119 </span>            : /// Sean Carroll's Spacetime and Geometry textbook (except correcting
+<span class="lineNum">     120 </span>            : /// sign errors: both extrinsic curvature terms are off by a minus sign
+<span class="lineNum">     121 </span>            : /// in Carroll's text but correct in Carroll's errata).
+<span class="lineNum">     122 </span>            : /// \f$ \hat{R}=R - 2 R_{ij} S^i S^j + K^2-K^{ij}K_{ij}.\f$
+<span class="lineNum">     123 </span>            : /// Here \f$\hat{R}\f$ is the intrinsic Ricci scalar curvature of
+<span class="lineNum">     124 </span>            : /// the Strahlkorper, \f$R\f$ and \f$R_{ij}\f$ are the Ricci scalar and
+<span class="lineNum">     125 </span>            : /// Ricci tensor of the 3D space that contains the Strahlkorper,
+<span class="lineNum">     126 </span>            : /// \f$ K_{ij} \f$ the output of StrahlkorperGr::extrinsic_curvature,
+<span class="lineNum">     127 </span>            : /// \f$ K \f$ is the trace of \f$K_{ij}\f$,
+<span class="lineNum">     128 </span>            : /// and `unit_normal_vector` is
+<span class="lineNum">     129 </span>            : /// \f$S^i = g^{ij} S_j\f$ where \f$S_j\f$ is the unit normal one form.
+<span class="lineNum">     130 </span>            : template &lt;typename Frame&gt;
+<span class="lineNum">     131 </span><span class="lineCov">          1 : Scalar&lt;DataVector&gt; ricci_scalar(</span>
+<span class="lineNum">     132 </span>            :     const tnsr::ii&lt;DataVector, 3, Frame&gt;&amp; spatial_ricci_tensor,
+<span class="lineNum">     133 </span>            :     const tnsr::I&lt;DataVector, 3, Frame&gt;&amp; unit_normal_vector,
+<span class="lineNum">     134 </span>            :     const tnsr::ii&lt;DataVector, 3, Frame&gt;&amp; extrinsic_curvature,
+<span class="lineNum">     135 </span>            :     const tnsr::II&lt;DataVector, 3, Frame&gt;&amp; upper_spatial_metric) noexcept;
+<span class="lineNum">     136 </span>            : 
+<span class="lineNum">     137 </span>            : /*!
+<span class="lineNum">     138 </span>            :  * \ingroup SurfacesGroup
+<span class="lineNum">     139 </span>            :  * \brief Area element of a 2D `Strahlkorper`.
+<span class="lineNum">     140 </span>            :  *
+<span class="lineNum">     141 </span>            :  * \details Implements Eq. (D.13), using Eqs. (D.4) and (D.5),
+<span class="lineNum">     142 </span>            :  * of \cite Baumgarte1996hh. Specifically, computes
+<span class="lineNum">     143 </span>            :  * \f$\sqrt{(\Theta^i\Theta_i)(\Phi^j\Phi_j)-(\Theta^i\Phi_i)^2}\f$,
+<span class="lineNum">     144 </span>            :  * \f$\Theta^i=\left(n^i(n_j-s_j) r J^j_\theta + r J^i_\theta\right)\f$,
+<span class="lineNum">     145 </span>            :  * \f$\Phi^i=\left(n^i(n_j-s_j)r J^j_\phi + r J^i_\phi\right)\f$,
+<span class="lineNum">     146 </span>            :  * and \f$\Theta^i\f$ and \f$\Phi^i\f$ are lowered by the
+<span class="lineNum">     147 </span>            :  * 3D spatial metric \f$g_{ij}\f$. Here \f$J^i_\alpha\f$, \f$s_j\f$,
+<span class="lineNum">     148 </span>            :  * \f$r\f$, and \f$n^i=n_i\f$ correspond to the input arguments
+<span class="lineNum">     149 </span>            :  * `jacobian`, `normal_one_form`, `radius`, and `r_hat`, respectively;
+<span class="lineNum">     150 </span>            :  * these input arguments depend only on the Strahlkorper, not on the
+<span class="lineNum">     151 </span>            :  * metric, and can be computed from a Strahlkorper using ComputeItems
+<span class="lineNum">     152 </span>            :  * in `StrahlkorperTags`. Note that this does not include the factor
+<span class="lineNum">     153 </span>            :  * of \f$\sin\theta\f$, i.e., this returns \f$r^2\f$ for a spherical
+<span class="lineNum">     154 </span>            :  * `Strahlkorper` in flat space.
+<span class="lineNum">     155 </span>            :  * This choice makes the area element returned here compatible with
+<span class="lineNum">     156 </span>            :  * `definite_integral` defined in `YlmSpherePack.hpp`.
+<span class="lineNum">     157 </span>            :  */
+<span class="lineNum">     158 </span>            : template &lt;typename Frame&gt;
+<span class="lineNum">     159 </span><span class="lineCov">          1 : Scalar&lt;DataVector&gt; area_element(</span>
+<span class="lineNum">     160 </span>            :     const tnsr::ii&lt;DataVector, 3, Frame&gt;&amp; spatial_metric,
+<span class="lineNum">     161 </span>            :     const StrahlkorperTags::aliases::Jacobian&lt;Frame&gt;&amp; jacobian,
+<span class="lineNum">     162 </span>            :     const tnsr::i&lt;DataVector, 3, Frame&gt;&amp; normal_one_form,
+<span class="lineNum">     163 </span>            :     const DataVector&amp; radius,
+<span class="lineNum">     164 </span>            :     const tnsr::i&lt;DataVector, 3, Frame&gt;&amp; r_hat) noexcept;
+<span class="lineNum">     165 </span>            : 
+<span class="lineNum">     166 </span>            : /*!
+<span class="lineNum">     167 </span>            :  * \ingroup SurfacesGroup
+<span class="lineNum">     168 </span>            :  * \brief Euclidean area element of a 2D `Strahlkorper`.
+<span class="lineNum">     169 </span>            :  *
+<span class="lineNum">     170 </span>            :  * This is useful for computing a flat-space integral over an
+<span class="lineNum">     171 </span>            :  * arbitrarily-shaped `Strahlkorper`.
+<span class="lineNum">     172 </span>            :  *
+<span class="lineNum">     173 </span>            :  * \details Implements Eq. (D.13), using Eqs. (D.4) and (D.5),
+<span class="lineNum">     174 </span>            :  * of \cite Baumgarte1996hh. Specifically, computes
+<span class="lineNum">     175 </span>            :  * \f$\sqrt{(\Theta^i\Theta_i)(\Phi^j\Phi_j)-(\Theta^i\Phi_i)^2}\f$,
+<span class="lineNum">     176 </span>            :  * \f$\Theta^i=\left(n^i(n_j-s_j) r J^j_\theta + r J^i_\theta\right)\f$,
+<span class="lineNum">     177 </span>            :  * \f$\Phi^i=\left(n^i(n_j-s_j)r J^j_\phi + r J^i_\phi\right)\f$,
+<span class="lineNum">     178 </span>            :  * and \f$\Theta^i\f$ and \f$\Phi^i\f$ are lowered by the
+<span class="lineNum">     179 </span>            :  * Euclidean spatial metric. Here \f$J^i_\alpha\f$, \f$s_j\f$,
+<span class="lineNum">     180 </span>            :  * \f$r\f$, and \f$n^i=n_i\f$ correspond to the input arguments
+<span class="lineNum">     181 </span>            :  * `jacobian`, `normal_one_form`, `radius`, and `r_hat`, respectively;
+<span class="lineNum">     182 </span>            :  * these input arguments depend only on the Strahlkorper, not on the
+<span class="lineNum">     183 </span>            :  * metric, and can be computed from a Strahlkorper using ComputeItems
+<span class="lineNum">     184 </span>            :  * in `StrahlkorperTags`. Note that this does not include the factor
+<span class="lineNum">     185 </span>            :  * of \f$\sin\theta\f$, i.e., this returns \f$r^2\f$ for a spherical
+<span class="lineNum">     186 </span>            :  * `Strahlkorper`.
+<span class="lineNum">     187 </span>            :  * This choice makes the area element returned here compatible with
+<span class="lineNum">     188 </span>            :  * `definite_integral` defined in `YlmSpherePack.hpp`.
+<span class="lineNum">     189 </span>            :  */
+<span class="lineNum">     190 </span>            : template &lt;typename Frame&gt;
+<span class="lineNum">     191 </span><span class="lineCov">          1 : Scalar&lt;DataVector&gt; euclidean_area_element(</span>
+<span class="lineNum">     192 </span>            :     const StrahlkorperTags::aliases::Jacobian&lt;Frame&gt;&amp; jacobian,
+<span class="lineNum">     193 </span>            :     const tnsr::i&lt;DataVector, 3, Frame&gt;&amp; normal_one_form,
+<span class="lineNum">     194 </span>            :     const DataVector&amp; radius,
+<span class="lineNum">     195 </span>            :     const tnsr::i&lt;DataVector, 3, Frame&gt;&amp; r_hat) noexcept;
+<span class="lineNum">     196 </span>            : 
+<span class="lineNum">     197 </span>            : /*!
+<span class="lineNum">     198 </span>            :  * \ingroup SurfacesGroup
+<span class="lineNum">     199 </span>            :  * \brief Surface integral of a scalar on a 2D `Strahlkorper`
+<span class="lineNum">     200 </span>            :  *
+<span class="lineNum">     201 </span>            :  * \details Computes the surface integral \f$\oint dA f\f$ for a scalar \f$f\f$
+<span class="lineNum">     202 </span>            :  * on a `Strahlkorper` with area element \f$dA\f$. The area element can be
+<span class="lineNum">     203 </span>            :  * computed via `StrahlkorperGr::area_element()`.
+<span class="lineNum">     204 </span>            :  */
+<span class="lineNum">     205 </span>            : template &lt;typename Frame&gt;
+<span class="lineNum">     206 </span><span class="lineCov">          1 : double surface_integral_of_scalar(</span>
+<span class="lineNum">     207 </span>            :     const Scalar&lt;DataVector&gt;&amp; area_element, const Scalar&lt;DataVector&gt;&amp; scalar,
+<span class="lineNum">     208 </span>            :     const Strahlkorper&lt;Frame&gt;&amp; strahlkorper) noexcept;
+<span class="lineNum">     209 </span>            : 
+<span class="lineNum">     210 </span>            : /*!
+<span class="lineNum">     211 </span>            :  * \ingroup SurfacesGroup
+<span class="lineNum">     212 </span>            :  * \brief Spin function of a 2D `Strahlkorper`.
+<span class="lineNum">     213 </span>            :  *
+<span class="lineNum">     214 </span>            :  * \details See Eqs. (2) and (10)
+<span class="lineNum">     215 </span>            :  * of \cite Owen2017yaj. This function computes the
+<span class="lineNum">     216 </span>            :  * &quot;spin function,&quot; which is an ingredient for horizon surface integrals that
+<span class="lineNum">     217 </span>            :  * measure quasilocal spin. This function is proportional to the imaginary part
+<span class="lineNum">     218 </span>            :  * of the horizon's complex scalar curvature. For Kerr black holes, the spin
+<span class="lineNum">     219 </span>            :  * function is proportional to the horizon vorticity. It is also useful for
+<span class="lineNum">     220 </span>            :  * visualizing the direction of a black hole's spin.
+<span class="lineNum">     221 </span>            :  * Specifically, this function computes
+<span class="lineNum">     222 </span>            :  * \f$\Omega = \epsilon^{AB}\nabla_A\omega_B\f$,
+<span class="lineNum">     223 </span>            :  * where capital indices index the tangent bundle of the surface and
+<span class="lineNum">     224 </span>            :  * where \f$\omega_\mu=(K_{\rho\nu}-K g_{\rho\nu})h_\mu^\rho s^\nu\f$ is
+<span class="lineNum">     225 </span>            :  * the curl of the angular momentum density of the surface,
+<span class="lineNum">     226 </span>            :  * \f$h^\rho_\mu = \delta_\mu^\rho + u_\mu u^\rho - s_\mu s^\rho\f$
+<span class="lineNum">     227 </span>            :  * is the projector tangent to the 2-surface,
+<span class="lineNum">     228 </span>            :  * \f$g_{\rho\nu} = \psi_{\rho\nu} + u_\rho u_\nu\f$ is the spatial
+<span class="lineNum">     229 </span>            :  * metric of the spatial slice, \f$u^\rho\f$ is the unit normal to the
+<span class="lineNum">     230 </span>            :  * spatial slice, and \f$s^\nu\f$ is the unit normal vector to the surface.
+<span class="lineNum">     231 </span>            :  * Because the tangent basis vectors \f$e_A^\mu\f$ are
+<span class="lineNum">     232 </span>            :  * orthogonal to both \f$u^\mu\f$ and \f$s^\mu\f$, it is straightforward
+<span class="lineNum">     233 </span>            :  * to show that \f$\Omega = \epsilon^{AB} \nabla_A K_{B\mu}s^\mu\f$.
+<span class="lineNum">     234 </span>            :  * This function uses the tangent vectors of the `Strahlkorper` to
+<span class="lineNum">     235 </span>            :  * compute \f$K_{B\mu}s^\mu\f$ and then numerically computes the
+<span class="lineNum">     236 </span>            :  * components of its gradient. The argument `area_element`
+<span class="lineNum">     237 </span>            :  * can be computed via `StrahlkorperGr::area_element`.
+<span class="lineNum">     238 </span>            :  * The argument `unit_normal_vector` can be found by raising the
+<span class="lineNum">     239 </span>            :  * index of the one-form returned by `StrahlkorperGr::unit_normal_oneform`.
+<span class="lineNum">     240 </span>            :  * The argument `tangents` is a Tangents that can be obtained from the
+<span class="lineNum">     241 </span>            :  * StrahlkorperDataBox using the `StrahlkorperTags::Tangents` tag.
+<span class="lineNum">     242 </span>            :  */
+<span class="lineNum">     243 </span>            : template &lt;typename Frame&gt;
+<span class="lineNum">     244 </span><span class="lineCov">          1 : Scalar&lt;DataVector&gt; spin_function(</span>
+<span class="lineNum">     245 </span>            :     const StrahlkorperTags::aliases::Jacobian&lt;Frame&gt;&amp; tangents,
+<span class="lineNum">     246 </span>            :     const YlmSpherepack&amp; ylm,
+<span class="lineNum">     247 </span>            :     const tnsr::I&lt;DataVector, 3, Frame&gt;&amp; unit_normal_vector,
+<span class="lineNum">     248 </span>            :     const Scalar&lt;DataVector&gt;&amp; area_element,
+<span class="lineNum">     249 </span>            :     const tnsr::ii&lt;DataVector, 3, Frame&gt;&amp; extrinsic_curvature) noexcept;
+<span class="lineNum">     250 </span>            : 
+<span class="lineNum">     251 </span>            : /*!
+<span class="lineNum">     252 </span>            :  * \ingroup SurfacesGroup
+<span class="lineNum">     253 </span>            :  * \brief Spin magnitude measured on a 2D `Strahlkorper`.
+<span class="lineNum">     254 </span>            :  *
+<span class="lineNum">     255 </span>            :  * \details Measures the quasilocal spin magnitude of a Strahlkorper, by
+<span class="lineNum">     256 </span>            :  * inserting \f$\alpha=1\f$ into Eq. (10) of \cite Owen2009sb
+<span class="lineNum">     257 </span>            :  * and dividing by \f$8\pi\f$ to yield the spin magnitude. The
+<span class="lineNum">     258 </span>            :  * spin magnitude is a Euclidean norm of surface integrals over the horizon
+<span class="lineNum">     259 </span>            :  * \f$S = \frac{1}{8\pi}\oint z \Omega dA\f$,
+<span class="lineNum">     260 </span>            :  * where \f$\Omega\f$ is obtained via `StrahlkorperGr::spin_function()`,
+<span class="lineNum">     261 </span>            :  * \f$dA\f$ is the area element, and \f$z\f$ (the &quot;spin potential&quot;) is a
+<span class="lineNum">     262 </span>            :  * solution of a generalized eigenproblem given by Eq. (9) of
+<span class="lineNum">     263 </span>            :  * \cite Owen2009sb. Specifically,
+<span class="lineNum">     264 </span>            :  * \f$\nabla^4 z + \nabla \cdot (R\nabla z) = \lambda \nabla^2 z\f$, where
+<span class="lineNum">     265 </span>            :  * \f$R\f$ is obtained via `StrahlkorperGr::ricci_scalar()`. The spin
+<span class="lineNum">     266 </span>            :  * magnitude is the Euclidean norm of the three values of \f$S\f$ obtained from
+<span class="lineNum">     267 </span>            :  * the eigenvectors \f$z\f$ with the 3 smallest-magnitude
+<span class="lineNum">     268 </span>            :  * eigenvalues \f$\lambda\f$. Note that this formulation of the eigenproblem
+<span class="lineNum">     269 </span>            :  * uses the &quot;Owen&quot; normalization, Eq. (A9) and surrounding discussion in
+<span class="lineNum">     270 </span>            :  * \cite Lovelace2008tw.
+<span class="lineNum">     271 </span>            :  * The eigenvectors are normalized  with the &quot;Kerr normalization&quot;,
+<span class="lineNum">     272 </span>            :  * Eq. (A22) of \cite Lovelace2008tw.
+<span class="lineNum">     273 </span>            :  * The argument `spatial_metric` is the metric of the 3D spatial slice
+<span class="lineNum">     274 </span>            :  * evaluated on the `Strahlkorper`.
+<span class="lineNum">     275 </span>            :  * The argument `tangents` can be obtained from the StrahlkorperDataBox
+<span class="lineNum">     276 </span>            :  * using the `StrahlkorperTags::Tangents` tag, and the argument
+<span class="lineNum">     277 </span>            :  * `unit_normal_vector` can
+<span class="lineNum">     278 </span>            :  * be found by raising the index of the one-form returned by
+<span class="lineNum">     279 </span>            :  * `StrahlkorperGr::unit_normal_one_form`.
+<span class="lineNum">     280 </span>            :  * The argument `ylm` is the `YlmSpherepack` of the `Strahlkorper`.
+<span class="lineNum">     281 </span>            :  * The argument `area_element`
+<span class="lineNum">     282 </span>            :  * can be computed via `StrahlkorperGr::area_element`.
+<span class="lineNum">     283 </span>            :  */
+<span class="lineNum">     284 </span>            : template &lt;typename Frame&gt;
+<span class="lineNum">     285 </span><span class="lineCov">          1 : double dimensionful_spin_magnitude(</span>
+<span class="lineNum">     286 </span>            :     const Scalar&lt;DataVector&gt;&amp; ricci_scalar,
+<span class="lineNum">     287 </span>            :     const Scalar&lt;DataVector&gt;&amp; spin_function,
+<span class="lineNum">     288 </span>            :     const tnsr::ii&lt;DataVector, 3, Frame&gt;&amp; spatial_metric,
+<span class="lineNum">     289 </span>            :     const StrahlkorperTags::aliases::Jacobian&lt;Frame&gt;&amp; tangents,
+<span class="lineNum">     290 </span>            :     const YlmSpherepack&amp; ylm, const Scalar&lt;DataVector&gt;&amp; area_element) noexcept;
+<span class="lineNum">     291 </span>            : 
+<span class="lineNum">     292 </span>            : /*!
+<span class="lineNum">     293 </span>            :  * \ingroup SurfacesGroup
+<span class="lineNum">     294 </span>            :  * \brief Spin vector of a 2D `Strahlkorper`.
+<span class="lineNum">     295 </span>            :  *
+<span class="lineNum">     296 </span>            :  * \details Computes the spin vector of a `Strahlkorper` in a `Frame`, such as
+<span class="lineNum">     297 </span>            :  * `Frame::Inertial`. The result is a `std::array&lt;double, 3&gt;` containing the
+<span class="lineNum">     298 </span>            :  * Cartesian components of the spin vector, whose magnitude is
+<span class="lineNum">     299 </span>            :  * `spin_magnitude`. This function will return the dimensionless spin
+<span class="lineNum">     300 </span>            :  * components if `spin_magnitude` is the dimensionless spin magnitude, and
+<span class="lineNum">     301 </span>            :  * it will return the dimensionful spin components if `spin_magnitude` is
+<span class="lineNum">     302 </span>            :  * the dimensionful spin magnitude. The spin vector is given by
+<span class="lineNum">     303 </span>            :  * a surface integral over the horizon \f$\mathcal{H}\f$ [Eq. (25) of
+<span class="lineNum">     304 </span>            :  * \cite Owen2017yaj]:
+<span class="lineNum">     305 </span>            :  * \f$S^i = \frac{S}{N} \oint_\mathcal{H} dA \Omega (x^i - x^i_0 - x^i_R) \f$,
+<span class="lineNum">     306 </span>            :  * where \f$S\f$ is the spin magnitude,
+<span class="lineNum">     307 </span>            :  * \f$N\f$ is a normalization factor enforcing \f$\delta_{ij}S^iS^j = S\f$,
+<span class="lineNum">     308 </span>            :  * \f$dA\f$ is the area element (via `StrahlkorperGr::area_element`),
+<span class="lineNum">     309 </span>            :  * \f$\Omega\f$ is the &quot;spin function&quot; (via `StrahlkorperGr::spin_function`),
+<span class="lineNum">     310 </span>            :  * \f$x^i\f$ are the `Frame` coordinates of points on the `Strahlkorper`,
+<span class="lineNum">     311 </span>            :  * \f$x^i_0\f$ are the `Frame` coordinates of the center of the Strahlkorper,
+<span class="lineNum">     312 </span>            :  * \f$x^i_R = \frac{1}{8\pi}\oint_\mathcal{H} dA (x^i - x^i_0) R \f$,
+<span class="lineNum">     313 </span>            :  * and \f$R\f$ is the intrinsic Ricci scalar of the `Strahlkorper`
+<span class="lineNum">     314 </span>            :  * (via `StrahlkorperGr::ricci_scalar`).
+<span class="lineNum">     315 </span>            :  * Note that measuring positions on the horizon relative to
+<span class="lineNum">     316 </span>            :  * \f$x^i_0 + x^i_R\f$ instead of \f$x^i_0\f$ ensures that the mass dipole
+<span class="lineNum">     317 </span>            :  * moment vanishes. Also note that \f$x^i - x^i_0\f$ is
+<span class="lineNum">     318 </span>            :  * is the product of `StrahlkorperTags::Rhat` and `StrahlkorperTags::Radius`.
+<span class="lineNum">     319 </span>            :  */
+<span class="lineNum">     320 </span>            : template &lt;typename Frame&gt;
+<span class="lineNum">     321 </span><span class="lineCov">          1 : std::array&lt;double, 3&gt; spin_vector(double spin_magnitude,</span>
+<span class="lineNum">     322 </span>            :                                   const Scalar&lt;DataVector&gt;&amp; area_element,
+<span class="lineNum">     323 </span>            :                                   const Scalar&lt;DataVector&gt;&amp; radius,
+<span class="lineNum">     324 </span>            :                                   const tnsr::i&lt;DataVector, 3, Frame&gt;&amp; r_hat,
+<span class="lineNum">     325 </span>            :                                   const Scalar&lt;DataVector&gt;&amp; ricci_scalar,
+<span class="lineNum">     326 </span>            :                                   const Scalar&lt;DataVector&gt;&amp; spin_function,
+<span class="lineNum">     327 </span>            :                                   const YlmSpherepack&amp; ylm) noexcept;
+<span class="lineNum">     328 </span>            : 
+<span class="lineNum">     329 </span>            : /*!
+<span class="lineNum">     330 </span>            :  * \ingroup SurfacesGroup
+<span class="lineNum">     331 </span>            :  * \brief Irreducible mass of a 2D `Strahlkorper`.
+<span class="lineNum">     332 </span>            :  *
+<span class="lineNum">     333 </span>            :  * \details See Eqs. (15.38) \cite Hartle2003gravity. This function computes the
+<span class="lineNum">     334 </span>            :  * irreducible mass from the area of a horizon. Specifically, computes
+<span class="lineNum">     335 </span>            :  * \f$M_\mathrm{irr}=\sqrt{\frac{A}{16\pi}}\f$.
+<span class="lineNum">     336 </span>            :  */
+<span class="lineNum">     337 </span><span class="lineCov">          1 : double irreducible_mass(double area) noexcept;</span>
+<span class="lineNum">     338 </span>            : 
+<span class="lineNum">     339 </span>            : /*!
+<span class="lineNum">     340 </span>            :  * \ingroup SurfacesGroup
+<span class="lineNum">     341 </span>            :  * \brief Christodoulou Mass of a 2D `Strahlkorper`.
+<span class="lineNum">     342 </span>            :  *
+<span class="lineNum">     343 </span>            :  * \details See e.g. Eq. (1) of \cite Lovelace2016uwp.
+<span class="lineNum">     344 </span>            :  * This function computes the Christodoulou mass from the dimensionful
+<span class="lineNum">     345 </span>            :  * spin angular momentum \f$S\f$ and the irreducible mass \f$M_{irr}\f$
+<span class="lineNum">     346 </span>            :  * of a black hole horizon. Specifically, computes
+<span class="lineNum">     347 </span>            :  *\f$M=\sqrt{M_{irr}^2+\frac{S^2}{4M_{irr}^2}}\f$
+<span class="lineNum">     348 </span>            :  */
+<span class="lineNum">     349 </span><span class="lineCov">          1 : double christodoulou_mass(double dimensionful_spin_magnitude,</span>
+<span class="lineNum">     350 </span>            :                           double irreducible_mass) noexcept;
+<span class="lineNum">     351 </span>            : }  // namespace StrahlkorperGr
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

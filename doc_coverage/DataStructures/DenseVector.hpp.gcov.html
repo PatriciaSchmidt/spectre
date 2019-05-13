@@ -1,0 +1,162 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - DataStructures/DenseVector.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">DataStructures</a> - DenseVector.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntryLo">62.5 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineCov">          1 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : /// \file
+<span class="lineNum">       5 </span>            : /// Defines class DenseVector.
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            : #pragma once
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : #include &lt;pup.h&gt;  // IWYU pragma: keep
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : #include &quot;Options/Options.hpp&quot;
+<span class="lineNum">      12 </span>            : #include &quot;Utilities/Blaze.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;Utilities/MakeWithValue.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;Utilities/TypeTraits.hpp&quot;
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            : #include &lt;blaze/math/DynamicVector.h&gt;
+<span class="lineNum">      18 </span>            : #include &lt;blaze/system/Version.h&gt;
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : /*!
+<span class="lineNum">      21 </span>            :  * \ingroup DataStructuresGroup
+<span class="lineNum">      22 </span>            :  * \brief A dynamically sized vector of arbitrary type.
+<span class="lineNum">      23 </span>            :  *
+<span class="lineNum">      24 </span>            :  * \details Use this vector type to represent a generic collection of numbers
+<span class="lineNum">      25 </span>            :  * without assigning any particular meaning to them. It supports all common
+<span class="lineNum">      26 </span>            :  * vector operations such as elementwise arithmetic, dot-products between
+<span class="lineNum">      27 </span>            :  * vectors and multiplication by a DenseMatrix.
+<span class="lineNum">      28 </span>            :  *
+<span class="lineNum">      29 </span>            :  * \note This is a thin wrapper around `blaze::DynamicVector`. Please refer to
+<span class="lineNum">      30 </span>            :  * the [Blaze documentation](https://bitbucket.org/blaze-lib/blaze/wiki/Home)
+<span class="lineNum">      31 </span>            :  * for information on how to use it.
+<span class="lineNum">      32 </span>            :  *
+<span class="lineNum">      33 </span>            :  * Refer to the \ref DataStructuresGroup documentation for a list of other
+<span class="lineNum">      34 </span>            :  * available vector and matrix types. In particular, to represent the values of
+<span class="lineNum">      35 </span>            :  * a function on the computational domain use DataVector instead.
+<span class="lineNum">      36 </span>            :  */
+<span class="lineNum">      37 </span>            : template &lt;typename T, bool TF = blaze::defaultTransposeFlag&gt;
+<span class="lineNum">      38 </span><span class="lineCov">          1 : class DenseVector : public blaze::DynamicVector&lt;T, TF&gt; {</span>
+<span class="lineNum">      39 </span>            :  public:
+<span class="lineNum">      40 </span>            :   // Inherit constructors
+<span class="lineNum">      41 </span>            :   using blaze::DynamicVector&lt;T, TF&gt;::DynamicVector;
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span>            :   /// Charm++ serialization
+<span class="lineNum">      44 </span>            :   // clang-tidy: runtime-references
+<span class="lineNum">      45 </span><span class="lineCov">          1 :   void pup(PUP::er&amp; p) noexcept {  // NOLINT</span>
+<span class="lineNum">      46 </span>            :     auto size = blaze::DynamicVector&lt;T, TF&gt;::size();
+<span class="lineNum">      47 </span>            :     p | size;
+<span class="lineNum">      48 </span>            :     if (p.isUnpacking()) {
+<span class="lineNum">      49 </span>            :       blaze::DynamicVector&lt;T, TF&gt;::resize(size);
+<span class="lineNum">      50 </span>            :     }
+<span class="lineNum">      51 </span>            :     if (cpp17::is_fundamental_v&lt;T&gt;) {
+<span class="lineNum">      52 </span>            :       PUParray(p, blaze::DynamicVector&lt;T, TF&gt;::data(), size);
+<span class="lineNum">      53 </span>            :     } else {
+<span class="lineNum">      54 </span>            :       for (auto&amp; element : *this) {
+<span class="lineNum">      55 </span>            :         p | element;
+<span class="lineNum">      56 </span>            :       }
+<span class="lineNum">      57 </span>            :     }
+<span class="lineNum">      58 </span>            :   }
+<span class="lineNum">      59 </span>            : };
+<span class="lineNum">      60 </span>            : 
+<span class="lineNum">      61 </span><span class="lineCov">          1 : namespace MakeWithValueImpls {</span>
+<span class="lineNum">      62 </span>            : template &lt;bool TFOut, typename TIn, bool TFIn&gt;
+<span class="lineNum">      63 </span><span class="lineNoCov">          0 : struct MakeWithValueImpl&lt;DenseVector&lt;double, TFOut&gt;, DenseVector&lt;TIn, TFIn&gt;&gt; {</span>
+<span class="lineNum">      64 </span>            :   /// \brief Returns a `DenseVector` the same size as `input`, with each element
+<span class="lineNum">      65 </span>            :   /// equal to `value`.
+<span class="lineNum">      66 </span><span class="lineCov">          1 :   static SPECTRE_ALWAYS_INLINE DenseVector&lt;double, TFOut&gt; apply(</span>
+<span class="lineNum">      67 </span>            :       const DenseVector&lt;TIn, TFIn&gt;&amp; input, const double value) noexcept {
+<span class="lineNum">      68 </span>            :     return DenseVector&lt;double, TFOut&gt;(input.size(), value);
+<span class="lineNum">      69 </span>            :   }
+<span class="lineNum">      70 </span>            : };
+<span class="lineNum">      71 </span>            : }  // namespace MakeWithValueImpls
+<span class="lineNum">      72 </span>            : 
+<span class="lineNum">      73 </span>            : template &lt;typename T, bool TF&gt;
+<span class="lineNum">      74 </span><span class="lineNoCov">          0 : struct create_from_yaml&lt;DenseVector&lt;T, TF&gt;&gt; {</span>
+<span class="lineNum">      75 </span>            :   template &lt;typename Metavariables&gt;
+<span class="lineNum">      76 </span><span class="lineNoCov">          0 :   static DenseVector&lt;T, TF&gt; create(const Option&amp; options) {</span>
+<span class="lineNum">      77 </span>            :     const auto data = options.parse_as&lt;std::vector&lt;T&gt;&gt;();
+<span class="lineNum">      78 </span>            :     DenseVector&lt;T, TF&gt; result(data.size());
+<span class="lineNum">      79 </span>            :     std::copy(std::begin(data), std::end(data), result.begin());
+<span class="lineNum">      80 </span>            :     return result;
+<span class="lineNum">      81 </span>            :   }
+<span class="lineNum">      82 </span>            : };
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

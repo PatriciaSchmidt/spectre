@@ -1,0 +1,541 @@
+<!-- HTML header for doxygen 1.8.10-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=9"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="SXS Collaboration">
+    <meta name="generator" content="Doxygen 1.8.13"/>
+    <style>
+        /*!
+         * IE10 viewport hack for Surface/desktop Windows 8 bug
+         * Copyright 2014-2015 Twitter, Inc.
+         * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+         */
+        @-webkit-viewport { width: device-width; }
+        @-moz-viewport    { width: device-width; }
+        @-ms-viewport     { width: device-width; }
+        @-o-viewport      { width: device-width; }
+        @viewport         { width: device-width; }
+      </style>
+  <title>SpECTRE: Spectral</title>
+  <link href="tabs.css" rel="stylesheet" type="text/css"/>
+  <script type="text/javascript" src="jquery.js"></script>
+  <script type="text/javascript" src="dynsections.js"></script>
+  <link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js", "TeX/AMSmath.js", "TeX/AMSsymbols.js", "color.js"],
+    jax: ["input/TeX","output/HTML-CSS"],
+});
+MathJax.Hub.Config({
+    TeX: { equationNumbers: { autoNumber: "AMS" } }
+});
+MathJax.Hub.Config({
+    tex2jax: {inlineMath: [['^^','^^'], ['\\(', '\\)']]}
+});
+</script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js"></script>
+  <link href="octicons.css" rel="stylesheet">
+  <link href="bootstrap.min.css" rel="stylesheet">
+  <link href="doxygen.css" rel="stylesheet" type="text/css" />
+  <script type="text/javascript" src="jquery.js"></script>
+  <script type="text/javascript" src="popper.min.js"></script>
+  <script type="text/javascript" src="bootstrap.min.js"></script>
+  <script type="text/javascript" src="spectre.js"></script>
+  </head>
+  <body>
+  <div id="top" class="navbar-fixed-top"><!-- do not remove this div, it is closed by doxygen! -->
+  <!-- BEGIN TITLEAREA -->
+  <div id="titlearea">
+  <script type="text/javascript">
+  var searchBox = new SearchBox("searchBox", "search",false,'Search');
+  </script>
+  <div id="main-nav">
+    <ul class="sm sm-dox" id="main-menu">
+      <li>
+      <a href="index.html">
+      SpECTRE &#160;
+        <span id="projectnumber">v0.0.0</span>
+      </a>
+      </li>
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="selected">
+          <span id="selected">
+            <i class="octicon octicon-book"></i><span>Documentation</span>
+          </span>
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li style="min-width: 135px;">
+            <a href="index.html">
+            <i class="octicon octicon-book"></i><span>Introduction</span></a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="installation.html">
+              <i class="octicon octicon-desktop-download"></i><span>Installation</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="tutorials.html">
+              <i class="octicon octicon-mortar-board"></i><span>User Tutorials</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="dev_guide.html">
+              <i class="octicon octicon-gist-secret"></i><span>Dev Guide</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="code_of_conduct.html">
+              <i class="octicon octicon-comment-discussion"></i><span>Code of Conduct</span>
+            </a>
+          </li>
+          <li style="min-width: 135px;">
+            <a href="contributing_to_spectre.html">
+              <i class="octicon octicon-git-pull-request"></i><span>Contributing Guide</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="selected">
+          <span id="selected">
+            <i class="octicon octicon-code"></i>
+              <span>Code Reference</span>
+          </span>
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li style="min-width: 130px;">
+            <a href="modules.html">
+              <i class="octicon octicon-code"></i>
+              <span>Topics</span>
+            </a>
+          </li>
+          <li style="min-width: 130px;">
+            <a href="namespaces.html">
+              <i class="octicon octicon-gist"></i>
+              <span>Namespaces</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <a href="files.html">
+          <i class="octicon octicon-file-directory"></i><span>Files</span>
+        </a>
+      </li>
+      <li>
+        <a href="citelist.html">
+          <i class="octicon octicon-file-text"></i><span>Bibliography</span>
+        </a>
+      </li>
+      <li>
+        <a href="https://github.com/sxs-collaboration/spectre" target="_blank">
+          <i class="octicon octicon-mark-github"></i><span>View on GitHub</span>
+        </a>
+      </li>
+      <!--The Search <li> is added by doxygen later-->
+    </ul>
+  </div><!-- main-nav -->
+  </div><!-- titlearea -->
+  <!-- window showing the filter options -->
+  <div id="MSearchSelectWindow"  style="position: fixed;"
+       onmouseover="return searchBox.OnSearchSelectShow()"
+       onmouseout="return searchBox.OnSearchSelectHide()"
+       onkeydown="return searchBox.OnSearchSelectKey(event)">
+  </div>
+  <!-- iframe showing the search results (closed by default) -->
+  <div id="MSearchResultsWindow"  style="position: fixed;">
+  <iframe src="javascript:void(0)" frameborder="0"
+          name="MSearchResults" id="MSearchResults">
+  </iframe>
+  </div>
+<!-- Generated by Doxygen 1.8.13 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search",false,'Search');
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<iframe src="javascript:void(0)" frameborder="0" 
+        name="MSearchResults" id="MSearchResults">
+</iframe>
+</div>
+
+<div class="header">
+  <div class="summary">
+<a href="#namespaces">Namespaces</a> &#124;
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#enum-members">Enumerations</a>  </div>
+  <div class="headertitle">
+<div class="title">Spectral</div>  </div>
+</div><!--header-->
+<div class="contents">
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespaceSpectral_1_1Swsh"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceSpectral_1_1Swsh.html">Spectral::Swsh</a></td></tr>
+<tr class="memdesc:namespaceSpectral_1_1Swsh"><td class="mdescLeft">&#160;</td><td class="mdescRight">Namespace for spin-weighted spherical harmonic utilities. <br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:namespaceSpectral_1_1filtering"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceSpectral_1_1filtering.html">Spectral::filtering</a></td></tr>
+<tr class="memdesc:namespaceSpectral_1_1filtering"><td class="mdescLeft">&#160;</td><td class="mdescRight">Matrices for filtering spectral coefficients. <br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:namespaceSpectral"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceSpectral.html">Spectral</a></td></tr>
+<tr class="memdesc:namespaceSpectral"><td class="mdescLeft">&#160;</td><td class="mdescRight">Functionality associated with a particular choice of basis functions and quadrature for spectral operations. <br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpherepackIterator.html">SpherepackIterator</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Iterates over spectral coefficients stored in SPHEREPACK format.  <a href="classSpherepackIterator.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classYlmSpherepack.html">YlmSpherepack</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">C++ interface to SPHEREPACK.  <a href="classYlmSpherepack.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:ga7dc46d71155b2fab8ded62ae00640d48"><td class="memTemplParams" colspan="2">template&lt;ComplexRepresentation Representation, typename TagList &gt; </td></tr>
+<tr class="memitem:ga7dc46d71155b2fab8ded62ae00640d48"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__SpectralGroup.html#ga7dc46d71155b2fab8ded62ae00640d48">Spectral::Swsh::make_swsh_transform_job_list</a> = typename detail::make_swsh_transform_job_list_impl&lt; -2, Representation, TagList, decltype(<a class="elRef" doxygen="/work/spectre/docs/config/cppreference-doxygen-web.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/utility/integer_sequence.html">std::make_integer_sequence</a>&lt; int, 5 &gt;{})&gt;::type</td></tr>
+<tr class="memdesc:ga7dc46d71155b2fab8ded62ae00640d48"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assemble a <code>tmpl::list</code> of <code><a class="el" href="classSpectral_1_1Swsh_1_1TransformJob.html" title="A class which gathers all necessary shared structure among several spin-weighted spherical harmonic t...">TransformJob</a></code> given a list of tags <code>TagList</code> that need to be transformed. The <code>Representation</code> is the <code>ComplexRepresentation</code> to use for the transformations.  <a href="group__SpectralGroup.html#ga7dc46d71155b2fab8ded62ae00640d48">More...</a><br /></td></tr>
+<tr class="separator:ga7dc46d71155b2fab8ded62ae00640d48"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac165a5e17db6104e62e3deed3d170bc5"><td class="memTemplParams" colspan="2">template&lt;ComplexRepresentation Representation, typename DerivativeTagList &gt; </td></tr>
+<tr class="memitem:gac165a5e17db6104e62e3deed3d170bc5"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__SpectralGroup.html#gac165a5e17db6104e62e3deed3d170bc5">Spectral::Swsh::make_swsh_transform_job_list_from_derivative_tags</a> = typename detail::make_swsh_transform_job_list_impl&lt; -2, Representation, tmpl::transform&lt; DerivativeTagList, tmpl::bind&lt; <a class="el" href="group__DataBoxTagsGroup.html#gae2151fd77d407e76f4eb7efdaaaf3d5c">db::remove_tag_prefix</a>, tmpl::_1 &gt; &gt;, decltype(<a class="elRef" doxygen="/work/spectre/docs/config/cppreference-doxygen-web.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/utility/integer_sequence.html">std::make_integer_sequence</a>&lt; int, 5 &gt;{})&gt;::type</td></tr>
+<tr class="memdesc:gac165a5e17db6104e62e3deed3d170bc5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assemble a <code>tmpl::list</code> of <code><a class="el" href="classSpectral_1_1Swsh_1_1TransformJob.html" title="A class which gathers all necessary shared structure among several spin-weighted spherical harmonic t...">TransformJob</a></code>s given a list of <code>Derivative&lt;Tag, Derivative&gt;</code> that need to be computed. The <code><a class="el" href="classSpectral_1_1Swsh_1_1TransformJob.html" title="A class which gathers all necessary shared structure among several spin-weighted spherical harmonic t...">TransformJob</a></code>s constructed by this type alias correspond to the <code>Tag</code>s in the list.  <a href="group__SpectralGroup.html#gac165a5e17db6104e62e3deed3d170bc5">More...</a><br /></td></tr>
+<tr class="separator:gac165a5e17db6104e62e3deed3d170bc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:ga37c9c17d05dccca652060d117f72ee21"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__SpectralGroup.html#ga37c9c17d05dccca652060d117f72ee21">Spectral::Basis</a> { <b>Chebyshev</b>, 
+<b>Legendre</b>
+ }<tr class="memdesc:ga37c9c17d05dccca652060d117f72ee21"><td class="mdescLeft">&#160;</td><td class="mdescRight">The choice of basis functions for computing collocation points and weights.  <a href="group__SpectralGroup.html#ga37c9c17d05dccca652060d117f72ee21">More...</a><br /></td></tr>
+</td></tr>
+<tr class="separator:ga37c9c17d05dccca652060d117f72ee21"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7744e520f6d553caf358a6f09f5978c1"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__SpectralGroup.html#ga7744e520f6d553caf358a6f09f5978c1">Spectral::Quadrature</a> { <b>Gauss</b>, 
+<b>GaussLobatto</b>
+ }<tr class="memdesc:ga7744e520f6d553caf358a6f09f5978c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">The choice of quadrature method to compute integration weights.  <a href="group__SpectralGroup.html#ga7744e520f6d553caf358a6f09f5978c1">More...</a><br /></td></tr>
+</td></tr>
+<tr class="separator:ga7744e520f6d553caf358a6f09f5978c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga01814e829545ff9168441eb23e451e00"><td class="memTemplParams" colspan="2">template&lt;size_t Dim&gt; </td></tr>
+<tr class="memitem:ga01814e829545ff9168441eb23e451e00"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__SpectralGroup.html#ga01814e829545ff9168441eb23e451e00">to_modal_coefficients</a> (<a class="el" href="classgsl_1_1not__null.html">gsl::not_null</a>&lt; <a class="el" href="classModalVector.html">ModalVector</a> *&gt; modal_coefficients, const <a class="el" href="classDataVector.html">DataVector</a> &amp;nodal_coefficients, const <a class="el" href="classMesh.html">Mesh</a>&lt; Dim &gt; &amp;mesh) noexcept</td></tr>
+<tr class="memdesc:ga01814e829545ff9168441eb23e451e00"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the modal coefficients from the nodal coefficients.  <a href="#ga01814e829545ff9168441eb23e451e00">More...</a><br /></td></tr>
+<tr class="separator:ga01814e829545ff9168441eb23e451e00"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga84e8187184ac3d64dafcacf388f9ad7c"><td class="memTemplParams" colspan="2">template&lt;size_t Dim&gt; </td></tr>
+<tr class="memitem:ga84e8187184ac3d64dafcacf388f9ad7c"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classModalVector.html">ModalVector</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__SpectralGroup.html#ga84e8187184ac3d64dafcacf388f9ad7c">to_modal_coefficients</a> (const <a class="el" href="classDataVector.html">DataVector</a> &amp;nodal_coefficients, const <a class="el" href="classMesh.html">Mesh</a>&lt; Dim &gt; &amp;mesh) noexcept</td></tr>
+<tr class="memdesc:ga84e8187184ac3d64dafcacf388f9ad7c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the modal coefficients from the nodal coefficients.  <a href="#ga84e8187184ac3d64dafcacf388f9ad7c">More...</a><br /></td></tr>
+<tr class="separator:ga84e8187184ac3d64dafcacf388f9ad7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga09ed4967641a636c4e8eb1679e711874"><td class="memTemplParams" colspan="2">template&lt;size_t Dim&gt; </td></tr>
+<tr class="memitem:ga09ed4967641a636c4e8eb1679e711874"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__SpectralGroup.html#ga09ed4967641a636c4e8eb1679e711874">to_nodal_coefficients</a> (<a class="el" href="classgsl_1_1not__null.html">gsl::not_null</a>&lt; <a class="el" href="classDataVector.html">DataVector</a> *&gt; nodal_coefficients, const <a class="el" href="classModalVector.html">ModalVector</a> &amp;modal_coefficients, const <a class="el" href="classMesh.html">Mesh</a>&lt; Dim &gt; &amp;mesh) noexcept</td></tr>
+<tr class="memdesc:ga09ed4967641a636c4e8eb1679e711874"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the nodal coefficients from the modal coefficients.  <a href="#ga09ed4967641a636c4e8eb1679e711874">More...</a><br /></td></tr>
+<tr class="separator:ga09ed4967641a636c4e8eb1679e711874"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gadfee7dc04620106a922abe4c52ef3169"><td class="memTemplParams" colspan="2">template&lt;size_t Dim&gt; </td></tr>
+<tr class="memitem:gadfee7dc04620106a922abe4c52ef3169"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classDataVector.html">DataVector</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="group__SpectralGroup.html#gadfee7dc04620106a922abe4c52ef3169">to_nodal_coefficients</a> (const <a class="el" href="classModalVector.html">ModalVector</a> &amp;modal_coefficients, const <a class="el" href="classMesh.html">Mesh</a>&lt; Dim &gt; &amp;mesh) noexcept</td></tr>
+<tr class="memdesc:gadfee7dc04620106a922abe4c52ef3169"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the nodal coefficients from the modal coefficients.  <a href="#gadfee7dc04620106a922abe4c52ef3169">More...</a><br /></td></tr>
+<tr class="separator:gadfee7dc04620106a922abe4c52ef3169"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<p>Things related to spectral transformations. </p>
+<h2 class="groupheader">Typedef Documentation</h2>
+<a id="ga7dc46d71155b2fab8ded62ae00640d48"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7dc46d71155b2fab8ded62ae00640d48">&#9670;&nbsp;</a></span>make_swsh_transform_job_list</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;ComplexRepresentation Representation, typename TagList &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="group__SpectralGroup.html#ga7dc46d71155b2fab8ded62ae00640d48">Spectral::Swsh::make_swsh_transform_job_list</a> = typedef typename detail::make_swsh_transform_job_list_impl&lt; -2, Representation, TagList, decltype(<a class="elRef" doxygen="/work/spectre/docs/config/cppreference-doxygen-web.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/utility/integer_sequence.html">std::make_integer_sequence</a>&lt;int, 5&gt;{})&gt;::type</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Assemble a <code>tmpl::list</code> of <code><a class="el" href="classSpectral_1_1Swsh_1_1TransformJob.html" title="A class which gathers all necessary shared structure among several spin-weighted spherical harmonic t...">TransformJob</a></code> given a list of tags <code>TagList</code> that need to be transformed. The <code>Representation</code> is the <code>ComplexRepresentation</code> to use for the transformations. </p>
+<h3>Details</h3>
+<p>Up to five <code><a class="el" href="classSpectral_1_1Swsh_1_1TransformJob.html" title="A class which gathers all necessary shared structure among several spin-weighted spherical harmonic t...">TransformJob</a></code> will be returned, corresponding to the possible spin values. Any number of transformations are aggregated into that set of <code><a class="el" href="classSpectral_1_1Swsh_1_1TransformJob.html" title="A class which gathers all necessary shared structure among several spin-weighted spherical harmonic t...">TransformJob</a></code>s. The number of transforms is up to five because the libsharp utility only has capability to perform spin-weighted spherical harmonic transforms for integer spin-weights from -2 to 2.</p>
+<div class="fragment"><div class="line"><span class="keyword">using</span> ExpectedInverseJobs = tmpl::list&lt;</div><div class="line">    TransformJob&lt;</div><div class="line">        -1, ComplexRepresentation::RealsThenImags,</div><div class="line">        tmpl::list&lt;Tags::Derivative&lt;TestTag&lt;-1&gt;, Tags::EthEthbar&gt;,</div><div class="line">                   Tags::Derivative&lt;ExpectedTestTag&lt;-1&gt;, Tags::EthEthbar&gt;&gt;&gt;,</div><div class="line">    TransformJob&lt;0, ComplexRepresentation::RealsThenImags,</div><div class="line">                 tmpl::list&lt;Tags::Derivative&lt;TestTag&lt;-1&gt;, Tags::Eth&gt;,</div><div class="line">                            Tags::Derivative&lt;TestTag&lt;2&gt;, Tags::EthbarEthbar&gt;&gt;&gt;&gt;;</div><div class="line"></div><div class="line">static_assert(</div><div class="line">    <a class="code" href="group__TypeTraitsGroup.html#ga173105b805ff5fa637edb005f704feca">cpp17::is_same_v</a>&lt;</div><div class="line">        <a class="code" href="group__SpectralGroup.html#ga7dc46d71155b2fab8ded62ae00640d48">make_swsh_transform_job_list</a>&lt;ComplexRepresentation::RealsThenImags,</div><div class="line">                                     TestDerivativeTagList&gt;,</div><div class="line">        ExpectedInverseJobs&gt;,</div><div class="line">    <span class="stringliteral">&quot;failed testing make_swsh_transform_job_list&quot;</span>);</div></div><!-- fragment -->
+</div>
+</div>
+<a id="gac165a5e17db6104e62e3deed3d170bc5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac165a5e17db6104e62e3deed3d170bc5">&#9670;&nbsp;</a></span>make_swsh_transform_job_list_from_derivative_tags</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;ComplexRepresentation Representation, typename DerivativeTagList &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="group__SpectralGroup.html#gac165a5e17db6104e62e3deed3d170bc5">Spectral::Swsh::make_swsh_transform_job_list_from_derivative_tags</a> = typedef typename detail::make_swsh_transform_job_list_impl&lt; -2, Representation, tmpl::transform&lt;DerivativeTagList, tmpl::bind&lt;<a class="el" href="group__DataBoxTagsGroup.html#gae2151fd77d407e76f4eb7efdaaaf3d5c">db::remove_tag_prefix</a>, tmpl::_1&gt; &gt;, decltype(<a class="elRef" doxygen="/work/spectre/docs/config/cppreference-doxygen-web.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/utility/integer_sequence.html">std::make_integer_sequence</a>&lt;int, 5&gt;{})&gt;::type</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Assemble a <code>tmpl::list</code> of <code><a class="el" href="classSpectral_1_1Swsh_1_1TransformJob.html" title="A class which gathers all necessary shared structure among several spin-weighted spherical harmonic t...">TransformJob</a></code>s given a list of <code>Derivative&lt;Tag, Derivative&gt;</code> that need to be computed. The <code><a class="el" href="classSpectral_1_1Swsh_1_1TransformJob.html" title="A class which gathers all necessary shared structure among several spin-weighted spherical harmonic t...">TransformJob</a></code>s constructed by this type alias correspond to the <code>Tag</code>s in the list. </p>
+<h3>Details</h3>
+<p>This is intended as a convenience utility for the first step of a derivative routine, where one transforms the set of fields for which derivatives are required.</p>
+<div class="fragment"><div class="line"><span class="keyword">using</span> ExpectedJobs =</div><div class="line">    tmpl::list&lt;TransformJob&lt;-1, ComplexRepresentation::Interleaved,</div><div class="line">                            tmpl::list&lt;TestTag&lt;-1&gt;, ExpectedTestTag&lt;-1&gt;&gt;&gt;,</div><div class="line">               TransformJob&lt;2, ComplexRepresentation::Interleaved,</div><div class="line">                            tmpl::list&lt;TestTag&lt;2&gt;&gt;&gt;&gt;;</div><div class="line"></div><div class="line">static_assert(</div><div class="line">    <a class="code" href="group__TypeTraitsGroup.html#ga173105b805ff5fa637edb005f704feca">cpp17::is_same_v</a>&lt;</div><div class="line">        <a class="code" href="group__SpectralGroup.html#gac165a5e17db6104e62e3deed3d170bc5">make_swsh_transform_job_list_from_derivative_tags</a>&lt;</div><div class="line">            ComplexRepresentation::Interleaved, TestDerivativeTagList&gt;,</div><div class="line">        ExpectedJobs&gt;,</div><div class="line">    <span class="stringliteral">&quot;failed testing make_swsh_transform_job_list_from_derivative_tags&quot;</span>);</div></div><!-- fragment -->
+</div>
+</div>
+<h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="ga37c9c17d05dccca652060d117f72ee21"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga37c9c17d05dccca652060d117f72ee21">&#9670;&nbsp;</a></span>Basis</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="group__SpectralGroup.html#ga37c9c17d05dccca652060d117f72ee21">Spectral::Basis</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The choice of basis functions for computing collocation points and weights. </p>
+<h3>Details</h3>
+<p>Choose <code>Legendre</code> for a general-purpose DG mesh, unless you have a particular reason for choosing another basis. </p>
+
+</div>
+</div>
+<a id="ga7744e520f6d553caf358a6f09f5978c1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7744e520f6d553caf358a6f09f5978c1">&#9670;&nbsp;</a></span>Quadrature</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="group__SpectralGroup.html#ga7744e520f6d553caf358a6f09f5978c1">Spectral::Quadrature</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The choice of quadrature method to compute integration weights. </p>
+<h3>Details</h3>
+<p>Integrals using \(N\) collocation points with Gauss quadrature are exact to polynomial order \(p=2N-1\). Gauss-Lobatto quadrature is exact only to polynomial order \(p=2N-3\), but includes collocation points at the domain boundary. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="ga01814e829545ff9168441eb23e451e00"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga01814e829545ff9168441eb23e451e00">&#9670;&nbsp;</a></span>to_modal_coefficients() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;size_t Dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void to_modal_coefficients </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classgsl_1_1not__null.html">gsl::not_null</a>&lt; <a class="el" href="classModalVector.html">ModalVector</a> *&gt;&#160;</td>
+          <td class="paramname"><em>modal_coefficients</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classDataVector.html">DataVector</a> &amp;&#160;</td>
+          <td class="paramname"><em>nodal_coefficients</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classMesh.html">Mesh</a>&lt; Dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mesh</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compute the modal coefficients from the nodal coefficients. </p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="namespaceSpectral.html#a690676a766e2de8b0a2cc1d29aa25888" title="Matrix used to transform from the nodal coefficients of a function to its spectral coefficients (mode...">Spectral::nodal_to_modal_matrix</a> </dd></dl>
+
+</div>
+</div>
+<a id="ga84e8187184ac3d64dafcacf388f9ad7c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga84e8187184ac3d64dafcacf388f9ad7c">&#9670;&nbsp;</a></span>to_modal_coefficients() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;size_t Dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classModalVector.html">ModalVector</a> to_modal_coefficients </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classDataVector.html">DataVector</a> &amp;&#160;</td>
+          <td class="paramname"><em>nodal_coefficients</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classMesh.html">Mesh</a>&lt; Dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mesh</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compute the modal coefficients from the nodal coefficients. </p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="namespaceSpectral.html#a690676a766e2de8b0a2cc1d29aa25888" title="Matrix used to transform from the nodal coefficients of a function to its spectral coefficients (mode...">Spectral::nodal_to_modal_matrix</a> </dd></dl>
+
+</div>
+</div>
+<a id="ga09ed4967641a636c4e8eb1679e711874"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga09ed4967641a636c4e8eb1679e711874">&#9670;&nbsp;</a></span>to_nodal_coefficients() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;size_t Dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void to_nodal_coefficients </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classgsl_1_1not__null.html">gsl::not_null</a>&lt; <a class="el" href="classDataVector.html">DataVector</a> *&gt;&#160;</td>
+          <td class="paramname"><em>nodal_coefficients</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classModalVector.html">ModalVector</a> &amp;&#160;</td>
+          <td class="paramname"><em>modal_coefficients</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classMesh.html">Mesh</a>&lt; Dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mesh</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compute the nodal coefficients from the modal coefficients. </p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="namespaceSpectral.html#aec4515583e06fd661630abf433049473" title="Matrix used to transform from the spectral coefficients (modes) of a function to its nodal coefficien...">Spectral::modal_to_nodal_matrix</a> </dd></dl>
+
+</div>
+</div>
+<a id="gadfee7dc04620106a922abe4c52ef3169"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gadfee7dc04620106a922abe4c52ef3169">&#9670;&nbsp;</a></span>to_nodal_coefficients() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;size_t Dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classDataVector.html">DataVector</a> to_nodal_coefficients </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classModalVector.html">ModalVector</a> &amp;&#160;</td>
+          <td class="paramname"><em>modal_coefficients</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classMesh.html">Mesh</a>&lt; Dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>mesh</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compute the nodal coefficients from the modal coefficients. </p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="namespaceSpectral.html#aec4515583e06fd661630abf433049473" title="Matrix used to transform from the spectral coefficients (modes) of a function to its nodal coefficien...">Spectral::modal_to_nodal_matrix</a> </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
+<!-- HTML footer for doxygen 1.8.10-->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+&copy; Copyright 2017 - 2019
+<a href="https://black-holes.org">SXS Collaboration</a>,
+<a href="LICENSE.txt" target="_blank">
+<span class="hidden-xs">Distributed under the</span>
+MIT License</a>
+</small></address>
+</body>
+</html>

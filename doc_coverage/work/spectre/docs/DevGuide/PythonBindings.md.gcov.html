@@ -1,0 +1,212 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - /work/spectre/docs/DevGuide/PythonBindings.md</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">work/spectre/docs/DevGuide</a> - PythonBindings.md</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : \cond NEVER</span>
+<span class="lineNum">       2 </span>            : Distributed under the MIT License.
+<span class="lineNum">       3 </span>            : See LICENSE.txt for details.
+<span class="lineNum">       4 </span>            : \endcond
+<span class="lineNum">       5 </span>            : # Writing Python Bindings {#spectre_writing_python_bindings}
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            : ## CMake and Directory Layout
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : To allow users to analyze output from simulations and take advantage of
+<span class="lineNum">      10 </span>            : SpECTRE's data structures and functions in python, bindings must sometimes be
+<span class="lineNum">      11 </span>            : written. SpECTRE uses
+<span class="lineNum">      12 </span>            : [Boost.Python]
+<span class="lineNum">      13 </span>            : (https://www.boost.org/doc/libs/1_68_0/libs/python/doc/html/index.html)
+<span class="lineNum">      14 </span>            : to aid with generating the bindings. The C++ code for the bindings should
+<span class="lineNum">      15 </span>            : generally go in a `Python` subdirectory. For example, the bindings for the
+<span class="lineNum">      16 </span>            : DataStructures library would go in `src/DataStructures/Python/`. SpECTRE
+<span class="lineNum">      17 </span>            : provides the `spectre_python_add_module` CMake function to make adding a new
+<span class="lineNum">      18 </span>            : python module, be it with or without bindings, easy.  The python bindings are
+<span class="lineNum">      19 </span>            : built only if `-D BUILD_PYTHON_BINDINGS=ON` is passed when invoking cmake.
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : The function `spectre_python_add_module` takes as its first argument the module,
+<span class="lineNum">      22 </span>            : in our case
+<span class="lineNum">      23 </span>            : `DataStructures`. The bindings library will be prefixed with `Py`, and therefore
+<span class="lineNum">      24 </span>            : be called `PyDataStructures`. Optionally, a list of `SOURCES` can be passed to
+<span class="lineNum">      25 </span>            : the CMake function. If the python module will only consist of python files, then
+<span class="lineNum">      26 </span>            : the `SOURCES` option should not be specified. Python files that should be part
+<span class="lineNum">      27 </span>            : of the module can be passed with the keyword `PYTHON_FILES`, e.g.
+<span class="lineNum">      28 </span>            : `PYTHON_FILES Hello.py HelloWorld.py`. Finally, the `MODULE_PATH` named argument
+<span class="lineNum">      29 </span>            : can be passed with a string that is the path to where the module should be. For
+<span class="lineNum">      30 </span>            : example, `MODULE_PATH &quot;submodule0/submodule1/&quot;` would mean the module is
+<span class="lineNum">      31 </span>            : accessed from python using `import spectre.submodule0.submodule1.MODULE_NAME`.
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span>            : Here is a complete example of how to call the `spectre_python_add_module`
+<span class="lineNum">      34 </span>            : function:
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span>            : \code
+<span class="lineNum">      37 </span>            : spectre_python_add_module(
+<span class="lineNum">      38 </span>            :   ExtraDataStructures
+<span class="lineNum">      39 </span>            :   MODULE_PATH &quot;DataStructures/&quot;
+<span class="lineNum">      40 </span>            :   SOURCES Bindings.cpp MyCoolDataStructure.cpp
+<span class="lineNum">      41 </span>            :   PYTHON_FILES CoolPythonDataStructure.py
+<span class="lineNum">      42 </span>            :   )
+<span class="lineNum">      43 </span>            : \endcode
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span>            : The library that is added has the name `PyExtraDataStructures` and requires that
+<span class="lineNum">      46 </span>            : at least the `${SPECTRE_LINK_PYBINDINGS}` be set as the last entry to the
+<span class="lineNum">      47 </span>            : `target_link_libraries` call. For example,
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span>            : \code
+<span class="lineNum">      50 </span>            : target_link_libraries(
+<span class="lineNum">      51 </span>            :   PyExtraDataStructures
+<span class="lineNum">      52 </span>            :   PUBLIC ExtraDataStructures
+<span class="lineNum">      53 </span>            :   ${SPECTRE_LINK_PYBINDINGS}
+<span class="lineNum">      54 </span>            :   )
+<span class="lineNum">      55 </span>            : \endcode
+<span class="lineNum">      56 </span>            : 
+<span class="lineNum">      57 </span>            : \warning `${SPECTRE_LINK_PYBINDINGS}` must be the *last* argument to
+<span class="lineNum">      58 </span>            : `target_link_libraries`.
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span>            : ## Writing Bindings
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span>            : Once a python module has been added you can write the actual bindings. You
+<span class="lineNum">      63 </span>            : should structure your bindings directory to reflect the structure of the library
+<span class="lineNum">      64 </span>            : you're writing bindings for. For example, say we want bindings for `DataVector`
+<span class="lineNum">      65 </span>            : and `Matrix` then we should have one source file for each class's bindings
+<span class="lineNum">      66 </span>            : inside `src/DataStructures/Python`. The functions that generate the bindings
+<span class="lineNum">      67 </span>            : should be in the `py_bindings` namespace and have a reasonable name such as
+<span class="lineNum">      68 </span>            : `bind_datavector`. There should be a file named `Bindings.cpp` which calls all
+<span class="lineNum">      69 </span>            : the `bind_*` functions. The `Bindings.cpp` file is quite simple and should
+<span class="lineNum">      70 </span>            : `include &lt;boost/python.hpp&gt;`, forward declare the `bind_*` functions, and then
+<span class="lineNum">      71 </span>            : have `BOOST_PYTHON_MODULE` function. For example,
+<span class="lineNum">      72 </span>            : 
+<span class="lineNum">      73 </span>            : \code{.cpp}
+<span class="lineNum">      74 </span>            : #include &lt;boost/python.hpp&gt;
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span>            : namespace py_bindings {
+<span class="lineNum">      77 </span>            : void bind_datavector();
+<span class="lineNum">      78 </span>            : }  // namespace py_bindings
+<span class="lineNum">      79 </span>            : 
+<span class="lineNum">      80 </span>            : BOOST_PYTHON_MODULE(_DataStructures) {
+<span class="lineNum">      81 </span>            :   Py_Initialize();
+<span class="lineNum">      82 </span>            :   py_bindings::bind_datavector();
+<span class="lineNum">      83 </span>            : }
+<span class="lineNum">      84 </span>            : \endcode
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span>            : Note that the library name is passed to `BOOST_PYTHON_MODULE` and is prefixed
+<span class="lineNum">      87 </span>            : with an underscore. The underscore is important!
+<span class="lineNum">      88 </span>            : 
+<span class="lineNum">      89 </span>            : The `DataVector` bindings serve as an example with code comments on how to write
+<span class="lineNum">      90 </span>            : bindings for a class. There is also extensive documentation available directly
+<span class="lineNum">      91 </span>            : from [Boost.Python]
+<span class="lineNum">      92 </span>            : (https://www.boost.org/doc/libs/1_68_0/libs/python/doc/html/index.html)
+<span class="lineNum">      93 </span>            : and [this GitHub repository](https://github.com/TNG/boost-python-examples) also
+<span class="lineNum">      94 </span>            : has many helpful examples. SpECTRE currently aims to support both Python 2.7
+<span class="lineNum">      95 </span>            : and Python 3 and as such all bindings must support both.
+<span class="lineNum">      96 </span>            : 
+<span class="lineNum">      97 </span>            : \note Exceptions should be allowed to propagate through the bindings so that
+<span class="lineNum">      98 </span>            : error handling via exceptions is possible from python rather than having the
+<span class="lineNum">      99 </span>            : python interpreter being killed with a call to `abort`.
+<span class="lineNum">     100 </span>            : 
+<span class="lineNum">     101 </span>            : ## Testing Python Bindings and Code
+<span class="lineNum">     102 </span>            : 
+<span class="lineNum">     103 </span>            : All the python bindings must be tested. SpECTRE uses the
+<span class="lineNum">     104 </span>            : [unittest](https://docs.python.org/3/library/unittest.html) framework
+<span class="lineNum">     105 </span>            : provided as part of python. To register a test file with CMake use the
+<span class="lineNum">     106 </span>            : SpECTRE-provided function `spectre_add_python_test` passing as the first
+<span class="lineNum">     107 </span>            : argument the test name (e.g. `&quot;Unit.DataStructures.Python.DataVector&quot;`), the
+<span class="lineNum">     108 </span>            : file as the second argument (e.g. `Test_DataVector.py`), and a semicolon
+<span class="lineNum">     109 </span>            : separated list of labels as the last (e.g. `&quot;unit;datastructures;python&quot;`).
+<span class="lineNum">     110 </span>            : All the test cases should be in a single class so that the python unit testing
+<span class="lineNum">     111 </span>            : framework will run all test functions on a single invocation to avoid startup
+<span class="lineNum">     112 </span>            : cost.
+<span class="lineNum">     113 </span>            : 
+<span class="lineNum">     114 </span>            : Below is an example of registering a python test file
+<span class="lineNum">     115 </span>            : 
+<span class="lineNum">     116 </span>            : \code
+<span class="lineNum">     117 </span>            : spectre_add_python_test(
+<span class="lineNum">     118 </span>            :   &quot;Unit.DataStructures.Python.DataVector&quot;
+<span class="lineNum">     119 </span>            :   Test_DataVector.py
+<span class="lineNum">     120 </span>            :   &quot;unit;datastructures;python&quot;)
+<span class="lineNum">     121 </span>            : \endcode
+<span class="lineNum">     122 </span>            : 
+<span class="lineNum">     123 </span>            : ## Using The Bindings
+<span class="lineNum">     124 </span>            : 
+<span class="lineNum">     125 </span>            : See \ref spectre_using_python &quot;Using SpECTRE's Python&quot;
+<span class="lineNum">     126 </span>            : 
+<span class="lineNum">     127 </span>            : ## Notes:
+<span class="lineNum">     128 </span>            : 
+<span class="lineNum">     129 </span>            : - All python libraries are dynamic/shared libraries.
+<span class="lineNum">     130 </span>            : - Exceptions should be allowed to propagate through the bindings so that
+<span class="lineNum">     131 </span>            :   error handling via exceptions is possible from python rather than having the
+<span class="lineNum">     132 </span>            :   python interpreter being killed with a call to `abort`.
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

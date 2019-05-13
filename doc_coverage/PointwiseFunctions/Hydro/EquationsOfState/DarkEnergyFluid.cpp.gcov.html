@@ -1,0 +1,181 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - PointwiseFunctions/Hydro/EquationsOfState/DarkEnergyFluid.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">PointwiseFunctions/Hydro/EquationsOfState</a> - DarkEnergyFluid.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;PointwiseFunctions/Hydro/EquationsOfState/DarkEnergyFluid.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &quot;DataStructures/DataVector.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">       7 </span>            : #include &quot;DataStructures/Tensor/Tensor.hpp&quot;
+<span class="lineNum">       8 </span>            : #include &quot;ErrorHandling/Error.hpp&quot;
+<span class="lineNum">       9 </span>            : #include &quot;Utilities/ConstantExpressions.hpp&quot;
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : // IWYU pragma: no_forward_declare Tensor
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            : /// \cond
+<span class="lineNum">      14 </span>            : namespace EquationsOfState {
+<span class="lineNum">      15 </span>            : template &lt;bool IsRelativistic&gt;
+<span class="lineNum">      16 </span>            : DarkEnergyFluid&lt;IsRelativistic&gt;::DarkEnergyFluid(
+<span class="lineNum">      17 </span>            :     const double parameter_w) noexcept
+<span class="lineNum">      18 </span>            :     : parameter_w_(parameter_w) {
+<span class="lineNum">      19 </span>            :   if (parameter_w_ &lt;= 0.0) {
+<span class="lineNum">      20 </span>            :     ERROR(&quot;The w(z) parameter must be positive.&quot;);
+<span class="lineNum">      21 </span>            :   }
+<span class="lineNum">      22 </span>            : }
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : EQUATION_OF_STATE_MEMBER_DEFINITIONS(template &lt;bool IsRelativistic&gt;,
+<span class="lineNum">      25 </span>            :                                      DarkEnergyFluid&lt;IsRelativistic&gt;, double, 2)
+<span class="lineNum">      26 </span>            : EQUATION_OF_STATE_MEMBER_DEFINITIONS(template &lt;bool IsRelativistic&gt;,
+<span class="lineNum">      27 </span>            :                                      DarkEnergyFluid&lt;IsRelativistic&gt;,
+<span class="lineNum">      28 </span>            :                                      DataVector, 2)
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span>            : template &lt;bool IsRelativistic&gt;
+<span class="lineNum">      31 </span>            : DarkEnergyFluid&lt;IsRelativistic&gt;::DarkEnergyFluid(
+<span class="lineNum">      32 </span>            :     CkMigrateMessage* /*unused*/) noexcept {}
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            : template &lt;bool IsRelativistic&gt;
+<span class="lineNum">      35 </span>            : void DarkEnergyFluid&lt;IsRelativistic&gt;::pup(PUP::er&amp; p) noexcept {
+<span class="lineNum">      36 </span>            :   EquationOfState&lt;IsRelativistic, 2&gt;::pup(p);
+<span class="lineNum">      37 </span>            :   p | parameter_w_;
+<span class="lineNum">      38 </span>            : }
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span>            : template &lt;bool IsRelativistic&gt;
+<span class="lineNum">      41 </span>            : template &lt;class DataType&gt;
+<span class="lineNum">      42 </span>            : Scalar&lt;DataType&gt;
+<span class="lineNum">      43 </span>            : DarkEnergyFluid&lt;IsRelativistic&gt;::pressure_from_density_and_energy_impl(
+<span class="lineNum">      44 </span>            :     const Scalar&lt;DataType&gt;&amp; rest_mass_density,
+<span class="lineNum">      45 </span>            :     const Scalar&lt;DataType&gt;&amp; specific_internal_energy) const noexcept {
+<span class="lineNum">      46 </span>            :   return Scalar&lt;DataType&gt;{parameter_w_ * get(rest_mass_density) *
+<span class="lineNum">      47 </span>            :                           (1.0 + get(specific_internal_energy))};
+<span class="lineNum">      48 </span>            : }
+<span class="lineNum">      49 </span>            : 
+<span class="lineNum">      50 </span>            : template &lt;bool IsRelativistic&gt;
+<span class="lineNum">      51 </span>            : template &lt;class DataType&gt;
+<span class="lineNum">      52 </span>            : Scalar&lt;DataType&gt;
+<span class="lineNum">      53 </span>            : DarkEnergyFluid&lt;IsRelativistic&gt;::pressure_from_density_and_enthalpy_impl(
+<span class="lineNum">      54 </span>            :     const Scalar&lt;DataType&gt;&amp; rest_mass_density,
+<span class="lineNum">      55 </span>            :     const Scalar&lt;DataType&gt;&amp; specific_enthalpy) const noexcept {
+<span class="lineNum">      56 </span>            :   return Scalar&lt;DataType&gt;{(parameter_w_ / (parameter_w_ + 1.0)) *
+<span class="lineNum">      57 </span>            :                           get(rest_mass_density) * get(specific_enthalpy)};
+<span class="lineNum">      58 </span>            : }
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span>            : template &lt;&gt;
+<span class="lineNum">      61 </span>            : template &lt;class DataType&gt;
+<span class="lineNum">      62 </span>            : Scalar&lt;DataType&gt;
+<span class="lineNum">      63 </span>            : DarkEnergyFluid&lt;true&gt;::specific_enthalpy_from_density_and_energy_impl(
+<span class="lineNum">      64 </span>            :     const Scalar&lt;DataType&gt;&amp; /*rest_mass_density*/,
+<span class="lineNum">      65 </span>            :     const Scalar&lt;DataType&gt;&amp; specific_internal_energy) const noexcept {
+<span class="lineNum">      66 </span>            :   return Scalar&lt;DataType&gt;{(1.0 + parameter_w_) *
+<span class="lineNum">      67 </span>            :                           (1.0 + get(specific_internal_energy))};
+<span class="lineNum">      68 </span>            : }
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span>            : template &lt;bool IsRelativistic&gt;
+<span class="lineNum">      71 </span>            : template &lt;class DataType&gt;
+<span class="lineNum">      72 </span>            : Scalar&lt;DataType&gt; DarkEnergyFluid&lt;IsRelativistic&gt;::
+<span class="lineNum">      73 </span>            :     specific_internal_energy_from_density_and_pressure_impl(
+<span class="lineNum">      74 </span>            :         const Scalar&lt;DataType&gt;&amp; rest_mass_density,
+<span class="lineNum">      75 </span>            :         const Scalar&lt;DataType&gt;&amp; pressure) const noexcept {
+<span class="lineNum">      76 </span>            :   return Scalar&lt;DataType&gt;{
+<span class="lineNum">      77 </span>            :       get(pressure) / (parameter_w_ * get(rest_mass_density)) - 1.0};
+<span class="lineNum">      78 </span>            : }
+<span class="lineNum">      79 </span>            : 
+<span class="lineNum">      80 </span>            : template &lt;bool IsRelativistic&gt;
+<span class="lineNum">      81 </span>            : template &lt;class DataType&gt;
+<span class="lineNum">      82 </span>            : Scalar&lt;DataType&gt;
+<span class="lineNum">      83 </span>            : DarkEnergyFluid&lt;IsRelativistic&gt;::chi_from_density_and_energy_impl(
+<span class="lineNum">      84 </span>            :     const Scalar&lt;DataType&gt;&amp; /*rest_mass_density*/,
+<span class="lineNum">      85 </span>            :     const Scalar&lt;DataType&gt;&amp; specific_internal_energy) const noexcept {
+<span class="lineNum">      86 </span>            :   return Scalar&lt;DataType&gt;{parameter_w_ * (1.0 + get(specific_internal_energy))};
+<span class="lineNum">      87 </span>            : }
+<span class="lineNum">      88 </span>            : 
+<span class="lineNum">      89 </span>            : template &lt;bool IsRelativistic&gt;
+<span class="lineNum">      90 </span>            : template &lt;class DataType&gt;
+<span class="lineNum">      91 </span>            : Scalar&lt;DataType&gt; DarkEnergyFluid&lt;IsRelativistic&gt;::
+<span class="lineNum">      92 </span>            :     kappa_times_p_over_rho_squared_from_density_and_energy_impl(
+<span class="lineNum">      93 </span>            :         const Scalar&lt;DataType&gt;&amp; /*rest_mass_density*/,
+<span class="lineNum">      94 </span>            :         const Scalar&lt;DataType&gt;&amp; specific_internal_energy) const noexcept {
+<span class="lineNum">      95 </span>            :   return Scalar&lt;DataType&gt;{square(parameter_w_) *
+<span class="lineNum">      96 </span>            :                           (1.0 + get(specific_internal_energy))};
+<span class="lineNum">      97 </span>            : }
+<span class="lineNum">      98 </span>            : }  // namespace EquationsOfState
+<span class="lineNum">      99 </span>            : 
+<span class="lineNum">     100 </span>            : template class EquationsOfState::DarkEnergyFluid&lt;true&gt;;
+<span class="lineNum">     101 </span>            : /// \endcond
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

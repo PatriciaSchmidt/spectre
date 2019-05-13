@@ -1,0 +1,138 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - DataStructures/DataBox/Actions/MutateApply.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">DataStructures/DataBox/Actions</a> - MutateApply.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntryLo">40.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;tuple&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            : #include &quot;DataStructures/DataBox/DataBox.hpp&quot;
+<span class="lineNum">       9 </span>            : #include &quot;Utilities/Requires.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : /// \cond
+<span class="lineNum">      13 </span>            : namespace tuples {
+<span class="lineNum">      14 </span>            : template &lt;typename...&gt;
+<span class="lineNum">      15 </span>            : class TaggedTuple;
+<span class="lineNum">      16 </span>            : }  // namespace tuples
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            : namespace Parallel {
+<span class="lineNum">      19 </span>            : template &lt;typename Metavariables&gt;
+<span class="lineNum">      20 </span>            : class ConstGlobalCache;
+<span class="lineNum">      21 </span>            : }  // namespace Parallel
+<span class="lineNum">      22 </span>            : /// \endcond
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span><span class="lineCov">          1 : namespace db {</span>
+<span class="lineNum">      25 </span><span class="lineNoCov">          0 : namespace Actions {</span>
+<span class="lineNum">      26 </span>            : /*!
+<span class="lineNum">      27 </span>            :  * \ingroup ActionsGroup
+<span class="lineNum">      28 </span>            :  * \brief Apply the function `F::apply` to the DataBox
+<span class="lineNum">      29 </span>            :  *
+<span class="lineNum">      30 </span>            :  * The function `F::apply` is invoked with the `F::argument_tags`. The result
+<span class="lineNum">      31 </span>            :  * of this computation is stored in the `F::return_tags`.
+<span class="lineNum">      32 </span>            :  *
+<span class="lineNum">      33 </span>            :  * Uses:
+<span class="lineNum">      34 </span>            :  * - DataBox:
+<span class="lineNum">      35 </span>            :  *   - All elements in `F::argument_tags`
+<span class="lineNum">      36 </span>            :  *   - All elements in `F::return_tags`
+<span class="lineNum">      37 </span>            :  *
+<span class="lineNum">      38 </span>            :  * DataBox changes:
+<span class="lineNum">      39 </span>            :  * - Modifies:
+<span class="lineNum">      40 </span>            :  *   - All elements in `F::return_tags`
+<span class="lineNum">      41 </span>            :  */
+<span class="lineNum">      42 </span>            : template &lt;typename F&gt;
+<span class="lineNum">      43 </span><span class="lineCov">          1 : struct MutateApply {</span>
+<span class="lineNum">      44 </span>            :   template &lt;typename DbTagsList, typename... InboxTags, typename ArrayIndex,
+<span class="lineNum">      45 </span>            :             typename ActionList, typename ParallelComponent,
+<span class="lineNum">      46 </span>            :             Requires&lt;tmpl::size&lt;DbTagsList&gt;::value != 0&gt; = nullptr&gt;
+<span class="lineNum">      47 </span><span class="lineNoCov">          0 :   static auto apply(db::DataBox&lt;DbTagsList&gt;&amp; box,</span>
+<span class="lineNum">      48 </span>            :                     const tuples::TaggedTuple&lt;InboxTags...&gt;&amp; /*inboxes*/,
+<span class="lineNum">      49 </span>            :                     const Parallel::ConstGlobalCache&lt;Metavariables&gt;&amp; /*cache*/,
+<span class="lineNum">      50 </span>            :                     const ArrayIndex&amp; /*array_index*/,
+<span class="lineNum">      51 </span>            :                     const ActionList /*meta*/,
+<span class="lineNum">      52 </span>            :                     const ParallelComponent* const /*meta*/) noexcept {
+<span class="lineNum">      53 </span>            :     db::mutate_apply&lt;F&gt;(make_not_null(&amp;box));
+<span class="lineNum">      54 </span>            :     return std::forward_as_tuple(std::move(box));
+<span class="lineNum">      55 </span>            :   }
+<span class="lineNum">      56 </span>            : };
+<span class="lineNum">      57 </span>            : }  // namespace Actions
+<span class="lineNum">      58 </span>            : }  // namespace db
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

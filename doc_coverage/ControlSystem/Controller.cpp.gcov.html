@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - ControlSystem/Controller.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">ControlSystem</a> - Controller.cpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #include &quot;ControlSystem/Controller.hpp&quot;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &quot;Utilities/ConstantExpressions.hpp&quot;
+<span class="lineNum">       7 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : template &lt;size_t DerivOrder&gt;
+<span class="lineNum">      10 </span>            : DataVector Controller&lt;DerivOrder&gt;::operator()(
+<span class="lineNum">      11 </span>            :     const DataVector&amp; timescales,
+<span class="lineNum">      12 </span>            :     const std::array&lt;DataVector, DerivOrder + 1&gt;&amp; q_and_derivs,
+<span class="lineNum">      13 </span>            :     const double q_time_offset, const double deriv_time_offset) const noexcept {
+<span class="lineNum">      14 </span>            :   // helper lambda for computing the binomial coefficients
+<span class="lineNum">      15 </span>            :   const auto binomial = [](size_t N, size_t k) noexcept {
+<span class="lineNum">      16 </span>            :     return falling_factorial(N, k) / factorial(k);
+<span class="lineNum">      17 </span>            :   };
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            :   // The coefficients a0_{k} are chosen such that the system is critically
+<span class="lineNum">      20 </span>            :   // damped, so they are given by: a0_{k} = (N choose k) timescales^{k-N}
+<span class="lineNum">      21 </span>            :   std::array&lt;DataVector, DerivOrder&gt; coefs0;
+<span class="lineNum">      22 </span>            :   DataVector inv_timescales = 1.0 / timescales;
+<span class="lineNum">      23 </span>            :   DataVector tau = inv_timescales;
+<span class="lineNum">      24 </span>            :   for (size_t i = DerivOrder; i-- &gt; 0;) {
+<span class="lineNum">      25 </span>            :     gsl::at(coefs0, i) = binomial(DerivOrder, i) * tau;
+<span class="lineNum">      26 </span>            :     // add another power of timescales
+<span class="lineNum">      27 </span>            :     tau *= inv_timescales;
+<span class="lineNum">      28 </span>            :   }
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span>            :   // correct for time offset
+<span class="lineNum">      31 </span>            :   std::array&lt;DataVector, DerivOrder&gt; coefs;
+<span class="lineNum">      32 </span>            :   for (size_t i = 0; i &lt; DerivOrder; i++) {
+<span class="lineNum">      33 </span>            :     gsl::at(coefs, i) = gsl::at(coefs0, i);
+<span class="lineNum">      34 </span>            :     double q_dt = q_time_offset;
+<span class="lineNum">      35 </span>            :     double deriv_dt = deriv_time_offset;
+<span class="lineNum">      36 </span>            :     double fact_denom = 1.0;
+<span class="lineNum">      37 </span>            :     for (size_t j = i; j-- &gt; 0;) {
+<span class="lineNum">      38 </span>            :       // update the factorial coefficient of this term in the series expansion
+<span class="lineNum">      39 </span>            :       fact_denom *= (i - j);
+<span class="lineNum">      40 </span>            :       const double t_offset = (j == 0 ? q_dt : deriv_dt);
+<span class="lineNum">      41 </span>            :       gsl::at(coefs, i) += gsl::at(coefs0, j) * t_offset / fact_denom;
+<span class="lineNum">      42 </span>            :       // update the time coefficients for the next term in the series expansion
+<span class="lineNum">      43 </span>            :       q_dt *= q_time_offset;
+<span class="lineNum">      44 </span>            :       deriv_dt *= deriv_time_offset;
+<span class="lineNum">      45 </span>            :     }
+<span class="lineNum">      46 </span>            :   }
+<span class="lineNum">      47 </span>            : 
+<span class="lineNum">      48 </span>            :   // compute denominator associated with correcting for time offset
+<span class="lineNum">      49 </span>            :   // reuse tau DataVector allocation and properly initialize
+<span class="lineNum">      50 </span>            :   DataVector&amp; denom = tau;
+<span class="lineNum">      51 </span>            :   denom = 1.0;
+<span class="lineNum">      52 </span>            :   double q_dt = q_time_offset;
+<span class="lineNum">      53 </span>            :   double deriv_dt = deriv_time_offset;
+<span class="lineNum">      54 </span>            :   double fact_denom = 1.0;
+<span class="lineNum">      55 </span>            :   for (size_t i = DerivOrder; i-- &gt; 0;) {
+<span class="lineNum">      56 </span>            :     // update the factorial coefficient of this term in the series expansion
+<span class="lineNum">      57 </span>            :     fact_denom *= (DerivOrder - i);
+<span class="lineNum">      58 </span>            :     const double t_offset = (i == 0 ? q_dt : deriv_dt);
+<span class="lineNum">      59 </span>            :     denom += gsl::at(coefs0, i) * t_offset / fact_denom;
+<span class="lineNum">      60 </span>            :     // update the time coefficients for the next term in the series expansion
+<span class="lineNum">      61 </span>            :     q_dt *= q_time_offset;
+<span class="lineNum">      62 </span>            :     deriv_dt *= deriv_time_offset;
+<span class="lineNum">      63 </span>            :   }
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span>            :   // compute control signal
+<span class="lineNum">      66 </span>            :   // reuse inv_timescales DataVector allocation and properly initialize
+<span class="lineNum">      67 </span>            :   DataVector&amp; control_signal = inv_timescales;
+<span class="lineNum">      68 </span>            :   control_signal = coefs[0] * q_and_derivs[0];
+<span class="lineNum">      69 </span>            :   for (size_t i = 1; i &lt; DerivOrder; i++) {
+<span class="lineNum">      70 </span>            :     control_signal += gsl::at(coefs, i) * gsl::at(q_and_derivs, i);
+<span class="lineNum">      71 </span>            :   }
+<span class="lineNum">      72 </span>            : 
+<span class="lineNum">      73 </span>            :   return control_signal / denom;
+<span class="lineNum">      74 </span>            : }
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span>            : // explicit instantiations
+<span class="lineNum">      77 </span>            : /// \cond
+<span class="lineNum">      78 </span>            : template class Controller&lt;2&gt;;
+<span class="lineNum">      79 </span>            : /// \endcond
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

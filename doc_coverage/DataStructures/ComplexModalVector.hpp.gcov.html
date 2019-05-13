@@ -1,0 +1,263 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - DataStructures/ComplexModalVector.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">DataStructures</a> - ComplexModalVector.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">26</td>
+            <td class="headerCovTableEntryLo">3.8 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &quot;DataStructures/VectorImpl.hpp&quot;
+<span class="lineNum">       7 </span>            : #include &quot;Utilities/PointerVector.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">       8 </span>            : #include &quot;Utilities/TMPL.hpp&quot;
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : // IWYU pragma: no_include &lt;blaze/math/expressions/DVecMapExpr.h&gt;
+<span class="lineNum">      11 </span>            : // IWYU pragma: no_include &lt;blaze/math/typetraits/IsVector.h&gt;
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            : /// \cond
+<span class="lineNum">      14 </span>            : class ModalVector;
+<span class="lineNum">      15 </span>            : /// \endcond
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            : /*!
+<span class="lineNum">      18 </span>            :  * \ingroup DataStructuresGroup
+<span class="lineNum">      19 </span>            :  * \brief A class for storing complex spectral coefficients on a spectral grid.
+<span class="lineNum">      20 </span>            :  *
+<span class="lineNum">      21 </span>            :  * \details A ComplexModalVector holds an array of spectral coefficients
+<span class="lineNum">      22 </span>            :  * represented as `std::complex&lt;double&gt;`s, and can be either owning (the array
+<span class="lineNum">      23 </span>            :  * is deleted when the ComplexModalVector goes out of scope) or non-owning,
+<span class="lineNum">      24 </span>            :  * meaning it just has a pointer to an array.
+<span class="lineNum">      25 </span>            :  *
+<span class="lineNum">      26 </span>            :  * Only basic mathematical operations are supported with
+<span class="lineNum">      27 </span>            :  * `ComplexModalVector`s. `ComplexModalVector`s may be added or subtracted and
+<span class="lineNum">      28 </span>            :  * may be added or subtracted with `ModalVector`s, and the following unary
+<span class="lineNum">      29 </span>            :  * operations are supported:
+<span class="lineNum">      30 </span>            :  * - conj
+<span class="lineNum">      31 </span>            :  * - imag (which returns a `ModalVector`)
+<span class="lineNum">      32 </span>            :  * - real (which returns a `ModalVector`)
+<span class="lineNum">      33 </span>            :  *
+<span class="lineNum">      34 </span>            :  * Also multiplication is supported with `std::complex&lt;double&gt;`s or doubles and
+<span class="lineNum">      35 </span>            :  * `ComplexModalVector`s, and `ComplexModalVector`s can be divided by
+<span class="lineNum">      36 </span>            :  * `std::complex&lt;double&gt;`s or `double`s. Multiplication is supported with
+<span class="lineNum">      37 </span>            :  * `ComplexDiagonalModalOperator`s and `ComplexModalVector`s.
+<span class="lineNum">      38 </span>            :  */
+<span class="lineNum">      39 </span>            : class ComplexModalVector
+<span class="lineNum">      40 </span><span class="lineCov">          1 :     : public VectorImpl&lt;std::complex&lt;double&gt;, ComplexModalVector&gt; {</span>
+<span class="lineNum">      41 </span>            :  public:
+<span class="lineNum">      42 </span>            :   using VectorImpl&lt;std::complex&lt;double&gt;, ComplexModalVector&gt;::operator=;
+<span class="lineNum">      43 </span>            :   using VectorImpl&lt;std::complex&lt;double&gt;, ComplexModalVector&gt;::VectorImpl;
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span>            :   MAKE_MATH_ASSIGN_EXPRESSION_POINTERVECTOR(+=, ComplexModalVector)
+<span class="lineNum">      46 </span>            :   MAKE_MATH_ASSIGN_EXPRESSION_POINTERVECTOR(-=, ComplexModalVector)
+<span class="lineNum">      47 </span>            : };
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span>            : namespace blaze {
+<span class="lineNum">      50 </span>            : template &lt;&gt;
+<span class="lineNum">      51 </span><span class="lineNoCov">          0 : struct IsVector&lt;ComplexModalVector&gt; : std::true_type {};</span>
+<span class="lineNum">      52 </span>            : template &lt;&gt;
+<span class="lineNum">      53 </span>            : struct TransposeFlag&lt;ComplexModalVector&gt;
+<span class="lineNum">      54 </span><span class="lineNoCov">          0 :     : BoolConstant&lt;ComplexModalVector::transpose_flag&gt; {};</span>
+<span class="lineNum">      55 </span>            : template &lt;&gt;
+<span class="lineNum">      56 </span><span class="lineNoCov">          0 : struct AddTrait&lt;ComplexModalVector, ComplexModalVector&gt; {</span>
+<span class="lineNum">      57 </span><span class="lineNoCov">          0 :   using Type = ComplexModalVector;</span>
+<span class="lineNum">      58 </span>            : };
+<span class="lineNum">      59 </span><span class="lineNoCov">          0 : BLAZE_TRAIT_SPECIALIZE_COMPATIBLE_BINARY_TRAIT(ComplexModalVector, ModalVector,</span>
+<span class="lineNum">      60 </span>            :                                                AddTrait);
+<span class="lineNum">      61 </span>            : template &lt;&gt;
+<span class="lineNum">      62 </span><span class="lineNoCov">          0 : struct SubTrait&lt;ComplexModalVector, ComplexModalVector&gt; {</span>
+<span class="lineNum">      63 </span><span class="lineNoCov">          0 :   using Type = ComplexModalVector;</span>
+<span class="lineNum">      64 </span>            : };
+<span class="lineNum">      65 </span><span class="lineNoCov">          0 : BLAZE_TRAIT_SPECIALIZE_COMPATIBLE_BINARY_TRAIT(ComplexModalVector, ModalVector,</span>
+<span class="lineNum">      66 </span>            :                                                SubTrait);
+<span class="lineNum">      67 </span><span class="lineNoCov">          0 : BLAZE_TRAIT_SPECIALIZE_COMPATIBLE_BINARY_TRAIT(ComplexModalVector,</span>
+<span class="lineNum">      68 </span>            :                                                std::complex&lt;double&gt;, MultTrait);
+<span class="lineNum">      69 </span><span class="lineNoCov">          0 : BLAZE_TRAIT_SPECIALIZE_COMPATIBLE_BINARY_TRAIT(ComplexModalVector, double,</span>
+<span class="lineNum">      70 </span>            :                                                MultTrait);
+<span class="lineNum">      71 </span>            : template &lt;&gt;
+<span class="lineNum">      72 </span>            : struct DivTrait&lt;ComplexModalVector, std::complex&lt;double&gt;&gt; {
+<span class="lineNum">      73 </span>            :   using Type = ComplexModalVector;
+<span class="lineNum">      74 </span>            : };
+<span class="lineNum">      75 </span>            : template &lt;&gt;
+<span class="lineNum">      76 </span><span class="lineNoCov">          0 : struct DivTrait&lt;ComplexModalVector, double&gt; {</span>
+<span class="lineNum">      77 </span><span class="lineNoCov">          0 :   using Type = ComplexModalVector;</span>
+<span class="lineNum">      78 </span>            : };
+<span class="lineNum">      79 </span>            : 
+<span class="lineNum">      80 </span>            : #if ((BLAZE_MAJOR_VERSION == 3) &amp;&amp; (BLAZE_MINOR_VERSION &lt;= 3))
+<span class="lineNum">      81 </span>            : template &lt;typename Operator&gt;
+<span class="lineNum">      82 </span>            : struct UnaryMapTrait&lt;ComplexModalVector, Operator&gt; {
+<span class="lineNum">      83 </span>            :   // Selectively allow unary operations for spectral coefficients
+<span class="lineNum">      84 </span>            :   static_assert(
+<span class="lineNum">      85 </span>            :       tmpl::list_contains_v&lt;
+<span class="lineNum">      86 </span>            :           tmpl::list&lt;blaze::Conj,
+<span class="lineNum">      87 </span>            :                      // Following 3 reqd. by operator(+,+=), (-,-=),
+<span class="lineNum">      88 </span>            :                      // (-) w/doubles
+<span class="lineNum">      89 </span>            :                      blaze::AddScalar&lt;ComplexModalVector::ElementType&gt;,
+<span class="lineNum">      90 </span>            :                      blaze::SubScalarRhs&lt;ComplexModalVector::ElementType&gt;,
+<span class="lineNum">      91 </span>            :                      blaze::SubScalarLhs&lt;ComplexModalVector::ElementType&gt;&gt;,
+<span class="lineNum">      92 </span>            :           Operator&gt;,
+<span class="lineNum">      93 </span>            :       &quot;Only unary operations permitted on a ComplexModalVector are:&quot;
+<span class="lineNum">      94 </span>            :       &quot; conj, imag, and real&quot;);
+<span class="lineNum">      95 </span>            :   using Type = ComplexModalVector;
+<span class="lineNum">      96 </span>            : };
+<span class="lineNum">      97 </span>            : template &lt;&gt;
+<span class="lineNum">      98 </span>            : struct UnaryMapTrait&lt;ComplexModalVector, blaze::Imag&gt; {
+<span class="lineNum">      99 </span>            :   using Type = ModalVector;
+<span class="lineNum">     100 </span>            : };
+<span class="lineNum">     101 </span>            : template &lt;&gt;
+<span class="lineNum">     102 </span>            : struct UnaryMapTrait&lt;ComplexModalVector, blaze::Real&gt; {
+<span class="lineNum">     103 </span>            :   using Type = ModalVector;
+<span class="lineNum">     104 </span>            : };
+<span class="lineNum">     105 </span>            : // for consistency with the std::imag and std::real, these operations should be
+<span class="lineNum">     106 </span>            : // supported on real types
+<span class="lineNum">     107 </span>            : template &lt;&gt;
+<span class="lineNum">     108 </span>            : struct UnaryMapTrait&lt;ModalVector, blaze::Imag&gt; {
+<span class="lineNum">     109 </span>            :   using Type = ModalVector;
+<span class="lineNum">     110 </span>            : };
+<span class="lineNum">     111 </span>            : template &lt;&gt;
+<span class="lineNum">     112 </span>            : struct UnaryMapTrait&lt;ModalVector, blaze::Real&gt; {
+<span class="lineNum">     113 </span>            :   using Type = ModalVector;
+<span class="lineNum">     114 </span>            : };
+<span class="lineNum">     115 </span>            : 
+<span class="lineNum">     116 </span>            : template &lt;typename Operator&gt;
+<span class="lineNum">     117 </span>            : struct BinaryMapTrait&lt;ComplexModalVector, ComplexModalVector, Operator&gt; {
+<span class="lineNum">     118 </span>            :   // Forbid math operations in this specialization of BinaryMap traits for
+<span class="lineNum">     119 </span>            :   // ComplexModalVector that are unlikely to be used on spectral coefficients.
+<span class="lineNum">     120 </span>            :   // Currently no non-arithmetic binary operations are supported.
+<span class="lineNum">     121 </span>            :   static_assert(
+<span class="lineNum">     122 </span>            :       tmpl::list_contains_v&lt;tmpl::list&lt;&gt;, Operator&gt;,
+<span class="lineNum">     123 </span>            :       &quot;This binary operation is not permitted on a ComplexModalVector.&quot;);
+<span class="lineNum">     124 </span>            :   using Type = ComplexModalVector;
+<span class="lineNum">     125 </span>            : };
+<span class="lineNum">     126 </span>            : #else
+<span class="lineNum">     127 </span>            : template &lt;typename Operator&gt;
+<span class="lineNum">     128 </span><span class="lineNoCov">          0 : struct MapTrait&lt;ComplexModalVector, Operator&gt; {</span>
+<span class="lineNum">     129 </span>            :   // Selectively allow unary operations for spectral coefficients
+<span class="lineNum">     130 </span>            :   static_assert(
+<span class="lineNum">     131 </span>            :       tmpl::list_contains_v&lt;
+<span class="lineNum">     132 </span>            :           tmpl::list&lt;blaze::Conj,
+<span class="lineNum">     133 </span>            :                      // Following 3 reqd. by operator(+,+=), (-,-=),
+<span class="lineNum">     134 </span>            :                      // (-) w/doubles
+<span class="lineNum">     135 </span>            :                      blaze::AddScalar&lt;ComplexModalVector::ElementType&gt;,
+<span class="lineNum">     136 </span>            :                      blaze::SubScalarRhs&lt;ComplexModalVector::ElementType&gt;,
+<span class="lineNum">     137 </span>            :                      blaze::SubScalarLhs&lt;ComplexModalVector::ElementType&gt;&gt;,
+<span class="lineNum">     138 </span>            :           Operator&gt;,
+<span class="lineNum">     139 </span>            :       &quot;Only unary operations permitted on a ComplexModalVector are:&quot;
+<span class="lineNum">     140 </span>            :       &quot; conj, imag, and real&quot;);
+<span class="lineNum">     141 </span><span class="lineNoCov">          0 :   using Type = ComplexModalVector;</span>
+<span class="lineNum">     142 </span>            : };
+<span class="lineNum">     143 </span>            : template &lt;&gt;
+<span class="lineNum">     144 </span><span class="lineNoCov">          0 : struct MapTrait&lt;ComplexModalVector, blaze::Imag&gt; {</span>
+<span class="lineNum">     145 </span><span class="lineNoCov">          0 :   using Type = ModalVector;</span>
+<span class="lineNum">     146 </span>            : };
+<span class="lineNum">     147 </span>            : template &lt;&gt;
+<span class="lineNum">     148 </span><span class="lineNoCov">          0 : struct MapTrait&lt;ComplexModalVector, blaze::Real&gt; {</span>
+<span class="lineNum">     149 </span><span class="lineNoCov">          0 :   using Type = ModalVector;</span>
+<span class="lineNum">     150 </span>            : };
+<span class="lineNum">     151 </span>            : template &lt;&gt;
+<span class="lineNum">     152 </span><span class="lineNoCov">          0 : struct MapTrait&lt;ModalVector, blaze::Imag&gt; {</span>
+<span class="lineNum">     153 </span><span class="lineNoCov">          0 :   using Type = ModalVector;</span>
+<span class="lineNum">     154 </span>            : };
+<span class="lineNum">     155 </span>            : template &lt;&gt;
+<span class="lineNum">     156 </span><span class="lineNoCov">          0 : struct MapTrait&lt;ModalVector, blaze::Real&gt; {</span>
+<span class="lineNum">     157 </span><span class="lineNoCov">          0 :   using Type = ModalVector;</span>
+<span class="lineNum">     158 </span>            : };
+<span class="lineNum">     159 </span>            : 
+<span class="lineNum">     160 </span>            : template &lt;typename Operator&gt;
+<span class="lineNum">     161 </span><span class="lineNoCov">          0 : struct MapTrait&lt;ComplexModalVector, ComplexModalVector, Operator&gt; {</span>
+<span class="lineNum">     162 </span>            :   // Forbid math operations in this specialization of BinaryMap traits for
+<span class="lineNum">     163 </span>            :   // ComplexModalVector that are unlikely to be used on spectral coefficients.
+<span class="lineNum">     164 </span>            :   // Currently no non-arithmetic binary operations are supported.
+<span class="lineNum">     165 </span>            :   static_assert(
+<span class="lineNum">     166 </span>            :       tmpl::list_contains_v&lt;tmpl::list&lt;&gt;, Operator&gt;,
+<span class="lineNum">     167 </span>            :       &quot;This binary operation is not permitted on a ComplexModalVector.&quot;);
+<span class="lineNum">     168 </span><span class="lineNoCov">          0 :   using Type = ComplexModalVector;</span>
+<span class="lineNum">     169 </span>            : };
+<span class="lineNum">     170 </span>            : #endif  // ((BLAZE_MAJOR_VERSION == 3) &amp;&amp; (BLAZE_MINOR_VERSION &lt;= 3))
+<span class="lineNum">     171 </span>            : }  // namespace blaze
+<span class="lineNum">     172 </span>            : 
+<span class="lineNum">     173 </span>            : /// \cond
+<span class="lineNum">     174 </span>            : DEFINE_STD_ARRAY_BINOP(ComplexModalVector, ComplexModalVector,
+<span class="lineNum">     175 </span>            :                        ComplexModalVector, operator+, std::plus&lt;&gt;())
+<span class="lineNum">     176 </span>            : DEFINE_STD_ARRAY_BINOP(ComplexModalVector, ComplexModalVector,
+<span class="lineNum">     177 </span>            :                        ComplexModalVector, operator-, std::minus&lt;&gt;())
+<span class="lineNum">     178 </span>            : DEFINE_STD_ARRAY_INPLACE_BINOP(ComplexModalVector,
+<span class="lineNum">     179 </span>            :                                ComplexModalVector, operator+=, std::plus&lt;&gt;())
+<span class="lineNum">     180 </span>            : DEFINE_STD_ARRAY_INPLACE_BINOP(ComplexModalVector,
+<span class="lineNum">     181 </span>            :                                ComplexModalVector, operator-=, std::minus&lt;&gt;())
+<span class="lineNum">     182 </span>            : /// \endcond
+<span class="lineNum">     183 </span>            : MAKE_WITH_VALUE_IMPL_DEFINITION_FOR(ComplexModalVector)
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

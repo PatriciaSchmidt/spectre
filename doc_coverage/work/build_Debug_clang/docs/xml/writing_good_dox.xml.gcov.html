@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - /work/build_Debug_clang/docs/xml/writing_good_dox.xml</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">work/build_Debug_clang/docs/xml</a> - writing_good_dox.xml</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineCov">          1 : &lt;?xml version='1.0' encoding='UTF-8' standalone='no'?&gt;</span>
+<span class="lineNum">       2 </span>            : &lt;doxygen xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:noNamespaceSchemaLocation=&quot;compound.xsd&quot; version=&quot;1.8.13&quot;&gt;
+<span class="lineNum">       3 </span>            :   &lt;compounddef id=&quot;writing_good_dox&quot; kind=&quot;page&quot;&gt;
+<span class="lineNum">       4 </span>            :     &lt;compoundname&gt;writing_good_dox&lt;/compoundname&gt;
+<span class="lineNum">       5 </span>            :     &lt;title&gt;Writing Good Documentation&lt;/title&gt;
+<span class="lineNum">       6 </span>            :     &lt;detaileddescription&gt;
+<span class="lineNum">       7 </span>            : &lt;sect1 id=&quot;writing_good_dox_1writing_dox_writing_help&quot;&gt;
+<span class="lineNum">       8 </span>            : &lt;title&gt;Tutorials, Instructions, and Dev Guide&lt;/title&gt;
+<span class="lineNum">       9 </span>            : &lt;para&gt;All non-code documentation such as tutorials, installation instructions, and the developer guide is written inside Markdown files such as this one. These files must be placed inside &lt;computeroutput&gt;docs/Tutorials&lt;/computeroutput&gt;, &lt;computeroutput&gt;docs/MainSite&lt;/computeroutput&gt;, or &lt;computeroutput&gt;docs/DevGuide&lt;/computeroutput&gt; according to what they document. Each Markdown file must start with the following line&lt;/para&gt;&lt;para&gt;&lt;programlisting&gt;&lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;#&lt;sp/&gt;The&lt;sp/&gt;title&lt;sp/&gt;{#the_tag}&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      10 </span>            : &lt;/programlisting&gt;&lt;/para&gt;&lt;para&gt;where &lt;computeroutput&gt;The title&lt;/computeroutput&gt; is replaced with your desired title, and &lt;computeroutput&gt;the_tag&lt;/computeroutput&gt; with the tag you want to use to reference the Markdown file and documentation. Each main heading of the file starts with a single octothorpe and can have a tag. For example,&lt;/para&gt;&lt;para&gt;&lt;programlisting&gt;&lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;#&lt;sp/&gt;My&lt;sp/&gt;Section&lt;sp/&gt;{#file_name_my_section}&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      11 </span>            : &lt;/programlisting&gt;&lt;/para&gt;&lt;para&gt;While the &lt;computeroutput&gt;file_name&lt;/computeroutput&gt; portion is not necessary, it is useful for reducing the likelihood of reference collisions. You can add a table of contents using the Doxygen command &lt;computeroutput&gt;\tableofcontents&lt;/computeroutput&gt;. All sections, subsections, subsubsections, etc. are shown in the table of contents if they have a tag, if not they do not appear.&lt;/para&gt;&lt;/sect1&gt;
+<span class="lineNum">      12 </span>            : &lt;sect1 id=&quot;writing_good_dox_1writing_dox_cpp_dox_help&quot;&gt;
+<span class="lineNum">      13 </span>            : &lt;title&gt;C++ Documentation&lt;/title&gt;
+<span class="lineNum">      14 </span>            : &lt;para&gt;We require you to add Doxygen documentation for any of the following you may have added to the public interface in any hpp file:&lt;/para&gt;&lt;para&gt;&lt;itemizedlist&gt;
+<span class="lineNum">      15 </span>            : &lt;listitem&gt;&lt;para&gt;classes&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;structs&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;enums&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;functions&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;namespaces&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;macros&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;type aliases&lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      16 </span>            : &lt;/para&gt;&lt;para&gt;Documentation begins on the line immediately above the declaration with either a triple slash &lt;computeroutput&gt;///&lt;/computeroutput&gt; or a &lt;computeroutput&gt;/*!&lt;/computeroutput&gt;.&lt;/para&gt;&lt;para&gt;Examples: &lt;verbatim&gt;/// \brief A brief description of the object to be documented
+<span class="lineNum">      17 </span>            : ///
+<span class="lineNum">      18 </span>            : /// Doxygen comments can be made
+<span class="lineNum">      19 </span>            : /// using triple slashes...
+<span class="lineNum">      20 </span>            : class ExampleClass{
+<span class="lineNum">      21 </span>            :   ... rest of code
+<span class="lineNum">      22 </span>            : }
+<span class="lineNum">      23 </span>            : &lt;/verbatim&gt;&lt;/para&gt;&lt;para&gt;&lt;verbatim&gt;/*!
+<span class="lineNum">      24 </span>            :  * \brief A brief description of the object to be documented
+<span class="lineNum">      25 </span>            :  *
+<span class="lineNum">      26 </span>            :  * Doxygen comments can also be made
+<span class="lineNum">      27 </span>            :  * using the &amp;quot;slash-star, star-slash&amp;quot; pattern, in this way.
+<span class="lineNum">      28 </span>            :  */
+<span class="lineNum">      29 </span>            : class ExampleClass{
+<span class="lineNum">      30 </span>            :   ... rest of code
+<span class="lineNum">      31 </span>            : }
+<span class="lineNum">      32 </span>            : &lt;/verbatim&gt;&lt;/para&gt;&lt;para&gt;Build your documentation by running &lt;computeroutput&gt;make doc&lt;/computeroutput&gt; in your build directory. You can then view it by opening &lt;computeroutput&gt;BUILD_DIR/docs/html/index.html&lt;/computeroutput&gt; in a browser and using the file navigator in Doxygen to locate your file.&lt;/para&gt;&lt;para&gt;In addition to providing a file directory of all the source files in SpECTRE, Doxygen also conveniently provides two additional organizations of the files, Topics and Namespaces. To ensure that your documentation is easily found from within Doxygen, we recommend that you add any new objects to Topics and any new namespaces to Namespaces.&lt;/para&gt;&lt;para&gt;&lt;heading level=&quot;2&quot;&gt;Add your object to an existing Topic:&lt;/heading&gt;
+<span class="lineNum">      33 </span>            : &lt;/para&gt;&lt;para&gt;Within a Doxygen comment, use the Doxygen keyword &lt;verbatim&gt;\ingroup
+<span class="lineNum">      34 </span>            : &lt;/verbatim&gt;&lt;/para&gt;&lt;para&gt;followed by the name of the Topic (you can find the list of existing Topics in &lt;computeroutput&gt;&lt;ref refid=&quot;spectre_2docs_2GroupDefs_8hpp&quot; kindref=&quot;compound&quot;&gt;docs/GroupDefs.hpp&lt;/ref&gt;&lt;/computeroutput&gt;).&lt;/para&gt;&lt;para&gt;&lt;heading level=&quot;2&quot;&gt;Add a new Topic:&lt;/heading&gt;
+<span class="lineNum">      35 </span>            : &lt;/para&gt;&lt;para&gt;Within &lt;computeroutput&gt;&lt;ref refid=&quot;spectre_2docs_2GroupDefs_8hpp&quot; kindref=&quot;compound&quot;&gt;docs/GroupDefs.hpp&lt;/ref&gt;&lt;/computeroutput&gt;, add the name of your Topic (which follows the naming convention &amp;quot;YourNameForTopic&amp;quot; followed by &amp;quot;Group&amp;quot;) among the rest, taking care to keep the list of Topics in alphabetical order.&lt;/para&gt;&lt;para&gt;&lt;heading level=&quot;2&quot;&gt;Add a new namespace:&lt;/heading&gt;
+<span class="lineNum">      36 </span>            : &lt;/para&gt;&lt;para&gt;In the hpp file in which the namespace is declared for the first time, add a Doxygen comment to the line directly above the namespace. Subsequent files which use this namespace will not need a Doxygen comment.&lt;/para&gt;&lt;para&gt;We also strongly encourage you to:&lt;/para&gt;&lt;para&gt;&lt;heading level=&quot;2&quot;&gt;Put any mathematical expressions in your documentation into LaTeX form:&lt;/heading&gt;
+<span class="lineNum">      37 </span>            : &lt;/para&gt;&lt;para&gt;Within a Doxygen comment, begin and conclude your expression with&lt;/para&gt;&lt;para&gt;&lt;verbatim&gt;\f$
+<span class="lineNum">      38 </span>            : &lt;/verbatim&gt;&lt;/para&gt;&lt;para&gt;Example: &lt;verbatim&gt;\\\ We define \f$ \xi : = \eta^2 \f$
+<span class="lineNum">      39 </span>            : &lt;/verbatim&gt;&lt;/para&gt;&lt;para&gt;Note that if this expression spans more than one line, your Doxygen comment must of the &amp;quot;slash-star, star-slash&amp;quot; form shown in the previous section. One can also use (within a Doxygen comment) the form&lt;/para&gt;&lt;para&gt;&lt;verbatim&gt;\f[ expression \f]
+<span class="lineNum">      40 </span>            : &lt;/verbatim&gt;&lt;/para&gt;&lt;para&gt;to put the expression on its own line. We also encourage you to use the latex env &lt;computeroutput&gt;align&lt;/computeroutput&gt; for formatting these multiple-line equations.&lt;/para&gt;&lt;sect2 id=&quot;writing_good_dox_1writing_dox_citations&quot;&gt;
+<span class="lineNum">      41 </span>            : &lt;title&gt;Cite publications in your documentation&lt;/title&gt;
+<span class="lineNum">      42 </span>            : &lt;para&gt;When you refer to publications or books in the documentation, add a corresponding entry to &lt;computeroutput&gt;docs/References.bib&lt;/computeroutput&gt;. Follow these guidelines when editing &lt;computeroutput&gt;docs/References.bib&lt;/computeroutput&gt;:&lt;/para&gt;&lt;para&gt;&lt;itemizedlist&gt;
+<span class="lineNum">      43 </span>            : &lt;listitem&gt;&lt;para&gt;Ideally, find the publication on &lt;ulink url=&quot;https://inspirehep.net&quot;&gt;INSPIRE HEP&lt;/ulink&gt;, copy its BibTeX entry, remove the colon &lt;computeroutput&gt;:&lt;/computeroutput&gt; from its key and add the &lt;computeroutput&gt;url&lt;/computeroutput&gt; field (see below). We remove the colon because it can create problems in HTML related to its function as a CSS selector.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;For publications that are not listed on &lt;ulink url=&quot;https://inspirehep.net&quot;&gt;INSPIRE HEP&lt;/ulink&gt;, make sure to format the new entry&amp;apos;s key in the same style, i.e. &lt;computeroutput&gt;(&amp;lt;Author&amp;gt;[a-zA-Z]+)(&amp;lt;Year&amp;gt;[0-9]{4})(&amp;lt;ID&amp;gt;[a-z]*)&lt;/computeroutput&gt;. Good keys are, for instance, &lt;computeroutput&gt;Einstein1915&lt;/computeroutput&gt; or &lt;computeroutput&gt;LVC2016a&lt;/computeroutput&gt;. For books you may omit the year.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;Sort the list of BibTeX entries in the file alphabetically by their keys.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;Provide open access or preprint information whenever possible. For publications available on &lt;ulink url=&quot;https://arxiv.org&quot;&gt;arXiv&lt;/ulink&gt;, for instance, add the following fields (filling in the correct values): &lt;programlisting&gt;&lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;archivePrefix&lt;sp/&gt;=&lt;sp/&gt;{arXiv},&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      44 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;eprint&lt;sp/&gt;=&lt;sp/&gt;{1609.00098},&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      45 </span>            : &lt;codeline&gt;&lt;highlight class=&quot;normal&quot;&gt;primaryClass&lt;sp/&gt;=&lt;sp/&gt;{astro-ph.HE},&lt;/highlight&gt;&lt;/codeline&gt;
+<span class="lineNum">      46 </span>            : &lt;/programlisting&gt;&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;Provide the &lt;computeroutput&gt;url&lt;/computeroutput&gt; field whenever possible. If a DOI has been issued by the publisher, use &lt;computeroutput&gt;&lt;ulink url=&quot;https://doi.org/&quot;&gt;https://doi.org/&lt;/ulink&gt;&amp;lt;doi&amp;gt;&lt;/computeroutput&gt; and also fill the &lt;computeroutput&gt;doi&lt;/computeroutput&gt; field of the entry. Else, use the URL provided by the publisher.&lt;/para&gt;&lt;/listitem&gt;&lt;listitem&gt;&lt;para&gt;Make sure to wrap strings in the BibTeX entries in &lt;computeroutput&gt;{}&lt;/computeroutput&gt; when capitalization is important, or when BibTeX keywords should be ignored (e.g. &lt;computeroutput&gt;and&lt;/computeroutput&gt; in author lists).&lt;/para&gt;&lt;/listitem&gt;&lt;/itemizedlist&gt;
+<span class="lineNum">      47 </span>            : &lt;/para&gt;&lt;para&gt;To cite an entry from the &lt;computeroutput&gt;docs/References.bib&lt;/computeroutput&gt; file in the documentation, use the Doxygen keyword &lt;verbatim&gt;\cite
+<span class="lineNum">      48 </span>            : &lt;/verbatim&gt; followed by the BibTeX key at the place in the documentation where you want the citation to appear. It will render as a numbered link to the bibliography page. It will also show a popover when hovering over the link, which displays the bibliographic information and provides quick access to the publication.&lt;/para&gt;&lt;para&gt;&lt;heading level=&quot;2&quot;&gt;Include any pictures that aid in the understanding of your documentation:&lt;/heading&gt;
+<span class="lineNum">      49 </span>            : &lt;/para&gt;&lt;para&gt;First, please compress your image to be under 130kB. As most images will be diagrammatical in nature this is certainly achievable!&lt;/para&gt;&lt;para&gt;Second, add the directory that will contain your image to the &lt;computeroutput&gt;docs/Images/&lt;/computeroutput&gt; directory. Create the appropriate directories such that the directory structure in &lt;computeroutput&gt;docs/Images&lt;/computeroutput&gt; matches that of &lt;computeroutput&gt;src&lt;/computeroutput&gt; and &lt;computeroutput&gt;tests/Unit&lt;/computeroutput&gt;.&lt;/para&gt;&lt;para&gt;Finally, include the image by using the Doxygen keyword&lt;/para&gt;&lt;para&gt;&lt;verbatim&gt;\image html NameOfImage.png
+<span class="lineNum">      50 </span>            : &lt;/verbatim&gt;&lt;/para&gt;&lt;para&gt;in your hpp file.&lt;/para&gt;&lt;/sect2&gt;
+<span class="lineNum">      51 </span>            : &lt;/sect1&gt;
+<span class="lineNum">      52 </span>            : &lt;sect1 id=&quot;writing_good_dox_1writing_dox_python_dox_help&quot;&gt;
+<span class="lineNum">      53 </span>            : &lt;title&gt;Python Documentation&lt;/title&gt;
+<span class="lineNum">      54 </span>            : &lt;para&gt;DocStrings... &lt;/para&gt;&lt;/sect1&gt;
+<span class="lineNum">      55 </span>            :     &lt;/detaileddescription&gt;
+<span class="lineNum">      56 </span>            :   &lt;/compounddef&gt;
+<span class="lineNum">      57 </span>            : &lt;/doxygen&gt;
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

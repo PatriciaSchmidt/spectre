@@ -1,0 +1,192 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - d32284e5936d66e7c00ef240767a23b992749e90 - NumericalAlgorithms/Interpolation/RegularGridInterpolant.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title"> SpECTRE Documentation Coverage Report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">NumericalAlgorithms/Interpolation</a> - RegularGridInterpolant.hpp</td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+             <td class="headerItem">Commit:</td>
+             <td class="headerValue"><a target="_blank" href="https://github.com/sxs-collaboration/spectre/commit/d32284e5936d66e7c00ef240767a23b992749e90">d32284e5936d66e7c00ef240767a23b992749e90</a></td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntry">12</td>
+            <td class="headerCovTableEntryLo">33.3 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2019-05-13 08:33:31</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td class="headerItem">Legend:</td>
+            <td class="headerValueLeg">            Lines:
+            <span class="coverLegendCov">hit</span>
+            <span class="coverLegendNoCov">not hit</span>
+</td>
+            <td></td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<span class="lineNum">       1 </span><span class="lineNoCov">          0 : // Distributed under the MIT License.</span>
+<span class="lineNum">       2 </span>            : // See LICENSE.txt for details.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : #pragma once
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : #include &lt;array&gt;
+<span class="lineNum">       7 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : #include &quot;DataStructures/DataVector.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;DataStructures/Index.hpp&quot;
+<span class="lineNum">      11 </span>            : #include &quot;DataStructures/Matrix.hpp&quot;  // IWYU pragma: keep
+<span class="lineNum">      12 </span>            : #include &quot;DataStructures/Variables.hpp&quot;
+<span class="lineNum">      13 </span>            : #include &quot;NumericalAlgorithms/LinearOperators/ApplyMatrices.hpp&quot;
+<span class="lineNum">      14 </span>            : #include &quot;Utilities/Gsl.hpp&quot;
+<span class="lineNum">      15 </span>            : #include &quot;Utilities/MakeArray.hpp&quot;
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            : // IWYU pragma: no_forward_declare Variables
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            : /// \cond
+<span class="lineNum">      20 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      21 </span>            : class Mesh;
+<span class="lineNum">      22 </span>            : namespace PUP {
+<span class="lineNum">      23 </span>            : class er;
+<span class="lineNum">      24 </span>            : }  // namespace PUP
+<span class="lineNum">      25 </span>            : /// \endcond
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span>            : namespace intrp {
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            : /// \ingroup NumericalAlgorithmsGroup
+<span class="lineNum">      30 </span>            : /// \brief Interpolate a Variables from a Mesh onto a regular grid of points.
+<span class="lineNum">      31 </span>            : ///
+<span class="lineNum">      32 </span>            : /// The target points must lie on a tensor-product grid that is aligned with the
+<span class="lineNum">      33 </span>            : /// source Mesh. In any direction where the source and target points share an
+<span class="lineNum">      34 </span>            : /// identical Mesh (i.e., where the underlying 1-dimensional meshes share the
+<span class="lineNum">      35 </span>            : /// same extent, basis, and quadrature), the code is optimized to avoid
+<span class="lineNum">      36 </span>            : /// performing identity interpolations.
+<span class="lineNum">      37 </span>            : ///
+<span class="lineNum">      38 </span>            : /// Note, however, that in each dimension of the target grid, the points can
+<span class="lineNum">      39 </span>            : /// be freely distributed; in particular, the grid points need not be the
+<span class="lineNum">      40 </span>            : /// collocation points corresponding to a particular basis and quadrature. Note
+<span class="lineNum">      41 </span>            : /// also that the target grid need not overlap the source grid. In this case,
+<span class="lineNum">      42 </span>            : /// polynomial extrapolation is performed, with order set by the order of the
+<span class="lineNum">      43 </span>            : /// basis in the source grid. The extrapolation will be correct but may suffer
+<span class="lineNum">      44 </span>            : /// from reduced accuracy, especially for higher-order polynomials.
+<span class="lineNum">      45 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      46 </span><span class="lineCov">          1 : class RegularGrid {</span>
+<span class="lineNum">      47 </span>            :  public:
+<span class="lineNum">      48 </span>            :   /// \brief An interpolator between two regular grids.
+<span class="lineNum">      49 </span>            :   ///
+<span class="lineNum">      50 </span>            :   /// When the optional third argument is NOT passed, creates an interpolator
+<span class="lineNum">      51 </span>            :   /// between two regular meshes.
+<span class="lineNum">      52 </span>            :   ///
+<span class="lineNum">      53 </span>            :   /// The optional third argument allows the caller to override the distribution
+<span class="lineNum">      54 </span>            :   /// of grid points in any dimension(s) of the target grid. Each non-empty
+<span class="lineNum">      55 </span>            :   /// element of `override_target_mesh_with_1d_logical_coords` gives the logical
+<span class="lineNum">      56 </span>            :   /// coordinates which will override the default coordinates of `target_mesh`.
+<span class="lineNum">      57 </span><span class="lineCov">          1 :   RegularGrid(const Mesh&lt;Dim&gt;&amp; source_mesh, const Mesh&lt;Dim&gt;&amp; target_mesh,</span>
+<span class="lineNum">      58 </span>            :               const std::array&lt;DataVector, Dim&gt;&amp;
+<span class="lineNum">      59 </span>            :                   override_target_mesh_with_1d_logical_coords =
+<span class="lineNum">      60 </span>            :                       make_array&lt;Dim&gt;(DataVector())) noexcept;
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span><span class="lineNoCov">          0 :   RegularGrid();</span>
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span>            :   // clang-tidy: no runtime references
+<span class="lineNum">      65 </span><span class="lineNoCov">          0 :   void pup(PUP::er&amp; p) noexcept;  // NOLINT</span>
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span>            :   /// \brief Interpolate Variables onto new mesh.
+<span class="lineNum">      68 </span>            :   //@{
+<span class="lineNum">      69 </span>            :   template &lt;typename TagsList&gt;
+<span class="lineNum">      70 </span><span class="lineCov">          1 :   void interpolate(gsl::not_null&lt;Variables&lt;TagsList&gt;*&gt; result,</span>
+<span class="lineNum">      71 </span>            :                    const Variables&lt;TagsList&gt;&amp; vars) const noexcept;
+<span class="lineNum">      72 </span>            :   template &lt;typename TagsList&gt;
+<span class="lineNum">      73 </span><span class="lineCov">          1 :   Variables&lt;TagsList&gt; interpolate(const Variables&lt;TagsList&gt;&amp; vars) const</span>
+<span class="lineNum">      74 </span>            :       noexcept;
+<span class="lineNum">      75 </span>            :   //@}
+<span class="lineNum">      76 </span>            : 
+<span class="lineNum">      77 </span>            :  private:
+<span class="lineNum">      78 </span>            :   template &lt;size_t LocalDim&gt;
+<span class="lineNum">      79 </span>            :   // NOLINTNEXTLINE(readability-redundant-declaration)
+<span class="lineNum">      80 </span><span class="lineNoCov">          0 :   friend bool operator==(const RegularGrid&lt;LocalDim&gt;&amp; lhs,</span>
+<span class="lineNum">      81 </span>            :                          const RegularGrid&lt;LocalDim&gt;&amp; rhs) noexcept;
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span><span class="lineNoCov">          0 :   size_t number_of_target_points_{};</span>
+<span class="lineNum">      84 </span><span class="lineNoCov">          0 :   Index&lt;Dim&gt; source_extents_;</span>
+<span class="lineNum">      85 </span><span class="lineNoCov">          0 :   std::array&lt;Matrix, Dim&gt; interpolation_matrices_;</span>
+<span class="lineNum">      86 </span>            : };
+<span class="lineNum">      87 </span>            : 
+<span class="lineNum">      88 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">      89 </span>            : template &lt;typename TagsList&gt;
+<span class="lineNum">      90 </span><span class="lineNoCov">          0 : void RegularGrid&lt;Dim&gt;::interpolate(</span>
+<span class="lineNum">      91 </span>            :     const gsl::not_null&lt;Variables&lt;TagsList&gt;*&gt; result,
+<span class="lineNum">      92 </span>            :     const Variables&lt;TagsList&gt;&amp; vars) const noexcept {
+<span class="lineNum">      93 </span>            :   if (result-&gt;number_of_grid_points() != number_of_target_points_) {
+<span class="lineNum">      94 </span>            :     result-&gt;initialize(number_of_target_points_);
+<span class="lineNum">      95 </span>            :   }
+<span class="lineNum">      96 </span>            :   apply_matrices(result, interpolation_matrices_, vars, source_extents_);
+<span class="lineNum">      97 </span>            : }
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">     100 </span>            : template &lt;typename TagsList&gt;
+<span class="lineNum">     101 </span>            : Variables&lt;TagsList&gt; RegularGrid&lt;Dim&gt;::interpolate(
+<span class="lineNum">     102 </span>            :     const Variables&lt;TagsList&gt;&amp; vars) const noexcept {
+<span class="lineNum">     103 </span>            :   Variables&lt;TagsList&gt; result;
+<span class="lineNum">     104 </span>            :   interpolate(make_not_null(&amp;result), vars);
+<span class="lineNum">     105 </span>            :   return result;
+<span class="lineNum">     106 </span>            : }
+<span class="lineNum">     107 </span>            : 
+<span class="lineNum">     108 </span>            : template &lt;size_t Dim&gt;
+<span class="lineNum">     109 </span>            : bool operator!=(const RegularGrid&lt;Dim&gt;&amp; lhs,
+<span class="lineNum">     110 </span>            :                 const RegularGrid&lt;Dim&gt;&amp; rhs) noexcept;
+<span class="lineNum">     111 </span>            : 
+<span class="lineNum">     112 </span>            : }  // namespace intrp
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>
